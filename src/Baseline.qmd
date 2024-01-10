@@ -10,7 +10,7 @@ author:
 format:
   html:
     theme:
-      light: [default]
+      light: [default, theme.scss]
       dark: [darkly]
     css: theme.css
     code-fold: true
@@ -34,6 +34,42 @@ format:
 
 ## Introduction
 
+```{R}
+set.seed(123)
+
+##############
+## Packages ##
+##############
+
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+library(readxl) # Read in Excel files
+library(datefixR) # Standardise dates  
+
+# Generate tables
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+# paths to PREdiCCt data
+if (file.exists("/docker")) { # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+} else { # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+```
+
 This report explores the baseline data for the PREdiCCt study, generating
 inferences and producing display items for publication.
 
@@ -50,43 +86,6 @@ presented originated from.
 
 A docker image [nathansam/predicct](#future-link) has been used to ensure this 
 analysis remains reproducible.
-
-```{R}
-#| message: false
-set.seed(123)
-
-##############
-## Packages ##
-##############
-
-library(plyr) # Used for mapping values
-library(tidyverse) # ggplot2, dplyr, and magrittr
-library(readxl) # Read in Excel files
-library(datefixR) # Standardise dates  
-
-# Generate tables
-library(table1)
-library(knitr)
-library(pander)
-
-# Generate flowchart of cohort derivation
-library(DiagrammeR)
-library(DiagrammeRsvg)
-
-# paths to PREdiCCt data
-if (file.exists("/.dockerenv")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
-} else { # Run on OS directly
-  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-}
-
-```
 
 ## Variables relevant to all subjects
 
@@ -364,6 +363,90 @@ names(demo)[15] <- "IBD Duration"
 pander(summary(aov(`IBD Duration` ~ cat, data = demo)))
 ```
 
+### Steroids
+
+```{R}
+extract_steroid_date <- function(steroid.dates) {
+  tryCatch(expr = {
+    if (!is.na(steroid.dates)) {
+      fix_date_char(steroid.dates)
+    }
+  },
+  error = function(e) {
+    message("Could not fix ", steroid.dates)
+    NA
+  }
+  )
+}
+
+
+demo$CST <- NA
+demo$ivCST <- NA
+
+for (row in 1:nrow(demo)) {
+  id <- demo[row, "ParticipantNo" ]
+  ster_dates <- subset(redcap, participantno == id)$oral_ster_start_date
+  
+  if (length(ster_dates) != 0) {
+    ster_dates <- stringr::str_split(ster_dates,
+                                     ", ",
+                                     n = Inf,
+                                     simplify = FALSE)[[1]]
+  }
+  if (all(is.na(ster_dates))) {
+    demo[row, "CST"] <- NA
+  } else {
+    last_ster_date <- ster_dates[length(ster_dates)]
+    demo[row, "CST"] <- extract_steroid_date(last_ster_date)
+  }
+  
+  
+  iv_ster_dates <- subset(redcap, participantno == id)$iv_ster_start_date
+  
+   if (length(iv_ster_dates) != 0) {
+    iv_ster_dates <- stringr::str_split(iv_ster_dates,
+                                     ", ",
+                                     n = Inf,
+                                     simplify = FALSE)[[1]]
+  }
+  if (all(is.na(iv_ster_dates))) {
+    demo[row, "ivCST"] <- NA
+  } else {
+    # Assumes dates are given in order
+    last_iv_ster_date <- iv_ster_dates[length(iv_ster_dates)]
+    demo[row, "ivCST"] <- extract_steroid_date(last_iv_ster_date)
+  }
+}
+
+demo$CST <- as.Date(demo$CST)
+demo$ivCST <- as.Date(demo$ivCST)
+
+demo$recent_ster <- pmax(demo$CST, demo$ivCST)
+demo$`Time since last steroid` <- as.numeric(as.Date(demo$entry_date) - demo$recent_ster) / 365.25
+```
+
+
+```{R}
+ggplot(demo, aes(x = `Time since last steroid`, color = diagnosis == 1, fill = diagnosis == 1)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  labs(
+    x = "Time since last steroid Rx (years)",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#5EB1BF", "#C24343")
+  )
+```
+
+
 ### Bio-naive status
 
 Bio-naive status has been determined using REDCap and EoS data. As clinical
@@ -446,7 +529,7 @@ demo$naive <- factor(demo$naive,
   labels = c("Current Rx", "Previous Rx", "Never prescribed")
 )
 
-colnames(demo)[16] <- c("Biologic")
+colnames(demo)[20] <- c("Biologic")
 
 ggplot(demo, aes(x = Biologic, fill = Biologic, color = Biologic)) +
   geom_bar() +
@@ -459,6 +542,99 @@ ggplot(demo, aes(x = Biologic, fill = Biologic, color = Biologic)) +
          color = guide_legend(title = "Biologic status"))
 ```
 
+### Dietary data
+
+#### Meat sum
+
+```{R}
+FFQ <- read_xlsx(paste0(
+  prefix,
+  "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
+))
+FFQ <- subset(FFQ, participantno %in% fcal$ParticipantNo)
+
+
+
+FFQ$ParticipantNo <- FFQ$participantno
+demo <- merge(demo,
+      FFQ[, c("ParticipantNo", "Meat_sum", "fibre", "PUFAg", "NOVAScore_cat")],
+      by = "ParticipantNo",
+      all.x = TRUE,
+      all.y = FALSE)
+
+demo$NOVAScore_cat <- factor(demo$NOVAScore_cat,
+                             levels = 1:4,
+                             labels = c("Unprocessed",
+                                        "Processed culinary",
+                                        "Proccesed food",
+                                        "Ultra-processed"))
+
+demo %>%
+  ggplot(aes(x = Meat_sum, color = diagnosis == 1, fill = diagnosis == 1)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  labs(
+    x = "Meat Sum",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#5EB1BF", "#C24343")
+  )
+```
+
+#### Fibre
+
+```{R}
+demo %>%
+  ggplot(aes(x = fibre, color = diagnosis == 1, fill = diagnosis == 1)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  labs(
+    x = "Dietary fibre",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#5EB1BF", "#C24343")
+  )
+```
+
+#### PUFAs
+
+```{R}
+demo %>%
+  ggplot(aes(x = PUFAg, color = diagnosis == 1, fill = diagnosis == 1)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  labs(
+    x = "PUFAs",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#5EB1BF", "#C24343")
+  )
+```
+
 ### Flowchart
 
 The below flowchart gives a simple explanation of how the sub-cohort of subjects
@@ -466,14 +642,7 @@ with analysed food frequency questionnaires (FFQs) was obtained.
 
 ```{R}
 #|fig-align: center
-
-FFQ <- read_xlsx(paste0(
-  prefix,
-  "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
-))
-temp <- subset(FFQ, participantno %in% fcal$ParticipantNo)
-
-
+#|
 #| resresults: "hold"
 flow <- grViz(paste0("digraph flowchart {
 
@@ -489,7 +658,6 @@ graph[splines = ortho]
 }"))
 htmltools::HTML(export_svg(flow))
 ```
-
 
 ### Table of baseline data by IBD type
 
@@ -516,7 +684,7 @@ my.render.cont <- function(x) {
 
 
 table1::table1(~ Age + Sex + Ethnicity + `IBD Duration` + BMI + FC + Biologic | diagnosis2,
-  data = demo,
+  data = demo[,c(-16,-17)],
   render.continuous = my.render.cont
 )
 ```
@@ -928,9 +1096,9 @@ Licensed by
 ## {.appendix}
 
 <div>
-  <img class = "center" style="padding-left:200px" src="images/PREdiCCtlogo.png" alt=" The PREdiCCt study logo" height = 200px> <br>
-  <img style="padding-right:25px;padding-left:115px" src="images/cgem-logo.png" alt="Centre for Genomic & Experimental Medicine logo" height = 50px>
-  <img class = "center" src="images/MRC_HGU_Edinburgh RGB.png" alt="MRC Human Genetics Unit logo" height = 50px>
+  <img class = "center" style="padding-left:200px" src="../images/PREdiCCtlogo.png" alt=" The PREdiCCt study logo" height = 200px> <br>
+  <img style="padding-right:25px;padding-left:115px" src="../images/cgem-logo.png" alt="Centre for Genomic & Experimental Medicine logo" height = 50px>
+  <img class = "center" src="../images/MRC_HGU_Edinburgh RGB.png" alt="MRC Human Genetics Unit logo" height = 50px>
 </div>
 
 ---

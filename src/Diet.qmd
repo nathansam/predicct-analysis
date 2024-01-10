@@ -1,0 +1,1245 @@
+---
+title: "Associations between flare and dietary factors"
+subtitle: "Interim report following the analysis outlined in the study SAP"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Diet.bib          
+format:
+  html:
+    theme:
+      light: [default, theme.scss]
+      dark: [darkly]
+    code-fold: true
+    code-link: true
+    toc: true
+    code-tools:
+      source: true
+      toggle: true
+    html-math-method: katex
+    embed-resources: true
+    mainfont: "Mulish"
+    monofont: "Noto Sans Mono"
+    fig-height: 8
+    pagetitle: "Dietary analysis"
+editor: 
+  markdown: 
+    wrap: 80
+---
+
+## Introduction
+
+```{R}
+#| message: false
+library(readxl)
+library(tidyverse)
+library(datefixR)
+library(survival)
+library(survminer)
+library(pander)
+library(coxme)
+library(finalfit)
+library(DescTools)
+if (file.exists("/docker")) { 
+  prefix <- "data/end-of-follow-up/"
+  processed.dir <- "data/processed/"
+} else {
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  processed.dir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+demo <- readRDS(paste0(processed.dir, "demo.RDS"))
+demo$FC <- log(demo$FC)
+```
+
+This interim report performs key aspects of the primary dietary analysis as
+described in the PREdiCCt statistical analysis plan (SAP).
+
+The SAP states associations between the primary outcome (disease flare) is to be
+modelled using Cox models with the variable of interest and controlled variables
+(smoking status, sex, and deprivation) included as fixed effects. A gamma
+frailty term is employed for hospital sites (which may capture inter-hospital
+differences).
+
+At present, deprivation is not included in the models. Index of multiple
+deprivation (IMD) is the deprivation measure intended for use in this study.
+
+However, IMD is
+relative to each constituent country in the UK and is therefore not suitable
+for direct use across the PREdiCCt cohort. In the future, we may scale IMD to
+allow cross-UK comparisons to be made.
+
+The following dietary variables of interest are noted in the SAP:
+
+-   Animal protein intake
+-   Dietary fibre
+-   N-6 (omega-6) polyunsaturated fatty acids (PUFAs)
+-   Emulsifiers (lecithin)
+
+For the primary analysis, only the first two-years of follow-up will be
+considered. However, secondary analyses have also been included here which use
+the maximum follow-up available, obtained from the end-of-study phenotyping.
+
+Relevant extracts from the study SAP can be found below.
+
+### Relevant pages of PREdiCCT SAP on dietary analyses
+
+{{< pdf PREdiCCt_SAP_sub.pdf height=600px width=100% >}}
+
+## Primary outcome: first flare
+
+Disease flares have been reported by clinical care teams instead of being
+reported by subjects themselves.
+
+```{R}
+#| warning: false
+flares <- read_xlsx(paste0(prefix, "Followup\ form.xlsx"), na = ".") %>%
+  select(ParticipantId, DiseaseFlareYN, FirstFlareStartDate)
+# Convert to traditional censoring indicators
+flares$DiseaseFlareYN <- plyr::mapvalues(flares$DiseaseFlareYN,
+                                         from = 2,
+                                         to = 0) 
+flares$FirstFlareStartDate <- as.Date(flares$FirstFlareStartDate)
+
+flare.df <- merge(demo, flares, by = "ParticipantId") 
+
+submit_dates <- as.data.frame(read_xlsx(paste0(prefix, "EOF_dates.xlsx")))
+submit_dates$lasteos <- as.Date(submit_dates$lasteos)
+
+flare.df$time <- flare.df$FirstFlareStartDate - as.Date(flare.df$entry_date)
+for (i in 1:nrow(flare.df)){
+  if (is.na(flare.df[i,"time"])) {
+    flare.df[i, "time"] <- subset(submit_dates,
+                              ParticipantId == flare.df[i, "ParticipantId"])[1, "lasteos"] -
+      as.Date(flare.df[i, "entry_date"])
+  }
+}
+```
+
+::: {.panel-tabset group="followup"}
+
+### Two-year follow-up
+
+```{R Limit to 2 years of followup}
+#| fig-height: 6
+flare.cut.df <- flare.df
+for (i in 1:nrow(flare.cut.df)){
+  if (flare.cut.df[i, "time"] > 365.25 * 2) {
+    flare.cut.df[i, "DiseaseFlareYN"] <- 0
+    flare.cut.df[i, "time"] <- 365.25 * 2
+  }
+}
+
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = flare.cut.df)
+p <- ggsurvplot(fit,
+           data = flare.cut.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "IBD Type",
+           legend.labs = c("Crohn's disease", "UC/IBDU"),
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+p
+```
+
+### Maximum follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = flare.df)
+p <- ggsurvplot(fit,
+           data = flare.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "IBD Type",
+           legend.labs = c("Crohn's disease", "UC/IBDU"),
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+p
+```
+:::
+
+## Controlled variables
+
+```{R}
+flare.cd.cut.df <- subset(flare.cut.df, diagnosis2 == "CD")
+flare.cd.df <- subset(flare.df, diagnosis2 == "CD")
+flare.uc.cut.df <- subset(flare.cut.df, diagnosis2 == "UC/IBDU")
+flare.uc.df <- subset(flare.df, diagnosis2 == "UC/IBDU")
+```
+
+Before exploring dietary variables of interest, the variables being controlled
+for will be first investigated.
+
+As smoking status is believe to act in opposite directions for CD and UC (being
+protective for UC but associated with worse outcomes in CD [@Birrenbach_2004]),
+the diseases will be modelled separately.
+
+None of these variables were found to be associated with disease flare. At
+present, the SAP will continue to be followed and these factors will still be
+modelled. However, this means subjects with
+[missing data for smoking](#brief-look-at-missingness) are being
+excluded whilst smoking status does not appear to be contributing meaningfully
+to the models. 
+
+::: {.panel-tabset}
+
+### Sex
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Sex, data = flare.cd.cut.df)
+p <- ggsurvplot(fit,
+           data = flare.cd.cut.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Sex",
+           legend.labs = c("Male", "Female"),
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-sex-cd-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-cd-cut.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+##### Maximum follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Sex, data = flare.cd.df)
+p <- ggsurvplot(fit,
+           data = flare.cd.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Sex",
+           legend.labs = c("Male", "Female"),
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-sex-cd-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-cd-full.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Sex, data = flare.uc.cut.df) 
+p <- ggsurvplot(fit,
+           data = flare.uc.cut.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Sex",
+           legend.labs = c("Male", "Female"),
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-sex-uc-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-uc-cut.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+##### Maximum follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Sex, data = flare.uc.df) 
+p <- ggsurvplot(fit,
+           data = flare.uc.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Sex",
+           legend.labs = c("Male", "Female"),
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-sex-uc-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-uc-full.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+### Smoking status
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Smoke, data = flare.cd.cut.df)
+p <- ggsurvplot(fit,
+           data = flare.cd.cut.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Smoking status at recruitment",
+           legend.labs = c("Current", "Previous", "Never"),
+           palette = c("#00A6ED", "#FFB400", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-smoking-cd-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-cd-cut.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+##### Maximum follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Smoke, data = flare.cd.df )
+p <- ggsurvplot(fit,
+           data = flare.cd.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Smoking status at recruitment",
+           legend.labs = c("Current", "Previous", "Never"),
+           palette = c("#00A6ED", "#FFB400", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-smoking-cd-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-cd-full.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Smoke, data = flare.uc.cut.df) 
+p <- ggsurvplot(fit,
+           data = flare.uc.cut.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Smoking status at recruitment",
+           legend.labs = c("Current", "Previous", "Never"),
+           palette = c("#00A6ED", "#FFB400", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-smoking-uc-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-uc-cut.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+##### Maximum follow-up
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ Smoke, data = flare.uc.df) 
+p <- ggsurvplot(fit,
+           data = flare.uc.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "Smoking status at recruitment",
+           legend.labs = c("Current", "Previous", "Never"),
+           palette = c("#00A6ED", "#FFB400", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+
+cairo_pdf("plots/EOF-flare-smoking-uc-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-uc-full.png",
+    width = 9,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+### Deprivation
+
+*Not currently used (see [introduction](#introduction))*
+
+:::
+
+## Dietary variables
+
+```{R}
+cox.summary <- function(fit) {
+  cat("Cox model summary:")
+  fit %>%
+    finalfit::fit2df(condense = FALSE) %>% 
+    knitr::kable(col.names = c("Variable",
+                               "HR",
+                               "Lower 95%",
+                               "Upper 95%",
+                               "P-value"),
+                 digits = 4) %>%
+    print()
+  cat("Proportional hazards assumption test:")
+  cox.zph(fit)$table %>%
+    knitr::kable(col.names = c("",
+                               "Chi-squared statistic",
+                               "DF",
+                               "P-value"),
+                 digits = 4) %>%
+    print()
+  return()
+}
+```
+
+Cox models are fitted using the above variables, a dietary variable of interest,
+and a gamma frailty term for hospital site. For each
+model, a summary of the hazard ratios and a test of the proportional hazards
+assumption are presented. Visualisations of Cox models using the most frequent
+category for categorical data and an absent frailty term, across quantiles for
+the dietary variable are also produced. 
+
+At present,
+we are using the proportional-hazards test based on scaled Schoenfeld residuals
+to explore the proportional hazards assumption (with the frailty term treated as
+a fixed offset). This is in contrast to the SAP which states the proportional
+hazards assumption will be assessed '_using the significance of continuous
+time-dependent covariates (incorporating a cubic B-spline or fractional
+polynomial shape if necessary)_'. In the future, this approach is expecting to
+be implemented instead of (or possibly alongside) the current approach. 
+
+### Total meat protein
+
+Protein intake from animal sources is not found to be significantly associated
+with flares in CD. However, there is evidence of an association for UC. At
+present, it is difficult to explore this in more detail (e.g. by meat type).
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit<- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + Meat_sum,
+      control = coxph.control(outer.max = 20),
+                 data = flare.cd.cut.df)
+
+newdata <- with(flare.cd.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           Meat_sum = quantile(Meat_sum, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Meat protein quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + Meat_sum + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+
+fit<- coxph(Surv(time, DiseaseFlareYN) ~ Sex + Smoke + Meat_sum,
+            control = coxph.control(outer.max = 20),
+            data = flare.cd.df)
+
+newdata <- with(flare.cd.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           Meat_sum = quantile(Meat_sum, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Meat protein quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + Meat_sum + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit<- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + Meat_sum,
+      control = coxph.control(outer.max = 20),
+                 data = flare.uc.cut.df)
+
+newdata <- with(flare.uc.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           Meat_sum = quantile(Meat_sum, na.rm = TRUE)[2:4]))
+
+
+fit <- survfit(fit, newdata = newdata)
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Meat protein quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + Meat_sum +
+                      frailty(SiteNo),
+      control = coxph.control(outer.max = 20),
+                 data = flare.uc.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit<- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + Meat_sum,
+      control = coxph.control(outer.max = 20),
+                 data = flare.uc.df)
+
+newdata <- with(flare.uc.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           Meat_sum = quantile(Meat_sum, na.rm = TRUE)[2:4]))
+
+
+fit <- survfit(fit, newdata = newdata)
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Meat protein quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~ 
+                  Sex + Smoke + Meat_sum + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.uc.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Dietary fibre
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + fibre,
+             control = coxph.control(outer.max = 20),
+                 data = flare.cd.cut.df)
+
+newdata <- with(flare.cd.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           fibre = quantile(fibre, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Dietary fibre quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + fibre + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + fibre,
+             control = coxph.control(outer.max = 20),
+                 data = flare.cd.df)
+
+newdata <- with(flare.cd.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           fibre = quantile(fibre, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Dietary fibre quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + fibre + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + fibre,
+             control = coxph.control(outer.max = 20),
+                 data = flare.uc.cut.df)
+
+newdata <- with(flare.uc.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           fibre = quantile(fibre, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Dietary fibre quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + fibre + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.uc.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + fibre,
+             control = coxph.control(outer.max = 20),
+                 data = flare.uc.df)
+
+newdata <- with(flare.uc.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           fibre = quantile(fibre, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Dietary fibre quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + fibre + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.uc.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### PUFAs
+
+The SAP states n-6 PUFAs will be investigated. However, the FFQ data extract
+lists PUFA collectively, presumbaly describing both n-3 and n-6 PUFAs. For
+now, these data will be used. 
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + PUFAg,
+             control = coxph.control(outer.max = 20),
+                 data = flare.cd.cut.df)
+
+newdata <- with(flare.cd.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "PUFA intake (by g) quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + PUFAg,
+             control = coxph.control(outer.max = 20),
+                 data = flare.cd.df)
+
+newdata <- with(flare.cd.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "PUFA intake (by g) quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + PUFAg,
+             control = coxph.control(outer.max = 20),
+                 data = flare.uc.cut.df)
+
+newdata <- with(flare.uc.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "PUFA intake (by g) quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.uc.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + PUFAg,
+             control = coxph.control(outer.max = 20),
+                 data = flare.uc.df)
+
+newdata <- with(flare.uc.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
+                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "PUFA intake (by g) quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.uc.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### NOVA score
+
+The SAP states emulsifiers (specifically lecithin) will be investigated.
+However, data on emulsifiers are not available in the FFQ data extract. As a
+proxy for emulsifiers, this report will look at ultra-processed foods via Nova
+scores [@Monteiro_2017]. 
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + NOVAScore_cat,
+             control = coxph.control(outer.max = 20),
+                 data = flare.cd.cut.df)
+
+newdata <- with(flare.cd.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 4)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 4)),
+                           NOVAScore_cat = factor(1:4,
+                                                  levels = 1:4,
+                                                  labels = c("Unprocessed",
+                                                             "Processed culinary",
+                                                             "Proccesed food",
+                                                             "Ultra-processed"))))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Nova score",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + NOVAScore_cat + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + NOVAScore_cat,
+             control = coxph.control(outer.max = 20),
+                 data = flare.cd.df)
+
+newdata <- with(flare.cd.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 4)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 4)),
+                          NOVAScore_cat = factor(1:4,
+                                                  levels = 1:4,
+                                                  labels = c("Unprocessed",
+                                                             "Processed culinary",
+                                                             "Proccesed food",
+                                                             "Ultra-processed"))))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Nova score",
+           ggtheme = theme_minimal(),
+           data = flare.cd.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + NOVAScore_cat + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.cd.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Two-year follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + NOVAScore_cat,
+             control = coxph.control(outer.max = 20),
+                 data = flare.uc.cut.df)
+
+newdata <- with(flare.uc.cut.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 4)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 4)),
+                           NOVAScore_cat = factor(1:4,
+                                                  levels = 1:4,
+                                                  labels = c("Unprocessed",
+                                                             "Processed culinary",
+                                                             "Proccesed food",
+                                                             "Ultra-processed"))))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Nova score",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + NOVAScore_cat + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.uc.cut.df)
+invisible(cox.summary(fit.me))
+```
+
+##### Maximum follow-up
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 4.5
+fit <- coxph(Surv(time, DiseaseFlareYN) ~
+                      Sex + Smoke + NOVAScore_cat,
+             control = coxph.control(outer.max = 20),
+                 data = flare.uc.df)
+
+newdata <- with(flare.uc.df,
+                data.frame(Sex = as.factor(rep(Mode(Sex), 4)),
+                           Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 4)),
+                           NOVAScore_cat = factor(1:4,
+                                                  levels = 1:4,
+                                                  labels = c("Unprocessed",
+                                                             "Processed culinary",
+                                                             "Proccesed food",
+                                                             "Ultra-processed"))))
+
+fit <- survfit(fit, newdata = newdata)
+
+ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Nova score",
+           ggtheme = theme_minimal(),
+           data = flare.uc.df)
+
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
+                  Sex + Smoke + NOVAScore_cat + frailty(SiteNo),
+                control = coxph.control(outer.max = 20),
+                data = flare.uc.df)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+
+
+<!--
+## Surgery
+
+```{R}
+#| warning: false
+surgery <- read_xlsx(paste0(prefix, "Followup\ form.xlsx"), na = ".") %>%
+  select(ParticipantId, SurgeryYN, Operation1Date)
+# Convert to traditional censoring indicators
+surgery$SurgeryYN <- plyr::mapvalues(surgery$SurgeryYN,
+                                         from = 2,
+                                         to = 0) 
+surgery$Operation1Date <- as.Date(surgery$Operation1Date)
+
+surgery.df <- merge(demo, surgery, by = "ParticipantId") 
+
+surgery.df$time <- surgery.df$Operation1Date - as.Date(surgery.df$entry_date)
+for (i in 1:nrow(surgery.df)){
+  if (is.na(surgery.df[i,"time"])) {
+    surgery.df[i, "time"] <- subset(submit_dates,
+                              ParticipantId == surgery.df[i, "ParticipantId"])[1, "lasteos"] -
+      as.Date(surgery.df[i, "entry_date"])
+  }
+}
+
+fit <- survfit(Surv(time, SurgeryYN) ~ cat, data = surgery.df)
+p <- ggsurvplot(fit,
+           data = surgery.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "FC at recruitment",
+           legend.labs = c("FC < 50", "50 ≤ FC≤ 250", "FCAL > 250"),
+           palette = c("#00A6ED", "#FFB400", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to surgery"
+           )
+
+cairo_pdf("plots/EOF-surgery.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-surgery.png", width = 9, height = 7, units = "in", res = 300)
+p
+invisible(dev.off())
+p
+```
+
+## Steroids
+
+```{R}
+#| warning: false
+cst <- read_xlsx(paste0(prefix, "Followup\ form.xlsx"), na = ".") %>%
+  select(ParticipantId, SteroidsYN, SteroidsDate)
+# Convert to traditional censoring indicators
+cst$SteroidsYN <- plyr::mapvalues(cst$SteroidsYN,
+                                         from = 2,
+                                         to = 0) 
+cst$SteroidsDate <- as.Date(cst$SteroidsDate)
+
+cst.df <- merge(demo, cst, by = "ParticipantId") 
+
+cst.df$time <- cst.df$SteroidsDate - as.Date(cst.df$entry_date)
+for (i in 1:nrow(cst.df)){
+  if (is.na(cst.df[i,"time"])) {
+    cst.df[i, "time"] <- subset(submit_dates,
+                              ParticipantId == cst.df[i, "ParticipantId"])[1, "lasteos"] -
+      as.Date(cst.df[i, "entry_date"])
+  }
+}
+
+fit <- survfit(Surv(time, SteroidsYN) ~ cat, data = cst.df)
+p <- ggsurvplot(fit,
+           data = cst.df,
+           conf.int = TRUE,
+           pval = TRUE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = TRUE, 
+           legend.title = "FC at recruitment",
+           legend.labs = c("FC < 50", "50 ≤ FC≤ 250", "FCAL > 250"),
+           palette = c("#00A6ED", "#FFB400", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to corticosteroid Rx"
+           )
+
+cairo_pdf("plots/EOF-CST.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-CST.png", width = 9, height = 7, units = "in", res = 300)
+p
+invisible(dev.off())
+p
+```
+-->
+
+## Brief look at missingness
+
+```{R}
+missing_plot(flare.df)
+```
+
+## {.appendix}
+
+<div>
+  <img class = "center" style="padding-left:200px" src="../images/PREdiCCtlogo.png" alt=" The PREdiCCt study logo" height = 200px> <br>
+  <img style="padding-right:25px;padding-left:115px" src="../images/cgem-logo.png" alt="Centre for Genomic & Experimental Medicine logo" height = 50px>
+  <img class = "center" src="../images/MRC_HGU_Edinburgh RGB.png" alt="MRC Human Genetics Unit logo" height = 50px>
+</div>
+
+---
+
+## Session info {.appendix}
+
+```{R Session info}
+pander::pander(sessionInfo())
+```

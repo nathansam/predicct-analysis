@@ -38,7 +38,9 @@ RUN install2.r \
     table1 \
     downlit \
     xml2 \
-    survminer
+    survminer \
+    coxme \
+    crayon
 
 ARG BUILDARCH
 
@@ -50,6 +52,7 @@ RUN cp analysis/docker/render analysis
 RUN chmod u+x analysis/render
 RUN mkdir -p analysis/docs
 RUN mkdir analysis/data
+RUN touch /docker
 WORKDIR /analysis
 RUN rm -rf /tmp/downloaded_packages
 CMD ["./render"]

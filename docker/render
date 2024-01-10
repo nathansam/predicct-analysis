@@ -9,6 +9,3 @@ mkdir temp
 quarto render --output-dir temp --to html
 rm -rf docs/*
 cp -r temp/* docs
-
-
-
