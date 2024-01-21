@@ -635,6 +635,156 @@ demo %>%
   )
 ```
 
+### Medication use
+
+#### Current IBD medication
+
+From REDCAP
+
+```{R}
+drugs <- data.frame(ParticipantNo = demo$ParticipantNo)
+
+drugs$ASA <- FALSE
+drugs$imm <- FALSE
+drugs$bio <- FALSE
+drugs$category <- NA
+
+redcap <- redcap %>% mutate(curr_on_mesa = ifelse(is.na(curr_on_mesa),
+                                                  0,
+                                                  curr_on_mesa),
+                            curr_on_aza = ifelse(is.na(curr_on_aza),
+                                                 0,
+                                                 curr_on_aza),
+                            curr_on_merc = ifelse(is.na(curr_on_merc),
+                                                 0,
+                                                 curr_on_merc),
+                            curr_on_metho = ifelse(is.na(curr_on_metho),
+                                                 0,
+                                                 curr_on_metho),
+                            curr_on_ciclo = ifelse(is.na(curr_on_ciclo),
+                                                 0,
+                                                 curr_on_ciclo),
+                            curr_on_inflix = ifelse(is.na(curr_on_inflix),
+                                                 0,
+                                                 curr_on_inflix),
+                            curr_on_ada = ifelse(is.na(curr_on_ada),
+                                                 0,
+                                                 curr_on_ada),
+                            curr_on_goli = ifelse(is.na(curr_on_goli),
+                                                 0,
+                                                 curr_on_goli),
+                            curr_on_vedo = ifelse(is.na(curr_on_vedo),
+                                                 0,
+                                                 curr_on_vedo),
+                            curr_on_goli = ifelse(is.na(curr_on_goli),
+                                                 0,
+                                                 curr_on_goli),
+                            curr_on_ust = ifelse(is.na(curr_on_ust),
+                                                 0,
+                                                 curr_on_ust)
+                            )
+
+
+for (i in 1:nrow(drugs)){
+  
+  if (drugs[i, "ParticipantNo"] %in% redcap$participantno) {
+    
+    
+    subject.data <- subset(redcap, participantno == drugs[i, "ParticipantNo"])[1,]
+      if (subject.data$curr_on_mesa == 1) drugs[i, "ASA"] <- TRUE
+    
+    # Immunosuppressants
+    if (subject.data$curr_on_aza == 1 |
+        subject.data$curr_on_merc == 1 | 
+        subject.data$curr_on_metho == 1 |
+        subject.data$curr_on_ciclo == 1) {
+      drugs[i, "imm"] <- TRUE
+    }
+    
+    # Biologics
+    if (subject.data$curr_on_inflix == 1 |
+        subject.data$curr_on_ada == 1 | 
+        subject.data$curr_on_goli == 1 |
+        subject.data$curr_on_vedo == 1 |
+        subject.data$curr_on_ust == 1) {
+      drugs[i, "bio"] <- TRUE
+    }
+    if (drugs[i, "imm"] &  drugs[i, "bio"]) {
+      drugs[i, "category"] <- 4
+    } else if (drugs[i, "imm"]) {
+      drugs[i, "category"] <- 2
+    } else if (drugs[i, "bio"]) {
+      drugs[i, "category"] <- 3
+    } else if (drugs[i,"ASA"]) {
+      drugs[i, "category"] <- 1
+    }
+  }
+}
+
+drugs$category <- factor(drugs$category,
+                         levels = 1:4,
+                         labels = c("5ASA",
+                                    "Mono immunotherapy",
+                                    "Mono biologic",
+                                    "Combo therapy"))
+
+drugs <- merge(drugs, demo[, c("ParticipantNo", "cat")], by = "ParticipantNo")
+colnames(drugs)[5] <- "Treatment"
+
+
+plt.cols <- c("#52528C", "#DD6E42", "#048A81", "#C585B3")
+
+ggplot(drugs, aes(x = Treatment, fill = Treatment, color = Treatment)) +
+  geom_bar() +
+  theme_minimal() +
+  ylab("Frequnecy") +
+  scale_fill_manual(values = plt.cols) +
+  scale_colour_manual(values = colorspace::darken(plt.cols, 0.3)) 
+```
+
+```{R}
+pander(chisq.test(drugs$Treatment , drugs$cat))
+```
+
+#### Antibiotics
+
+Patient reported. 
+
+```{R}
+meds <- read_xlsx(paste0(data.path, "Baseline2022/medicines.xlsx"))
+drugs <- merge(drugs,
+               meds[, c("ParticipantNo", "Antibiotics6Mths")],
+               by = "ParticipantNo",
+               all.x = TRUE,
+               all.y = FALSE)
+drugs$Antibiotics6Mths <- factor(drugs$Antibiotics6Mths, c(1,2), c("Yes", "No"))
+colnames(drugs)[7] <- "Antibiotic use in 6 months"
+
+plt.cols <- c("#FE5F55", "#004E89")
+
+ggplot(drugs, aes(x = `Antibiotic use in 6 months`, 
+                  color = `Antibiotic use in 6 months`,
+                  fill = `Antibiotic use in 6 months`)) +
+  geom_bar() +
+  theme_minimal() +
+  xlab("Antibiotic use in the previous six months") +
+  ylab("Frequency") + theme(legend.position = "none") +
+  scale_fill_manual(values = plt.cols) +
+  scale_colour_manual(values = colorspace::darken(plt.cols, 0.5)) 
+```
+
+```{R}
+pander(chisq.test(drugs$`Antibiotic use in 6 months`, drugs$cat))
+```
+
+#### Table
+
+```{R}
+table1(~ Treatment + `Antibiotic use in 6 months` | cat,
+       drugs)
+```
+
+
 ### Flowchart
 
 The below flowchart gives a simple explanation of how the sub-cohort of subjects
@@ -725,6 +875,32 @@ smoking <- smoking[,-3]
 
 demo.fcal <- merge(demo.fcal,
                  smoking,
+                 by = "ParticipantNo",
+                 all.x = TRUE,
+                 all.y = FALSE)
+```
+
+
+```{R}
+esmoking <- read_xlsx(paste0(data.path, "Baseline2022/lifestyle.xlsx")) %>%
+  select(ParticipantNo, ECigs, ECigsPast)
+esmoking$ECigs <- plyr::mapvalues(esmoking$ECigs, from = 2, to = 3)
+
+for (i in 1:nrow(esmoking)) {
+  if ((!is.na(esmoking[i, "ECigsPast"] == 1) & esmoking[i, "ECigsPast"] == 1) & (!is.na(esmoking[i, "ECigs"]) & esmoking[i, "ECigs"] == 3)){
+    esmoking[i, "ECigs"] <- 2
+  }
+}
+
+esmoking$ECigs <- factor(esmoking$ECigs,
+                        levels = seq(1,3),
+                        labels = c("Current", "Previous", "Never"))
+
+esmoking <- esmoking[,-3]
+
+
+demo.fcal <- merge(demo.fcal,
+                 esmoking,
                  by = "ParticipantNo",
                  all.x = TRUE,
                  all.y = FALSE)
@@ -977,11 +1153,28 @@ ggplot(demo.cd, aes(x = Smoke, fill = Smoke, color = Smoke)) +
 pander(chisq.test(demo.cd$Smoke , demo.cd$cat))
 ```
 
+### E-cigarette use
+
+```{R}
+ggplot(demo.cd, aes(x = ECigs, fill = ECigs, color = ECigs)) +
+  geom_bar() +
+  xlab("E-cigarette status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(values = c("#4E0250", "#517664", "#1C448E")) +
+  scale_color_manual(values = c("#3D003F", "#385245", "#033070")) +
+  guides(fill = guide_legend(title = "E-cigarette status"),
+         color = guide_legend(title = "E-cigarette status"))
+```
+
+```{R}
+pander(chisq.test(demo.cd$ECigs , demo.cd$cat))
+```
 
 ### Table of CD variables
 
 ```{R}
-table1(~ Location + L4 + Behaviour + Perianal + Surgery + Smoke | cat,
+table1(~ Location + L4 + Behaviour + Perianal + Surgery + Smoke + ECigs | cat,
        data = demo.cd)
 ```
 
@@ -1076,10 +1269,28 @@ ggplot(demo.uc, aes(x = Smoke, fill = Smoke, color = Smoke)) +
 pander(chisq.test(demo.uc$Smoke , demo.uc$cat))
 ```
 
+### E-cigarette use
+
+```{R}
+ggplot(demo.uc, aes(x = ECigs, fill = ECigs, color = ECigs)) +
+  geom_bar() +
+  xlab("E-cigarette status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(values = c("#4E0250", "#517664", "#1C448E")) +
+  scale_color_manual(values = c("#3D003F", "#385245", "#033070")) +
+  guides(fill = guide_legend(title = "E-cigarette status"),
+         color = guide_legend(title = "E-cigarette status"))
+```
+
+```{R}
+pander(fisher.test(demo.uc$ECigs, demo.uc$cat))
+```
+
 ### Table of UC variables
 
 ```{R}
-table1(~ Extent + Smoke | cat, data = demo.uc)
+table1(~ Extent + Smoke + ECigs | cat, data = demo.uc)
 ```
 
 
