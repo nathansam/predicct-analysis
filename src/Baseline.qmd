@@ -1115,13 +1115,14 @@ L4 <- rep(0, nrow(cd.location))
 Location <- rep(NA, nrow(cd.location))
 
 for (i in 1:nrow(cd.location)) {
+  # If Oesophago-gastric, Duodenal, Jejunal, then L4 is present
   if (any(cd.location[i, 2:4] == 1)) L4[i] <- 1
   if (cd.location[i, 5] == 1 & cd.location[i, 6] == 1) {
-    Location[i] <- 3
+    Location[i] <- 3 # Ileal-colonic
   } else if (cd.location[i, 5] == 1 & cd.location[i, 6] == 0) {
-    Location[i] <- 1
+    Location[i] <- 1 # Ileal only
   } else if (cd.location[i, 5] == 0 & cd.location[i, 6] == 1) {
-    Location[i] <- 2
+    Location[i] <- 2 # Colonic only
   }
   if (is.na(Location[i]) & L4[i] == 1) {
     Location[i] <- 4 # L4 Only
@@ -1285,7 +1286,8 @@ HBI.df <- read_xlsx(paste0(prefix, "Followup\ form.xlsx"), na = ".") %>%
 HBI.df <- subset(HBI.df, ParticipantId %in% demo.cd$ParticipantId)
 demo.cd <- merge(demo.cd, HBI.df, by = "ParticipantId", all.x = TRUE)
 demo.cd %>%
-  ggplot(aes(x = as.factor(MaxHBI))) + geom_bar()
+  ggplot(aes(x = as.factor(MaxHBI))) +
+  geom_bar()
 ```
 
 ### Smoking
