@@ -54,6 +54,7 @@ if (file.exists("/docker")) {
 
 demo <- readRDS(paste0(processed.dir, "demo.RDS"))
 demo$FC <- log(demo$FC)
+
 ```
 
 This interim report performs key aspects of the primary dietary analysis as
@@ -90,7 +91,7 @@ Relevant extracts from the study SAP can be found below.
 
 {{< pdf PREdiCCt_SAP_sub.pdf height=600px width=100% >}}
 
-## Primary outcome: first flare
+## Primary outcome: first hard flare
 
 Disease flares have been reported by clinical care teams instead of being
 reported by subjects themselves.
@@ -171,6 +172,160 @@ p <- ggsurvplot(fit,
            )
 p
 ```
+:::
+
+
+## Secondary outcome: first soft flare
+
+ /Volumes/igmm/cvallejo-predicct/predicct/old/calpro/20210126/calprotectin.xlsx
+ 
+```{R}
+monthlyQ <- as.data.frame(
+  read_xlsx(paste0("/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/",
+                   "Followup/monthlyQ.xlsx")))
+monthlyQ$DiseaseWorsenedDate <- as.Date(monthlyQ$DiseaseWorsenedDate)
+monthlyQ$ActualDate <- as.Date(monthlyQ$ActualDate)
+monthlyQ <- monthlyQ[!is.na(monthlyQ$DiseaseControlled),]
+```
+
+::: {.panel-tabset group="followup"}
+
+### Two-year follow-up
+
+```{R}
+soft.flare <- data.frame(ParticipantNo = character(),
+                         Cens = numeric(),
+                         Date = character())
+for (id in unique(monthlyQ$ParticipantNo)) {
+  sub <- subset(monthlyQ, ParticipantNo == id)
+  sub <- sub[order(sub$DiseaseWorsenedDate),]
+  if (any(sub$DiseaseControlled == 2)) {
+    index <- which(sub$DiseaseControlled == 2)[1]
+    Cens <- 1
+    Date <- sub[index, "DiseaseWorsenedDate"]
+  } else {
+    Cens <- 0
+    Date <- sub[nrow(sub), "ActualDate"]
+  }
+  soft.flare <- rbind(soft.flare,
+                      data.frame(ParticipantNo = id, Cens = Cens, Date = Date))
+}
+
+
+soft.flare <- subset(soft.flare, ParticipantNo %in% flare.cut.df$ParticipantNo)
+soft.flare <- merge(soft.flare,
+                    flare.cut.df[,c("ParticipantNo", "entry_date")],
+                    all.x = TRUE,
+                    all.y = FALSE)
+soft.flare <- soft.flare[!is.na(soft.flare$Date), ]
+soft.flare$time <- with(soft.flare, Date - as.Date(entry_date))
+soft.flare <- soft.flare[, -4]
+
+hard.flare <- flare.cut.df[, c("ParticipantNo", "DiseaseFlareYN", "FirstFlareStartDate", "time")]
+colnames(hard.flare) <- c("ParticipantNo", "Cens", "Date", "time")
+
+soft.flare$type <- "soft"
+hard.flare$type <- "hard"
+
+flare.comb <- rbind(soft.flare, hard.flare)
+flare.comb$type <- factor(flare.comb$type,
+                          levels = c("hard", "soft"),
+                          labels = c("hard flare", "soft flare"))
+
+for (i in 1:nrow(flare.comb)){
+  if (flare.comb[i, "time"] > 365.25 * 2) {
+    flare.comb[i, "Cens"] <- 0
+    flare.comb[i, "time"] <- 365.25 * 2
+  }
+}
+```
+
+```{R}
+fit <- survfit(Surv(time, Cens) ~ type, data = flare.comb)
+p <- ggsurvplot(fit,
+           data = flare.comb,
+           conf.int = TRUE,
+           pval = FALSE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = FALSE, 
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           legend.title = "Flare type",
+           break.time.by = 200,
+           xlim = c(0, 800)
+           )
+ggsave("flare-2y.pdf",
+       p$plot,width = 9 * 2/3,
+       height = 9 * 2/3,
+       units = "in" )
+print(p)
+```
+### Maxmimum follow-up
+
+```{R}
+soft.flare <- data.frame(ParticipantNo = character(),
+                         Cens = numeric(),
+                         Date = character())
+for (id in unique(monthlyQ$ParticipantNo)) {
+  sub <- subset(monthlyQ, ParticipantNo == id)
+  sub <- sub[order(sub$DiseaseWorsenedDate),]
+  if (any(sub$DiseaseControlled == 2)) {
+    index <- which(sub$DiseaseControlled == 2)[1]
+    Cens <- 1
+    Date <- sub[index, "DiseaseWorsenedDate"]
+  } else {
+    Cens <- 0
+    Date <- sub[nrow(sub), "ActualDate"]
+  }
+  soft.flare <- rbind(soft.flare,
+                      data.frame(ParticipantNo = id, Cens = Cens, Date = Date))
+}
+
+soft.flare <- subset(soft.flare, ParticipantNo %in% flare.df$ParticipantNo)
+soft.flare <- merge(soft.flare,
+                    flare.cut.df[,c("ParticipantNo", "entry_date")],
+                    all.x = TRUE,
+                    all.y = FALSE)
+soft.flare <- soft.flare[!is.na(soft.flare$Date), ]
+soft.flare$time <- with(soft.flare, Date - as.Date(entry_date))
+soft.flare <- soft.flare[, -4]
+
+hard.flare <- flare.df[, c("ParticipantNo", "DiseaseFlareYN", "FirstFlareStartDate", "time")]
+colnames(hard.flare) <- c("ParticipantNo", "Cens", "Date", "time")
+
+soft.flare$type <- "soft"
+hard.flare$type <- "hard"
+
+flare.comb <- rbind(soft.flare, hard.flare)
+flare.comb$type <- factor(flare.comb$type,
+                          levels = c("hard", "soft"),
+                          labels = c("hard flare", "soft flare")
+                          )
+```
+
+```{R}
+fit <- survfit(Surv(time, Cens) ~ type, data = flare.comb)
+p <- ggsurvplot(fit,
+           data = flare.comb,
+           conf.int = TRUE,
+           pval = FALSE,
+           pval.method = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table = FALSE, 
+           palette = c("#00A6ED", "#F6511D"),
+           xlab = "Time from study recrutiment (days)",
+           legend.title = "Flare type",
+           break.time.by = 400,
+           xlim = c(0, 2200)
+           )
+ggsave("flare-full.pdf",
+       p$plot,width = 9 * 2/3,
+       height = 9 * 2/3,
+       units = "in")
+p
+```
+
 :::
 
 ## Controlled variables
@@ -571,6 +726,19 @@ ggsurvplot(fit,
            ggtheme = theme_minimal(),
            data = flare.cd.cut.df)
 
+pdf("meat-cd.pdf", width = 8 * 2/3, height = 4.5 * 2/3)
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Meat protein quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/meat-cd.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
+
+
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + Meat_sum + frailty(SiteNo),
                 control = coxph.control(outer.max = 20),
@@ -600,6 +768,7 @@ ggsurvplot(fit,
            legend.title = "Meat protein quantiles",
            ggtheme = theme_minimal(),
            data = flare.cd.df)
+
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + Meat_sum + frailty(SiteNo),
@@ -637,6 +806,18 @@ ggsurvplot(fit,
            legend.title = "Meat protein quantiles",
            ggtheme = theme_minimal(),
            data = flare.uc.cut.df)
+
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Meat protein quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/meat-uc.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
+
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                       Sex + Smoke + Meat_sum +
@@ -709,6 +890,18 @@ ggsurvplot(fit,
            ggtheme = theme_minimal(),
            data = flare.cd.cut.df)
 
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Dietary fibre quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/fibre-cd.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
+
+
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + fibre + frailty(SiteNo),
                 control = coxph.control(outer.max = 20),
@@ -776,6 +969,17 @@ ggsurvplot(fit,
            legend.title = "Dietary fibre quantiles",
            ggtheme = theme_minimal(),
            data = flare.uc.cut.df)
+
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Dietary fibre quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/fibre-uc.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + fibre + frailty(SiteNo),
@@ -834,14 +1038,14 @@ now, these data will be used.
 #| output: "asis"
 #| fig-height: 4.5
 fit <- coxph(Surv(time, DiseaseFlareYN) ~
-                      Sex + Smoke + PUFAg,
+                      Sex + Smoke + PUFA_percEng,
              control = coxph.control(outer.max = 20),
                  data = flare.cd.cut.df)
 
 newdata <- with(flare.cd.cut.df,
                 data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
                            Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
-                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+                           PUFA_percEng = quantile(PUFA_percEng, na.rm = TRUE)[2:4]))
 
 fit <- survfit(fit, newdata = newdata)
 
@@ -851,8 +1055,19 @@ ggsurvplot(fit,
            ggtheme = theme_minimal(),
            data = flare.cd.cut.df)
 
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "PUFA intake (by g) quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/pufa-cd.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
+
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                  Sex + Smoke + PUFA_percEng + frailty(SiteNo),
                 control = coxph.control(outer.max = 20),
                 data = flare.cd.cut.df)
 invisible(cox.summary(fit.me))
@@ -865,14 +1080,14 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 4.5
 fit <- coxph(Surv(time, DiseaseFlareYN) ~
-                      Sex + Smoke + PUFAg,
+                      Sex + Smoke + PUFA_percEng,
              control = coxph.control(outer.max = 20),
                  data = flare.cd.df)
 
 newdata <- with(flare.cd.df,
                 data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
                            Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
-                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+                           PUFA_percEng = quantile(PUFA_percEng, na.rm = TRUE)[2:4]))
 
 fit <- survfit(fit, newdata = newdata)
 
@@ -883,7 +1098,7 @@ ggsurvplot(fit,
            data = flare.cd.df)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                  Sex + Smoke + PUFA_percEng + frailty(SiteNo),
                 control = coxph.control(outer.max = 20),
                 data = flare.cd.df)
 invisible(cox.summary(fit.me))
@@ -902,14 +1117,14 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 4.5
 fit <- coxph(Surv(time, DiseaseFlareYN) ~
-                      Sex + Smoke + PUFAg,
+                      Sex + Smoke + PUFA_percEng,
              control = coxph.control(outer.max = 20),
                  data = flare.uc.cut.df)
 
 newdata <- with(flare.uc.cut.df,
                 data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
                            Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
-                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+                           PUFA_percEng = quantile(PUFA_percEng, na.rm = TRUE)[2:4]))
 
 fit <- survfit(fit, newdata = newdata)
 
@@ -919,8 +1134,19 @@ ggsurvplot(fit,
            ggtheme = theme_minimal(),
            data = flare.uc.cut.df)
 
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "PUFA intake (by g) quantiles",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/pufa-uc.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
+
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                  Sex + Smoke + PUFA_percEng + frailty(SiteNo),
                 control = coxph.control(outer.max = 20),
                 data = flare.uc.cut.df)
 invisible(cox.summary(fit.me))
@@ -933,14 +1159,14 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 4.5
 fit <- coxph(Surv(time, DiseaseFlareYN) ~
-                      Sex + Smoke + PUFAg,
+                      Sex + Smoke + PUFA_percEng,
              control = coxph.control(outer.max = 20),
                  data = flare.uc.df)
 
 newdata <- with(flare.uc.df,
                 data.frame(Sex = as.factor(rep(Mode(Sex), 3)),
                            Smoke = as.factor(rep(Mode(Smoke, na.rm = TRUE), 3)),
-                           PUFAg = quantile(PUFAg, na.rm = TRUE)[2:4]))
+                           PUFA_percEng = quantile(PUFA_percEng, na.rm = TRUE)[2:4]))
 
 fit <- survfit(fit, newdata = newdata)
 
@@ -951,7 +1177,7 @@ ggsurvplot(fit,
            data = flare.uc.df)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + PUFAg + frailty(SiteNo),
+                  Sex + Smoke + PUFA_percEng + frailty(SiteNo),
                 control = coxph.control(outer.max = 20),
                 data = flare.uc.df)
 invisible(cox.summary(fit.me))
@@ -998,6 +1224,17 @@ ggsurvplot(fit,
            legend.title = "Nova score",
            ggtheme = theme_minimal(),
            data = flare.cd.cut.df)
+
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Nova score",
+           ggtheme = theme_minimal(),
+           data = flare.cd.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/nova-cd.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + NOVAScore_cat + frailty(SiteNo),
@@ -1076,6 +1313,18 @@ ggsurvplot(fit,
            legend.title = "Nova score",
            ggtheme = theme_minimal(),
            data = flare.uc.cut.df)
+
+
+p <-ggsurvplot(fit,
+           conf.int = TRUE,
+           legend.title = "Nova score",
+           ggtheme = theme_minimal(),
+           data = flare.uc.cut.df,
+           xlab = "Time (days)")$plot
+ggsave("plots/nova-uc.pdf",
+       print(p),
+       width = 9 * 2/3,
+       height = 9 * 2/3, units = "in")
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + NOVAScore_cat + frailty(SiteNo),
@@ -1226,6 +1475,31 @@ p
 
 ```{R}
 missing_plot(flare.df)
+```
+
+
+## Save flare data
+
+```{R}
+if (!dir.exists(paste0(processed.dir, "flares"))) {
+  dir.create(paste0(processed.dir, "flares"))
+  fileConn <- file(paste0(processed.dir, "flares/README.md"))
+  writeLines(c("# README",
+             "",
+             paste("This directory contains files describing important",
+                   "baseline characteristcs for the PREdiCCt cohort alongside", 
+                   "time-to-flare data obtained from end-of-study phenotyping", 
+                   "(not subject-reported flares via the PREdiCCt mechanism)."),
+             "",
+             paste0("`all-flares.RDS` uses the total follow-up available,",
+                    " whilst `cutoff-flares.RDS` censors any observations after",
+                    "two years (the original planned maximum study follow-up)")),
+           fileConn)
+close(fileConn)
+}
+
+saveRDS(flare.df, paste0(processed.dir, "flares/all-flares.RDS"))
+saveRDS(flare.cut.df, paste0(processed.dir, "flares/cutoff-flares.RDS"))
 ```
 
 ## {.appendix}
