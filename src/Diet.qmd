@@ -188,6 +188,9 @@ monthlyQ$ActualDate <- as.Date(monthlyQ$ActualDate)
 monthlyQ <- monthlyQ[!is.na(monthlyQ$DiseaseControlled),]
 ```
 
+`r nrow(subset(monthlyQ,  ActualDate - DiseaseWorsenedDate > 6 * 30))` subjects
+reported a flare more than 6 months after the flare was believed to occur. 
+
 ::: {.panel-tabset group="followup"}
 
 ### Two-year follow-up
@@ -196,6 +199,7 @@ monthlyQ <- monthlyQ[!is.na(monthlyQ$DiseaseControlled),]
 soft.flare <- data.frame(ParticipantNo = character(),
                          Cens = numeric(),
                          Date = character())
+
 for (id in unique(monthlyQ$ParticipantNo)) {
   sub <- subset(monthlyQ, ParticipantNo == id)
   sub <- sub[order(sub$DiseaseWorsenedDate),]
@@ -205,6 +209,7 @@ for (id in unique(monthlyQ$ParticipantNo)) {
     Date <- sub[index, "DiseaseWorsenedDate"]
   } else {
     Cens <- 0
+    sub <- sub[order(sub$ActualDate), ]
     Date <- sub[nrow(sub), "ActualDate"]
   }
   soft.flare <- rbind(soft.flare,
@@ -232,6 +237,7 @@ flare.comb$type <- factor(flare.comb$type,
                           levels = c("hard", "soft"),
                           labels = c("hard flare", "soft flare"))
 
+# Censor at two years 
 for (i in 1:nrow(flare.comb)){
   if (flare.comb[i, "time"] > 365.25 * 2) {
     flare.comb[i, "Cens"] <- 0
@@ -248,7 +254,7 @@ p <- ggsurvplot(fit,
            pval = FALSE,
            pval.method = TRUE,
            ggtheme = theme_minimal(),
-           risk.table = FALSE, 
+           risk.table = TRUE, 
            palette = c("#00A6ED", "#F6511D"),
            xlab = "Time from study recrutiment (days)",
            legend.title = "Flare type",
@@ -256,7 +262,7 @@ p <- ggsurvplot(fit,
            xlim = c(0, 800)
            )
 ggsave("flare-2y.pdf",
-       p$plot,width = 9 * 2/3,
+       p$plot, width = 9 * 2/3,
        height = 9 * 2/3,
        units = "in" )
 print(p)
@@ -276,6 +282,7 @@ for (id in unique(monthlyQ$ParticipantNo)) {
     Date <- sub[index, "DiseaseWorsenedDate"]
   } else {
     Cens <- 0
+    sub <- sub[order(sub$ActualDate), ]
     Date <- sub[nrow(sub), "ActualDate"]
   }
   soft.flare <- rbind(soft.flare,
@@ -297,7 +304,39 @@ colnames(hard.flare) <- c("ParticipantNo", "Cens", "Date", "time")
 soft.flare$type <- "soft"
 hard.flare$type <- "hard"
 
+soft.flare <- soft.flare %>%
+  distinct(ParticipantNo, .keep_all = TRUE)
+
+hard.flare <- hard.flare %>%
+  distinct(ParticipantNo, .keep_all = TRUE)
+
 flare.comb <- rbind(soft.flare, hard.flare)
+flare.comb[is.na(flare.comb[,"Cens"]), "Cens"] <- 0 
+
+
+
+for (id in unique(flare.comb$ParticipantNo)) {
+  update <- FALSE
+  temp <- subset(flare.comb, ParticipantNo == id)
+  if (nrow(temp) == 2) {
+    if (subset(temp, type == "hard")$Cens == 1) {
+      if (subset(temp, type == "soft")$Cens == 0) {
+        update <- TRUE
+      } else if (subset(temp, type == "soft")$Cens == 1) {
+          if (subset(temp, type == "soft")$time > subset(temp, type == "hard")$time) {
+          update <- TRUE
+          }
+        }
+    }
+  }
+  if (update) {
+    flare.comb[flare.comb[,"ParticipantNo"] == id & flare.comb[,"type"] == "soft",
+               "Cens"] <- 1
+    flare.comb[flare.comb[,"ParticipantNo"] == id & flare.comb[,"type"] == "soft",
+               "time"] <- flare.comb[flare.comb[,"ParticipantNo"] == id & flare.comb[,"type"] == "hard", "time"]
+  }
+}
+
 flare.comb$type <- factor(flare.comb$type,
                           levels = c("hard", "soft"),
                           labels = c("hard flare", "soft flare")
@@ -312,7 +351,7 @@ p <- ggsurvplot(fit,
            pval = FALSE,
            pval.method = TRUE,
            ggtheme = theme_minimal(),
-           risk.table = FALSE, 
+           risk.table = TRUE, 
            palette = c("#00A6ED", "#F6511D"),
            xlab = "Time from study recrutiment (days)",
            legend.title = "Flare type",

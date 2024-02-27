@@ -7,6 +7,10 @@ author:
     affiliations:
       - ref: CGEM
       - ref: HGU
+  - name: "Chiara Contronei"
+    affiliations:
+      - ref: Lothian
+      - ref: CGEM
 format:
   html:
     theme:
@@ -113,7 +117,6 @@ Later sections examine
 [variables only relevant to CD subjects](##variables-only-relevant-to-crohns-disease-subjects) and
 [variables only relevant to UC/IBDU subjects](#variables-only-relevant-to-ucibdu-subjects).
 
-
 ### Month of recruitment
 
 There is potential for seasonality to confound interpretations of our results,
@@ -213,8 +216,14 @@ ggplot(demo, aes(x = cat, fill = cat, color = cat)) +
   ylab("Frequency") +
   xlab("FC category") +
   theme_minimal() +
-  scale_fill_manual(values = c("#508484", "#FCAA67", "#EB5160")) +
-  scale_color_manual(values = c("#355C5C", "#B96E03", "#B12537")) +
+  scale_fill_manual(
+    values = c("#508484", "#FCAA67", "#EB5160"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#355C5C", "#B96E03", "#B12537"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "FC category"),
     color = guide_legend(title = "FC category")
@@ -226,7 +235,7 @@ joined PREdiCCt. Moving forward, we will only consider subjects with a baseline
 FC available. 
 
 ```{R}
-demo <- demo[!is.na(demo$cat), ]
+# demo <- demo[!is.na(demo$cat), ]
 ```
 
 ### Sex
@@ -236,7 +245,10 @@ figure, the PREdiCCt cohort is female by majority.
 
 ```{R}
 demo$Sex <- factor(demo$Sex, levels = c("1", "2"), labels = c("Male", "Female"))
-ggplot(demo, aes(x = Sex, fill = Sex, color = Sex)) +
+
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Sex, fill = Sex, color = Sex)) +
   geom_bar() +
   ylab("Frequency") +
   theme_minimal() +
@@ -267,8 +279,9 @@ demo$diagnosis2 <- plyr::mapvalues(demo$diagnosis,
 ) %>%
   factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
 
-
-ggplot(demo, aes(x = diagnosis2, fill = diagnosis2, color = diagnosis2)) +
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = diagnosis2, fill = diagnosis2, color = diagnosis2)) +
   geom_bar() +
   ylab("Frequency") +
   theme_minimal() +
@@ -297,12 +310,15 @@ demo$ethnic_gp <- factor(demo$ethnic_gp,
 )
 colnames(demo)[10:11] <- c("Age", "Ethnicity")
 
-ggplot(demo, aes(x = Ethnicity, fill = Ethnicity, color = Ethnicity)) +
+
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Ethnicity, fill = Ethnicity, color = Ethnicity)) +
   geom_bar() +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#F24236", "#2E86AB"), na.value = "#5E5759") +
-  scale_color_manual(values = c("#C0362C", "#1E556C"), na.value = "#2E282A")
+  scale_fill_manual(values = c("#F24236", "#2E86AB"), na.value = "#032B43") +
+  scale_color_manual(values = c("#C0362C", "#1E556C"), na.value = "#032B43")
 ```
 
 ```{R}
@@ -325,7 +341,10 @@ names(IMD)[2] <- "IMD"
 demo <- merge(demo, IMD, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
 
 cols <- c("#A8F9FF", "#EF8275", "#6D326D", "#0B6E4F", "#F4D35E")
-ggplot(demo, aes(x = IMD, color = as.factor(IMD), fill = as.factor(IMD))) +
+
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = IMD, color = as.factor(IMD), fill = as.factor(IMD))) +
   geom_bar() +
   theme_minimal() +
   theme(legend.position = "none") +
@@ -390,10 +409,10 @@ duration.cd <- subset(duration, diagnosis == "1")
 
 duration.uc <- subset(duration, diagnosis != "1")
 
-ggplot(
-  duration,
-  aes(x = duration, color = diagnosis == 1, fill = diagnosis == 1)
-) +
+
+duration %>%
+  drop_na(duration) %>%
+  ggplot(aes(x = duration, color = diagnosis == 1, fill = diagnosis == 1)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
   labs(
@@ -426,6 +445,245 @@ names(demo)[17] <- "IBD Duration"
 pander(summary(aov(`IBD Duration` ~ cat, data = demo)))
 ```
 
+### IBD Control
+
+
+```{R}
+# join data sets to include demographic and diagnosis2 data, FC data will come later (as lots is missing)
+# 1928 participants at baseline in IBD_C dataset
+
+IBD <- read_xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+
+# create flare_group in IBD_C and make into level
+IBD <- IBD %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0,
+    "No Flares", "1 or More Flares"
+  ))
+IBD$flare_group <- factor(IBD$flare_group,
+  levels = c("No Flares", "1 or More Flares")
+)
+
+IBD <- IBD %>%
+  mutate(treatment = ifelse(TreatmentUseful == 4,
+    "Not On Treatment",
+    "On Treatment"
+  ))
+IBD$treatment <- factor(IBD$treatment,
+  levels = c("Not On Treatment", "On Treatment")
+)
+
+# correcting scores where No is favourable and Yes is unfavourable outcomes
+# answer options were always YES/NO/Not sure
+if (any(IBD$MissPlannedActivities == 3)) {
+  IBD <- IBD %>%
+    mutate_at(
+      vars("MissPlannedActivities":"NewSymptoms"),
+      ~ recode(., `3` = 1, `2` = 2, `1` = 0)
+    )
+}
+
+# correct TreatmentUseful (Yes is favourable, No unfavrouable)
+# not on treatment was assigned the value 1
+if (any(IBD$TreatmentUseful == 3)) {
+  IBD <- IBD %>%
+    mutate_at(
+      "TreatmentUseful",
+      ~ recode(., `4` = 2, `3` = 1, `2` = 0, `1` = 2)
+    )
+}
+
+# exclude rows with missing data, 17 participants excluded for missing IBD-control questionnaire data
+IBD <- IBD %>%
+  filter(!rowSums(is.na(select(., 17:27))) > 0)
+
+# new column with total control score
+IBD <- IBD %>%
+  mutate(control_score = rowSums(select(., 17:27), na.rm = TRUE))
+
+# new column with IBD-control-8 score
+# added 2 to make comparable to future scores where the first question is asked to make comparable to future and against the cut off of 13 which indicates remission
+IBD <- IBD %>%
+  mutate(control_8 = TreatmentUseful + MissPlannedActivities + WakeUpAtNight + SignificantPain + OftenLackEnergy + AnxiousDepressed + NeedChangeTreatment + 2)
+
+# create groups with cut off of IBD-control-8 scores quiescent (13 or above)/not quiescent
+IBD <- IBD %>%
+  mutate(control_grouped = ifelse(control_8 >= 13, "13-16", "0-12"))
+
+IBD$control_8 <- as.factor(IBD$control_8)
+
+IBD <- IBD %>%
+  mutate(vas_control = ifelse(OverallControl >= 85, "85+", "<85"))
+
+demo <- merge(demo, IBD[, c("ParticipantNo", "control_8", "vas_control")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
+
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = control_8, color = control_8, fill = control_8)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  xlab("Control VAS Scores") +
+  ylab("Frequency") +
+  scale_color_manual(values = viridis::viridis(15), na.value = "#032B43") +
+  scale_fill_manual(values = viridis::viridis(15), na.value = "#032B43")
+```
+
+```{R}
+pander(summary(aov(control_8 ~ cat, data = demo)))
+```
+
+
+```{R}
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = vas_control, color = vas_control, fill = vas_control)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  xlab("Visual analogue scores") +
+  ylab("Frequency") +
+  scale_color_manual(values = c("#D00000", "#FFBA08"), na.value = "#032B43") +
+  scale_fill_manual(values = c("#D00000", "#FFBA08"), na.value = "#032B43")
+```
+
+```{R}
+pander(chisq.test(demo$vas_control, demo$cat))
+```
+
+### Lab results
+
+```{R}
+labs <- as.data.frame(read_xlsx(paste0(
+  data.path,
+  "Baseline2022/bloodtestresults.xlsx"
+)))
+
+labs <- labs %>%
+  distinct(ParticipantNo, .keep_all = TRUE)
+
+# labs[labs[, "HaemoglobinUnit"] == "g/dL" & !is.na(labs[, "HaemoglobinUnit"]) & !is.na(labs[, "Haemoglobin"]) , "Haemoglobin"] <-
+#  10 * labs[labs[, "HaemoglobinUnit"] == "g/dL" & !is.na(labs[, "HaemoglobinUnit"]) & !is.na(labs[, "Haemoglobin"]) , #"Haemoglobin"]
+
+labs <- labs[, c(
+  "ParticipantNo",
+  "CReactiveProtein",
+  "Haemoglobin",
+  "HaemoglobinUnit",
+  "WCC",
+  "Albumin",
+  "AlbuminUnit"
+)]
+demo <- merge(demo, labs, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
+```
+
+#### CRP
+
+```{R}
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = CReactiveProtein)) +
+  geom_histogram(bins = 100, fill = "#EB9486", color = "#BF7163") +
+  theme_minimal() +
+  xlab("CRP") +
+  ylab("Frequency")
+```
+
+```{R}
+pander(summary(aov(CReactiveProtein ~ cat, data = demo)))
+```
+
+#### Haemoglobin
+
+```{R}
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Haemoglobin)) +
+  geom_histogram(bins = 100, fill = "#EB9486", color = "#BF7163") +
+  theme_minimal() +
+  xlab("Haemoglobin") +
+  ylab("Frequency")
+```
+
+Whilst a normal distribution is observed overall, there appears to be some
+observations substantially lower than one would expect for this distribution. 
+Investigating these observations suggests that these observations are in units
+of g/dL instead of the common g/L units. 
+
+```{R}
+knitr::kable(table(subset(demo, Haemoglobin < 50)$HaemoglobinUnit),
+  col.names = c("Units", "Frequency")
+)
+```
+
+As such, Haemoglobin < 50 have been multiplied by 10 to be in g/L units. 
+
+```{R}
+demo <- demo %>%
+  mutate(Haemoglobin = if_else(Haemoglobin < 50, Haemoglobin * 10, Haemoglobin))
+demo <- select(demo, -HaemoglobinUnit)
+
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Haemoglobin)) +
+  geom_histogram(bins = 100, fill = "#EB9486", color = "#BF7163") +
+  theme_minimal() +
+  xlab("Haemoglobin") +
+  ylab("Frequency")
+```
+
+```{R}
+pander(summary(aov(CReactiveProtein ~ cat, data = demo)))
+```
+
+#### White cell count
+
+```{R}
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = WCC)) +
+  geom_histogram(bins = 100, fill = "#EB9486", color = "#BF7163") +
+  theme_minimal() +
+  xlab("White cell count") +
+  ylab("Frequency")
+```
+
+```{R}
+pander(summary(aov(WCC ~ cat, data = demo)))
+```
+
+#### Albumin
+
+```{R}
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Albumin)) +
+  geom_histogram(bins = 100, fill = "#EB9486", color = "#BF7163") +
+  theme_minimal() +
+  xlab("Albumin") +
+  ylab("Frequency")
+```
+
+```{R}
+demo <- demo %>%
+  mutate(Albumin = if_else(Albumin > 100, Albumin / 10, Albumin))
+demo <- select(demo, -AlbuminUnit)
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Albumin)) +
+  geom_histogram(bins = 40, fill = "#EB9486", color = "#BF7163") +
+  theme_minimal() +
+  xlab("Albumin") +
+  ylab("Frequency")
+```
+
+```{R}
+pander(summary(aov(Albumin ~ cat, data = demo)))
+```
+
 ### Steroids
 
 ```{R}
@@ -442,7 +700,6 @@ extract_steroid_date <- function(steroid.dates) {
     }
   )
 }
-
 
 demo$CST <- NA
 demo$ivCST <- NA
@@ -464,7 +721,6 @@ for (row in 1:nrow(demo)) {
     last_ster_date <- ster_dates[length(ster_dates)]
     demo[row, "CST"] <- extract_steroid_date(last_ster_date)
   }
-
 
   iv_ster_dates <- subset(redcap, participantno == id)$iv_ster_start_date
 
@@ -493,14 +749,13 @@ demo$`Time since last steroid` <- as.numeric(as.Date(demo$entry_date) - demo$rec
 
 
 ```{R}
-ggplot(
-  demo,
-  aes(
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(
     x = `Time since last steroid`,
     color = diagnosis == 1,
     fill = diagnosis == 1
-  )
-) +
+  )) +
   geom_histogram(bins = 25) +
   theme_minimal() +
   labs(
@@ -599,12 +854,14 @@ demo <- merge(demo,
 
 demo$naive <- factor(demo$naive,
   levels = c("no-using", "no-not-using", "yes"),
-  labels = c("Current Rx", "Previous Rx", "Never prescribed")
+  labels = c("Current", "Previously", "Never prescribed")
 )
 
-colnames(demo)[22] <- c("Biologic")
+colnames(demo)[28] <- c("Biologic")
 
-ggplot(demo, aes(x = Biologic, fill = Biologic, color = Biologic)) +
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Biologic, fill = Biologic, color = Biologic)) +
   geom_bar() +
   xlab("Biologic status") +
   ylab("Frequency") +
@@ -628,8 +885,6 @@ FFQ <- read_xlsx(paste0(
 ))
 FFQ <- subset(FFQ, participantno %in% fcal$ParticipantNo)
 
-
-
 FFQ$ParticipantNo <- FFQ$participantno
 demo <- merge(demo,
   FFQ[, c("ParticipantNo", "Meat_sum", "fibre", "PUFA_percEng", "NOVAScore_cat")],
@@ -649,6 +904,7 @@ demo$NOVAScore_cat <- factor(demo$NOVAScore_cat,
 )
 
 demo %>%
+  drop_na(cat) %>%
   ggplot(aes(x = Meat_sum, color = diagnosis == 1, fill = diagnosis == 1)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -672,6 +928,7 @@ demo %>%
 
 ```{R}
 demo %>%
+  drop_na(cat) %>%
   ggplot(aes(x = fibre, color = diagnosis == 1, fill = diagnosis == 1)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -695,6 +952,7 @@ demo %>%
 
 ```{R}
 demo %>%
+  drop_na(cat) %>%
   ggplot(aes(x = PUFA_percEng, color = diagnosis == 1, fill = diagnosis == 1)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -822,15 +1080,20 @@ drugs$category <- factor(drugs$category,
 drugs <- merge(drugs, demo[, c("ParticipantNo", "cat")], by = "ParticipantNo")
 colnames(drugs)[5] <- "Treatment"
 
-
 plt.cols <- c("#52528C", "#DD6E42", "#048A81", "#C585B3")
 
-ggplot(drugs, aes(x = Treatment, fill = Treatment, color = Treatment)) +
+
+drugs %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Treatment, fill = Treatment, color = Treatment)) +
   geom_bar() +
   theme_minimal() +
-  ylab("Frequnecy") +
-  scale_fill_manual(values = plt.cols) +
-  scale_colour_manual(values = colorspace::darken(plt.cols, 0.3))
+  ylab("Frequency") +
+  scale_fill_manual(values = plt.cols, na.value = "#032B43") +
+  scale_colour_manual(
+    values = colorspace::darken(plt.cols, 0.3),
+    na.value = "#032B43"
+  )
 ```
 
 ```{R}
@@ -854,18 +1117,24 @@ colnames(drugs)[7] <- "Antibiotic use in 6 months"
 
 plt.cols <- c("#FE5F55", "#004E89")
 
-ggplot(drugs, aes(
-  x = `Antibiotic use in 6 months`,
-  color = `Antibiotic use in 6 months`,
-  fill = `Antibiotic use in 6 months`
-)) +
+
+drugs %>%
+  drop_na(cat) %>%
+  ggplot(aes(
+    x = `Antibiotic use in 6 months`,
+    color = `Antibiotic use in 6 months`,
+    fill = `Antibiotic use in 6 months`
+  )) +
   geom_bar() +
   theme_minimal() +
   xlab("Antibiotic use in the previous six months") +
   ylab("Frequency") +
   theme(legend.position = "none") +
-  scale_fill_manual(values = plt.cols) +
-  scale_colour_manual(values = colorspace::darken(plt.cols, 0.5))
+  scale_fill_manual(values = plt.cols, na.value = "#032B43") +
+  scale_colour_manual(
+    values = colorspace::darken(plt.cols, 0.5),
+    na.value = "#032B43"
+  )
 ```
 
 ```{R}
@@ -875,10 +1144,11 @@ pander(chisq.test(drugs$`Antibiotic use in 6 months`, drugs$cat))
 #### Table
 
 ```{R}
-table1(
-  ~ Treatment + `Antibiotic use in 6 months` | cat,
-  drugs
-)
+drugs %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Treatment + `Antibiotic use in 6 months` | cat
+  )
 ```
 
 
@@ -896,8 +1166,8 @@ flow <- grViz(paste0("digraph flowchart {
 graph[splines = ortho]
   # node definitions with substituted label text
   node [fontname = Helvetica, shape = rectangle, fixedsize = false, width = 1]
-  1 [label = 'Recruited to PREdiCCt\n n = 2629']
-  2 [label = 'Baseline FC available\n n = 2144']
+  1 [label = 'Recruited to PREdiCCt\n n = ", nrow(demo), "']
+  2 [label = 'Baseline FC available\n n = ", nrow(drop_na(demo, cat)), "']
   3 [label = 'Food frequency questionnaire\n analysed\n n = ", nrow(FFQ), "']
 
   node [shape=none, width=0, height=0, label='']
@@ -926,12 +1196,28 @@ my.render.cont <- function(x) {
   )
 }
 
+demo$control_8 <- as.numeric(demo$control_8)
 
-
-table1::table1(~ Age + Sex + Ethnicity + IMD + `IBD Duration` + BMI + FC + Biologic | diagnosis2,
-  data = demo[, c(-18, -19)],
-  render.continuous = my.render.cont
-)
+demo[, c(-24, -25)] %>%
+  drop_na(cat) %>%
+  table1::table1(
+    x = ~ Age +
+      Sex +
+      Ethnicity +
+      IMD +
+      `IBD Duration` +
+      control_8 +
+      vas_control +
+      BMI +
+      FC +
+      CReactiveProtein +
+      Haemoglobin +
+      WCC +
+      Albumin +
+      Biologic |
+      diagnosis2,
+    render.continuous = my.render.cont
+  )
 ```
 
 ### Table of baseline data by FC groups
@@ -942,12 +1228,28 @@ Instead of stratifying by IBD type, this table instead stratifies by FC groups
 ```{R}
 #| label: tbl-tab2
 #| tbl-cap: "Baseline data by FCAL"
-demo.fcal <- subset(demo, !is.na(FC))
 
-table1(~ Age + Sex + Ethnicity + IMD + diagnosis2 + `IBD Duration` + BMI + FC + Biologic | cat,
-  data = demo.fcal,
-  render.continuous = my.render.cont
-)
+demo %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Age +
+      Sex +
+      Ethnicity +
+      IMD +
+      diagnosis2 +
+      `IBD Duration` +
+      control_8 +
+      vas_control +
+      BMI +
+      FC +
+      CReactiveProtein +
+      Haemoglobin +
+      WCC +
+      Albumin +
+      Biologic |
+      cat,
+    render.continuous = my.render.cont
+  )
 ```
 
 ### Table of baseline data by cohort
@@ -956,31 +1258,43 @@ All subjects vs FCAL vs FFQ
 
 ```{R}
 comp <- demo
-comp$cohort <- "FCAL"
+comp$cohort <- "All"
 
-temp <- subset(comp, ParticipantNo %in% FFQ$participantno)
+temp <- demo %>%
+  drop_na(cat)
+temp$cohort <- "FCAL"
+
+comp <- rbind(comp, temp)
+
+temp <- subset(demo, ParticipantNo %in% FFQ$participantno)
 temp$cohort <- "FFQ"
 
 comp <- rbind(comp, temp)
 
 comp$cohort <- factor(comp$cohort,
-  levels = c("FCAL", "FFQ"),
-  labels = c("FCAL cohort", "FFQ cohort")
+  levels = c("All", "FCAL", "FFQ"),
+  labels = c("Full cohort", "FCAL cohort", "FFQ cohort")
 )
-table1(~ Age + Sex + Ethnicity + IMD + diagnosis2 + `IBD Duration` + BMI + FC + Biologic | cohort,
+
+table1(
+  ~ Age +
+    Sex +
+    Ethnicity +
+    IMD +
+    diagnosis2 +
+    `IBD Duration` +
+    control_8 +
+    vas_control +
+    BMI +
+    FC +
+    CReactiveProtein +
+    Haemoglobin +
+    WCC +
+    Albumin +
+    Biologic | cohort,
   data = comp,
   render.continuous = my.render.cont,
   overall = FALSE
-)
-```
-
-
-```{R}
-demo.fcal <- subset(demo, !is.na(FC))
-
-table1(~ Age + Sex + Ethnicity + IMD + diagnosis2 + `IBD Duration` + BMI + FC + Biologic | cat,
-  data = demo.fcal,
-  render.continuous = my.render.cont
 )
 ```
 
@@ -1004,7 +1318,7 @@ smoking$Smoke <- factor(smoking$Smoke,
 smoking <- smoking[, -3]
 
 
-demo.fcal <- merge(demo.fcal,
+demo <- merge(demo,
   smoking,
   by = "ParticipantNo",
   all.x = TRUE,
@@ -1032,7 +1346,7 @@ esmoking$ECigs <- factor(esmoking$ECigs,
 esmoking <- esmoking[, -3]
 
 
-demo.fcal <- merge(demo.fcal,
+demo <- merge(demo,
   esmoking,
   by = "ParticipantNo",
   all.x = TRUE,
@@ -1072,20 +1386,22 @@ surgery <- subset(surgery, !is.na(surgery$Surgery))
 # As REDCap is first, this will be prioritised over subject (if not NA)
 surgery <- distinct(surgery, ParticipantNo, .keep_all = TRUE)
 
-demo.cd <- subset(demo.fcal, diagnosis2 == "CD")
+demo.cd <- subset(demo, diagnosis2 == "CD")
 demo.cd <- merge(demo.cd, surgery, all.x = TRUE, all.y = FALSE)
 demo.cd$Surgery <- factor(demo.cd$Surgery,
   levels = c(1, 2),
   labels = c("Yes", "No")
 )
 
-ggplot(demo.cd, aes(x = Surgery, fill = Surgery, color = Surgery)) +
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Surgery, fill = Surgery, color = Surgery)) +
   geom_bar() +
   xlab("Previous surgery") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#F9B9B7", "#96C9DC"), na.value = "#5E5759") +
-  scale_color_manual(values = c("#D06965", "#448CA2"), na.value = "#2E282A")
+  scale_fill_manual(values = c("#F9B9B7", "#96C9DC"), na.value = "#032B43") +
+  scale_color_manual(values = c("#D06965", "#448CA2"), na.value = "#032B43")
 ```
 
 FCAL at study recruitment is significantly associated with having previously
@@ -1160,13 +1476,21 @@ demo.cd$Location <- factor(demo.cd$Location,
   labels = c("L1", "L2", "L3", "L4 only")
 )
 
-ggplot(demo.cd, aes(x = Location, fill = Location, color = Location)) +
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Location, fill = Location, color = Location)) +
   geom_bar() +
   xlab("Montreal location") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#33CA7F", "#96C9DC", "#C33C54", "#FCB97D")) +
-  scale_color_manual(values = c("#318859", "#448CA2", "#80333E", "#BD7700")) +
+  scale_fill_manual(
+    values = c("#33CA7F", "#96C9DC", "#C33C54", "#FCB97D"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#318859", "#448CA2", "#80333E", "#BD7700"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "Montreal location"),
     color = guide_legend(title = "Montreal location")
@@ -1180,7 +1504,7 @@ used to compare with FC.
 pander(fisher.test(demo.cd$Location, demo.cd$cat, workspace = 200000 * 100))
 ```
 
-In addition to L4 only being considered, we also investigate L4 as a modifier. 
+In addition to L4-only being considered, we also investigate L4 as a modifier. 
 
 ```{R}
 demo.cd$L4 <- factor(demo.cd$L4,
@@ -1188,13 +1512,15 @@ demo.cd$L4 <- factor(demo.cd$L4,
   labels = c("Not present", "Present")
 )
 
-ggplot(demo.cd, aes(x = L4, fill = L4, color = L4)) +
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = L4, fill = L4, color = L4)) +
   geom_bar() +
   xlab("Presence of L4") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#51E5FF", "#EC368D")) +
-  scale_color_manual(values = c("#079DB1", "#AF0863")) +
+  scale_fill_manual(values = c("#51E5FF", "#EC368D"), na.value = "#032B43") +
+  scale_color_manual(values = c("#079DB1", "#AF0863"), na.value = "#032B43") +
   guides(
     fill = guide_legend(title = "Presence of L4"),
     color = guide_legend(title = "Presence of L4")
@@ -1232,13 +1558,21 @@ demo.cd$Behaviour <- factor(demo.cd$Behaviour,
   labels = c("B1", "B2", "B3")
 )
 
-ggplot(demo.cd, aes(x = Behaviour, fill = Behaviour, color = Behaviour)) +
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Behaviour, fill = Behaviour, color = Behaviour)) +
   geom_bar() +
   xlab("Montreal behaviour") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#7AE7C7", "#440381", "#D64045")) +
-  scale_color_manual(values = c("#07A282", "#340165", "#942E31")) +
+  scale_fill_manual(
+    values = c("#7AE7C7", "#440381", "#D64045"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#07A282", "#340165", "#942E31"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "Montreal behaviour"),
     color = guide_legend(title = "Montreal behaviour")
@@ -1259,13 +1593,15 @@ demo.cd$Perianal <- factor(demo.cd$Perianal,
   labels = c("Yes", "No")
 )
 
-ggplot(demo.cd, aes(x = Perianal, fill = Perianal, color = Perianal)) +
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Perianal, fill = Perianal, color = Perianal)) +
   geom_bar() +
   xlab("Perianal disease") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#023C40", "#AF5B5B")) +
-  scale_color_manual(values = c("#002C30", "#754242")) +
+  scale_fill_manual(values = c("#023C40", "#AF5B5B"), na.value = "#032B43") +
+  scale_color_manual(values = c("#002C30", "#754242"), na.value = "#032B43") +
   guides(
     fill = guide_legend(title = "Perianal disease"),
     color = guide_legend(title = "Perianal disease")
@@ -1278,16 +1614,22 @@ Perianal disease is not associated with FCAL at recruitment.
 pander(chisq.test(demo.cd$Perianal, demo.cd$cat))
 ```
 
-### HBI
+### Harvey-Bradshaw Index
 
 ```{R}
-HBI.df <- read_xlsx(paste0(prefix, "Followup\ form.xlsx"), na = ".") %>%
-  select(ParticipantId, MaxHBI)
+HBI.df <- redcap[, c("participantid", "current_hb")]
+colnames(HBI.df) <- c("ParticipantId", "HBI")
 HBI.df <- subset(HBI.df, ParticipantId %in% demo.cd$ParticipantId)
+
 demo.cd <- merge(demo.cd, HBI.df, by = "ParticipantId", all.x = TRUE)
+
 demo.cd %>%
-  ggplot(aes(x = as.factor(MaxHBI))) +
-  geom_bar()
+  drop_na(cat) %>%
+  ggplot(aes(x = as.factor(HBI))) +
+  geom_bar(fill = "#A167A5", color = "#4A306D") +
+  theme_minimal() +
+  ylab("Frequency") +
+  xlab("Harvey-Bradshaw index at time of recruitment")
 ```
 
 ### Smoking
@@ -1296,13 +1638,21 @@ We will consider smoking for CD and UC separately as smoking is often reported
 to worsen outcomes in CD but be protective in UC. 
 
 ```{R}
-ggplot(demo.cd, aes(x = Smoke, fill = Smoke, color = Smoke)) +
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
   geom_bar() +
   xlab("Smoking status") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#4E0250", "#517664", "#1C448E")) +
-  scale_color_manual(values = c("#3D003F", "#385245", "#033070")) +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "Smoking status"),
     color = guide_legend(title = "Smoking status")
@@ -1316,13 +1666,21 @@ pander(chisq.test(demo.cd$Smoke, demo.cd$cat))
 ### E-cigarette use
 
 ```{R}
-ggplot(demo.cd, aes(x = ECigs, fill = ECigs, color = ECigs)) +
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
   geom_bar() +
   xlab("E-cigarette status") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#4E0250", "#517664", "#1C448E")) +
-  scale_color_manual(values = c("#3D003F", "#385245", "#033070")) +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "E-cigarette status"),
     color = guide_legend(title = "E-cigarette status")
@@ -1336,28 +1694,56 @@ pander(chisq.test(demo.cd$ECigs, demo.cd$cat))
 ### Table of CD variables
 
 ```{R}
-table1(~ Location + L4 + Behaviour + Perianal + Surgery + Smoke + ECigs | cat,
-  data = demo.cd
-)
+demo.cd %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Location +
+      L4 +
+      HBI +
+      Behaviour +
+      Perianal +
+      Surgery +
+      Smoke +
+      ECigs |
+      cat,
+    render.continuous = my.render.cont
+  )
 ```
 
 ### Table of CD variables by cohort
 
 ```{R}
 comp <- demo.cd
-comp$cohort <- "FCAL"
+comp$cohort <- "All"
 
-temp <- subset(comp, ParticipantNo %in% FFQ$participantno)
+temp <- demo.cd %>%
+  drop_na(cat)
+temp$cohort <- "FCAL"
+
+comp <- rbind(comp, temp)
+
+temp <- subset(demo.cd, ParticipantNo %in% FFQ$participantno)
 temp$cohort <- "FFQ"
 
 comp <- rbind(comp, temp)
 
 comp$cohort <- factor(comp$cohort,
-  levels = c("FCAL", "FFQ"),
-  labels = c("FCAL cohort", "FFQ cohort")
+  levels = c("All", "FCAL", "FFQ"),
+  labels = c("Full cohort", "FCAL cohort", "FFQ cohort")
 )
-table1(~ Location + L4 + Behaviour + Perianal + Surgery + Smoke + ECigs | cohort,
+
+table1(
+  ~ Location +
+    L4 +
+    HBI +
+    Behaviour +
+    Perianal +
+    Surgery +
+    Smoke +
+    ECigs |
+    cohort,
   data = comp,
+  render.continuous = my.render.cont,
   overall = FALSE
 )
 ```
@@ -1398,7 +1784,7 @@ kable(mapping,
 E2 is the most common Montreal extent classification.
 
 ```{R}
-demo.uc <- subset(demo.fcal, diagnosis2 == "UC/IBDU")
+demo.uc <- subset(demo, diagnosis2 == "UC/IBDU")
 redcap.uc <- subset(redcap, participantno %in% demo.uc$ParticipantNo)
 names(redcap.uc)[names(redcap.uc) == "participantno"] <- "ParticipantNo"
 redcap.uc <- redcap.uc[, c("ParticipantNo", "max_extent")]
@@ -1418,14 +1804,21 @@ demo.uc$Extent <- factor(demo.uc$Extent,
   labels = c("E1", "E2", "E3")
 )
 
-
-ggplot(demo.uc, aes(x = Extent, fill = Extent, color = Extent)) +
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Extent, fill = Extent, color = Extent)) +
   geom_bar() +
   xlab("Montreal extent") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#7AE7C7", "#440381", "#D64045")) +
-  scale_color_manual(values = c("#07A282", "#340165", "#942E31")) +
+  scale_fill_manual(
+    values = c("#7AE7C7", "#440381", "#D64045"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#07A282", "#340165", "#942E31"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "Montreal extent"),
     color = guide_legend(title = "Montreal extent")
@@ -1437,17 +1830,41 @@ Montreal extent is not associated with FC
 ```{R}
 pander(chisq.test(demo.uc$Extent, demo.uc$cat))
 ```
+### Mayo score
+
+```{R}
+mayo.df <- redcap[, c("participantid", "current_mayo")]
+colnames(mayo.df) <- c("ParticipantId", "Mayo")
+mayo.df <- subset(mayo.df, ParticipantId %in% demo.uc$ParticipantId)
+
+demo.uc <- merge(demo.uc, mayo.df, by = "ParticipantId", all.x = TRUE)
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = as.factor(Mayo))) +
+  geom_bar(fill = "#284B63", color = "#153243") +
+  theme_minimal() +
+  ylab("Frequency") +
+  xlab("Mayo score at time of recruitment")
+```
 
 ### Smoking
 
 ```{R}
-ggplot(demo.uc, aes(x = Smoke, fill = Smoke, color = Smoke)) +
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
   geom_bar() +
   xlab("Smoking status") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#4E0250", "#517664", "#1C448E")) +
-  scale_color_manual(values = c("#3D003F", "#385245", "#033070")) +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "Smoking status"),
     color = guide_legend(title = "Smoking status")
@@ -1461,13 +1878,21 @@ pander(chisq.test(demo.uc$Smoke, demo.uc$cat))
 ### E-cigarette use
 
 ```{R}
-ggplot(demo.uc, aes(x = ECigs, fill = ECigs, color = ECigs)) +
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
   geom_bar() +
   xlab("E-cigarette status") +
   ylab("Frequency") +
   theme_minimal() +
-  scale_fill_manual(values = c("#4E0250", "#517664", "#1C448E")) +
-  scale_color_manual(values = c("#3D003F", "#385245", "#033070")) +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
   guides(
     fill = guide_legend(title = "E-cigarette status"),
     color = guide_legend(title = "E-cigarette status")
@@ -1481,34 +1906,56 @@ pander(fisher.test(demo.uc$ECigs, demo.uc$cat))
 ### Table of UC variables
 
 ```{R}
-table1(~ Extent + Smoke + ECigs | cat, data = demo.uc)
+demo.uc %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Extent + Mayo + Smoke + ECigs | cat,
+    render.continuous = my.render.cont
+  )
 ```
 
 ### Table of UC variables by cohort
 
 ```{R}
 comp <- demo.uc
-comp$cohort <- "FCAL"
+comp$cohort <- "All"
 
-temp <- subset(comp, ParticipantNo %in% FFQ$participantno)
+temp <- demo.uc %>%
+  drop_na(cat)
+temp$cohort <- "FCAL"
+
+comp <- rbind(comp, temp)
+
+temp <- subset(demo.uc, ParticipantNo %in% FFQ$participantno)
 temp$cohort <- "FFQ"
 
 comp <- rbind(comp, temp)
 
 comp$cohort <- factor(comp$cohort,
-  levels = c("FCAL", "FFQ"),
-  labels = c("FCAL cohort", "FFQ cohort")
+  levels = c("All", "FCAL", "FFQ"),
+  labels = c("Full cohort", "FCAL cohort", "FFQ cohort")
 )
-table1(~ Extent + Smoke + ECigs | cohort,
+
+
+table1(~ Extent + Mayo + Smoke + ECigs | cohort,
   data = comp,
+  render.continuous = my.render.cont,
   overall = FALSE
 )
 ```
 
 ```{R}
-saveRDS(demo.fcal, paste0(outdir, "demo.RDS"))
-saveRDS(demo.cd, paste0(outdir, "demo-cd.RDS"))
-saveRDS(demo.uc, paste0(outdir, "demo-uc.RDS"))
+demo %>%
+  drop_na(cat) %>%
+  saveRDS(paste0(outdir, "demo.RDS"))
+
+demo.cd %>%
+  drop_na(cat) %>%
+  saveRDS(paste0(outdir, "demo-cd.RDS"))
+
+demo.uc %>%
+  drop_na(cat) %>%
+  saveRDS(paste0(outdir, "demo-uc.RDS"))
 ```
 
 ## Reuse {.appendix}
