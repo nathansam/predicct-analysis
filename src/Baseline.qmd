@@ -308,8 +308,8 @@ considered as a continuous variable.
 #| label: fig-BMI-dist
 #| fig-cap: "Distribution of BMI in the FC cohort."
 #| warning: false
-demo$BMI <- with(demo, Weight / ((Height / 100)^2)) 
-demo[demo[,"age"] < 18,  "BMI"] <- NA
+demo$BMI <- with(demo, Weight / ((Height / 100)^2))
+demo[demo[, "age"] < 18, "BMI"] <- NA
 demo %>%
   drop_na(cat) %>%
   ggplot(aes(x = BMI)) +
@@ -331,11 +331,12 @@ ethnicity.
 #| label: fig-BMIcat-dist
 #| fig-cap: "Distribution of BMI categories in the FC cohort."
 demo$BMIcat <- cut(demo$BMI,
-                   c(0, 18.5, 25, 30, Inf),
-                   include.lowest = TRUE,
-                   right = FALSE,
-                   labels = c("Underweight", "Normal", "Overweight", "Obese"))
-demo[demo[,"age"] < 18, "BMIcat"] <- NA
+  c(0, 18.5, 25, 30, Inf),
+  include.lowest = TRUE,
+  right = FALSE,
+  labels = c("Underweight", "Normal", "Overweight", "Obese")
+)
+demo[demo[, "age"] < 18, "BMIcat"] <- NA
 
 plt.cols <- c("#F6AE2D", "#C81D25", "#1481BA", "#7E1F86")
 
@@ -343,14 +344,16 @@ plt.cols <- c("#F6AE2D", "#C81D25", "#1481BA", "#7E1F86")
 demo %>%
   drop_na(cat) %>%
   ggplot(aes(x = BMIcat, color = BMIcat, fill = BMIcat)) +
-  geom_bar() + 
+  geom_bar() +
   theme_minimal() +
   theme(legend.position = "none") +
   scale_fill_manual(values = plt.cols, na.value = "#032B43") +
-  scale_color_manual(values = colorspace::darken(plt.cols, 0.2),
-                     na.value = "#032B43") + 
+  scale_color_manual(
+    values = colorspace::darken(plt.cols, 0.2),
+    na.value = "#032B43"
+  ) +
   xlab("BMI category") +
-  ylab("Frequency") 
+  ylab("Frequency")
 ```
 
 ### IBD type
@@ -1485,7 +1488,7 @@ low prescribing rates during the recruitment period (which ended March 2020).
 
 ```{R}
 #| label: fig-biologic-use
-#| fig-cap: "Bio-naivety in the FC cohort." 
+#| fig-cap: "Bio-naivety in the FC cohort."
 demo %>%
   drop_na(cat) %>%
   ggplot(aes(x = Biologic, fill = Biologic, color = Biologic)) +
@@ -1528,7 +1531,8 @@ colnames(drugs)[8] <- "Antibiotic use in 6 months"
 percAntibiotic <- round(
   sum(drugs$`Antibiotic use in 6 months` == "Yes", na.rm = TRUE) /
     sum(!is.na(drugs$`Antibiotic use in 6 months`), na.rm = TRUE),
-  2) * 100
+  2
+) * 100
 ```
 
 Study participants were asked if they had taken an antibiotic in the last six
@@ -2158,7 +2162,7 @@ HBI.df <- subset(HBI.df, ParticipantId %in% demo.cd$ParticipantId)
 demo.cd <- merge(demo.cd, HBI.df, by = "ParticipantId", all.x = TRUE)
 
 temp <- demo.cd %>%
-  drop_na(cat) 
+  drop_na(cat)
 percHBI <- round(sum(is.na(temp$HBI)) / nrow(temp), 2) * 100
 ```
 
@@ -2697,8 +2701,9 @@ the cohort.
 #| fig-cap: "Ileal vs colonic disease in the study cohort."
 
 ileal.colonic <- merge(ileal.colonic,
-                       demo[, c("ParticipantNo", "cat")],
-                       by = "ParticipantNo")
+  demo[, c("ParticipantNo", "cat")],
+  by = "ParticipantNo"
+)
 
 
 ileal.colonic %>%
