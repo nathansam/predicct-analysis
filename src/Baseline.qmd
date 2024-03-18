@@ -296,6 +296,63 @@ Moreover, the distribution of sex is significantly different between FCAL groups
 pander(chisq.test(demo$Sex, demo$cat))
 ```
 
+### BMI
+
+Body mass index is given by weight (in $Kg$) divided by height (in $M$) squared.
+
+As threshold differ in the paediatric population, differing by age and sex, BMI
+has not been calculated for those less than 18 years of age. BMI is first
+considered as a continuous variable. 
+
+```{R}
+#| label: fig-BMI-dist
+#| fig-cap: "Distribution of BMI in the FC cohort."
+#| warning: false
+demo$BMI <- with(demo, Weight / ((Height / 100)^2)) 
+demo[demo[,"age"] < 18,  "BMI"] <- NA
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = BMI)) +
+  geom_histogram(color = "#AD013B", fill = "#F0386B", bins = 30) +
+  theme_minimal() +
+  ylab("Frequency")
+```
+
+We also consider BMI grouped into underweight, normal, overweight, and obese
+categories using the definitions used by the NIH and WHO
+[@weirBMIClassificationPercentile2024]. 
+
+A cut-off of $30 KgM^{-2}$ is used to denote obesity in adults without
+Asian/South Asian backgrounds. As data on Asian and South Asian ethnicity is not
+available (See [Ethnicity](#ethnicity)), we are unable to adjust the threshold based on
+ethnicity.
+
+```{R}
+#| label: fig-BMIcat-dist
+#| fig-cap: "Distribution of BMI categories in the FC cohort."
+demo$BMIcat <- cut(demo$BMI,
+                   c(0, 18.5, 25, 30, Inf),
+                   include.lowest = TRUE,
+                   right = FALSE,
+                   labels = c("Underweight", "Normal", "Overweight", "Obese"))
+demo[demo[,"age"] < 18, "BMIcat"] <- NA
+
+plt.cols <- c("#F6AE2D", "#C81D25", "#1481BA", "#7E1F86")
+
+
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = BMIcat, color = BMIcat, fill = BMIcat)) +
+  geom_bar() + 
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = plt.cols, na.value = "#032B43") +
+  scale_color_manual(values = colorspace::darken(plt.cols, 0.2),
+                     na.value = "#032B43") + 
+  xlab("BMI category") +
+  ylab("Frequency") 
+```
+
 ### IBD type
 
 For this study, we have grouped ulcerative colitis (UC) and inflammatory bowel
@@ -422,7 +479,7 @@ demo <- merge(demo, duration[, c("ParticipantNo", "duration")],
   all.y = FALSE
 )
 
-names(demo)[16] <- "IBD Duration"
+names(demo)[18] <- "IBD Duration"
 pander(summary(aov(`IBD Duration` ~ cat, data = demo)))
 ```
 
@@ -1541,7 +1598,6 @@ htmltools::HTML(export_svg(flow))
 ```{R}
 #| label: tbl-tab1
 #| tbl-cap: "Baseline data by IBD type."
-demo$BMI <- with(demo, Weight / ((Height / 100)^2))
 
 my.render.cont <- function(x) {
   with(
