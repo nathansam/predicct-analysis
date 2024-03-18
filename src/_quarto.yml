@@ -1,9 +1,73 @@
 project:
-  title: "Predicct"
+  type: website
+  preview:
+    port: 5147
   render:
+    - "Index.qmd"
     - "Baseline.qmd"
-    - "TTE.qmd"
+    - "Soft-flare.qmd"
     - "Diet.qmd"
+    - "Diet-no-smoking.qmd"
+  output-dir: "../docs"
+  resources:
+    - "PREdiCCt_SAP_sub.pdf"
+    - "light-dark.js"
+    - "*..dark.svg"
+    - "*.-dark.svg"
+
+execute:
+      freeze: auto
+      cache: true
+
+format:
+  html:
+    theme:
+      light: [default, theme.scss]
+      dark: [darkly]
+    code-fold: true
+    code-link: true
+    toc: true
+    toc-depth: 5
+    code-tools:
+      source: true
+      toggle: true
+    html-math-method: katex
+    embed-resources: true
+    mainfont: "Mulish"
+    monofont: "Noto Sans Mono"
+website:
+  title: "PREdiCCt analyses"
+  twitter-card:
+    creator: "@IBDNathan"
+    site: "@EdinUni_IGC"
+  open-graph: true
+  navbar:
+    background: "#004276"
+    search: true
+    right:
+      - text: About
+        file: Index.qmd
+      - Baseline.qmd
+      - Diet.qmd
+      - icon: github
+        href: https://github.com/nathansam/predicct-analysis
+  page-footer:
+    background: "#004276"
+    left: "Copyright 2024, The Authors"
+    right:
+      - icon: github
+        href: https://github.com/nathansam/predicct-analysis
+      - icon: twitter
+        href: https://twitter.com/IBDNathan
+  page-navigation: true
+  repo-url: https://github.com/nathansam/predicct-analysis
+  repo-actions: [issue]
+  favicon: "../images/favicon.png"
+
+google-scholar: true
+date: "last-modified"
+title-block-banner: false
+
 
 affiliations:
   - id: HGU
@@ -22,6 +86,11 @@ affiliations:
     city: "Edinburgh"
     country: "United Kingdom"
     url: "https://services.nhslothian.scot/EdinburghIBDUnit/Pages/default.aspx"
+  - id: Lothian
+    name: "NHS Lothian"
+    city: "Edinburgh"
+    country: "United Kingdom"
+    url: "https://services.nhslothian.scot"
   - id: Turing
     name: "The Alan Turing Institute"
     city: "London"
