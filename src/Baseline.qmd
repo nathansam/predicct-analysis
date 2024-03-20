@@ -174,6 +174,41 @@ ggplot(demo, aes(x = as.factor(month), color = as.factor(month), fill = as.facto
 ```
 
 
+### Country of recruitment
+
+PREdiCCt is a pan-UK study which recruited across
+`r length(unique(demo$SiteName))` sites. @fig-country shows the distribution of
+the PREdiCCt cohort by country of the recruiting site. 
+
+```{R}
+#| label: fig-country
+#| fig-cap: "Distribution of the PREdiCCt cohort by country of recruitment site."
+site.data <- read.csv(paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
+                             "metadata/sites.csv"))
+sites <- demo %>%
+  select(ParticipantNo, SiteNo)
+sites <- merge(sites, site.data, by = "SiteNo", all.x = TRUE, all.y = FALSE)
+
+plt.cols <- c( "#003459", "#DB5461", "#41D3BD", "#F09D51")
+
+sites$Country <- factor(sites$Country,
+                        levels = c("Scotland",
+                                   "England",
+                                   "Wales",
+                                   "Northern Ireland"))
+
+
+sites %>%
+  ggplot(aes(x = Country, color = Country, fill = Country)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  xlab("Country of recruiting site") +
+  ylab("Frequency") +
+  scale_fill_manual(values = plt.cols) +
+  scale_color_manual(values = colorspace::darken(plt.cols, 0.2))
+```
+
 ### Faecal calprotectin at study recruitment
 
 ```{R}
@@ -318,14 +353,24 @@ demo %>%
   ylab("Frequency")
 ```
 
+
+BMI as a continuous variable is not associated with FC groups. 
+
+```{R}
+#| label: tbl-BMI-fc
+#| tbl-cap: "Fisher's exact test between BMI and FC groups."
+pander(summary(aov(BMI ~ cat, data = demo)))
+```
+
 We also consider BMI grouped into underweight, normal, overweight, and obese
 categories using the definitions used by the NIH and WHO
 [@weirBMIClassificationPercentile2024]. 
 
 A cut-off of $30 KgM^{-2}$ is used to denote obesity in adults without
 Asian/South Asian backgrounds. As data on Asian and South Asian ethnicity is not
-available (See [Ethnicity](#ethnicity)), we are unable to adjust the threshold based on
-ethnicity.
+available (See [Ethnicity](#ethnicity)), we are unable to adjust the threshold
+based on ethnicity. However, this is expected to be relevant to relatively few
+subjects.
 
 ```{R}
 #| label: fig-BMIcat-dist
@@ -356,15 +401,25 @@ demo %>%
   ylab("Frequency")
 ```
 
+BMI by category is not associated with FC groups. 
+
+```{R}
+#| label: tbl-BMIcat-fc
+#| tbl-cap: "Chi-squared test between BMI categories and FC groups."
+pander(chisq.test(demo$BMIcat, demo$cat))
+```
+
+
 ### IBD type
 
 For this study, we have grouped ulcerative colitis (UC) and inflammatory bowel
 disease unclassified (IBDU) into one category. 
 IBD type is self-reported.
 
-There are more Crohn's disease (CD) than UC/IBDU subjects. This suggests our
-inclusion criteria may have biased against UC/IBDU subjects as prevalence for UC
-is approximately double that of CD [@Jones_2019].
+Whilst PREdiCCt was designed to recruit an equal number of CD and UC/IBDU
+subjects, the COVID-19 pandemic halted recruitment which has resulted in there
+not being an equal balance of CD and UC/IBDU subjects.There are slightly more
+Crohn's disease (CD) than UC/IBDU subjects in the FC cohort.
 
 ```{R}
 #| label: fig-IBD-dist
@@ -374,6 +429,13 @@ demo$diagnosis2 <- plyr::mapvalues(demo$diagnosis,
   to = c(1, 2, 2, 2)
 ) %>%
   factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
+
+demo$diagnosis <- plyr::mapvalues(demo$diagnosis,
+  from = seq(1, 4),
+  to = c(1, 2, 3, 3)
+) %>%
+  factor(levels = c("1", "2", "3"), labels = c("CD", "UC", "IBDU"))
+
 
 demo %>%
   drop_na(cat) %>%
@@ -451,7 +513,7 @@ duration.uc <- subset(duration, diagnosis != "1")
 
 duration %>%
   drop_na(duration) %>%
-  ggplot(aes(x = duration, color = diagnosis == 1, fill = diagnosis == 1)) +
+  ggplot(aes(x = duration, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
   labs(
@@ -461,11 +523,9 @@ duration %>%
     fill = "IBD type"
   ) +
   scale_fill_manual(
-    labels = c("UC/IBDU", "Crohn's"),
     values = c("#CDEDF6", "#FF6B6B")
   ) +
   scale_color_manual(
-    labels = c("UC/IBDU", "Crohn's"),
     values = c("#5EB1BF", "#C24343")
   )
 ```
@@ -536,6 +596,7 @@ IMD <- read_xlsx(paste0(
 IMD <- as.data.frame(IMD)
 names(IMD)[2] <- "IMD"
 demo <- merge(demo, IMD, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
+demo$IMD <- as.factor(demo$IMD)
 
 cols <- c("#A8F9FF", "#EF8275", "#6D326D", "#0B6E4F", "#F4D35E")
 
@@ -553,18 +614,11 @@ demo %>%
 
 ```{R}
 #| label: tbl-IMD-fc
-#| tbl-cap: "ANOVA between IMD and FC groups."
-pander(summary(aov(IMD ~ cat, data = demo)))
+#| tbl-cap: "CHI-squared test between IMD and FC groups."
+pander(chisq.test(demo$IMD, demo$cat))
 ```
 
 ### IBD Control
-
-IBD Control is a validated questionnaire. designed to assess disease control
-from a patient's perspective [@Bodger_2013]. We considered an eight question
-subset, IBD-Control-8 which ranges in potential scores from 0 to 16. We also
-consider the IBD-Control visual analogue scale (VAS). @Bodger_2013 found a
-cut-off of $\geq 13$ for IBD-Control-8 and a cut-off of $\geq 85$ for
-IBD-Control-VAS to be optimal for identifying quiescent disease.
 
 ```{R}
 #| label: control-8-dist
@@ -640,13 +694,25 @@ IBD$control_8 <- as.factor(IBD$control_8)
 IBD <- IBD %>%
   mutate(vas_control = ifelse(OverallControl >= 85, "85+", "<85"))
 
-demo <- merge(demo, IBD[, c("ParticipantNo", "control_8", "vas_control")],
+demo <- merge(demo, IBD[, c("ParticipantNo", "control_8", "OverallControl", "vas_control")],
   by = "ParticipantNo",
   all.x = TRUE,
   all.y = FALSE
 )
+```
 
-demo %>%
+IBD Control is a validated questionnaire designed to assess disease control
+from a patient's perspective [@Bodger_2013]. We considered an eight question
+subset, IBD-Control-8 which ranges in potential scores from 0 to 16. We also
+consider the IBD-Control visual analogue scale (VAS). @Bodger_2013 found a
+cut-off of $\geq 13$ for IBD-Control-8 and a cut-off of $\geq 85$ for
+IBD-Control-VAS to be optimal for identifying quiescent disease.
+
+```{R}
+#| label: fig-IBD-control
+#| fig-cap: "Distributiuon of IBD Control scores for (A) Control-8 and (B) Visual analogue scale. The vertical red lines denote the cut-offs for quiescent disease reported by @Bodger_2013."
+#| warning: false
+p1 <- demo %>%
   drop_na(cat) %>%
   ggplot(aes(x = control_8, color = control_8, fill = control_8)) +
   geom_bar() +
@@ -657,20 +723,44 @@ demo %>%
   scale_color_manual(values = viridis::viridis(15), na.value = "#032B43") +
   scale_fill_manual(values = viridis::viridis(15), na.value = "#032B43") +
   geom_vline(xintercept = 11.5, color = "#FF4B3E")
+
+p2 <- demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = OverallControl)) +
+  geom_histogram(binwidth = 5, fill = "#FFD23F", color = "#947805") +
+  theme_minimal() +
+  xlab("VAS Scores") +
+  ylab("Frequency") +
+  geom_vline(xintercept = 85, color = "#FF4B3E") +
+  scale_x_continuous(breaks = seq(0, 100, 10))
+p1/p2 + plot_annotation(tag_levels = 'A')
 ```
 
-IBD-Control-8 scores were found to be significantly associated with FC.
+IBD-Control-8 scores and VAS were both found to be significantly associated with
+FC.
 
 ```{R}
-#| label: tbl-control-fc
-#| tbl-cap: "ANOVA between IMD and FC groups."
+#| label: tbl-control-8-fc
+#| tbl-cap: "ANOVA between control-8 and FC groups."
 pander(summary(aov(as.numeric(control_8) ~ cat, data = demo)))
 ```
 
 
 ```{R}
-#| label: fig-VAS-hist
-#| fig-cap: "Distribution of IBD-Control-VAS scores. A VAS of 85 or greater is predictive of quiescent disease."
+#| label: tbl-control-vas-fc
+#| tbl-cap: "ANOVA between control VAS and FC groups."
+pander(summary(aov(OverallControl ~ cat, data = demo)))
+```
+
+Instead to treating VAS as a continuous value, going forward, VAS will be
+discretised into  below 85 and 85 and above as a VAS of 85 was found by
+@Bodger_2013 to be predictive of quiescent disease.
+
+```{R}
+#| label: fig-VAS-dist
+#| fig-cap: "Distribution of discretised IBD-Control-VAS scores."
+demo <- demo %>%
+  select(-OverallControl)
 demo %>%
   drop_na(cat) %>%
   ggplot(aes(x = vas_control, color = vas_control, fill = vas_control)) +
@@ -683,7 +773,7 @@ demo %>%
   scale_fill_manual(values = c("#D00000", "#447604"), na.value = "#032B43")
 ```
 
-The discretised VAS was found to be significantly associated with FC. 
+The discretised VAS is continued to be significantly associated with FC. 
 
 ```{R}
 #| label: tbl-vas-fc
@@ -1596,13 +1686,11 @@ htmltools::HTML(export_svg(flow))
 ```
 
 
-### Table of baseline data by IBD type
+
+### Table of baseline data by cohort
 
 
 ```{R}
-#| label: tbl-tab1
-#| tbl-cap: "Baseline data by IBD type."
-
 my.render.cont <- function(x) {
   with(
     stats.apply.rounding(stats.default(x),
@@ -1615,68 +1703,13 @@ my.render.cont <- function(x) {
 
 demo$control_8 <- as.numeric(demo$control_8)
 
-demo %>%
-  drop_na(cat) %>%
-  table1::table1(
-    x = ~ Age +
-      Sex +
-      Ethnicity +
-      IMD +
-      `IBD Duration` +
-      control_8 +
-      vas_control +
-      BMI +
-      FC +
-      CReactiveProtein +
-      Haemoglobin +
-      WCC +
-      Albumin +
-      Biologic |
-      diagnosis2,
-    render.continuous = my.render.cont
-  )
-```
 
-### Table of baseline data by FC groups
-
-
-```{R}
-#| label: tbl-tab2
-#| tbl-cap: "Baseline data by FC."
-
-demo %>%
-  drop_na(cat) %>%
-  table1(
-    x = ~ Age +
-      Sex +
-      Ethnicity +
-      IMD +
-      diagnosis2 +
-      `IBD Duration` +
-      control_8 +
-      vas_control +
-      BMI +
-      FC +
-      CReactiveProtein +
-      Haemoglobin +
-      WCC +
-      Albumin +
-      Biologic |
-      cat,
-    render.continuous = my.render.cont
-  )
-```
-
-### Table of baseline data by cohort
-
-
-```{R}
 comp <- demo
 comp$cohort <- "All"
 
 temp <- demo %>%
   drop_na(cat)
-temp$cohort <- "FCAL"
+temp$cohort <- "FC"
 
 comp <- rbind(comp, temp)
 
@@ -1686,25 +1719,29 @@ temp$cohort <- "FFQ"
 comp <- rbind(comp, temp)
 
 comp$cohort <- factor(comp$cohort,
-  levels = c("All", "FCAL", "FFQ"),
-  labels = c("Full cohort", "FCAL cohort", "FFQ cohort")
+  levels = c("All", "FC", "FFQ"),
+  labels = c("Full cohort", "FC cohort", "FFQ cohort")
 )
 
 table1(
   ~ Age +
     Sex +
     Ethnicity +
-    IMD +
-    diagnosis2 +
+    BMIcat +
+    diagnosis +
     `IBD Duration` +
+    IMD +
     control_8 +
     vas_control +
-    BMI +
     FC +
     CReactiveProtein +
     Haemoglobin +
     WCC +
     Albumin +
+    Meat_sum +
+    fibre +
+    PUFA_percEng +
+    NOVAScore_cat +
     Biologic | cohort,
   data = comp,
   render.continuous = my.render.cont,
@@ -1741,7 +1778,7 @@ pander(chisq.test(comp$diagnosis2, comp$cohort))
 ##### Index of multiple deprivation
 
 ```{R}
-pander(summary(aov(IMD ~ cohort, data = comp)))
+pander(chisq.test(comp$IMD, comp$cohort))
 ```
 
 ##### Disease duration
@@ -1804,6 +1841,10 @@ difference appears to be negligible.
 pander(summary(aov(Albumin ~ cohort, data = comp)))
 ```
 
+##### Dietary data
+
+Dietary data have not been compared across cohorts.
+
 ##### Biologic usage
 
 There is a significant difference in biologic usage across the cohorts with
@@ -1812,6 +1853,72 @@ biologic than the full cohort or the FC sub-cohort.
 
 ```{R}
 pander(chisq.test(comp$Biologic, comp$cohort))
+```
+
+### Table of baseline data by FC groups
+
+
+```{R}
+#| label: tbl-tab2
+#| tbl-cap: "Baseline data by FC."
+
+demo %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Age +
+    Sex +
+    Ethnicity +
+    BMIcat +
+    diagnosis +
+    `IBD Duration` +
+    IMD +
+    control_8 +
+    vas_control +
+    FC +
+    CReactiveProtein +
+    Haemoglobin +
+    WCC +
+    Albumin +
+    Meat_sum +
+    fibre +
+    PUFA_percEng +
+    NOVAScore_cat +
+    Biologic | cat,
+    render.continuous = my.render.cont
+  )
+```
+
+### Table of baseline data by IBD type
+
+```{R}
+#| label: tbl-tab1
+#| tbl-cap: "Baseline data by IBD type."
+
+demo %>%
+  drop_na(cat) %>%
+  table1::table1(
+    x = ~ Age +
+    Sex +
+    Ethnicity +
+    BMIcat +
+    diagnosis +
+    `IBD Duration` +
+    IMD +
+    control_8 +
+    vas_control +
+    FC +
+    CReactiveProtein +
+    Haemoglobin +
+    WCC +
+    Albumin +
+    Meat_sum +
+    fibre +
+    PUFA_percEng +
+    NOVAScore_cat +
+    Biologic |
+      diagnosis2,
+    render.continuous = my.render.cont
+  )
 ```
 
 ## Variables only relevant to Crohn's disease subjects
@@ -2187,6 +2294,34 @@ demo.cd %>%
 summary(aov(HBI ~ cat, data = demo.cd))
 ```
 
+### PRO-2 in Crohn's disease
+
+Sum of liquid stools per day and abdominal pain. 
+
+```{R}
+PRO2 <- redcap[, c("participantno", "liq_stool_day", "abdo_pain")]
+PRO2$liq_stool_day <- as.numeric(PRO2$liq_stool_day) # Drop ileostomies
+
+PRO2$PRO2 <- with(PRO2, liq_stool_day + abdo_pain)
+
+PRO2$ParticipantNo <- PRO2$participantno
+demo.cd <- merge(demo.cd,
+              PRO2[, c("ParticipantNo", "PRO2")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+```
+
+```{R}
+demo.cd %>%
+  ggplot(aes(x = as.factor(PRO2))) +
+  geom_bar(fill = "#FF8552", color = "#D2632A") +
+  scale_fill_manual(na.value = "#032B43") +
+  scale_color_manual(na.value = "#032B43") +
+  theme_minimal()
+```
+
+
 ### Smoking
 
 ```{R}
@@ -2277,6 +2412,7 @@ demo.cd %>%
     x = ~ Location +
       L4 +
       HBI +
+      PRO2 +
       Behaviour +
       Perianal +
       Surgery +
@@ -2295,7 +2431,7 @@ comp$cohort <- "All"
 
 temp <- demo.cd %>%
   drop_na(cat)
-temp$cohort <- "FCAL"
+temp$cohort <- "FC"
 
 comp <- rbind(comp, temp)
 
@@ -2305,14 +2441,15 @@ temp$cohort <- "FFQ"
 comp <- rbind(comp, temp)
 
 comp$cohort <- factor(comp$cohort,
-  levels = c("All", "FCAL", "FFQ"),
-  labels = c("Full cohort", "FCAL cohort", "FFQ cohort")
+  levels = c("All", "FC", "FFQ"),
+  labels = c("Full cohort", "FC cohort", "FFQ cohort")
 )
 
 table1(
   ~ Location +
     L4 +
     HBI +
+    PRO2 +
     Behaviour +
     Perianal +
     Surgery +
@@ -2345,6 +2482,12 @@ pander(chisq.test(comp$L4, comp$cohort))
 
 ```{R}
 pander(summary(aov(HBI ~ cohort, data = comp)))
+```
+
+##### PRO2
+
+```{R}
+pander(summary(aov(PRO2 ~ cohort, data = comp)))
 ```
 
 ##### Montreal behaviour
@@ -2502,6 +2645,33 @@ Mayo score is highly significantly associated with FC.
 summary(aov(Mayo ~ cat, data = demo.uc))
 ```
 
+### PRO-2 in ulcerative colitis
+
+Sum of stool frequency and rectal bleeding categories. 
+
+```{R}
+PRO2 <- redcap[, c("participantno", "stool_freq", "rectal_bleed")]
+
+PRO2$PRO2 <- with(PRO2, stool_freq + rectal_bleed)
+
+PRO2$ParticipantNo <- PRO2$participantno
+demo.uc <- merge(demo.uc,
+              PRO2[, c("ParticipantNo", "PRO2")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+```
+
+```{R}
+demo.uc %>%
+  ggplot(aes(x = as.factor(PRO2), fill = diagnosis2, color = diagnosis2)) +
+  geom_bar() +
+  scale_fill_manual(values = "#FF8552", na.value = "#032B43") +
+  scale_color_manual(values = "#D2632A", na.value = "#032B43") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
 ### Smoking
 
 As with CD subjects, smoking status for UC/IBDU subjects is self-reported. 
@@ -2582,7 +2752,7 @@ pander(fisher.test(demo.uc$ECigs, demo.uc$cat))
 demo.uc %>%
   drop_na(cat) %>%
   table1(
-    x = ~ Extent + Mayo + Smoke + ECigs | cat,
+    x = ~ Extent + Mayo + PRO2 + Smoke + ECigs | cat,
     render.continuous = my.render.cont
   )
 ```
@@ -2595,7 +2765,7 @@ comp$cohort <- "All"
 
 temp <- demo.uc %>%
   drop_na(cat)
-temp$cohort <- "FCAL"
+temp$cohort <- "FC"
 
 comp <- rbind(comp, temp)
 
@@ -2605,12 +2775,12 @@ temp$cohort <- "FFQ"
 comp <- rbind(comp, temp)
 
 comp$cohort <- factor(comp$cohort,
-  levels = c("All", "FCAL", "FFQ"),
-  labels = c("Full cohort", "FCAL cohort", "FFQ cohort")
+  levels = c("All", "FC", "FFQ"),
+  labels = c("Full cohort", "FC cohort", "FFQ cohort")
 )
 
 
-table1(~ Extent + Mayo + Smoke + ECigs | cohort,
+table1(~ Extent + Mayo + PRO2 + Smoke + ECigs | cohort,
   data = comp,
   render.continuous = my.render.cont,
   overall = FALSE
@@ -2632,6 +2802,12 @@ pander(chisq.test(comp$Extent, comp$cohort))
 
 ```{R}
 pander(summary(aov(Mayo ~ cohort, data = comp)))
+```
+
+##### PRO2
+
+```{R}
+pander(summary(aov(PRO2 ~ cohort, data = comp)))
 ```
 
 ##### Smoking status
@@ -2704,7 +2880,6 @@ ileal.colonic <- merge(ileal.colonic,
   demo[, c("ParticipantNo", "cat")],
   by = "ParticipantNo"
 )
-
 
 ileal.colonic %>%
   drop_na(cat) %>%
