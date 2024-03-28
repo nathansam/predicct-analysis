@@ -1,19 +1,24 @@
 project:
   type: website
-  preview:
-    port: 5147
   render:
     - "Index.qmd"
-    - "Baseline.qmd"
-    - "Soft-flare.qmd"
-    - "Diet.qmd"
-    - "Diet-no-smoking.qmd"
+    - "Baseline/Introduction.qmd"
+    - "Baseline/Recruitment.qmd"
+    - "Baseline/Demographics.qmd"
+    - "Baseline/IBD.qmd"
+    - "Baseline/Biochemistry.qmd"
+    - "Baseline/Diet.qmd"
+    - "Baseline/Tables.qmd"
+    - "Survival/Introduction.qmd"
+    - "Survival/Soft-hard-flares.qmd"
+    - "Survival/Controlled.qmd"
+    - "Survival/Demographics.qmd"
+    - "Survival/IBD.qmd"
+    - "Survival/Biochemistry.qmd"
+    - "Survival/Diet.qmd"
   output-dir: "../docs"
   resources:
-    - "PREdiCCt_SAP_sub.pdf"
-    - "light-dark.js"
-    - "*..dark.svg"
-    - "*.-dark.svg"
+    - "robots.txt"
 
 execute:
       freeze: auto
@@ -32,7 +37,7 @@ format:
       source: true
       toggle: true
     html-math-method: katex
-    embed-resources: true
+    embed-resources: false
     mainfont: "Mulish"
     monofont: "Noto Sans Mono"
 website:
@@ -41,18 +46,50 @@ website:
     creator: "@IBDNathan"
     site: "@EdinUni_IGC"
   open-graph: true
-  navbar:
-    background: "#004276"
-    search: true
-    right:
-      - text: About
-        file: Index.qmd
-      - Baseline.qmd
-      - Diet.qmd
+  sidebar:
+    logo: "logo.png"
+    style: "floating"
+    tools:
       - icon: github
-        href: https://github.com/nathansam/predicct-analysis
+        menu:
+          - text: Source Code
+            url:  https://github.com/nathansam/predicct-analysis
+          - text: Report a Bug
+            url:  https://github.com/nathansam/predicct-analysis/issues
+    search: true
+    contents:
+      - "Index.qmd"
+      - "Baseline/Recruitment.qmd"
+      - section: "Baseline Analyses"
+        contents:
+          - "Baseline/Introduction.qmd"
+          - "Baseline/Demographics.qmd"
+          - "Baseline/IBD.qmd"
+          - "Baseline/Biochemistry.qmd"
+          - "Baseline/Diet.qmd"
+          - "Baseline/Tables.qmd"
+      - section: "Time to flare"
+        contents:
+          - "Survival/Introduction.qmd"
+          - "Survival/Soft-hard-flares.qmd"
+          - "Survival/Controlled.qmd"
+          - "Survival/Demographics.qmd"
+          - "Survival/IBD.qmd"
+          - "Survival/Biochemistry.qmd"
+          - "Survival/Diet.qmd"
+#  navbar:
+#    background: "#004276"
+#    search: true
+#    right:
+#      - text: About
+#        file: Index.qmd
+#      - Baseline.qmd
+#      - TTE.qmd
+#      - icon: github
+#        href: https://github.com/nathansam/predicct-analysis
   page-footer:
-    background: "#004276"
+    background: "#dff1f3"
+    foreground: "#000000"
     left: "Copyright 2024, The Authors"
     right:
       - icon: github

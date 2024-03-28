@@ -1,0 +1,32 @@
+---
+title: "Introduction"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+  - name: "Chiara Cotronei"
+    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
+    affiliations:
+      - ref: Lothian
+bibliography: Baseline.bib   
+---
+
+This section of the website explores the baseline data for the PREdiCCt study,
+generating inferences and producing display items for publication.
+
+There are three main data sources for baseline demographic and phenotypic data
+in PREdiCCt: 
+
+1. Participant questionnaires.
+1. Forms completed by a subject's clinical team (via REDCap) during recruitment.
+1. Data collected retrospectively during the end-of-study (EoS) phenotyping
+   which was completed by a member of the subject's IBD care team.
+
+As all three are used, it will be made clear which source the data
+presented originate from. 
+
+A docker image, [nathansam/predicct](#future-link), has been used to ensure this 
+analysis remains reproducible.

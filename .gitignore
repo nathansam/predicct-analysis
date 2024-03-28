@@ -4,8 +4,9 @@
 .Ruserdata
 .DS_Store
 *.Rproj
-Docs/
 src/plots
-*_files
 _freeze
 *_cache
+plots
+src/Baseline/*_files
+src/Survival/*_files

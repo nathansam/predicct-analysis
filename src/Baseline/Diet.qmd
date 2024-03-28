@@ -1,0 +1,333 @@
+---
+title: "Diet"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Baseline.bib   
+---
+
+## Introduction
+
+```{R}
+set.seed(123)
+
+##############
+## Packages ##
+##############
+
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+library(readxl) # Read in Excel files
+library(lubridate) # Handle dates
+library(datefixR) # Standardise dates
+library(patchwork) # Arrange ggplots
+
+# Generate tables
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+# paths to PREdiCCt data
+if (file.exists("/docker")) { # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+} else { # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+demo <- readRDS(paste0(outdir, "demo-biochem.RDS"))
+
+FFQ <- read_xlsx(paste0(
+  prefix,
+  "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
+))
+
+FFQ$ParticipantNo <- FFQ$participantno
+demo <- merge(demo,
+  FFQ[, c("ParticipantNo", "Meat_sum", "fibre", "PUFA_percEng", "NOVAScore_cat")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
+```
+
+PREdiCCt has collected data on diet via food frequency questionnaires (FFQs) and
+food diaries. This dietary data has been analysed by staff at the
+[University of Aberdeen](https://www.abdn.ac.uk/), primarily by
+[Dr Janet Kyle](https://www.abdn.ac.uk/iahs/profiles/j.kyle), 
+[Dr Graham Horgan](https://www.bioss.ac.uk/people/graham), and
+[Professor Alex Johnstone](https://www.abdn.ac.uk/rowett/research/profiles/alex.johnstone).
+
+Whilst data for many dietary variables have been collected, this report
+will focus on the data outlined in the SAP.
+
+1. Protein from animal-sources
+1. Dietary fibre
+1. Polyunsaturated fatty acids (PUFAs)
+1. Nova intake score
+
+The data for these variables were extracted from the FFQs. As reported
+associations between dietary data and IBD are often specific to a form of IBD
+rather than IBD as a whole, these data will be presented stratified by disease
+type. 
+
+## Protein from meat sources
+
+@fig-meat-sum-dist suggests there are relatively few vegetarians in the PREdiCCt
+cohort. Whilst some extreme values were observed for protein from meat sources,
+they remain plausible. 
+
+```{R}
+#| label: fig-meat-sum-dist
+#| fig-cap: "Distribution of protein intake from meat."
+#| warning: false
+demo %>%
+  drop_na(Meat_sum) %>%
+  ggplot(aes(x = Meat_sum, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Protein from meat sources (g)",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
+```
+
+No association was observed between protein intake from meat and FC.
+
+```{R}
+#| label: tbl-meat-sum
+#| tbl-cap: "ANOVA between protein intake from meat and FC groups."
+pander(summary(aov(Meat_sum ~ cat, data = demo)))
+```
+
+## Dietary fibre
+
+Fibre has frequently investigated as a potential factor in IBD pathogenesis,
+particularly in CD. 
+
+A study of 170,776 women across 26 years found fibre
+intake, particularly fibre derived from fruits, to be low for incident CD
+patients [@ananthakrishnan_2013].
+
+A US study of 1,130 CD subjects found CD patients who reported that they did not
+avoid high-fibre foods were approximately 40\% less likely to have a disease
+flare in a 6-month period than those who avoided high-fibre foods [@brotherton_2016].
+
+There is less evidence of a relationship between UC and dietary fibre.  
+
+There does not appear to be substantial differences in fibre between CD and
+UC/IBDU PREdiCCt participants. 
+
+```{R}
+#| label: fig-fibre-dist
+#| fig-cap: "Distribution of dietary fibre."
+#| warning: false
+demo %>%
+  drop_na(fibre) %>%
+  ggplot(aes(x = fibre, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Dietary fibre",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
+```
+
+No association was found between dietary fibre intake and FC. 
+
+```{R}
+#| label: tbl-fibre
+#| tbl-cap: "ANOVA between dietary fibre and FC groups."
+pander(summary(aov(fibre ~ cat, data = demo)))
+```
+
+## Polyunsaturated fatty acids
+
+PUFAs exhibit anti-inflammatory properties and there is evidence of a
+relationship between PUFAs and UC incidence [@Marion_Letellier_2013]. Research
+suggests that a diet with a poor balance of n-3 and n-6 PUFAs, commonly seen in
+"Western" diets is associated with IBD risk. 
+
+The PREdiCCt SAP states n-6 PUFAs will be examined. However, the data obtained
+from the FFQs describes PUFAs as a whole (including n-3 PUFAs).
+
+```{R}
+#| label: fig-pufa-dist
+#| fig-cap: "Distribution of polyunsaturated fatty acids."
+#| warning: false
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = PUFA_percEng, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "PUFA intake",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
+```
+
+A significant association was not seen between PUFA intake and FC. 
+
+```{R}
+#| label: tbl-pufa
+#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups."
+pander(summary(aov(PUFA_percEng ~ cat, data = demo)))
+```
+
+## Nova intake score
+
+There has been a great deal of recent research interest in ultra processed food
+(UPF) and IBD. For example, @Narula_2021 found UPF intake to be positively
+associated with IBD risk. 
+
+The Nova score is a popular approach for classifying UPFs [@Monteiro_2017]. Food
+is classified as either unprocessed, processed culinary, processed food, or
+ultra-processed via the Nova score. The University of Aberdeen have developed an
+extension of the Nova score, the Nova intake score, which can be used to
+categorise individuals and their diets instead of individual food items.
+
+The following definition of the Nova intake score was written by Liam McAdie 
+during a 5th year medical elective in which he worked on the PREdiCCt dietary
+data. The formulae have received minor modifications, but otherwise the
+definitions remain unchanged from McAdie's work. 
+
+### Definition
+
+When completing the FFQ, participants were asked to report ($a$) portion size
+normally consumed, ($b$) number of times this portion is consumed in one day and
+($c$) number of days per week food type is consumed. Participant’s daily average
+consumption (in grams) of a food and drink type ($x$) was calculated by:
+
+$$
+x=\frac{c}{7}(a+b)
+$$
+
+Standardised number of portions consumed daily for food and drink type ($y$) was
+calculated by dividing consumption ($x$) by the Foods Standard Agency average
+UK-portion size ($z$). 
+
+$$
+y= \frac{x}{z}
+$$
+
+Nova intake scores ($N$) were calculated by multiplying the number of
+standardised portions consumed ($y$) by their corresponding Nova score ($M$)
+assigned in the database. This process is repeated for all 169 food and drink
+types and totalled to give one overall Nova intake score. This score is a marker
+representative of UPF intake.
+
+$$
+N = \sum_{i = 1}^{169} (y_i M_i)
+$$
+
+### Results
+
+The distribution of Nova intake score appears to be uniform across the cohort.
+
+```{R}
+#| label: fig-novas-dist
+#| fig-cap: "Distribution of Nova intake scores."
+demo$NOVAScore_cat <- factor(demo$NOVAScore_cat,
+  levels = 1:4,
+  labels = c(
+    "Unprocessed",
+    "Processed culinary",
+    "Procesed food",
+    "Ultra-processed"
+  )
+)
+
+demo %>%
+  drop_na(NOVAScore_cat) %>%
+  ggplot(aes(x = NOVAScore_cat, color = diagnosis2, fill = diagnosis2)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Nova intake score",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
+```
+
+No significant association was observed between Nova intake scores and FC
+groups. 
+
+```{R}
+#| tbl-cap: "Chi-squared test between Nova intake score and FC groups."
+pander(chisq.test(demo$NOVAScore_cat, demo$cat))
+```
+
+```{R}
+saveRDS(demo, paste0(outdir, "demo-diet.RDS"))
+```
+
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.

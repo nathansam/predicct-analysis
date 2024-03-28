@@ -1,0 +1,184 @@
+---
+title: "Study recruitment"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Baseline.bib   
+---
+
+```{R}
+set.seed(123)
+suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+library(readxl) # Read in Excel files
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+if (file.exists("/docker")) { # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+} else { # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+```
+
+
+```{R}
+# Demographic data as reported by subjects
+demo <- read_xlsx(paste0(data.path, "Baseline2022/demographics.xlsx"),
+  col_types = c(
+    "text",
+    "text",
+    "text",
+    "text",
+    "numeric",
+    "numeric",
+    "text",
+    "text",
+    "date",
+    "numeric",
+    "text"
+  )
+)
+```
+
+
+### Month of recruitment
+
+There is potential for seasonality to confound interpretations of our results,
+particularly when making inferences regarding diet. As such,
+month of recruitment is explored ([@fig-month]).
+
+Recruitment was low in December, which is to be as expected as there are
+typically fewer clinic appointments in December and participants were recruited
+in IBD clinics.
+
+However, recruitment was also low in April and July. As such, the impact of
+seasonality is likely to be minimal for this cohort and will be ignored for all
+analyses. 
+
+```{R}
+#| label: fig-month
+#| fig-cap: "Distribution of month of diagnosis."
+demo$entry_date <- as.Date(demo$entry_date)
+demo$month <- month(demo$entry_date, label = TRUE)
+ggplot(demo, aes(x = as.factor(month), color = as.factor(month), fill = as.factor(month))) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  xlab("Month of recruitment") +
+  ylab("Frequency")
+```
+
+
+### Country of recruitment
+
+PREdiCCt is a pan-UK study which recruited across
+`r length(unique(demo$SiteName))` sites. @fig-country shows the distribution of
+the PREdiCCt cohort by country of the recruiting site. 
+
+```{R}
+#| label: fig-country
+#| fig-cap: "Distribution of the PREdiCCt cohort by country of recruitment site."
+site.data <- read.csv(paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
+                             "metadata/sites.csv"))
+sites <- demo %>%
+  select(ParticipantNo, SiteNo)
+sites <- merge(sites, site.data, by = "SiteNo", all.x = TRUE, all.y = FALSE)
+
+plt.cols <- c( "#003459", "#DB5461", "#41D3BD", "#F09D51")
+
+sites$Country <- factor(sites$Country,
+                        levels = c("Scotland",
+                                   "England",
+                                   "Wales",
+                                   "Northern Ireland"))
+
+
+sites %>%
+  ggplot(aes(x = Country, color = Country, fill = Country)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  xlab("Country of recruiting site") +
+  ylab("Frequency") +
+  scale_fill_manual(values = plt.cols) +
+  scale_color_manual(values = colorspace::darken(plt.cols, 0.2))
+```
+
+### Cohort derivation
+
+The below flowchart gives a simple explanation of how the sub-cohort of subjects
+with analysed food frequency questionnaires (FFQs) was obtained. 
+
+```{R}
+#| class-output: output
+
+
+fcal <- read_xlsx(paste0(data.path, "Baseline2022/calprotectin.xlsx"))
+fcal$Result <- as.numeric(plyr::mapvalues(fcal$Result, from = "<20", to = 20))
+
+fcal <- fcal[, c("ParticipantNo", "Result")]
+
+fcal.eof <- read_xlsx(paste0(prefix, "EOF_fcal.xlsx"))
+
+
+fcal.eof <- subset(fcal.eof, IsBaseline == 1)
+fcal.eof <- subset(fcal.eof, FCALLevel != ".")
+fcal.eof$FCALLevel <- as.numeric(fcal.eof$FCALLevel)
+fcal.eof <- fcal.eof[, c("ParticipantNo", "FCALLevel")]
+names(fcal.eof)[2] <- "Result"
+
+fcal <- rbind(fcal, fcal.eof)
+fcal <- distinct(fcal, ParticipantNo, .keep_all = TRUE)
+
+demo <- merge(demo, fcal, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
+
+FFQ <- read_xlsx(paste0(
+  prefix,
+  "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
+))
+
+FFQ <- subset(FFQ, participantno %in% fcal$ParticipantNo)
+
+
+flow <- grViz(paste0("digraph flowchart {
+
+graph[splines = ortho]
+  # node definitions with substituted label text
+  node [fontname = Helvetica, shape = rectangle, fixedsize = false, width = 1]
+  1 [label = 'Recruited to PREdiCCt\n n = ", nrow(demo), "']
+  2 [label = 'Baseline FC available\n n = ", nrow(drop_na(demo, Result)), "']
+  3 [label = 'Food frequency questionnaire\n analysed\n n = ", nrow(FFQ), "']
+
+  node [shape=none, width=0, height=0, label='']
+  1 -> 2; 2-> 3
+}"))
+htmltools::HTML(export_svg(flow))
+```
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.

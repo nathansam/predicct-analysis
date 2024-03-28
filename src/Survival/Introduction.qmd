@@ -1,0 +1,36 @@
+---
+title: "Introduction"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Survival.bib   
+---
+
+This report explores associations between time to flare and the variables
+recorded at baseline. Time to flare is modelled
+using Cox models with the variable of interest and controlled variables (sex,
+and deprivation) included as fixed effects. A gamma
+frailty term is employed for hospital sites (which may capture inter-hospital
+differences).
+
+The primary study endpoint is soft flare which is defined as a participant
+reporting their disease as being uncontrolled when they completed a monthly
+study questionnaire. 
+
+For soft flares, only the first two years of follow-up are considered as this
+was the time interval in which questionnaires were sent to participants. 
+
+The secondary study endpoint is hard flare, which required elevated CRP and/or
+CRP and for the subject to change medication. Data for this endpoint was
+collected via end-of-study phenotyping. 
+
+For hard flares, the full study follow-up period has been used, from study
+recruitment to the time the end of study phenotyping was completed. 
+
+Soft and hard flares have been identified by Dr Linda Williams, the PREdiCCt
+trial statistician. The same flare definitions have been used across all teams
+working on PREdiCCt. 

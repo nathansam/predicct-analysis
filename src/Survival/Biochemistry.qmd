@@ -1,0 +1,910 @@
+---
+title: "Biochemistry"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Survival.bib   
+---
+
+## Introduction
+
+```{R}
+#| message: false
+library(readxl)
+library(tidyverse)
+library(datefixR)
+library(survival)
+library(survminer)
+library(pander)
+library(coxme)
+library(finalfit)
+library(DescTools)
+library(gtsummary)
+
+
+# paths to PREdiCCt data
+if (file.exists("/docker")) { # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+} else { # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+if (!dir.exists("plots")) dir.create("plots")
+
+demo <- readRDS(paste0(outdir, "demo-full.RDS"))
+demo$FC <- log(demo$FC)
+
+cox.summary <- function(fit) {
+  cat("Cox model summary:")
+  fit %>%
+    finalfit::fit2df(condense = FALSE) %>%
+    knitr::kable(
+      col.names = c(
+        "Variable",
+        "HR",
+        "Lower 95%",
+        "Upper 95%",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
+    print()
+  
+  cat("\\newline
+  
+Diagnostics: \\newline
+  
+")
+  
+  cat('\\newline
+  
+::: {.panel-tabset} 
+
+      ')
+  
+  cat("
+  
+###### Proportional hazards assumption test \\newline
+
+  ")
+  cox.zph(fit)$table %>%
+    knitr::kable(
+      col.names = c(
+        "",
+        "Chi-squared statistic",
+        "DF",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
+    print()
+  
+  cat("\\newline
+
+###### DF betas \\newline
+
+  ")
+  
+  print(ggcoxdiagnostics(fit, type = "dfbeta"))
+  
+  cat("\\newline 
+  
+###### Martignale residuals \\newline
+      
+      ")
+  
+  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+  
+  cat("\\newline
+  
+:::
+
+      ")
+  return()
+}
+
+flare.df <- readRDS(paste0(outdir, "flares-IBD.RDS"))
+flare.cd.df <- readRDS(paste0(outdir, "flares-IBD-cd.RDS"))
+flare.uc.df <- readRDS(paste0(outdir, "flares-IBD-uc.RDS"))
+```
+
+## C-reactive protein
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.cd.df$CReactiveProtein_cat <- cut(flare.cd.df$CReactiveProtein, 
+                                        c(0, 5, 10.0000001, Inf),
+                                        labels = c("CRP < 5",
+                                                   "5 ≤ CRP ≤ 10",
+                                                   "CRP > 10"),
+                                        include.lowest = TRUE,
+                                        right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ CReactiveProtein_cat,
+               data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "CRP",
+  legend.labs = levels(flare.cd.df$CReactiveProtein_cat),
+  palette = c("#1A8FE3", "#FED766", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/CRP-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ CReactiveProtein_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "CRP",
+  legend.labs = levels(flare.cd.df$CReactiveProtein_cat),
+  palette = c("#1A8FE3", "#FED766", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/CRP-full-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$CReactiveProtein_cat <- cut(flare.uc.df$CReactiveProtein, 
+                                        c(0, 5, 10.0000001, Inf),
+                                        labels = c("CRP < 5",
+                                                   "5 ≤ CRP ≤ 10",
+                                                   "CRP > 10"),
+                                        include.lowest = TRUE,
+                                        right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ CReactiveProtein_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "CRP",
+  legend.labs = levels(flare.uc.df$CReactiveProtein_cat),
+  palette = c("#1A8FE3", "#FED766", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/CRP-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ CReactiveProtein_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "CRP",
+  legend.labs = levels(flare.uc.df$CReactiveProtein_cat),
+  palette = c("#1A8FE3", "#FED766", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/CRP-full-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+## Haemoglobin
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.cd.df$Haemoglobin_cat <- cut(flare.cd.df$Haemoglobin,
+                                   quantile(flare.df$Haemoglobin,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Haemoglobin_cat,
+               data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Haemoglobin",
+  legend.labs = levels(flare.cd.df$Haemoglobin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/haemoglobin-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Haemoglobin_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Haemoglobin",
+  legend.labs = levels(flare.cd.df$Haemoglobin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/haemoglobin-full-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$Haemoglobin_cat <- cut(flare.uc.df$Haemoglobin,
+                                   quantile(flare.df$Haemoglobin,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Haemoglobin_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Haemoglobin",
+  legend.labs = levels(flare.uc.df$Haemoglobin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/haemoglobin-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Haemoglobin_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Haemoglobin",
+  legend.labs = levels(flare.uc.df$Haemoglobin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/haemoglobin-full-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+## White cell count
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.cd.df$WCC_cat <- cut(flare.cd.df$WCC,
+                                   quantile(flare.df$WCC,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ WCC_cat,
+               data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White cell count",
+  legend.labs = levels(flare.cd.df$WCC_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/WCC-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + WCC + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ WCC_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White cell count",
+  legend.labs = levels(flare.cd.df$WCC_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/WCC-full-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + WCC + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$WCC_cat <- cut(flare.uc.df$WCC,
+                                   quantile(flare.df$WCC,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ WCC_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White cell count",
+  legend.labs = levels(flare.uc.df$WCC_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/WCC-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + WCC + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ WCC_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White cell count",
+  legend.labs = levels(flare.uc.df$WCC_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/WCC-full-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + WCC + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+## Albumin
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.cd.df$Albumin_cat <- cut(flare.cd.df$Albumin,
+                                   quantile(flare.df$Albumin,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Albumin_cat,
+               data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Albumin",
+  legend.labs = levels(flare.cd.df$Albumin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/Albumin-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Albumin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Albumin_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Albumin",
+  legend.labs = levels(flare.cd.df$Albumin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/Albumin-full-cd-KM.pdf")
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Albumin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$Albumin_cat <- cut(flare.uc.df$Albumin,
+                                   quantile(flare.df$Albumin,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Albumin_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Albumin",
+  legend.labs = levels(flare.uc.df$Albumin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/Albumin-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Albumin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Albumin_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Albumin",
+  legend.labs = levels(flare.uc.df$Albumin_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/Albumin-full-uc-KM.pdf")
+p
+invisible(dev.off())
+p
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Albumin + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.
+
+```{R}
+saveRDS(flare.df, paste0(outdir, "flares-biochem.RDS"))
+saveRDS(flare.cd.df, paste0(outdir, "flares-biochem-cd.RDS"))
+saveRDS(flare.uc.df, paste0(outdir, "flares-biochem-uc.RDS"))
+```
+
+
+

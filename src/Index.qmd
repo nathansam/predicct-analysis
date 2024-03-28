@@ -1,5 +1,5 @@
 ---
-title: "PREdiCCt analyses"
+title: "About"
 date: ""
 date-format: ""
 title-block-banner: false
@@ -17,19 +17,17 @@ author:
 # At least one R code block has to exist or inline doesn't work
 ```
 
-## About
+## Introduction
 
 To-do
 
 This work uses data provided by patients and collected by the NHS as part of
-their care and support. We are very grateful to participants and their IBD care
-teams for their support. Without your contributions, this study would not have
-been possible. 
+their care and support. We are grateful to participants and their IBD care
+teams for their support. 
 
 ## Using this website
 
-The navigation menu at the top of the page will allow you to navigate through
-the steps of the analysis pipeline.  The code button at the top of each page can
+The code button at the top of each page can
 be used to show all code blocks instead of clicking on the code buttons for each
 individual block of code. Moving the mouse pointer over any citations in a
 report will produce a pop up box with reference details. Clicking on the

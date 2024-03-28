@@ -1,0 +1,814 @@
+---
+title: "Controlled variables"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Survival.bib
+---
+
+## Introduction
+
+```{R}
+#| message: false
+library(readxl)
+library(tidyverse)
+library(datefixR)
+library(survival)
+library(survminer)
+library(pander)
+library(coxme)
+library(finalfit)
+library(DescTools)
+library(gtsummary)
+
+
+# paths to PREdiCCt data
+if (file.exists("/docker")) { # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+} else { # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+if (!dir.exists("plots")) dir.create("plots")
+
+demo <- readRDS(paste0(outdir, "demo-full.RDS"))
+demo$FC <- log(demo$FC)
+
+cox.summary <- function(fit) {
+  cat("Cox model summary:")
+  fit %>%
+    finalfit::fit2df(condense = FALSE) %>%
+    knitr::kable(
+      col.names = c(
+        "Variable",
+        "HR",
+        "Lower 95%",
+        "Upper 95%",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
+    print()
+  
+  cat("\\newline
+  
+Diagnostics: \\newline
+  
+")
+  
+  cat('\\newline
+  
+::: {.panel-tabset} 
+
+      ')
+  
+  cat("
+  
+###### Proportional hazards assumption test \\newline
+
+  ")
+  cox.zph(fit)$table %>%
+    knitr::kable(
+      col.names = c(
+        "",
+        "Chi-squared statistic",
+        "DF",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
+    print()
+  
+  cat("\\newline
+
+###### DF betas \\newline
+
+  ")
+  
+  print(ggcoxdiagnostics(fit, type = "dfbeta"))
+  
+  cat("\\newline 
+  
+###### Martignale residuals \\newline
+      
+      ")
+  
+  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+  
+  cat("\\newline
+  
+:::
+
+      ")
+  return()
+}
+
+flare.df <- readRDS(paste0(outdir, "flares-overview.RDS"))
+flare.cd.df <- subset(flare.df, diagnosis2 == "CD")
+flare.uc.df <- subset(flare.df, diagnosis2 == "UC/IBDU")
+```
+
+Before exploring dietary variables of interest, the variables being controlled
+for will be first investigated.
+
+As smoking status is believe to act in opposite directions for CD and UC (being
+protective for UC but associated with worse outcomes in CD [@Birrenbach_2004]),
+the diseases will be modelled separately.
+
+Of these variables, only sex was found to be associated with disease flare. At
+present, the SAP will continue to be followed and these factors will still be
+modelled. However, this means subjects without smoking status available are
+being excluded whilst smoking status does not appear to be contributing
+meaningfully to the models. 
+
+## Sex
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(softflare_time, softflare) ~ Sex, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sex",
+  legend.labs = c("Male", "Female"),
+  palette = c("#00A6ED", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-sex-cd-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-cd-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flares
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Sex, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sex",
+  legend.labs = c("Male", "Female"),
+  palette = c("#00A6ED", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-sex-cd-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-cd-full.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(softflare_time, softflare) ~ Sex, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sex",
+  legend.labs = c("Male", "Female"),
+  palette = c("#00A6ED", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-sex-uc-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-uc-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Sex, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sex",
+  legend.labs = c("Male", "Female"),
+  palette = c("#00A6ED", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-sex-uc-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-sex-uc-full.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+## Smoking status
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(softflare_time, softflare) ~ Smoke, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Smoking status",
+  legend.labs = c("Current", "Previous", "Never"),
+  palette = c("#00A6ED", "#FFB400", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-smoking-cd-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-cd-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Smoke, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Smoking status",
+  legend.labs = c("Current", "Previous", "Never"),
+  palette = c("#00A6ED", "#FFB400", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-smoking-cd-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-cd-full.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(softflare_time, softflare) ~ Smoke, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Smoking status",
+  legend.labs = c("Current", "Previous", "Never"),
+  palette = c("#00A6ED", "#FFB400", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-smoking-uc-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-uc-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Smoke, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Smoking status",
+  legend.labs = c("Current", "Previous", "Never"),
+  palette = c("#00A6ED", "#FFB400", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-smoking-uc-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-smoking-uc-full.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+## Deprivation
+
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 7
+fit <- survfit(Surv(softflare_time, softflare) ~ IMD, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "IMD",
+  palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-IMD-cd-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-IMD-cd-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flare
+
+```{R}
+#| fig-height: 7
+fit <- survfit(Surv(hardflare_time, hardflare) ~ IMD, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "IMD",
+  palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-IMD-cd-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-IMD-cd-full.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 7
+fit <- survfit(Surv(softflare_time, softflare) ~ IMD, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "IMD",
+  palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-IMD-uc-cut.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-IMD-uc-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flare
+
+```{R}
+#| fig-height: 7
+fit <- survfit(Surv(hardflare_time, hardflare) ~ IMD, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "IMD",
+  palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-IMD-uc-full.pdf", width = 9, height = 7)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-IMD-uc-full.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+## Faecal calprotectin
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(softflare_time, softflare) ~ cat, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Faecal calprotectin",
+  palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-FC-cd-cut.pdf", width = 7, height = 6.5)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-FC-cd-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ cat, data = flare.cd.df)
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Faecal calprotectin",
+  palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-FC-cd-full.pdf", width = 7, height = 6.5)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-FC-cd-full.png",
+  width = 7,
+  height = 6.5,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(softflare_time, softflare) ~ cat, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Faecal calprotectin",
+  palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare"
+)
+
+cairo_pdf("plots/EOF-flare-FC-uc-cut.pdf", width = 7, height = 6.5)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-FC-uc-cut.png",
+  width = 9,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+#### Hard flare
+
+```{R}
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ cat, data = flare.uc.df)
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Faecal calprotectin",
+  palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare"
+)
+
+cairo_pdf("plots/EOF-flare-FC-uc-full.pdf", width = 7, height = 6.5)
+p
+invisible(dev.off())
+
+png("plots/EOF-flare-FC-uc-full.png",
+  width = 7,
+  height = 6.5,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+p
+```
+
+:::
+
+## Cox models
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare 
+
+```{R}
+#| output: "asis"
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df,
+  model = TRUE
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| output: "asis"
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare 
+
+```{R}
+#| output: "asis"
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| output: "asis"
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+```{R}
+saveRDS(flare.df, paste0(outdir, "flares-contolled.RDS"))
+saveRDS(flare.cd.df, paste0(outdir, "flares-controlled-cd.RDS"))
+saveRDS(flare.uc.df, paste0(outdir, "flares-controlled-uc.RDS"))
+```
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.

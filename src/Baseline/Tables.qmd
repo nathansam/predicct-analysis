@@ -1,0 +1,520 @@
+---
+title: "Overall tables"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Baseline.bib   
+---
+
+## Introduction
+
+```{R}
+set.seed(123)
+
+##############
+## Packages ##
+##############
+
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+library(readxl) # Read in Excel files
+library(lubridate) # Handle dates
+library(datefixR) # Standardise dates
+library(patchwork) # Arrange ggplots
+
+# Generate tables
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+# paths to PREdiCCt data
+if (file.exists("/docker")) { # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+} else { # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+demo <- readRDS(paste0(outdir, "demo-diet.RDS"))
+FFQ <- read_xlsx(paste0(
+  prefix,
+  "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
+))
+```
+
+
+## Table of baseline data by cohort
+
+
+```{R}
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+demo$control_8 <- as.numeric(demo$control_8)
+
+
+comp <- demo
+comp$cohort <- "All"
+
+temp <- demo %>%
+  drop_na(cat)
+temp$cohort <- "FC"
+
+comp <- rbind(comp, temp)
+
+temp <- subset(demo, ParticipantNo %in% FFQ$participantno)
+temp$cohort <- "FFQ"
+
+comp <- rbind(comp, temp)
+
+comp$cohort <- factor(comp$cohort,
+  levels = c("All", "FC", "FFQ"),
+  labels = c("Full cohort", "FC cohort", "FFQ cohort")
+)
+
+table1(
+  ~ Age +
+    Sex +
+    Ethnicity +
+    BMIcat +
+    diagnosis +
+    `IBD Duration` +
+    IMD +
+    control_8 +
+    vas_control +
+    FC +
+    CReactiveProtein +
+    Haemoglobin +
+    WCC +
+    Albumin +
+    Meat_sum +
+    fibre +
+    PUFA_percEng +
+    NOVAScore_cat +
+    Biologic | cohort,
+  data = comp,
+  render.continuous = my.render.cont,
+  overall = FALSE
+)
+```
+
+### Associations with cohort membership 
+
+Only age, biologic use, and albumin were found to be significantly different
+across cohorts. 
+
+#### Age
+
+There is a significant difference in age across cohorts with subjects in the FFQ
+sub-cohort being more likely to be older than the Full or FC cohorts. 
+
+```{R}
+pander(summary(aov(Age ~ cohort, data = comp)))
+```
+
+#### Sex
+
+```{R}
+pander(chisq.test(comp$Sex, comp$cohort))
+```
+
+#### IBD type
+
+```{R}
+pander(chisq.test(comp$diagnosis2, comp$cohort))
+```
+
+#### Index of multiple deprivation
+
+```{R}
+pander(chisq.test(comp$IMD, comp$cohort))
+```
+
+#### Disease duration
+
+```{R}
+pander(summary(aov(`IBD Duration` ~ cohort, data = comp)))
+```
+
+#### IBD Control-8
+
+```{R}
+pander(summary(aov(control_8 ~ cohort, data = comp)))
+```
+
+#### IBD visual analogue score
+
+```{R}
+pander(chisq.test(comp$vas_control, comp$cohort))
+```
+
+#### Body mass index
+
+```{R}
+pander(summary(aov(BMI ~ cohort, data = comp)))
+```
+
+#### Faecal calprotectin
+
+FC has been treated as a continuous variable for this test. FC has not been 
+discretised.
+
+```{R}
+pander(summary(aov(FC ~ cohort, data = comp)))
+```
+
+#### C-reactive protein
+
+```{R}
+pander(summary(aov(CReactiveProtein ~ cohort, data = comp)))
+```
+
+#### Haemoglobin
+
+```{R}
+pander(summary(aov(Haemoglobin ~ cohort, data = comp)))
+```
+
+#### White cell count
+
+```{R}
+pander(summary(aov(WCC ~ cohort, data = comp)))
+```
+
+#### Albumin 
+
+There is a significant difference in albumin across the cohorts. However, this
+difference appears to be negligible. 
+
+```{R}
+pander(summary(aov(Albumin ~ cohort, data = comp)))
+```
+
+#### Dietary data
+
+Dietary data have not been compared across cohorts.
+
+#### Biologic usage
+
+There is a significant difference in biologic usage across the cohorts with
+subjects in the FFQ sub-cohort being less likely to have been prescribed a
+biologic than the full cohort or the FC sub-cohort. 
+
+```{R}
+pander(chisq.test(comp$Biologic, comp$cohort))
+```
+
+## Table of baseline data by FC groups
+
+```{R}
+#| label: tbl-tab2
+#| tbl-cap: "Baseline data by FC."
+
+demo %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Age +
+    Sex +
+    Ethnicity +
+    BMIcat +
+    diagnosis +
+    `IBD Duration` +
+    IMD +
+    control_8 +
+    vas_control +
+    FC +
+    CReactiveProtein +
+    Haemoglobin +
+    WCC +
+    Albumin +
+    Meat_sum +
+    fibre +
+    PUFA_percEng +
+    NOVAScore_cat +
+    Biologic | cat,
+    render.continuous = my.render.cont
+  )
+```
+
+## Table of baseline data by IBD type
+
+```{R}
+#| label: tbl-tab1
+#| tbl-cap: "Baseline data by IBD type."
+
+demo %>%
+  drop_na(cat) %>%
+  table1::table1(
+    x = ~ Age +
+    Sex +
+    Ethnicity +
+    BMIcat +
+    diagnosis +
+    `IBD Duration` +
+    IMD +
+    control_8 +
+    vas_control +
+    FC +
+    CReactiveProtein +
+    Haemoglobin +
+    WCC +
+    Albumin +
+    Meat_sum +
+    fibre +
+    PUFA_percEng +
+    NOVAScore_cat +
+    Biologic |
+      diagnosis2,
+    render.continuous = my.render.cont
+  )
+```
+
+## Table of Crohn's disease variables
+
+```{R}
+demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
+demo.cd %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Location +
+      L4 +
+      HBI +
+      PRO2 +
+      Behaviour +
+      Perianal +
+      Surgery +
+      Smoke +
+      ECigs |
+      cat,
+    render.continuous = my.render.cont
+  )
+```
+
+## Table of Crohn's disease variables by cohort
+
+```{R}
+comp <- demo.cd
+comp$cohort <- "All"
+
+temp <- demo.cd %>%
+  drop_na(cat)
+temp$cohort <- "FC"
+
+comp <- rbind(comp, temp)
+
+temp <- subset(demo.cd, ParticipantNo %in% FFQ$participantno)
+temp$cohort <- "FFQ"
+
+comp <- rbind(comp, temp)
+
+comp$cohort <- factor(comp$cohort,
+  levels = c("All", "FC", "FFQ"),
+  labels = c("Full cohort", "FC cohort", "FFQ cohort")
+)
+
+table1(
+  ~ Location +
+    L4 +
+    HBI +
+    PRO2 +
+    Behaviour +
+    Perianal +
+    Surgery +
+    Smoke +
+    ECigs |
+    cohort,
+  data = comp,
+  render.continuous = my.render.cont,
+  overall = FALSE
+)
+```
+
+### Associations between Crohn's Disease-only variables and cohort membership
+
+None of the CD-only variables were found to significantly differ across cohorts. 
+
+#### Montreal location
+
+```{R}
+pander(fisher.test(comp$Location, comp$cohort, workspace = 200000000))
+```
+
+#### Upper gastrointestinal inflammation
+
+```{R}
+pander(chisq.test(comp$L4, comp$cohort))
+```
+
+#### Harvey-Bradshaw index
+
+```{R}
+pander(summary(aov(HBI ~ cohort, data = comp)))
+```
+
+#### PRO2
+
+```{R}
+pander(summary(aov(PRO2 ~ cohort, data = comp)))
+```
+
+#### Montreal behaviour
+
+```{R}
+pander(chisq.test(comp$Behaviour, comp$cohort))
+```
+
+#### Perianal disease
+
+```{R}
+pander(chisq.test(comp$Perianal, comp$cohort))
+```
+
+#### Surgery
+
+```{R}
+pander(chisq.test(comp$Surgery, comp$cohort))
+```
+
+#### Smoking status
+
+```{R}
+pander(chisq.test(comp$Smoke, comp$cohort))
+```
+
+#### E-cigarette use
+
+```{R}
+pander(chisq.test(comp$ECigs, comp$cohort))
+```
+
+
+## Table of ulcerative colitis/IBDU variables
+
+```{R}
+
+demo.uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
+
+demo.uc %>%
+  drop_na(cat) %>%
+  table1(
+    x = ~ Extent + Mayo + PRO2 + Smoke + ECigs | cat,
+    render.continuous = my.render.cont
+  )
+```
+
+## Table of Ulcerative colitis/IBDU variables by cohort
+
+```{R}
+comp <- demo.uc
+comp$cohort <- "All"
+
+temp <- demo.uc %>%
+  drop_na(cat)
+temp$cohort <- "FC"
+
+comp <- rbind(comp, temp)
+
+temp <- subset(demo.uc, ParticipantNo %in% FFQ$participantno)
+temp$cohort <- "FFQ"
+
+comp <- rbind(comp, temp)
+
+comp$cohort <- factor(comp$cohort,
+  levels = c("All", "FC", "FFQ"),
+  labels = c("Full cohort", "FC cohort", "FFQ cohort")
+)
+
+
+table1(~ Extent + Mayo + PRO2 + Smoke + ECigs | cohort,
+  data = comp,
+  render.continuous = my.render.cont,
+  overall = FALSE
+)
+```
+
+### Associations between Crohn's Disease-only variables and cohort membership
+
+None of the UC/IBDU-only variables were found to significantly differ across
+cohorts. 
+
+#### Montreal extent
+
+```{R}
+pander(chisq.test(comp$Extent, comp$cohort))
+```
+
+#### Mayo score
+
+```{R}
+pander(summary(aov(Mayo ~ cohort, data = comp)))
+```
+
+#### PRO2
+
+```{R}
+pander(summary(aov(PRO2 ~ cohort, data = comp)))
+```
+
+#### Smoking status
+
+```{R}
+pander(chisq.test(comp$Smoke, comp$cohort))
+```
+
+#### E-cigarette use
+
+```{R}
+pander(chisq.test(comp$ECigs, comp$cohort))
+```
+
+
+```{R}
+demo %>%
+  drop_na(cat) %>%
+  saveRDS(paste0(outdir, "demo.RDS"))
+
+demo %>%
+  saveRDS(paste0(outdir, "demo-full.RDS"))
+
+demo.cd %>%
+  saveRDS(paste0(outdir, "demo-cd.RDS"))
+
+demo.uc %>%
+  saveRDS(paste0(outdir, "demo-uc.RDS"))
+```
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.

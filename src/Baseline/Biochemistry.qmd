@@ -1,0 +1,343 @@
+---
+title: "Biochemistry data"
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+bibliography: Baseline.bib   
+---
+
+## Introduction
+
+```{R}
+set.seed(123)
+
+##############
+## Packages ##
+##############
+
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+library(readxl) # Read in Excel files
+library(lubridate) # Handle dates
+library(datefixR) # Standardise dates
+library(patchwork) # Arrange ggplots
+
+# Generate tables
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+# paths to PREdiCCt data
+if (file.exists("/docker")) { # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+} else { # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+demo <- readRDS(paste0(outdir, "demo-IBD.RDS"))
+
+labs <- as.data.frame(read_xlsx(paste0(
+  data.path,
+  "Baseline2022/bloodtestresults.xlsx"
+)))
+
+labs <- labs %>%
+  distinct(ParticipantNo, .keep_all = TRUE)
+
+
+labs <- labs[, c(
+  "ParticipantNo",
+  "CReactiveProtein",
+  "Haemoglobin",
+  "HaemoglobinUnit",
+  "WCC",
+  "WCCUnit",
+  "Albumin",
+  "AlbuminUnit"
+)]
+demo <- merge(demo, labs, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
+```
+
+Participants' IBD care teams reported biochemistry results via REDCap. Whilst
+data from many types of blood tests were collected, only the tests most relevant
+to IBD will be presented here. Where possible, reference levels have been
+denoted on plots via vertical lines. 
+
+## C-reactive protein
+
+```{R}
+perc <- (1 - demo %>%
+  drop_na(cat) %>%
+  select(CReactiveProtein) %>%
+  is.na() %>%
+  sum() /
+  demo %>%
+    drop_na(cat) %>%
+    nrow()) * 100
+```
+
+Alongside FC, CRP is the most requested laboratory test for monitoring IBD
+disease activity. Unlike FC which acts as a proxy for gastrointestinal
+inflammation, CRP provides an indication of inflammation across the body. The
+reference level for CRP is considered to be < 5 mg/L. 
+
+CRP was generally well-completed with `r round(perc, 2)`% of subjects having an
+associated CRP. As can be seen in @fig-crp-dist, there were some extreme, albeit
+physiologically plausible, values reported. 
+  
+```{R}
+#| label: fig-crp-dist
+#| fig-cap: "Distribution of CRP at recruitment for the FC cohort."
+#| warning: false
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = CReactiveProtein)) +
+  geom_histogram(bins = 100, fill = "#EB9486", color = "#BF7163") +
+  theme_minimal() +
+  xlab("CRP (mg/L)") +
+  ylab("Frequency")
+```
+
+As should be expected, CRP was found to be associated with FC. 
+
+```{R}
+#| label: tbl-crp-fc
+#| tbl-cap: "ANOVA between CRP and FC groups."
+pander(summary(aov(CReactiveProtein ~ cat, data = demo)))
+```
+
+## Haemoglobin
+
+```{R}
+perc <- (1 - demo %>%
+  drop_na(cat) %>%
+  select(Haemoglobin) %>%
+  is.na() %>%
+  sum() /
+  demo %>%
+    drop_na(cat) %>%
+    nrow()) * 100
+```
+
+Haemoglobin is a protein which facilitates the transport of oxygen in red blood
+cells. Haemoglobin has been reported for `r round(perc, 2)`% of subjects in the
+FC cohort. Haemoglobin differs between sex and accordingly has sex-specific
+reference levels (130-170 g/L for men and 120-150g/L for women).
+
+Whilst a normal distribution for haemoglobin is observed overall
+(@fig-hb-dist-old), there appears to be some observations substantially lower
+than one would expect for this distribution. Investigating these observations
+suggests that these observations are likely to be in units of g/dL instead of
+the common g/L units (@tbl-hb-units). 
+
+```{R}
+#| label: fig-hb-dist-old
+#| fig-cap: "Distribution of haemoglobin before processing."
+#| warning: false
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Haemoglobin)) +
+  geom_histogram(bins = 100, fill = "#76E5FC", color = "#2EB6CD") +
+  theme_minimal() +
+  xlab("Haemoglobin") +
+  ylab("Frequency")
+```
+
+
+```{R}
+#| label: tbl-hb-units
+#| tbl-cap: "Reported unit measurements for Haemoglobin reported less than 50."
+knitr::kable(table(subset(demo, Haemoglobin < 50)$HaemoglobinUnit),
+  col.names = c("Units", "Frequency")
+)
+```
+
+Having assumed any Haemoglobin < 50 has been reported in g/dL, any Haemoglobin
+observations <50  have been multiplied by 10 to be in g/L units. This results
+in the distribution seen in @fig-hb-dist-new. 
+
+```{R}
+#| label: fig-hb-dist-new
+#| fig-cap: "Distribution of haemoglobin after processing."
+#| warning: false
+demo <- demo %>%
+  mutate(Haemoglobin = if_else(Haemoglobin < 50,
+    Haemoglobin * 10,
+    Haemoglobin
+  )) %>%
+  select(-HaemoglobinUnit)
+
+p1 <- demo %>%
+  drop_na(cat) %>%
+  filter(Sex == "Female") %>%
+  ggplot(aes(x = Haemoglobin)) +
+  geom_histogram(bins = 100, fill = "#8789C0", color = "#6A6B9C") +
+  theme_minimal() +
+  xlab("Haemoglobin (g/L)") +
+  ylab("Frequency") +
+  xlim(0, 190) +
+  geom_vline(xintercept = c(120, 150), color = "#93032E") +
+  ggtitle("Female haemoglobin")
+
+
+
+p2 <- demo %>%
+  drop_na(cat) %>%
+  filter(Sex == "Male") %>%
+  ggplot(aes(x = Haemoglobin, fill = Sex, color = Sex)) +
+  geom_histogram(bins = 100, fill = "#225560", color = "#044651") +
+  theme_minimal() +
+  xlab("Haemoglobin (g/L)") +
+  ylab("Frequency") +
+  xlim(0, 190) +
+  geom_vline(xintercept = c(130, 170), color = "#93032E") +
+  ggtitle("Male haemoglobin")
+
+(p1 / p2)
+```
+
+Haemoglobin was not found to be significantly associated with FC at a 5%
+significance level. 
+
+```{R}
+#| label: tbl-hb-fc
+#| tbl-cap: "ANOVA between haemoglobin and FC groups."
+pander(summary(aov(Haemoglobin ~ cat, data = demo)))
+```
+
+## White cell count
+
+```{R}
+perc <- (1 - demo %>%
+  drop_na(cat) %>%
+  select(WCC) %>%
+  is.na() %>%
+  sum() /
+  demo %>%
+    drop_na(cat) %>%
+    nrow()) * 100
+```
+
+White cell count (WCC) is a measurement of all white blood cells (neutrophils,
+lymphocytes, monocytes, basophils and eosinophils) which help to fight
+infections. `r round(perc, 2)`% of subjects have a WCC recorded. 
+
+Whilst some extreme WCC values are observed, most observations fall within the
+reference range (4-11 (×10^9/L)) and a conventional bell curve is seen overall. 
+
+```{R}
+#| label: fig-WCC-dist
+#| fig-cap: "Distrbution of WCC for the FC cohort. Vertical lines indicate the reference range."
+#| warning: false
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = WCC)) +
+  geom_histogram(bins = 100, fill = "#7FD8BE", color = "#2D977E") +
+  theme_minimal() +
+  xlab("White cell count (×10^9/L") +
+  ylab("Frequency") +
+  geom_vline(xintercept = c(4, 11), color = "#FF686B", alpha = 0.8)
+```
+
+WCC is reported to be associated with FC. 
+
+```{R}
+#| label: tbl-wcc-fc
+#| tbl-cap: "ANOVA between WCC and FC groups."
+pander(summary(aov(WCC ~ cat, data = demo)))
+```
+
+## Albumin
+
+```{R}
+perc <- (1 - demo %>%
+  drop_na(cat) %>%
+  select(Albumin) %>%
+  is.na() %>%
+  sum() /
+  demo %>%
+    drop_na(cat) %>%
+    nrow()) * 100
+```
+
+Albumin is globular protein made in the liver which carries hormones, vitamins,
+and enzymes. Albumin has a reference range of 35-50 (g/L).
+`r round(perc, 2)`% of subjects in the FC cohort have a recorded Albumin
+result. 
+
+```{R}
+#| label: fig-Albumin-dist-old
+#| fig-cap: "Distribution of Albumin before processing."
+#| warning: false
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Albumin)) +
+  geom_histogram(bins = 100, fill = "#21D19F", color = "#26A37D") +
+  theme_minimal() +
+  xlab("Albumin") +
+  ylab("Frequency") +
+  geom_vline(xintercept = c(35, 50), color = "#FF686B")
+```
+
+As can be seen in @fig-Albumin-dist-old, a very extreme value has been reported. 
+This has been assumed to have been off by a factor of 10. Adjusting this
+observation results in the distribution seen in @fig-Albumin-dist-new.
+
+```{R}
+#| label: fig-Albumin-dist-new
+#| fig-cap: "Distribution of Albumin after processing."
+#| warning: false
+demo <- demo %>%
+  mutate(Albumin = if_else(Albumin > 100, Albumin / 10, Albumin)) %>%
+  select(-AlbuminUnit)
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Albumin)) +
+  geom_histogram(bins = 40, fill = "#21D19F", color = "#26A37D") +
+  theme_minimal() +
+  xlab("Albumin (g/L)") +
+  ylab("Frequency") +
+  geom_vline(xintercept = c(35, 50), color = "#FF686B")
+```
+
+There is strong evidence for an association between Albumin and FC. 
+
+```{R}
+#| label: tbl-Albumin-fc
+#| tbl-cap: "ANOVA between Albumin and FC groups."
+pander(summary(aov(Albumin ~ cat, data = demo)))
+```
+
+```{R}
+saveRDS(demo, paste0(outdir, "demo-biochem.RDS"))
+```
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.

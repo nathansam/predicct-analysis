@@ -18,8 +18,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300');
 
 .code-tools-button {
-  color: white !important;
-  background-color: #004276 !important;
+  background-color: #64c7ce !important;
 }
 
 .navbar {
@@ -39,7 +38,47 @@ img.center{
   padding-right: 20px;
 }
 
-h5 {
-  color: #4F86C6 !important;
+h1, h2, h3, h4 {
+  color: #57aaae !important;
 }
 
+a {
+  color: #57aaae !important;
+}
+
+h5 {
+  color: #dff1f3 !important;
+}
+
+.output {
+  padding-left: 30% !important;
+}
+
+
+.sidebar-menu-container a {
+  color: gray !important;
+}
+
+.sidebar-menu-container a.active {
+  color: #95ca3c !important;
+}
+
+
+.sidebar-menu-container a:hover {
+    color: #95ca3c !important;
+}
+
+
+.quarto-title-meta-author a {
+  color:gray !important;
+}
+
+
+.sidebar nav[role=doc-toc] ul>li>a.active, .sidebar nav[role=doc-toc] ul>li>ul>li>a.active {
+    border-left: 1px solid #95ca3c !important;
+    color: #95ca3c !important;
+}
+
+.sidebar nav[role=doc-toc] ul>li>a:hover, .sidebar nav[role=doc-toc] ul>li>ul>li>a:hover {
+    color: #95ca3c !important;
+}
