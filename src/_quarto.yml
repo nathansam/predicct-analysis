@@ -1,7 +1,7 @@
 project:
   type: website
   render:
-    - "Index.qmd"
+    - "index.qmd"
     - "Baseline/Introduction.qmd"
     - "Baseline/Recruitment.qmd"
     - "Baseline/Demographics.qmd"
@@ -19,6 +19,7 @@ project:
   output-dir: "../docs"
   resources:
     - "robots.txt"
+    - ".nojekyll"
 
 execute:
       freeze: auto
@@ -58,7 +59,7 @@ website:
             url:  https://github.com/nathansam/predicct-analysis/issues
     search: true
     contents:
-      - "Index.qmd"
+      - "index.qmd"
       - "Baseline/Recruitment.qmd"
       - section: "Baseline Analyses"
         contents:
