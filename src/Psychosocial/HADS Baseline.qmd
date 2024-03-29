@@ -59,7 +59,6 @@ if (file.exists("/.dockerenv")) {
 #hads is question 42 of the baseline questionnaire
 hads <- read.xlsx(paste0(data.path, "Baseline2022/hads.xlsx"))
 health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
-flarecause <- read.xlsx(paste0(data.path, "Baseline2022/flarecause.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
@@ -78,79 +77,38 @@ hads <- hads %>%
 health <- health %>%
   filter(!is.na(ParticipantId))
 
-flarecause <- flarecause %>%
-  filter(!is.na(ParticipantId))
-
 demographics <- demographics %>% 
-  filter(!is.na(ParticipantId))
-
-lifeevents <- lifeevents %>% 
   filter(!is.na(ParticipantId))
 
 IBD <- IBD %>% 
   filter(!is.na(ParticipantId))
-
 ```
 
 
-### Introduction
-
-The links between gut health and central nervous system (CNS) symptoms are of emerging importance for a wide array of diseases. 
-There is evidence to suggest that lower perceived stress is linked to a reduced risk of developing IBD as well as influencing the severity of disease (1, 2), and psychological co-morbidities have been linked to increase symptom reporting (3).
 
 
-The PREdiCCt baseline questionnaire asked participants: 
-What do you think causes flare in your symptoms? (tick all that apply)[Q35.1]
 
-As seen in the graph below, the two most common patient reported causes of flare are stress and dietary changes. 
-
-The focus of my work will be investigating the relationship between mental health, stress and flares of IBD.
-Diet is being investigated in central analyses.
-
-
-```{r patient reported flare}
-# Select the columns of interest
-variables_of_interest <- flarecause[, c(
-  "MedsStoppedWorking", "StoppedAttendClinic", "StoppedMeds",
-  "DietaryChanges", "Gastroenteritis", "OtherInfection",
-  "Travel", "Stress", "Smoking", "Alcohol",
-  "Antibiotics", "FCPregnancy", "Breastfeeding",
-  "Menstruation", "Exercise", "SleepDisturbance",
-  "Pollution", "NSAIDS", "OtherFlareCause"
-)]
-
-# Reshape the data into long format
-variables_long <- gather(variables_of_interest, key = "Variable", value = "Cause")
-
-# Plot the counts using geom_bar
-patient_flare_baseline <- ggplot(variables_long, aes(x = Cause, fill = Variable)) +
-  geom_bar(position = "dodge", color = "black") +
-  ggtitle("Patient reported flare cause via baseline questionnaire") +
-  xlab("Cause") +
-  ylab("Count") +
-  theme_minimal() +
-  theme(axis.ticks.x = element_blank())
-
-print(patient_flare_baseline)
-
-```
-
-
-### Data for analysis
+### The Hospital Anxiety and Depression Scale
 
 Participants filled out the HADS questionnaire (presented below) at baseline. This questionnaire allows for calculation of depression and anxiety scores separately.
  
 ![image](/Users/chiaracotronei/documents/Baseline/HADSquestionnaire.png)
 
+
 ## Analysis of baseline HADS
 
-Patients under 18 (n=53) and without baseline faecal calprotectin (209) were excluded.
-9 participants had missing data for some or all HADS questions, these were excluded.
+
+### Methods
+
+Participants <18 years old (n=53) and participants missing baseline faecal calprotectin (n = 209) were excluded.
+Participants missing HADS data (n=9) were excluded.
+Scores were re-coded to reflect HADS scoring: HADS questions are scored 0-3 or 3-0 (as visible in image above), questionnaire responses were scored 1-4 (where 1 = 1st choice option, 2 = 2nd etc). 
+Scores were grouped separately for anxiety and depression, as per HADS-questionnaire, into 'normal' (0-7), 'borderline abnormal' (8-10) and 'abnormal' (11-21). In this report we will refer to "borderline abnormal" as "moderate", and "abnormal" as "high".
+This data is saved as "hads_with_demographics" (separate columns for anxiety and depression scores) and "hads_for_analysis" with variable hads_type (duplicate rows of participants).
 
 
-HADS scores were initally recorded as 1, 2, 3 and 4 (where 1= 1st multiple choice option, 2 = 2nd etc). However HADS questions are scored 0-3 or 3-0 (as visible in image above). The data was recoded to reflect this. 
-
-HADS were also divided into score groups as per the HADS questionnaire: 'normal' (0-7), 'borderline abnormal' (8-10) and 'abnormal' (11-21). In this report we will refer to "borderline abnormal" as "moderate", and "abnormal" as "high".
+We tested for associations of diagnosis type (CD vs UC/IBDU), sex, age group, flares reported in the previous year (flare vs no flares) and faecal calprotectin (by categories: <50, 50-250, >250) with score groups for anxiety and depression separately. This was done for the PREdiCCt IBD cohort as a whole, and for CD and UC/IBDU groups separately.
+Testing for associations was done by chi-square test or Fisher's exact test. 
 
 ```{r, join demographics, delete missing data, tidy HADS}
 #join demographics
@@ -162,7 +120,6 @@ hads_with_demographics$diagnosis2 <- plyr::mapvalues(hads_with_demographics$diag
   to = c(1, 2, 2, 2)
 ) %>%
   factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
-
 
 #exclude participants <17, 53 participants excluded, tot 1847
 hads_with_demographics <- hads_with_demographics[hads_with_demographics$age > 17,]
@@ -219,16 +176,29 @@ hads_with_demographics$AgeGroup <- cut(hads_with_demographics$age,
                          breaks = c(18, 24, 34, 44, 54, 65, Inf), 
                          labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
                          include.lowest = TRUE)
+
+#add FC data and exclude missing FC
 hads_with_demographics <- hads_with_demographics %>% 
   left_join(demo %>% select(ParticipantNo, FC, cat, IMD, Smoke))
 hads_with_demographics <- hads_with_demographics %>% 
   filter(!is.na(cat))
 
+#Join flare data
+hads_with_demographics <- hads_with_demographics %>% 
+  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
+#create flare groups
+hads_with_demographics <- hads_with_demographics %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
+#make flares into levels
+hads_with_demographics$flare_group <- factor(hads_with_demographics$flare_group, levels = c( "No Flares","1 or More Flares"))
+hads_with_demographics <- hads_with_demographics %>% 
+  filter(!is.na(flare_group))
+
 #create hads_for_analysis which has new variable 'hads_type'
 hads_for_analysis <- hads_with_demographics %>%
   gather(key = "hads_type", value = "hads_score", anxiety_hads, depression_hads)
 
-#score group
+#score groups
 hads_for_analysis <- hads_for_analysis %>% 
   mutate(
     score_group = cut(hads_score, breaks = c(0, 7, 10, 21), labels = c("0-7", "8-10", "11-21"), include.lowest = TRUE)
@@ -240,9 +210,14 @@ saveRDS(hads_for_analysis, paste0(save_path, "hads_for_analysis.RDS"))
 ```
 
 
+### Baseline scores
+
 At baseline, anxiety scores tended to be higher for anxiety compared than for depression. 
 
-[Could be interesting to reflect on this - does HADS tend to create lower scores in general for depression? Is this due to anxiety often preceding the development of depression? Is this a true relfection of mental disease burden in IBD population? Is anxiety higher prevalence than depression in whole population? Are people with depression less likely to carry out questionnaires than people with anxiety?]
+Reference to baseline population. 
+[Could be interesting to reflect on this - does HADS tend to create lower scores in general for depression? Is this due to anxiety often preceding the development of depression? Is this a true reflection of mental disease burden in IBD population? Is anxiety higher prevalence than depression in whole population? Are people with depression less likely to carry out questionnaires than people with anxiety?]
+
+
 
 ```{r, baseline distribution of anxiety and depression scores}
 ggplot(hads_for_analysis, aes(x = hads_score, colour = hads_type)) +
@@ -251,15 +226,7 @@ ggplot(hads_for_analysis, aes(x = hads_score, colour = hads_type)) +
        x = "HADS score",
        y = "Number of Participants") +
   theme_classic()
-```
 
-#### Investigating associations with sex
-
-We tested for associations of sex with HADS (grouped) using chi square test, in the PREdiCCt cohort as a whole.
-This showed that females were more likely to score higher HADS than males for anxiety scores and that there was no significant difference between sexes in depression scores.
-
-```{r, table for data ad chi sq}
-#anxiety_hads
 filtered_data_anxiety <- hads_for_analysis[hads_for_analysis$hads_type == "anxiety_hads", ]
 
 my.render.cont <- function(x) {
@@ -272,16 +239,114 @@ my.render.cont <- function(x) {
   )
 }
 
+table1::table1(~ score_group | hads_type,
+  data = hads_for_analysis,
+  render.continuous = my.render.cont,
+  caption = "Distribution across score groups, Anxiety and Depression"
+)
 
-table1::table1(~ score_group | Sex,
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont,
-  title = "Distribution of Anxiety Scores by Sex"
+  caption = "Distribution of Baseline Anxiety Scores across Key Variables"
 )
+
+#depression_hads
+filtered_data_depression <- hads_for_analysis[hads_for_analysis$hads_type == "depression_hads", ]
+
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
+  data = filtered_data_depression,
+  render.continuous = my.render.cont,
+  caption = "Distribution of Baseline Depression Scores across Key Variables"
+)
+
+#create subgroups for analysis
+
+#UC anxiety
+anxiety_uc <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "UC/IBDU",]
+#UC depression
+depression_uc <- filtered_data_depression[filtered_data_depression$diagnosis2 == "UC/IBDU",]
+#CD anxiety
+anxiety_cd <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "CD",]
+#CD depression
+depression_cd <- filtered_data_depression[filtered_data_depression$diagnosis2 == "CD",]
+
+
+```
+
+#### Association of baseline HADS with key variables
+
+Associations with anxiety scores:
+
+* no association between diagnosis groups
+* significant association with sex
+* significant association with age group
+* significant association with flares in previous year
+* no association with FC
+
+Associations with depression scores:
+
+* no association between diagnosis groups
+* no association with sex
+* association with age group whole cohort and UC/IBDU, not in CD separately 
+* significant association with flares in previous year whole coort and CD, but not true for UC/IBDU group
+* no association with FC
+
+
+#### Diagnosis type
+
+There are no significant differences in HADS-Anxiety or HADS-Depression score groups between CD and UC/IBDU cohorts.
+
+
+```{r, hads ad diagnosis tyoe}
+# Create the contingency table
+contingency_table_anxiety <- table(filtered_data_anxiety$diagnosis2, filtered_data_anxiety$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
+print(chi_squared_result_anxiety)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result_anxiety$p.value < alpha) {
+  message("There is a significant association between diagnosis type and anxiety score groups")
+} else {
+  message("There is no significant association between diagnosis type and anxiety score groups")
+}
+
+
+# Create the contingency table
+contingency_table_depression <- table(filtered_data_depression$diagnosis2, filtered_data_depression$score_group)
+chi_squared_result_depression <- chisq.test(contingency_table_depression)
+print(chi_squared_result_depression)
+#check for significance
+alpha <- 0.05
+if (chi_squared_result_depression$p.value < alpha) {
+  message("There is a significant association between diagnosis type and score group in depression HADS.")
+} else {
+  message("There is no significant association between diagnosis type and depression score groups.")
+}
+
+
+```
+
+
+
+#### Sex
+
+Anxiety scores and sex:
+
+* significant association in whole cohort (p-value = 3.448e-10)
+* significant in CD cohort (p-value = 3.196e-05)
+* significant in UC/IBDU cohort (p-value = 1.866e-05)
+
+Depression scores and sex:
+
+* no significant association in whole cohort, CD or UC/IBDU groups
+
+
+
+```{r, table for data ad chi sq}
 
 # Create the contingency table
 contingency_table_anxiety <- table(filtered_data_anxiety$Sex, filtered_data_anxiety$score_group)
-#chi.sq
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 print(chi_squared_result_anxiety)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
@@ -292,29 +357,18 @@ if (chi_squared_result_anxiety$p.value < alpha) {
   message("There is no significant association between sex and anxiety score groups")
 }
 
-#depression_hads
-filtered_data_depression <- hads_for_analysis[hads_for_analysis$hads_type == "depression_hads", ]
+#anxiety cd
+contingency_table_anxiety <- table(anxiety_uc$Sex, anxiety_uc$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
+print(chi_squared_result_anxiety)
 
-my.render.cont <- function(x) {
-  with(
-    stats.apply.rounding(stats.default(x),
-      digits = 3,
-      round.integers = FALSE
-    ),
-    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
-  )
-}
-
-
-table1::table1(~ score_group | Sex,
-  data = filtered_data_depression,
-  render.continuous = my.render.cont,
-  title = "Distribution of Depression Scores by Sex"
-)
+#anxiety UC
+contingency_table_anxiety <- table(anxiety_cd$Sex, anxiety_cd$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
+print(chi_squared_result_anxiety)
 
 # Create the contingency table
 contingency_table_depression <- table(filtered_data_depression$Sex, filtered_data_depression$score_group)
-#chi.sq
 chi_squared_result_depression <- chisq.test(contingency_table_depression)
 print(chi_squared_result_depression)
 #check for significance
@@ -324,22 +378,116 @@ if (chi_squared_result_depression$p.value < alpha) {
 } else {
   message("There is no significant association between sex and depression score groups.")
 }
+
+contingency_table_depression <- table(depression_cd$Sex, depression_cd$score_group)
+chi_squared_result_depression <- chisq.test(contingency_table_depression)
+print(chi_squared_result_depression)
+
+contingency_table_depression <- table(depression_uc$Sex, depression_uc$score_group)
+chi_squared_result_depression <- chisq.test(contingency_table_depression)
+print(chi_squared_result_depression)
 ```
 
 
 
-#### Investigations for associations with age
-
-We used linear modelling to investigate for association between HADS and age. 
-This showed there is a significant correlation between age and anxiety scores (Multiple R-squared:  0.03132,	Adjusted R-squared:  0.03079 , p-value: 2.14e-14), but not between age and depression scores (Multiple R-squared:  1.505e-06,	Adjusted R-squared:  -0.0005432,  p-value: 0.9581
+#### Age group
 
 
-We compared score groups on anxiety HADS and depression HADS across age groups using chi squared and found: 
-* a higher proportion of young people have moderate and high risk for anxiety 
-* a higher proportion of young people have moderate risk for depression.
-The percentage of participants within each score group/diviided into age groups is presented below for both anxiety and depression scores.
+We compared score groups for HADS-Anxiety and HADS-Depression scores across age groups using chi squared and found: 
 
-```{r, correlation with age, HADS,lm}
+Age groups and anxiety scores
+
+* significant associations in whole cohort (p-value = 5.289e-08)
+* significant in CD cohort (p-value = p-value = 0.006)
+* significant in UC/IBDU cohort (p-value = 0.001)
+
+Age groups and depression scores
+
+* significant associations in whole cohort (p-value = 0.031)
+* no significant in CD cohort (p-value = 0.078)
+* significant in UC/IBDU cohort (p-value = 0.036)
+
+As seen from the graphs below, a higher proportion of young people have moderate and high risk for anxiety. Interpretation of associations with age and depression scores is more challenging and the association is weaker. 
+
+
+
+```{r, correlation with age, HADS, chi-sq}
+
+percentages <- filtered_data_anxiety %>%
+  group_by(AgeGroup, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(AgeGroup) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group, y = percentage, colour = AgeGroup, group = AgeGroup)) +
+  geom_line() +
+  labs(title = "Distribution of baseline HADS-Anxiety Scores per age group",
+       x = "HADS score group",
+       y = "Number of Participants") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_classic()
+
+contingency_table_anxiety <- table(filtered_data_anxiety$AgeGroup, filtered_data_anxiety$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
+print(chi_squared_result_anxiety)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result_anxiety$p.value < alpha) {
+  message("There is a significant association between age groups and anxiety score groups")
+} else {
+  message("There is no significant association between age groups and anxiety score groups")
+}
+
+contingency_table_anxiety <- table(anxiety_cd$AgeGroup, anxiety_cd$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
+print(chi_squared_result_anxiety)
+
+contingency_table_anxiety <- table(anxiety_uc$AgeGroup, anxiety_uc$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
+print(chi_squared_result_anxiety)
+
+
+#derpression and age group
+percentages <- filtered_data_depression %>%
+  group_by(AgeGroup, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(AgeGroup) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group, y = percentage, colour = AgeGroup, group = AgeGroup)) +
+  geom_line() +
+  labs(title = "Distribution of baseline depression HADS Scores per age group",
+       x = "HADS score group",
+       y = "Number of Participants") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_classic()
+
+
+contingency_table_depression <- table(filtered_data_depression$AgeGroup, filtered_data_depression$score_group)
+#chi.sq
+chi_squared_result_dep <- chisq.test(contingency_table_depression)
+print(chi_squared_result_dep)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result_dep$p.value < alpha) {
+  message("There is a significant association between age groups and depression score groups")
+} else {
+  message("There is no significant association between age groups and depression score groups")
+}
+
+contingency_table_depression <- table(depression_cd$AgeGroup, depression_cd$score_group)
+chi_squared_result_dep <- chisq.test(contingency_table_depression)
+print(chi_squared_result_dep)
+
+contingency_table_depression <- table(depression_uc$AgeGroup, depression_uc$score_group)
+chi_squared_result_dep <- chisq.test(contingency_table_depression)
+print(chi_squared_result_dep)
+```
+
+We additionally used linear modelling to investigate for association between HADS scores and age. 
+This showed there is a significant correlation between age and anxiety scores (Multiple R-squared:  0.03132,	Adjusted R-squared:  0.03079 , p-value: 2.14e-14), but not between age and depression scores (Multiple R-squared:  1.505e-06,	Adjusted R-squared:  -0.0005432,  p-value = 0.9581)
+
+```{r, lm anxiety and depression and age}
 correlation_result_age_anxiety <- lm(age ~ hads_score, data = filtered_data_anxiety)
 summary(correlation_result_age_anxiety)
 
@@ -354,207 +502,58 @@ ggplot(filtered_data_anxiety, aes(x = age, y = hads_score)) +
        x = "Age",
        y = "Anxiety Score") +
   theme_minimal()
-
-
-contingency_table_anxiety <- table(filtered_data_anxiety$AgeGroup, filtered_data_anxiety$score_group)
-#chi.sq
-chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
-print(chi_squared_result_anxiety)
-# Check if the result is significant at a certain alpha level (e.g., 0.05)
-alpha <- 0.05
-if (chi_squared_result_anxiety$p.value < alpha) {
-  message("There is a significant association between age groups and anxiety score groups")
-} else {
-  message("There is no significant association between age groups and anxiety score groups")
-}
-
-
-percentages <- filtered_data_anxiety %>%
-  group_by(AgeGroup, score_group) %>%
-  summarise(count = n()) %>%
-  group_by(AgeGroup) %>%
-  mutate(percentage = count / sum(count) * 100)
-
-ggplot(percentages, aes(x = score_group, y = percentage, colour = AgeGroup, group = AgeGroup)) +
-  geom_line() +
-  labs(title = "Distribution of baseline anxiety HADS Scores per age group",
-       x = "HADS score group",
-       y = "Number of Participants") +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
-  theme_classic()
-
-
-#derpression, age, all
-
-contingency_table_depression <- table(filtered_data_depression$AgeGroup, filtered_data_depression$score_group)
-#chi.sq
-chi_squared_result_dep <- chisq.test(contingency_table_depression)
-print(chi_squared_result_dep)
-# Check if the result is significant at a certain alpha level (e.g., 0.05)
-alpha <- 0.05
-if (chi_squared_result_dep$p.value < alpha) {
-  message("There is a significant association between age groups and depression score groups")
-} else {
-  message("There is no significant association between age groups and depression score groups")
-}
-
-
-percentages <- filtered_data_depression %>%
-  group_by(AgeGroup, score_group) %>%
-  summarise(count = n()) %>%
-  group_by(AgeGroup) %>%
-  mutate(percentage = count / sum(count) * 100)
-
-ggplot(percentages, aes(x = score_group, y = percentage, colour = AgeGroup, group = AgeGroup)) +
-  geom_line() +
-  labs(title = "Distribution of baseline depression HADS Scores per age group",
-       x = "HADS score group",
-       y = "Number of Participants") +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
-  theme_classic()
-
-
 ```
 
 
-
-### Baseline data on faecal calprotectin and flare in the previous year
-
-Here we present data collected in baseline questionnaires relating to flares in the previous year as reported by patients and faecal calprotectin.
-
-Data relating to flares was found to be missing for 3 participants; these participants were excluded.
-
-[Participants answer the question: "How many flares (an increase in your symptoms necessitating a change in your IBD medicines) have you had in the past year?" (Q14 of the baseline questionnaire)
-
-Participants reported number of flares and these are presented in the graph below. Participants were divided into "flare" or "no flare" groups referring to whether they reported no or any flares in the previous year..
-
-Analysis with t-test showed there was a significant difference in flare rates between sexes (p-value = 0.018), (mean for males 0.66; mean for female 0.85).
-Analysis with chi-square showed that females were have reported one or more flares than males (p-value: < 2.2e-16).
-
-This was also true for UC/IBDU patients separately (p-value = 0.00047), but not true for Crohn's Disease (CD) patients (p-value = 0.03767).
-
-```{r, merge data for IBD and FC, tidy, new group}
-hads_old_flare <- merge(hads_for_analysis, IBD[, c("ParticipantNo", "FlaresInPastYear", "OverallControl", "AccessIBDServices")], by = "ParticipantNo", all.x = TRUE)
-
-#tidy by renaming
-hads_old_flare <- hads_old_flare %>%
-  rename(
-    flares_last_year = FlaresInPastYear,
-    overall_control = OverallControl,
-    access_IBD_services = AccessIBDServices)
-
-#delete missing rows (patients 140081, 160040, 210042) - tot 3670
-hads_old_flare <- hads_old_flare %>%
-  filter(!is.na(flares_last_year))
-
-t_test_result_flare_sex <- t.test(flares_last_year ~ Sex, data = hads_old_flare)
-print(t_test_result_flare_sex)
-
-
-ggplot(hads_old_flare, aes(x = flares_last_year, fill = Sex)) +
-  geom_bar(position = "dodge", color = "black", stat = "count") +
-  labs(title = "Distribution of Flares by Sex",
-       subtitle = paste("There is no statistically significant difference in flare rates by sex (p =", format(t_test_result_flare_sex$p.value, digits = 2), ")"),
-       x = "Flares in last year",
-       y = "Frequency") +
-  theme_minimal()
-
-
-#randomly renaming to hads_fc here
-
-#create flare groups
-hads_fc <- hads_old_flare %>%
-  mutate(flare_group = ifelse(flares_last_year == 0, "No Flares", "1 or More Flares"))
-
-#make flares into levels
-hads_fc$flare_group <- factor(hads_fc$flare_group, levels = c( "No Flares","1 or More Flares"))
-
-
-#chisq sex and flare
-chisq_result <- chisq.test(hads_fc$Sex, hads_fc$flare_group)
-chisq_result
-
-filtered_uc <- hads_fc[hads_fc$diagnosis2 == "UC/IBDU",]
-chisq_result <- chisq.test(filtered_uc$Sex, filtered_uc$flare_group)
-chisq_result
-
-filtered_cd <- hads_fc[hads_fc$diagnosis2 == "CD",]
-chisq_result <- chisq.test(filtered_cd$Sex, filtered_cd$flare_group)
-chisq_result
-
-
-#consider saving this as hads_data or hads_clean, there shouldn't be any other key data that needs joined
-saveRDS(hads_fc, paste0(save_path, "hads_fc.RDS"))
-```
-
-#### Differences in HADS across flare groups (flare vs no flare in last year)
+#### Flare groups (flare vs no flare in last year)
 
 We used chi-square to test for differences in HADS across flare groups. When looking at all patients, HADS scores (anxiety and depression) were higher in those who had experienced a flare in the last year.
 
 Reporting flares in previous year and anxiety scores
+
 * associated in whole cohort (p-value = 0.00027)
-* assocaited in UC (p-value = 0.009)
 * associated in CD (p-value = 0.007)
+* associated in UC (p-value = 0.009)
+
 
 Reporting flares in previous year and depression scores
-* associated in whole cohort (p-value = 0.0015)
-* not associated in UC (p-value = 0.0622)
-* associated in CD (p-value = 0.0074)
+
+* associated in whole cohort (p-value = = 0.001)
+* associated in CD (p-value = 0.007)
+* not associated in UC (p-value = 0.062)
+
 
 
 Note will need to do plots to prove directionality of this relationship (done for whole cohort, not for UC/IBDU and CD individually)
 ```{r, chi-sq for association between HADS ands flare group}
-filtered_data_anxiety <- hads_fc[hads_fc$hads_type == "anxiety_hads",]
+
+#anxiety
 contingency_table_anxiety <- table(filtered_data_anxiety$flare_group, filtered_data_anxiety$score_group)
-#chi.sq
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 print(chi_squared_result_anxiety)
 
-filtered_data_depression <- hads_fc[hads_fc$hads_type == "depression_hads",]
-contingency_table_depression <- table(filtered_data_depression$flare_group, filtered_data_depression$score_group)
-contingency_table_depression
-#chi.sq
-chi_squared_result_depression <- chisq.test(contingency_table_depression)
-print(chi_squared_result_depression)
-
-#UC anxiety
-anxiety_uc <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "UC/IBDU",]
-contingency_uc_anx <- table(anxiety_uc$flare_group, anxiety_uc$score_group)
-chi_squared <- chisq.test(contingency_uc_anx)
-print(chi_squared)
-
-#UC depression
-depression_uc <- filtered_data_depression[filtered_data_depression$diagnosis2 == "UC/IBDU",]
-contingency_uc_dep <- table(depression_uc$flare_group, depression_uc$score_group)
-chi_squared <- chisq.test(contingency_uc_dep)
-print(chi_squared)
-
-#CD anxiety
-anxiety_cd <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "CD",]
 contingency_cd_anx <- table(anxiety_cd$flare_group, anxiety_cd$score_group)
 chi_squared <- chisq.test(contingency_cd_anx)
 print(chi_squared)
 
-#CD depression
-depression_cd <- filtered_data_depression[filtered_data_depression$diagnosis2 == "CD",]
+contingency_uc_anx <- table(anxiety_uc$flare_group, anxiety_uc$score_group)
+chi_squared <- chisq.test(contingency_uc_anx)
+print(chi_squared)
+
+#depression
+contingency_table_depression <- table(filtered_data_depression$flare_group, filtered_data_depression$score_group)
+contingency_table_depression
+chi_squared_result_depression <- chisq.test(contingency_table_depression)
+print(chi_squared_result_depression)
+
 contingency_cd_dep <- table(depression_cd$flare_group, depression_cd$score_group)
 chi_squared <- chisq.test(contingency_cd_dep)
 print(chi_squared)
 
-# plots to illustrate the above - depression whole
-percentages <- filtered_data_depression %>%
-  group_by(flare_group, score_group) %>%
-  summarise(count = n()) %>%
-  group_by(flare_group) %>%
-  mutate(percentage = count / sum(count) * 100)
+contingency_uc_dep <- table(depression_uc$flare_group, depression_uc$score_group)
+chi_squared <- chisq.test(contingency_uc_dep)
+print(chi_squared)
 
-ggplot(percentages, aes(x = score_group, y = percentage, colour = flare_group, group = flare_group)) +
-  geom_line() +
-  labs(title = "Distribution of baseline depression HADS Scores if flare reported last year",
-       x = "HADS score group",
-       y = "Number of Participants") +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
-  theme_classic()
 
 #plot- anxiety whole
 percentages <- filtered_data_anxiety %>%
@@ -565,233 +564,87 @@ percentages <- filtered_data_anxiety %>%
 
 ggplot(percentages, aes(x = score_group, y = percentage, colour = flare_group, group = flare_group)) +
   geom_line() +
-  labs(title = "Distribution of baseline anxiety HADS Scores per age group",
+  labs(title = "Distribution of baseline HADS-Anxiety scores per age group",
        x = "HADS score group",
        y = "Number of Participants") +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
   theme_classic()
 
-```
 
-
-We investigated differences in HADS score between flare groups (controlling for sex and age) using linear modelling. Ony done for whole cohort.
-This showed that both HADS-Anxiety and HADS-Depression rates were significantly higher in patients who reported a flare in the previous year compared to those that had not.
-
-Currently not including this in my analyses.
-```{r, linear regression for anxiety and depression scores, sex, age}
-filtered_data_anxiety <- hads_fc[hads_fc$hads_type == "anxiety_hads", ]
-
-filtered_data_anxiety$flare_group <-
-  relevel(filtered_data_anxiety$flare_group, ref = "No Flares")
-
-# Run linear regression 
-model_anxiety <- lm(hads_score ~ flare_group + Sex + age, data = filtered_data_anxiety)
-summary(model_anxiety)
-
-ggplot(filtered_data_anxiety, aes(x = flare_group, y = hads_score, color = Sex)) +
-  geom_boxplot() +
-  geom_smooth(method = "lm", se = TRUE) +
-  labs(title = "Linear Regression Plot for Anxiety Scores",
-       x = "Flare Group",
-       y = "HADS Score",
-       color = "Sex") +
-  theme_minimal()
-
-#linear regression anxiety in UC/IBDU
-filtered_uc <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "UC/IBDU",]
-model_anxiety_uc <- lm(hads_score ~ flare_group + Sex + age, data = filtered_uc)
-summary(model_anxiety_uc)
-
-#linear regression anxiety in CD
-filtered_cd <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "CD",]
-model_anxiety_cd <- lm(hads_score ~ flare_group + Sex + age, data = filtered_cd)
-summary(model_anxiety_cd)
-
-filtered_data_depression <- hads_fc[hads_fc$hads_type == "depression_hads", ]
-
-# Relevel the factor variable
-filtered_data_depression$flare_group <-
-  relevel(filtered_data_depression$flare_group, ref = "No Flares")
-
-# Run linear regression 
-model_depression <- lm(hads_score ~ flare_group + Sex + age, data = filtered_data_depression)
-summary(model_depression)
-
-#linear regression depression in UC/IBDU
-filtered_uc <- filtered_data_depression[filtered_data_depression$diagnosis2 == "UC/IBDU",]
-model_depression_uc <- lm(hads_score ~ flare_group + Sex + age, data = filtered_uc)
-summary(model_depression_uc)
-
-#linear regression depression in CD
-filtered_cd <- filtered_data_depression[filtered_data_depression$diagnosis2 == "CD",]
-model_depression_cd <- lm(hads_score ~ flare_group + Sex + age, data = filtered_cd)
-summary(model_depression_cd)
-
-ggplot(filtered_data_depression, aes(x = flare_group, y = hads_score, color = Sex)) +
-  geom_boxplot() +
-  geom_smooth(method = "lm", se = TRUE) +
-  labs(title = "Linear Regression Plot for Depression Scores",
-       x = "Flare Group",
-       y = "HADS Score",
-       color = "Sex") +
-  theme_minimal()
-```
-
-
-
-#### Faecal calprotectin at baseline, flares and HADS
-
-
-## Faecal calprotecting and flares in the last year
-We investigated the relationship in calprotectin levels between flare groups.
-Faecal calprotectin was higher in patients who reported having 1 or more flares in the last year (p-value = 4.105e-08, Fisher's).
-This was true for analysis of UC/IBDU and CD separately (respectively p-value = 8.212e-08; p-value = p-value = 0.0131).
-
-```{r, check missing FC and plot FC}
-
-#need to save hads_fc
-
-percentages <- hads_fc %>%
-  group_by(cat, flare_group) %>%
+# plots to illustrate the above - depression whole
+percentages <- filtered_data_depression %>%
+  group_by(flare_group, score_group) %>%
   summarise(count = n()) %>%
   group_by(flare_group) %>%
   mutate(percentage = count / sum(count) * 100)
 
-# Create a line chart to show FC at baseline with reporting flares -> maybe do this with the whole cohort (will remain signific)
-ggplot(percentages, aes(x = cat, y = percentage, color = flare_group, group = flare_group)) +
+ggplot(percentages, aes(x = score_group, y = percentage, colour = flare_group, group = flare_group)) +
   geom_line() +
-  labs(title = "Percentage of Respondents with a Certain FC ",
-       x = "FC",
-       y = "Percentage") +
+  labs(title = "Distribution of baseline HADS-Depression scores if flare reported last year",
+       x = "HADS score group",
+       y = "Number of Participants") +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
-  theme_minimal()
+  theme_classic()
 
-contingency_table <- table(hads_fc$cat, hads_fc$flare_group)
-contingency_table
 
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
-
-# FC and flares in UC/IBDU
-filtered_uc <- hads_fc[hads_fc$diagnosis2 == "UC/IBDU",]
-contingency_table_uc <- table(filtered_uc$cat, filtered_uc$flare_group)
-
-options(expressions = 10000)
-fisher_result_uc <- fisher.test(contingency_table_uc, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_uc
-
-#FC and flares in CD
-filtered_cd <- hads_fc[hads_fc$diagnosis2 == "CD",]
-contingency_table_cd <- table(filtered_cd$cat, filtered_cd$flare_group)
-
-options(expressions = 10000)
-fisher_result_cd <- fisher.test(contingency_table_cd, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_cd
 ```
 
-##Faecal calprotectin and flares in the last year
-There was no significant association between faecal calprotectin at baseline (grouped) and anxiety HADS scores or depression HADS scores. This was true for when looking at UC/IBDU and CD together or separately.
+
+
+#### Faecal calprotectin
+
+
+There was no significant association between faecal calprotectin at baseline (grouped) and anxiety HADS scores or depression HADS scores. 
+This was true for when looking at UC/IBDU and CD together or separately.
 
 
 ```{r, difference in FC across anxiety groups}
 #anxiety
-
-filtered_data_anxiety <- hads_fc[hads_fc$hads_type == "anxiety_hads", ]
-
 contingency_table <- table(filtered_data_anxiety$cat, filtered_data_anxiety$score_group)
-print(contingency_table)
-options(expressions = 10000)
-fisher_result_gr_anx <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_gr_anx
+chi_squared_result_anxiety <- chisq.test(contingency_table)
+print(chi_squared_result_anxiety)
 
+contingency_table <- table(anxiety_cd$cat, anxiety_cd$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table)
+print(chi_squared_result_anxiety)
 
-#UC only 
+contingency_table <- table(anxiety_uc$cat, anxiety_uc$score_group)
+chi_squared_result_anxiety <- chisq.test(contingency_table)
+print(chi_squared_result_anxiety)
 
-filtered_uc <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "UC/IBDU",]
+#depression
+contingency_table <- table(filtered_data_depression$cat, filtered_data_depression$score_group)
+chi_squared_result_depression <- chisq.test(contingency_table)
+print(chi_squared_result_depression)
 
-#uc anxiety grouped
-contingency_table <- table(filtered_uc$cat, filtered_uc$score_group)
-print(contingency_table)
+contingency_table <- table(depression_cd$cat, depression_cd$score_group)
+chi_squared_result_depression <- chisq.test(contingency_table)
+print(chi_squared_result_depression)
 
-options(expressions = 10000)
-fisher_result_gr_uc <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_gr_uc
-
-#CD only
-filtered_cd <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "CD",]
-
-#CD anxiety grouped
-contingency_table <- table(filtered_cd$cat, filtered_cd$score_group)
-print(contingency_table)
-
-options(expressions = 10000)
-fisher_result_gr_cd <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_gr_cd
-
-#depression UC and CD
-filtered_data_depression <- hads_fc[hads_fc$hads_type == "depression_hads", ]
-
-contingency_table <- table(filtered_data_depression$score_group, filtered_data_depression$cat)
-print(contingency_table)
-
-options(expressions = 10000)
-fisher_result_gr <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_gr
-
-
-# UC and depression
-filtered_uc <- filtered_data_depression[filtered_data_depression$diagnosis2 == "UC/IBDU",]
-
-#uc depression grouped
-contingency_table <- table(filtered_uc$cat, filtered_uc$score_group)
-print(contingency_table)
-
-options(expressions = 10000)
-fisher_result_gr_uc <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_gr_uc
-
-
-#CD only
-filtered_cd <- filtered_data_depression[filtered_data_depression$diagnosis2 == "CD",]
-
-#CD depression grouped
-contingency_table <- table(filtered_cd$cat, filtered_cd$score_group)
-print(contingency_table)
-
-options(expressions = 10000)
-fisher_result_gr_cd <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result_gr_cd
-
+contingency_table <- table(depression_uc$cat, depression_uc$score_group)
+chi_squared_result_depression <- chisq.test(contingency_table)
+print(chi_squared_result_depression)
 ```
 
 
-#### Summary of findings
-
-* There is a significant association with anxiety score and sex, and anxiety scores and age
-* There is not a significant association with depression scores and sex or age
-* There is a significant association with anxiety and depression scores (separately) with reported flare occurrences
-* There is a significant association between FC and reported flares
-* There is no significant association between anxiety or depression scores and FC at baseline
-
-
-#### Next steps
-
-* Smoking as a confounding factor - done
-* Time to flare for each HADS group - done
-* How does HADS change over time/movement across groups?
-* HADS and medication use (surrogate of medical issues)
-* Look at psychotropic medications and impact (if this data is available)
-* Further analysis of Q17?
-* Separate investigation into sleep and alcohol
 
 
 
+### IBD-control scores and HADS
 
-## HADS and IBD Control score
+We investigate for associations with HADS scores and IBD-control scores. IBD control scores are strongly correlated with HADS Anxiety and Depression scores.
 
-# IBD-control scores and HADS
+IBD control-8 and anxiety scores
 
+* significant association whole cohort (p-value < 2.2e-16)
+* significant association CD cohort (p-value < 2.2e-16)
+* significant association UC/IBDU cohort (p-value < 2.2e-16)
+
+IBD control-8 and depression scores
+
+* significant association whole cohort (p-value < 2.2e-16)
+* significant association CD cohort (p-value < 2.2e-16)
+* significant association UC/IBDU cohort (p-value < 2.2e-16)
 
 ```{r, merge flare data with hads demo data, then re-code intogroups as for hads_for_analysis}
 hads_control <- hads_for_analysis %>% 
@@ -801,22 +654,10 @@ hads_control <- hads_for_analysis %>%
 missing_C8 <- hads_control %>% 
   filter(is.na(control_grouped))
 
-#exclude missing control scores -> total 3640 rows (1820 pp with both HADS and IBD_C scores)
+#exclude missing control scores
 hads_control <- hads_control %>% 
   filter(!is.na(control_grouped))
 
-#I rechecked and no missing data in vas/control or HADS
-
-#create data set which include hads, control scores and fc (3252)
-hads_control_fc <- hads_fc %>% 
-    left_join(IBD_FC %>% select(ParticipantNo, control_score, OverallControl, control_8, control_grouped, vas_control), by = "ParticipantNo")
-
-#30 rows missing data for control scores- exclude these 15 participants
-missing_C8 <- hads_control_fc %>% 
-  filter(is.na(control_grouped))
-hads_control_fc <- hads_control_fc %>% 
-  filter(!is.na(control_grouped))
-#now have 3222 rows, total of 1611 participants with complete hads, control scores, FC data
 ```
 
 ```{r, HADS and control - 8}
@@ -825,11 +666,19 @@ hads_control_fc <- hads_control_fc %>%
 hads_control$control_grouped <- factor(hads_control$control_grouped)
 hads_control$vas_control <- factor(hads_control$vas_control)
 
-#NB using hads_control for these analyses
-#all partipants
+filtered_data_anxiety <- hads_control[hads_control$hads_type == "anxiety_hads", ]
+filtered_data_depression <- hads_control[hads_control$hads_type == "depression_hads", ]
+
+#all participants
 data_flare_a <- hads_control[hads_control$hads_type == "anxiety_hads",]
 contingency_table_flare <- table(data_flare_a$score_group, data_flare_a$control_grouped)
 chi_squared_result <- chisq.test(contingency_table_flare)
+print(chi_squared_result)
+
+#anxiety, cd only
+data_flare_c <- data_flare_a[data_flare_a$diagnosis2 == "CD",]
+contingency_table_c <- table(data_flare_c$score_group, data_flare_c$control_grouped)
+chi_squared_result <- chisq.test(contingency_table_c)
 print(chi_squared_result)
 
 #anxiety, uc/ibdu only
@@ -838,11 +687,6 @@ contingency_table_b <- table(data_flare_b$score_group, data_flare_b$control_grou
 chi_squared_result <- chisq.test(contingency_table_b)
 print(chi_squared_result)
 
-#anxiety, cd only
-data_flare_c <- data_flare_a[data_flare_a$diagnosis2 == "CD",]
-contingency_table_c <- table(data_flare_c$score_group, data_flare_c$control_grouped)
-chi_squared_result <- chisq.test(contingency_table_c)
-print(chi_squared_result)
 
 #depression, all
 data_flare_d <- hads_control[hads_control$hads_type == "depression_hads",]
@@ -876,13 +720,51 @@ table1::table1(~ control_grouped | diagnosis2 + score_group,
   render.continuous = my.render.cont,
   title = "Distribution of IBD-Control 8 scores and depression HADS"
 )
+
+#plot- anxiety whole
+percentages <- filtered_data_anxiety %>%
+  group_by(control_grouped, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(control_grouped) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group, y = percentage, colour = control_grouped, group = control_grouped)) +
+  geom_line() +
+  labs(title = "Distribution of baseline HADS-Anxiety scores per IBD control-8 scores",
+       x = "HADS score group",
+       y = "Number of Participants") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_classic()
+
+percentages <- filtered_data_depression %>%
+  group_by(control_grouped, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(control_grouped) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group, y = percentage, colour = control_grouped, group = control_grouped)) +
+  geom_line() +
+  labs(title = "Distribution of baseline HADS-Depression scores per IBD control-8 scores",
+       x = "HADS score group",
+       y = "Number of Participants") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_classic()
 ```
 
+We investigate for associations with HADS scores and IBD-control scores. 
 
+IBD control-vas and anxiety scores
 
-Here we investigate the relationship between HADS and IBD-control 8 scores. There is a significant correlation between HADS and IBD control scores both for anxiety (top table) and depression (bottom table), and when looking ad all patients and UC/IBDU and CD patients separately.
+* significant association whole cohort (p-value < 2.2e-16)
+* significant association CD cohort (p-value = 4.543e-14)
+* significant association UC/IBDU cohort (p-value = 3.175e-10)
 
-Add graphs here to illustrate.
+IBD control-8 and depression scores
+
+* significant association whole cohort (p-value < 2.2e-16)
+* significant association CD cohort (p-value = 1.594e-14
+* significant association UC/IBDU cohort (p-value = 3.745e-08)
+
 
 
 ```{r, HADS and control - vas}
@@ -935,9 +817,38 @@ table1::table1(~ vas_control | diagnosis2 + score_group,
   render.continuous = my.render.cont,
   title = "Distribution of IBD-vas scores and depression HADS"
 )
+
+#plot- anxiety whole
+percentages <- filtered_data_anxiety %>%
+  group_by(vas_control, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(vas_control) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group, y = percentage, colour = vas_control, group = vas_control)) +
+  geom_line() +
+  labs(title = "Distribution of baseline HADS-Anxiety scores per IBD control-vas ",
+       x = "HADS score group",
+       y = "Number of Participants") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_classic()
+
+percentages <- filtered_data_depression %>%
+  group_by(vas_control, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(vas_control) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group, y = percentage, colour = vas_control, group = vas_control)) +
+  geom_line() +
+  labs(title = "Distribution of baseline HADS-Depression scores per IBD control-vas",
+       x = "HADS score group",
+       y = "Number of Participants") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_classic()
 ```
 
-Here we investigate the relationship between HADS and IBD-vas scores. There is a significant correlation between HADS and IBD control scores both for anxiety (tob table) and depression (bottom table), and when looking ad all patients and UC/IBDU and CD patients separately.
+
 
 ## Reproduction and reproducibility {.appendix}
 

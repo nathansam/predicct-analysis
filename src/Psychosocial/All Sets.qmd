@@ -60,6 +60,7 @@ if (file.exists("/.dockerenv")) {
 ```{r load data}
 #read-in data
 #hads is question 42 of the baseline questionnaire
+flarecause <- read.xlsx(paste0(data.path, "Baseline2022/flarecause.xlsx"))
 health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
@@ -75,6 +76,53 @@ psqi_IBD <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/psqi_IBD.RDS"
 phq_clean <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/phq_clean.RDS")
 hads_fc <-  readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_fc.RDS")
 ETOH <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/ETOH.RDS")
+```
+
+
+
+### Introduction 
+
+The links between gut health and central nervous system (CNS) symptoms are of emerging importance for a wide array of diseases. 
+There is evidence to suggest that lower perceived stress is linked to a reduced risk of developing IBD as well as influencing the severity of disease (1, 2), and psychological comorbidities have been linked to increase symptom reporting (3).
+
+
+The PREdiCCt baseline questionnaire asked participants: 
+What do you think causes flare in your symptoms? (tick all that apply)[Q35.1]
+
+As seen in the graph below, the two most common patient reported causes of flare are stress and dietary changes. 
+
+The focus of my work will be investigating the relationship between mental health, stress and flares of IBD.
+Diet is being investigated in central analyses.
+
+
+```{r patient reported flare}
+# Select the columns of interest
+flarecause <- flarecause %>%
+  filter(!is.na(ParticipantId))
+
+variables_of_interest <- flarecause[, c(
+  "MedsStoppedWorking", "StoppedAttendClinic", "StoppedMeds",
+  "DietaryChanges", "Gastroenteritis", "OtherInfection",
+  "Travel", "Stress", "Smoking", "Alcohol",
+  "Antibiotics", "FCPregnancy", "Breastfeeding",
+  "Menstruation", "Exercise", "SleepDisturbance",
+  "Pollution", "NSAIDS", "OtherFlareCause"
+)]
+
+# Reshape the data into long format
+variables_long <- gather(variables_of_interest, key = "Variable", value = "Cause")
+
+# Plot the counts using geom_bar
+patient_flare_baseline <- ggplot(variables_long, aes(x = Cause, fill = Variable)) +
+  geom_bar(position = "dodge", color = "black") +
+  ggtitle("Patient reported flare cause via baseline questionnaire") +
+  xlab("Cause") +
+  ylab("Count") +
+  theme_minimal() +
+  theme(axis.ticks.x = element_blank())
+
+print(patient_flare_baseline)
+
 ```
 
 ```{r, join datasets}
@@ -151,4 +199,106 @@ ggplot(percentages, aes(x = cat, y = percentage, color = flare_group, group = fl
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
   theme_minimal()
 
+```
+
+
+From hads baseline:
+
+### Baseline data on faecal calprotectin and flare in the previous year
+
+* Do flare in previous year in ALL SETS
+
+Here we present data collected in baseline questionnaires relating to flares in the previous year as reported by patients and faecal calprotectin.
+
+Data relating to flares was found to be missing for 3 participants; these participants were excluded.
+
+[Participants answer the question: "How many flares (an increase in your symptoms necessitating a change in your IBD medicines) have you had in the past year?" (Q14 of the baseline questionnaire)
+
+Participants reported number of flares and these are presented in the graph below. Participants were divided into "flare" or "no flare" groups referring to whether they reported no or any flares in the previous year..
+
+Analysis with t-test showed there was a significant difference in flare rates between sexes (p-value = 0.018), (mean for males 0.66; mean for female 0.85).
+Analysis with chi-square showed that females were have reported one or more flares than males (p-value: < 2.2e-16).
+
+This was also true for UC/IBDU patients separately (p-value = 0.00047), but not true for Crohn's Disease (CD) patients (p-value = 0.03767).
+
+```{r, update this merge data for IBD and FC, tidy, new group}
+
+# redo this with ALL SETS - looking at flare rates/flare groups and associations across all patients
+t_test_result_flare_sex <- t.test(flares_last_year ~ Sex, data = hads_old_flare)
+print(t_test_result_flare_sex)
+
+
+ggplot(hads_old_flare, aes(x = flares_last_year, fill = Sex)) +
+  geom_bar(position = "dodge", color = "black", stat = "count") +
+  labs(title = "Distribution of Flares by Sex",
+       subtitle = paste("There is no statistically significant difference in flare rates by sex (p =", format(t_test_result_flare_sex$p.value, digits = 2), ")"),
+       x = "Flares in last year",
+       y = "Frequency") +
+  theme_minimal()
+
+
+
+
+#chisq sex and flare
+chisq_result <- chisq.test(hads_fc$Sex, hads_fc$flare_group)
+chisq_result
+
+filtered_uc <- hads_fc[hads_fc$diagnosis2 == "UC/IBDU",]
+chisq_result <- chisq.test(filtered_uc$Sex, filtered_uc$flare_group)
+chisq_result
+
+filtered_cd <- hads_fc[hads_fc$diagnosis2 == "CD",]
+chisq_result <- chisq.test(filtered_cd$Sex, filtered_cd$flare_group)
+chisq_result
+```
+
+
+## Faecal calprotecting and flares in the last year - RECODE with ALL HADS
+
+We investigated the relationship in calprotectin levels between flare groups.
+Faecal calprotectin was higher in patients who reported having 1 or more flares in the last year (p-value = 4.105e-08, Fisher's).
+
+This was true for analysis of UC/IBDU and CD separately (respectively p-value = 8.212e-08; p-value = p-value = 0.0131).
+
+```{r, check missing FC and plot FC}
+
+#need to save hads_fc
+
+percentages <- hads_fc %>%
+  group_by(cat, flare_group) %>%
+  summarise(count = n()) %>%
+  group_by(flare_group) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+# Create a line chart to show FC at baseline with reporting flares -> maybe do this with the whole cohort (will remain signific)
+ggplot(percentages, aes(x = cat, y = percentage, color = flare_group, group = flare_group)) +
+  geom_line() +
+  labs(title = "Percentage of Respondents with a Certain FC ",
+       x = "FC",
+       y = "Percentage") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_minimal()
+
+contingency_table <- table(hads_fc$cat, hads_fc$flare_group)
+contingency_table
+
+options(expressions = 10000)
+fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
+fisher_result
+
+# FC and flares in UC/IBDU
+filtered_uc <- hads_fc[hads_fc$diagnosis2 == "UC/IBDU",]
+contingency_table_uc <- table(filtered_uc$cat, filtered_uc$flare_group)
+
+options(expressions = 10000)
+fisher_result_uc <- fisher.test(contingency_table_uc, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
+fisher_result_uc
+
+#FC and flares in CD
+filtered_cd <- hads_fc[hads_fc$diagnosis2 == "CD",]
+contingency_table_cd <- table(filtered_cd$cat, filtered_cd$flare_group)
+
+options(expressions = 10000)
+fisher_result_cd <- fisher.test(contingency_table_cd, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
+fisher_result_cd
 ```
