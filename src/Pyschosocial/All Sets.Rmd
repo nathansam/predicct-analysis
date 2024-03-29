@@ -1,0 +1,156 @@
+---
+title: "PREdiCCt Paper 2"
+author: "Chiara Cotronei"
+date: "2024-03-14"
+output:
+  html_document:
+    self_contained: yes
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
+```
+
+```{r load libraries, warn.conflicts = FALSE}
+set.seed(123)
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+library(readxl) # Read in Excel files
+library(datefixR) # Standardise dates  
+library(openxlsx)
+library(tidyr)
+library(ggdist)
+library(rstatix)
+
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+library(kableExtra)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+#cox-regression
+library(survival)
+library(survminer)
+library(finalfit)
+
+```
+
+```{r access to data}
+# paths to PREdiCCt data
+if (file.exists("/.dockerenv")) {
+  # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+  save_path <- "people/chiara/"
+} else {
+  # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+}
+```
+
+```{r load data}
+#read-in data
+#hads is question 42 of the baseline questionnaire
+health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
+demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
+IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+psqi <- read.xlsx(paste0(data.path, "Baseline2022/psqi.xlsx"))
+demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
+flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
+smoking <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/smoking.rds")
+flares_combined <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/flares-combined-cut.RDS")
+flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
+flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
+exercise <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/exercise.RDS")
+psqi_IBD <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/psqi_IBD.RDS")
+phq_clean <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/phq_clean.RDS")
+hads_fc <-  readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_fc.RDS")
+ETOH <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/ETOH.RDS")
+```
+
+```{r, join datasets}
+#all sets keeps only those who completed all questionnaires - total 1527
+all_sets <- exercise %>% 
+  inner_join(psqi_IBD %>% select(ParticipantNo, TotalScore, SleepDisturbance)) %>% 
+  rename(PSQIScore = TotalScore)
+all_sets <- all_sets %>% 
+  inner_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation))
+filtered_data_depression <- hads_fc[hads_fc$hads_type == "depression_hads", ]
+filtered_data_anxiety <- hads_fc[hads_fc$hads_type == "anxiety_hads", ]
+all_sets <- all_sets %>% 
+  inner_join(filtered_data_anxiety %>% select(ParticipantNo, hads_score, score_group)) %>% 
+  rename(anxiety_score = hads_score, anxiety_group = score_group)
+all_sets <- all_sets %>% 
+  inner_join(filtered_data_depression %>% select(ParticipantNo, hads_score, score_group)) %>% 
+  rename(depression_score = hads_score, depression_group = score_group)
+
+filtered_data_depression <- hads_fc[hads_fc$hads_type == "depression_hads", ]
+filtered_data_anxiety <- hads_fc[hads_fc$hads_type == "anxiety_hads", ]
+#inclusive full dataset 1639
+all_psychosocial <- psqi_IBD %>% 
+  full_join(exercise %>% select(ParticipantNo, MinimumExercise, diagnosis2, AgeGroup, cat))
+all_psychosocial <- all_psychosocial %>% 
+  full_join(filtered_data_anxiety %>% select(ParticipantNo, hads_score, score_group, diagnosis2, cat)) %>% 
+  rename(anxiety_score = hads_score, anxiety_group = score_group)
+all_psychosocial <- all_psychosocial %>% 
+  full_join(filtered_data_depression %>% select(ParticipantNo, hads_score, score_group, diagnosis2, cat)) %>%
+  rename(depression_score = hads_score, depression_group = score_group)
+all_psychosocial <- all_psychosocial %>% 
+  full_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation, diagnosis2, AgeGroup, cat))
+all_psychosocial <- all_psychosocial %>% 
+  full_join(ETOH %>% select(ParticipantNo, Alcoholg, Alcohol_units_wk, weekly_units, diagnosis2, AgeGroup, cat))
+
+
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+
+# this isnt working with the missing values - made everying disappear when I made na = "missing"
+table1::table1( ~ Sex + cat + anxiety_group + depression_group | diagnosis2,
+  data = all_psychosocial,
+  render.continuous = my.render.cont,
+  title = "Psychosocial factors in cohort"
+)
+
+table1::table1( ~ depression_group| diagnosis2,
+  data = all_psychosocial,
+  render.continuous = my.render.cont,
+  title = "Psychosocial factors in cohort"
+)
+
+table1::table1( ~ SleepDisturbance + somatisation + MinimumExercise + weekly_units| diagnosis2,
+  data = all_psychosocial,
+  render.continuous = my.render.cont,
+  title = "Psychosocial factors in cohort"
+)
+
+
+#this needs recoded to reflect whole cohort
+# Create a line chart to show FC at baseline with reporting flares -> maybe do this with the whole cohort (will remain significant but just to be clear)
+ggplot(percentages, aes(x = cat, y = percentage, color = flare_group, group = flare_group)) +
+  geom_line() +
+  labs(title = "Percentage of Respondents with a Certain FC ",
+       x = "FC",
+       y = "Percentage") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_minimal()
+
+```

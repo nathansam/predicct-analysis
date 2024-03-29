@@ -1,0 +1,173 @@
+---
+title: "Life Events"
+author: "Chiara Cotronei"
+date: "2024-03-14"
+output:
+  html_document:
+    self_contained: yes
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
+```
+
+```{r load libraries, warn.conflicts = FALSE}
+set.seed(123)
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+library(readxl) # Read in Excel files
+library(datefixR) # Standardise dates  
+library(openxlsx)
+library(tidyr)
+library(ggdist)
+library(rstatix)
+
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+library(kableExtra)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+#cox-regression
+library(survival)
+library(survminer)
+library(finalfit)
+
+```
+
+```{r access to data}
+# paths to PREdiCCt data
+if (file.exists("/.dockerenv")) {
+  # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+  save_path <- "people/chiara/"
+} else {
+  # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+}
+```
+
+```{r load data}
+#read-in data
+#hads is question 42 of the baseline questionnaire
+lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
+demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
+demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
+IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+ETOH <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/ETOH.RDS")
+QOL <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
+```
+
+
+In the baseline questionnaire, participants were asked:
+Have you had any significant life events in the last month? (Q 45.1)
+This question was then repeated in monthly questionnaires. It is a modified version of Holmes-Rahe Stress inventory.
+
+Cleaned data set as others, exclude age <18, exclude missing baseline FC.
+
+Results:
+Yes: 298
+No: 1306
+
+132 (large majority) people gave "other" as an answer.
+
+* Females more likely to report a life event
+
+
+```{r, lifeevents}
+#Join demo data, exclude <18, make age groups, code diagnosis
+lifeevents <- lifeevents %>% 
+  left_join(demographics %>% select(ParticipantNo, Sex, diagnosis, age))
+lifeevents <- lifeevents %>% 
+  filter(!is.na(ParticipantNo))
+lifeevents <- lifeevents %>% 
+  filter(!is.na(AnyLifeEvents))
+lifeevents <- lifeevents[lifeevents$age > 17,]
+lifeevents$Sex <- factor(lifeevents$Sex, levels = c(1, 2), labels = c("Male", "Female"))
+lifeevents$AnyLifeEvents <- factor(lifeevents$AnyLifeEvents, levels = c(1, 2), labels = c("Yes", "No"))
+lifeevents$AgeGroup <- cut(lifeevents$age, 
+                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
+                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+                         include.lowest = TRUE)
+lifeevents$diagnosis2 <- plyr::mapvalues(lifeevents$diagnosis,
+  from = seq(1, 4),
+  to = c(1, 2, 2, 2)
+) %>%
+  factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
+lifeevents <- lifeevents %>% 
+  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
+
+lifeevents <- lifeevents %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
+lifeevents$flare_group <- factor(lifeevents$flare_group, levels = c( "No Flares","1 or More Flares"))
+
+lifeevents <- lifeevents %>% 
+  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
+lifeevents <- lifeevents %>% 
+  filter(!is.na(cat))
+```
+
+
+```{r, baseline associations?}
+
+#plot distributions
+variables_of_interest <- lifeevents[, c(
+  "Death", "Divorce", "MaritalSeparation",
+  "PersonalInjury", "Marriage", "Dismissal",
+  "MaritalReconcil", "Retirement", "HealthFamilyMember", "Pregnancy",
+  "SexualDifficulties", "GainNewFamilyMember", "NewMortgage",
+  "OtherLifeEvent"
+)]
+
+# Reshape the data into long format
+variables_long <- gather(variables_of_interest, key = "Variable", value = "LifeEvent")
+
+# Plot the counts using geom_bar
+events_baseline <- ggplot(variables_long, aes(x = LifeEvent, fill = Variable)) +
+  geom_bar(position = "dodge", color = "black") +
+  ggtitle("Significant Life Event") +
+  xlab("Cause") +
+  ylab("Count") +
+  theme_minimal() +
+  theme(axis.ticks.x = element_blank())
+print(events_baseline)
+
+#How many responded yes/no by Sex
+events_sex <- table(lifeevents$AnyLifeEvents, lifeevents$Sex)
+print(events_sex)
+events_age <- table(lifeevents$AnyLifeEvents, lifeevents$AgeGroup)
+print(events_age)
+
+#Distribution of responses
+
+#anyone more than 1 life event?
+
+```
+
+
+Plan: code life event vs no life event and see if there is an association on time to flare. 
+
+
+
+
+
+
+
+
+# Quality of life 
+
+Higher scores indicate better answer
+Reverse code: GeneralHealth, PainInterfere, CalmAndPeaceful, DownheartedBlue
+
