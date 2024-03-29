@@ -1,12 +1,10 @@
 ---
 title: "HADS Baseline - Interim Report"
-author: "Chiara Cotronei"
-date: "2024-10-01"
-output:
-  html_document:
-    self_contained: yes
-    code_folding: hide
-  pdf_document: default
+author:
+  - name: "Chiara Cotronei"
+    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
+    affiliations:
+      - ref: Lothian
 ---
 
 ```{r setup}
@@ -941,6 +939,20 @@ table1::table1(~ vas_control | diagnosis2 + score_group,
 
 Here we investigate the relationship between HADS and IBD-vas scores. There is a significant correlation between HADS and IBD control scores both for anxiety (tob table) and depression (bottom table), and when looking ad all patients and UC/IBDU and CD patients separately.
 
+## Reproduction and reproducibility {.appendix}
 
+<details class = "appendix">
+  <summary> Session info </summary>
 
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
 
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.
+ 
+ 

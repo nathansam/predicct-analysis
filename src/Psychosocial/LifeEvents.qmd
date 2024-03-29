@@ -1,12 +1,10 @@
 ---
 title: "Life Events"
-author: "Chiara Cotronei"
-date: "2024-03-14"
-output:
-  html_document:
-    self_contained: yes
-    code_folding: hide
-  pdf_document: default
+author:
+  - name: "Chiara Cotronei"
+    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
+    affiliations:
+      - ref: Lothian
 ---
 
 ```{r setup}
