@@ -170,7 +170,7 @@ fit.me <- coxph(
 invisible(cox.summary(fit.me))
 ```
 
-##### Hard flare
+#### Hard flare
 
 ```{R}
 #| results: "hold"
@@ -212,7 +212,7 @@ invisible(cox.summary(fit.me))
 
 :::
 
-#### Ulcerative colitis
+### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
 
@@ -352,7 +352,7 @@ fit.me <- coxph(
 invisible(cox.summary(fit.me))
 ```
 
-##### Hard flare
+#### Hard flare
 
 ```{R}
 #| results: "hold"
@@ -394,11 +394,11 @@ invisible(cox.summary(fit.me))
 
 :::
 
-#### Ulcerative colitis
+### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+#### Soft flare
 
 ```{R}
 #| results: "hold"
@@ -438,7 +438,7 @@ fit.me <- coxph(
 invisible(cox.summary(fit.me))
 ```
 
-##### Hard flare
+#### Hard flare
 
 ```{R}
 #| results: "hold"
@@ -527,7 +527,7 @@ fit.me <- coxph(
 invisible(cox.summary(fit.me))
 ```
 
-##### Hard flare
+#### Hard flare
 
 ```{R}
 #| results: "hold"
@@ -568,11 +568,11 @@ invisible(cox.summary(fit.me))
 
 :::
 
-#### Ulcerative colitis
+### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+#### Soft flare
 
 ```{R}
 #| results: "hold"
@@ -611,7 +611,7 @@ fit.me <- coxph(
 invisible(cox.summary(fit.me))
 ```
 
-##### Hard flare
+#### Hard flare
 
 ```{R}
 #| results: "hold"
