@@ -2,7 +2,8 @@
 title: "HADS Baseline - Interim Report"
 author:
   - name: "Chiara Cotronei"
-    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
+    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei!
+    
     affiliations:
       - ref: Lothian
 ---
@@ -214,8 +215,14 @@ saveRDS(hads_for_analysis, paste0(save_path, "hads_for_analysis.RDS"))
 
 At baseline, anxiety scores tended to be higher for anxiety compared than for depression. 
 
-Reference to baseline population. 
-[Could be interesting to reflect on this - does HADS tend to create lower scores in general for depression? Is this due to anxiety often preceding the development of depression? Is this a true reflection of mental disease burden in IBD population? Is anxiety higher prevalence than depression in whole population? Are people with depression less likely to carry out questionnaires than people with anxiety?]
+A recent meta-analysis (https://pubmed.ncbi.nlm.nih.gov/33721557/) looking at the prevalence of anxiety and depression in people with IBD found that 
+
+
+* Overall, pooled prevalence of anxiety symptoms was 32·1% (95% CI 28·3-36·0) in 58 studies (I2=96·9%) and pooled prevalence of depression symptoms was 25·2% (22·0-28·5) in 75 studies (I2=97·6%). 
+* In studies that reported prevalence of anxiety or depression in patients with Crohn's disease and ulcerative colitis within the same study population, patients with Crohn's disease had higher odds of anxiety symptoms (OR 1·2, 95% CI 1·1-1·4) and depression symptoms (1·2, 1·1-1·4) than patients with ulcerative colitis. 
+* Overall, women with IBD were more likely to have symptoms of anxiety than were men with IBD (pooled prevalence 33·8% [95% CI 26·5-41·5] for women vs 22·8% [18·7-27·2] for men; OR 1·7 [95% CI 1·2-2·3]). They were also more likely to have symptoms of depression than men were (pooled prevalence 21·2% [95% CI 15·4-27·6] for women vs 16·2% [12·6-20·3] for men; OR 1·3 [95% CI 1·0-1·8]).
+
+Our findings also show higher rates of anxiety compare to depression, and higher rates of anxiety in women compared to men. However we did not find any difference between sexes in rates of depression. We also did not find any difference across diagnosis (Crohn's vs UC/IBDU).
 
 
 
