@@ -69,7 +69,6 @@ demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
 flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
 smoking <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/smoking.rds")
 hads_for_analysis <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_for_analysis.rds")
-hads_fc <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_fc.rds")
 demo_uc <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-uc.RDS")
 demo_cd <-readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.RDS")
 flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
@@ -79,27 +78,59 @@ flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_sof
 
 ## HADS scores and time to flare
 
-Here we present survival analysis (time to hard flare) using cox-regression models, stratifying on HADS anxiety/depression groups. In all analyses we controlled for sex, smoking, frailty (site) and analysed by diagnosis (UC/IBDU and CD) separately.
-We subsequently repeat analyses, additionally controlling for FC.
+Here we present survival analysis (time to soft and hard flare) using cox-regression models, stratifying by HADS anxiety/depression groups. 
 
-Flare data was coded by Nathan is in 'flares' (hard flares with cut off 2 years).
+We conducted three survival analyses:
+1. Controlling for site only
+2. Controlling for sex, smoking, IMD, site +/- age (if this was found to be signficantly associated with scores at baseline). 
+3. Controlling for factors above and faecal calprotectin additionally. 
+
+Each analysis was conducted for the whoel IBD cohort, and for UC/IBDU and CD separately.
 
 ### Key findings
 
-* Moderate depression scores (8-10) are associated with an increase risk in flare in UC/IBDU cohort (p-value = 0.0024; controlling for FC p-value = 0.0004)
+
+Maybe take this bit out?
+* Moderate depression scores (8-10) are associated with an increase risk in hard flare in UC/IBDU cohort (p-value = 0.0024; controlling for FC p-value = 0.0004)
 * Depression scores significantly increased risk of flare in UC/IBDU in univariate analysis (p-value = 0.03) 
 * High anxiety scores (11-21) were associated with an increase risk in flare in UC/IBDU when controlling for FC (p-value = 0.03)
+
 * Female sex was a significant risk factor for flare in the UC/IBDU cohort when controlling for smoking, frailty (site) FC (0.037)
 * Female sex was a significant risk factor for flare in the CD cohort when controlling for smoking, frailty(site) +/- FC (p-values = 0.02 and 0.002 respectively)
 
+Below are other bits to put in somwehere - here?
 
+#### HADS depression scores increase risk of flare in UC/IBDU
+
+We found that in patients with UC, patients with higher depression scores at baseline had higher risk with time to flare. 
+
+Of note:
+
+* Risk was significantly increased for patients scoring 8-10 (moderate risk for depression, p-value: 0.0024, 95% CI 1.33-3.78), but not for patients in the high risk group (p-value: 0.097, 95% CI 0.89-3.91). This may be due to small numbers in the high risk group (n = 39). Not significant when score_group considered overall (p-value = 0.07)
+* Proportional Hazards Assumptions test is violated
+* High HADS-Depression scores are NOT a diagnosis of depression, they do likely represent higher levels of distress, compared to those scoring lower on the HADS-D scale
+* HADS-questionnaire has been found to underestimate depression rates within the IBD population with traditional cut off scores, and a meta-analysis found inconsistencies in detection of depression from HADS-D in the general population
+
+
+#### Considering the impact of baseline disease activity and HADS Scores
+
+It also interesting to consider the influence that disease severity/activity may have on HADS scores. Although all patients were in remission at baseline, disease activity in the previous year differed across groups. In a baseline analysis we compared patients who had reported "zero" or "one or more flares" in the previous year (flare defined as requiring a change in medication). Using chi-square to to test for differences in HADS across flare groups we found that: 
+
+* analysing the cohort as a whole HADS scores (both for anxiety and depression) were higher in those who had experienced a flare in the last year vs those who had not.
+* In the UC/IBDU cohort there was a statistically significant difference across flare groups in HADS-anxiety scores (p-value: 8.305e-13), but no difference in HADS-Depression scores (p-value: 0.0815). 
+* In the CD cohort there was a statistically significant difference across flare groups in HADS-anxiety scores (p-value <0.001 and HADS-Depression scores (p-value < 0.001).
+
+
+The lack of difference in HADS-Depression scores in the UC/IBDU cohort suggests that depression may influence disease activity more than previous disease activity influences depression scores.
+
+Full results of baseline analysis can be found in separate report (HADS Baseline).
 ```{r, dataset hads and hads flares}
 
-hardflare_hads <- hads_fc %>% 
+hardflare_hads <- hads_for_analysis %>% 
   inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time), by = "ParticipantNo") %>% 
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 #3508 here
-softflare_hads <- hads_fc %>% 
+softflare_hads <- hads_for_analysis %>% 
   inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 
   rename(DiseaseFlareYN = softflare, time = softflare_time)
 #3620 here
@@ -160,13 +191,16 @@ cox.summary <- function(fit) {
 ```
 
 
-# Analysis for whole cohort 
+## Analysis for whole cohort 
+
 ## Soft flares
 
-Anxiety:
-* signficant association both moderate and severe
+### Anxiety and soft flare
+
+
+* controlling for site only, significant association both moderate (p=value = 9.5e-05) and severe (p-value = 1.1e-07) anxiety
 * remains significant both groups when controlling for IMD, sex, smoking, age group, site - moderate (p-value = 0.0023, 95% CI 1.12-1.70) and severe (p-value = 0.00001, 95% CI 1.30-2.00)
-* signficant when controlling for FC additionally for moderate (p-value = 0.001, 95% CI 1.14-1.73) and severe (p-value < 0.00001, 95% CI 1.31-2.02)
+* remains significant when controlling for FC additionally for moderate (p-value = 0.001, 95% CI 1.14-1.73) and severe (p-value < 0.00001, 95% CI 1.31-2.02)
 
 
 ```{r, soft flares all anxiety}
@@ -211,10 +245,14 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                 data = soft_anxiety_IBD)
 summary(cox_model)
 ```
-Depression and soft flares:
-* controlling for site only, significant for moderate (p-value = 0.0009, 95% CI 1.18-1.95) and severe (p-value 0.01, 95% CI 1.08-2.07)
+
+
+### Depression and soft flares:
+
+
+* controlling for site only, significant for moderate (p-value = 0.0009, 95% CI 1.18-1.95) and severe (p-value 0.014, 95% CI 1.08-2.07)
 * controlling for sex, smoking, IMD, age amd site - significant for moderate (0.0019, 95% CI 1.15-1.92) and severe (p-value = 0.03, 95% CI 1.03-1.99) depression
-* controlling for FC additionally - significant for moderate (0.0008, 95% CI 1.19-1.99) and severe (p-value = 0.04, 95% CI 1.01-1.95) depression
+* controlling for FC additionally - significant for moderate (0.0008, 95% CI 1.19-1.99) and severe (p-value = 0.043, 95% CI 1.01-1.95) depression
 
 ```{r, soft flares all depression}
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_depression_IBD)
@@ -307,10 +345,12 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
 summary(cox_model)
 ```
 
-Depression and hard flare, whole cohort
-* Controlling for site only, significant association with moderate depressio (p-value 0.005, 95% CI 1.18-2.60) but no significant association with severe depression
-* Analysis 2 signficiant for moderate depression (p-value = 0.012, 95% CI 1.12-2.48)
-* Controlling for FC additionally, signficiant for moderate depression (p-value = 0.009, 95% CI 1.14-2.54)
+### Depression and hard flare:
+
+
+* Controlling for site only, significant association with moderate depression (p-value 0.005, 95% CI 1.18-2.60) but no significant association with severe depression
+* Significant for moderate depression (p-value = 0.012, 95% CI 1.12-2.48) in analysis 2
+* Controlling for FC additionally, significiant for moderate depression (p-value = 0.009, 95% CI 1.14-2.54)
 
 ```{r, hard flares all depression whole}
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_depression_IBD)
@@ -356,31 +396,31 @@ summary(cox_model)
 
 ```
 
+-----------------------------------------
+End of whole group analysis
+------------------------------------------
 
 
 # Analyses by subgroups (CD vs UC/IBDU)
 
+n= 800, number of events= 314 
 
-## Soft flares
 
-### UC/IBDU
+## Soft flares UC/IBDU
 
-Soft Flare UC/IBDU
-Not controlling for FC (n= 898, number of events= 335)
-Controlling for FC (n= 802, number of events= 314)
+### UC/IBDU anxiety scores and soft flares
 
-#### UC/IBDU anxiety scores
 
-o	Controlling for site only, significant association with severe anxiety and risk of flare (p-value = 0.0004, 95% CI 1.24 - 2.18) (remains significant if using FC dataset, association less strong)
-o	Controlling for site, sex, smoking, significant association with severe anxiety and risk of flare (p-value = 0.0018, 95% CI 1.18- 2.086) (remains significant if using FC dataset, association less strong)
-o	Controlling for site, sex, smoking and FC significant association with severe anxiety and risk of flare (p-value = 0.004, 95% CI 1.14- 2.09)
-o	Sex significant in all
+*	Controlling for site only, significant association with severe anxiety and risk of flare (p-value = 0.0024, 95% CI 1.17 - 2.14)
+*	Controlling for site, sex, smoking, IMD and age group significant association with severe anxiety and risk of flare (p-value = 0.021, 95% CI 1.05 - 1.95)
+*	Controlling for site, sex, smoking, IMD, age group and FC significant association with severe anxiety and risk of flare (p-value = 0.011, 95% CI 1.09- 2.02)
 
-#### UC/IBDU depression scores
 
-o	Controlling for site only, significant association with moderate depression and risk of flare (p-value = 0.015, 95% CI 1.08 - 2.11) (remains significant if using FC dataset, association stronger, and severe group becomes borderline associated p=value =0.05)
-o	Controlling for site, sex, smoking, significant association with moderate depression and risk of flare (p-value = 0.007, 95% CI 1.13- 2.21) (remains significant if using FC dataset, association stronger)
-o	Controlling for site, sex, smoking and FC significant association with moderate depression and risk of flare (p-value = 0.0008, 95% CI 1.27- 2.56)
+#### UC/IBDU depression scores and soft flares
+
+*	Controlling for site only, significant association with moderate depression and risk of flare (p-value = 0.008, 95% CI 1.12 - 2.25) and severe depression (p-value = 0.037, 95% CI 1.032-2.652)
+*	Controlling for site, sex, smoking, IMD and age group, significant association with moderate (p-value = 0.009, 95% CI 1.13- 2.25) and severe (p-value = 0.040, 95% CI 1.02 - 2.66) depression and risk of flare
+*	Controlling for site, sex, smoking and FC significant association with moderate (p-value = 0.004, 95% CI 1.27- 2.56) and severe (p-value = 0.048, 95% CI 1.01 - 2.62) depression and risk of flare 
 
 
 ```{r, soft flare UC/IBDU}
@@ -419,11 +459,11 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
 summary(cox_model)
 
 #3 +FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = soft_anx_uc)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = soft_uc_anx)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + score_group + cat + frailty(SiteNo),
-                data = soft_anx_uc)
+                data = soft_uc_anx)
 summary(cox_model)
 
 
@@ -473,20 +513,19 @@ summary(cox_model)
 
 ## Soft flares CD
 
-Not controlling for FC (n= 912, number of events= 299)
-Controlling for FC (n= 820, number of events= 279)
+n= 820, number of events= 279
 
 #### CD anxiety scores
 
-o	Controlling for site only, significant associations with moderate (p-value = 0.0017, 95% CI 1.18-2.10) and severe anxiety (p-value > 0.00001, 95% CI 1.49-2.59) (remains strongly associate using FC dataset)
-o	Controlling for site, sex, smoking, significant associations with moderate (p-value = 0.013, 95% CI 1.07-1.92) and severe anxiety (p-value > 0.0001, 95% CI 1.34-2.35) (remains strongly associate using FC dataset)
-o	Controlling for site, sex, smoking and FC significant associations with moderate (p-value = 0.002, 95% CI 1.17-2.12) and severe anxiety (p-value > 0.001, 95% CI 1.33-2.38) 
+* Controlling for site only, significant associations with moderate (p-value = 0.0013, 95% CI 1.32-2.36) and severe anxiety (p-value > 0.00001, 95% CI 1.48-2.64) (remains strongly associate using FC dataset)
+* Controlling for site, sex, smoking, IMD and age group, significant associations with moderate (p-value = 0.013, 95% CI 1.21-2.22) and severe anxiety (p-value > 0.0001, 95% CI 1.37-2.50)
+*	Controlling for site, sex, smoking, IMD and age group, FC significant associations with moderate (p-value = 0.002, 95% CI 1.21-2.21) and severe anxiety (p-value > 0.0001, 95% CI 1.36-2.49) 
 
 #### CD depression scores
 
-o	Controlling for site only – significant for moderate depression (p-value = 0.04, 95% CI 1.00-2.01)
-o	Controlling for site, sex, smoking – no significant associations
-o	Controlling for site, sex, smoking and FC – no significant associations
+*	Controlling for site only – significant for moderate depression (p-value = 0.038, 95% CI 1.02-2.09)
+*	Controlling for site, sex, smoking and IMD – no significant associations
+*	Controlling for site, sex, smoking, IMD and FC – no significant associations
 
 
 ```{r, soft flare CD}
@@ -524,11 +563,11 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
 summary(cox_model)
 
 #site/sex/smoke/fc
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = soft_anx_cd)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = soft_cd_anx)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + Smoke + score_group + cat + AgeGroup + IMD + frailty(SiteNo),
-                data = soft_anx_cd)
+                data = soft_cd_anx)
 summary(cox_model)
 
 
@@ -559,50 +598,26 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
 summary(cox_model)
 
 #site/sex/smoke/IMD/age
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + AgeGroup + IMD + Smoke + frailty(SiteNo), data = soft_cd_dep)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + IMD + Smoke + frailty(SiteNo), data = soft_cd_dep)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + IMD + score_group + frailty(SiteNo),
+                  Sex + Smoke + IMD + score_group + frailty(SiteNo),
                 data = soft_cd_dep)
 summary(cox_model)
 
 #add FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + AgeGroup + IMD + Smoke + cat + frailty(SiteNo), data = soft_cd_dep)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + IMD + Smoke + cat + frailty(SiteNo), data = soft_cd_dep)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + IMD + score_group + cat + frailty(SiteNo),
+                  Sex + Smoke + IMD + score_group + cat + frailty(SiteNo),
                 data = soft_cd_dep)
 summary(cox_model)
 
 ```
 
 
+## Hard flares
 
-
-#### HADS depression scores increase risk of flare in UC/IBDU
-
-We found that in patients with UC, patients with higher depression scores at baseline had higher risk with time to flare. 
-
-Of note:
-
-* Risk was significantly increased for patients scoring 8-10 (moderate risk for depression, p-value: 0.0024, 95% CI 1.33-3.78), but not for patients in the high risk group (p-value: 0.097, 95% CI 0.89-3.91). This may be due to small numbers in the high risk group (n = 39). Not significant when score_group considered overall (p-value = 0.07)
-* Proportional Hazards Assumptions test is violated
-* High HADS-Depression scores are NOT a diagnosis of depression, they do likely represent higher levels of distress, compared to those scoring lower on the HADS-D scale
-* HADS-questionnaire has been found to underestimate depression rates within the IBD population with traditional cut off scores, and a meta-analysis found inconsistencies in detection of depression from HADS-D in the general population
-
-
-#### Considering the impact of baseline disease activity and HADS Scores
-
-It also interesting to consider the influence that disease severity/activity may have on HADS scores. Although all patients were in remission at baseline, disease activity in the previous year differed across groups. In a baseline analysis we compared patients who had reported "zero" or "one or more flares" in the previous year (flare defined as requiring a change in medication). Using chi-square to to test for differences in HADS across flare groups we found that: 
-
-* analysing the cohort as a whole HADS scores (both for anxiety and depression) were higher in those who had experienced a flare in the last year vs those who had not.
-* In the UC/IBDU cohort there was a statistically significant difference across flare groups in HADS-anxiety scores (p-value: 8.305e-13), but no difference in HADS-Depression scores (p-value: 0.0815). 
-* In the CD cohort there was a statistically significant difference across flare groups in HADS-anxiety scores (p-value <0.001 and HADS-Depression scores (p-value < 0.001).
-
-
-The lack of difference in HADS-Depression scores in the UC/IBDU cohort suggests that depression may influence disease activity more than previous disease activity influences depression scores.
-
-Full results of baseline analysis can be found in separate report (HADS Baseline).
 
 ```{r, table for participants}
 
@@ -625,6 +640,27 @@ table1::table1(~ score_group | hads_type,
 )
 
 ```
+
+
+### UC/IBDU and Hard flares
+
+n= 780, number of events= 119 
+
+
+#### Anxiety and time to hard flare
+
+* Controlling for site only no significant association
+* Controlling for site, sex, smoking, IMD and age, no significant association
+* Controlling for site, sex, smoking, IMD, age and FC, no significant association
+
+
+#### Depression and time to hard flare
+
+Note: violation of proportional hazards assumption
+
+* Controlling for site only, significant association with moderate (8-10) depression and increased risk of hard flare (p-value 0.004, 95% CI 1.29-3.56)
+* Controlling for site, sex, smoking, IMD and age, significant association with moderate (8-10) (p-value = 0.002, 95% CI 1.32-3.80) and severe (p-value = 0.034, 95% CI 1.06-4.79) depression
+* Controlling for confounders above and FC, significant association with moderate (8-10) (p-value = 0.0003, 95% CI 1.57-4.67) and severe (p-value = 0.041, 95% CI 1.03-4.69) depression
 
 ``` {r, flare (hard) and UC }
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_anx)
@@ -693,14 +729,18 @@ summary(cox_model)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = flare_uc_dep)
 cox.summary(fit.me)
+summary(cox_model)
 
 #analysis 3 (FC cat)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + cat + frailty(SiteNo), data = flare_uc_dep)
 cox.summary(fit.me)
+summary(cox_model)
 ```
 
-
+ HAVE UPDATED UP TO HERE
+ 
+ 
 ### Crohn's Disease - not controlling for FC 
 
 #### No increase in flare risk with higher HADS Scores
