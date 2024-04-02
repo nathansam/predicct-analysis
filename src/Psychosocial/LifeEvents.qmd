@@ -429,11 +429,11 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo),
 summary(cox_model)
 
 #no effect when controlling for Sex, Smoke, frailty , age, IMD
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = LE_CD_soft)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + Smoke + IMD + frailty(SiteNo), data = LE_CD_soft)
 summary(cox_model)
 
 #with FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = LE_CD_soft)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + Smoke + cat + IMD +  frailty(SiteNo), data = LE_CD_soft)
 summary(cox_model)
 
 #hard flare
@@ -458,10 +458,10 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo),
 summary(cox_model)
 
 #no effect when controlling for Sex, Smoke, frailty , age, IMD
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = LE_CD_hard)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + Smoke + IMD + frailty(SiteNo), data = LE_CD_hard)
 summary(cox_model)
 
 #with FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = LE_CD_hard)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + Smoke + cat + IMD +  frailty(SiteNo), data = LE_CD_hard)
 summary(cox_model)
 ```
