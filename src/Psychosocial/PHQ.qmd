@@ -69,15 +69,18 @@ phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
 flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
 smoking <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/smoking.rds")
+flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
+flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
 ```
 
 
  ## The Patient Health Questionnaire (PHQ - 15)
 
 Q43.1 of the baseline questionnaire: "During the past 4 weeks how much have you been bothered by any of the following problems?"
+
 13 physical symptoms + feeling tired/trouble sleeping. Scores 0 (not at all) to 2 (bothered a lot). 
 Total score is between 0-30. 
-Scores of ≥5, ≥10, ≥15 represent mild, moderate and severe levels of somatization. The reliability and validity of the PHQ-15 are high in clinical and occupational health care settings.
+Scores of ≥5, ≥10, ≥15 represent mild, moderate and severe levels of somatisation. The reliability and validity of the PHQ-15 are high in clinical and occupational health care settings.
 
 ```{r, load and tidy phq data set}
 #61 missing ParticipantId (blank rows - exclude these, from 1960 to 1899)
@@ -185,20 +188,21 @@ table1::table1(~ Sex + AgeGroup + diagnosis2 | somatisation,
 )
 ```
 
-All patients (1608)
+
+### Baseline associations - whole cohort
 
 Somatisation scores are: 
 
-* Higher for females (p-value < 2.2e-16).
-* Higher for patients with CD than UC/IBDU (p-value = 0.04351)
-* Higher for those who reported one or more flares in the previous year (p-value = p-value = 2.879e-07)
-* There was a signficant difference across somatisation score according to age (p-valeu = 0.02)
+* Significantly higher for patients with CD than UC/IBDU (p-value = 0.043)
+* Significantly higher for females (p-value < 2.2e-16).
+* Significantly higher for those who reported one or more flares in the previous year (p-value = 2.879e-07)
+* There was a signficant difference across somatisation score according to age (p-value = 0.017)
   * The 45-54 age group had the highest percentage of participants in the 'severe somatisation group' (12%)
   * The 18-24 age group had the highest percentage of participants in the 'moderate somatisation group' (27.2%)
   * The 65+ had the highest percentage of participants in the 'mild somatisation group' (50%) (likely that this reflects MSK pain associated with age)
   * The 25-34 had the highet percentage of participants in the 'no somatisation group' (31.7%)    
   * The percentage of participants in each somatisation category per age group are presented in table below
-* FC was not significantly associated with somatisation category (note this analysis is in 1608 patients)
+* FC was not significantly associated with somatisation category (p-value = 0.99)
 
 ```{r, distribution of scores for sex and disease type}
 # Sex
@@ -227,14 +231,6 @@ ggplot(phq_percent, aes(x = TotalPHQ, y = Percentage, colour = Sex)) +
        y = "Percentage of Participants") +
   theme_classic()
 
-# Plot the bar graph (total counts)
-ggplot(phq_clean, aes(x = somatisation, fill = Sex)) +
-  geom_bar(stat = "count", position = "dodge") +
-  labs(title = "Distribution of somatisation by Sex",
-       x = "Somatisation Level",
-       y = "Number of Participants") +
-  theme_minimal()
-
 
 # Disease type - stat significant for it being higher in CD (p-value = 0.018)
 # need to add CI
@@ -251,19 +247,6 @@ if (chi_squared_result$p.value < alpha) {
 }
 
 phq_percent <- phq_clean %>%
-  group_by(TotalPHQ, diagnosis2) %>%
-  summarise(Percentage = n() / nrow(phq_clean) * 100) %>%
-  ungroup()
-
-# Plot the line graph
-ggplot(phq_percent, aes(x = TotalPHQ, y = Percentage, colour = diagnosis2)) +
-  geom_line() +
-  labs(title = "Distribution of baseline PSQI Scores",
-       x = "PSQI score",
-       y = "Percentage of Participants") +
-  theme_classic()
-
-phq_percent <- phq_clean %>%
   group_by(somatisation, diagnosis2) %>%
   summarise(Percentage = n() / nrow(phq_clean) * 100) %>%
   ungroup()
@@ -271,9 +254,9 @@ phq_percent <- phq_clean %>%
 # Plot the bar graph (total counts)
 ggplot(phq_percent, aes(x = somatisation, y = Percentage, fill = diagnosis2)) +
   geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Distribution of somatisation by Sex",
+  labs(title = "Distribution of somatisation by diagnosis type",
        x = "Somatisation Level",
-       y = "Number of Participants") +
+       y = "Percentage of Participants") +
   theme_minimal()
 
 #flares last year 
@@ -285,16 +268,24 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and flares in last year")
+  message("There is a significant association between somatisation scores and flares in last year")
 } else {
-  message("There is no significant association between sex and flares in last year")
+  message("There is no significant association between somatisation scores and flares in last year")
 }
 
 #age - p-value = 0.02
 contingency_table <- table(phq_clean$AgeGroup, phq_clean$somatisation)
 contingency_table
-fisher_result <- fisher.test(contingency_table, simulate.p.value = TRUE)
-fisher_result
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between somatisation scores and age")
+} else {
+  message("There is no significant association between somatisation scores and age")
+}
+
 
 percentages <- phq_clean %>%
   group_by(AgeGroup, somatisation) %>%
@@ -321,23 +312,27 @@ table1::table1(~ somatisation | AgeGroup,
 #FC - 
 contingency_table <- table(phq_clean$cat, phq_clean$somatisation)
 contingency_table
-fisher_result <- fisher.test(contingency_table, simulate.p.value = TRUE)
-fisher_result
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between somatisation scores and FC")
+} else {
+  message("There is no significant association between somatisation scores and FC")
+}
 ```
-
-Additionally, would be interesting to see the distributions of symptoms most frequently reported (by sex and disease type).
-And also perhaps associations with anxiety and depression.
 
 ## Analysis by diagnosis type separately
 
 Here we investigate whether somatisation scores in CD and UC/IBDU patients have different associations with sex, age, flares in last year and FC
 
-### Crohn's patients only 
+### Baseline Associations - Crohn's Disease
 
-* Females are have higher somatisation scores than men (p-value < 2.2e-16)
+* Females have significantly higher somatisation scores than men (p-value < 2.2e-16)
 * Participants who reported one or more flares in previous year had higher somatisation scores (p-value = 1.8e-05)
-* There was no significant association with age (p-value = 0.1019)
-* NO significant association with faecal calprotectin (p-value = 0.84)
+* There was no significant association with age (p-value = 0.119)
+* There was no significant association with faecal calprotectin (p-value = 0.83)
 
 ```{r, CROHNS AND SOMATISATION}
 
@@ -375,31 +370,37 @@ if (chi_squared_result$p.value < alpha) {
 #age - p-value = 0.02
 contingency_table <- table(CD_phq$AgeGroup, CD_phq$somatisation)
 contingency_table
-print(contingency_table)
-fisher_result <- fisher.test(contingency_table, simulate.p.value = TRUE)
-fisher_result
-
-
-table1::table1(~ somatisation | AgeGroup,
-  data = CD_phq,
-  render.continuous = my.render.cont,
-  caption = "Distribution of patients across somatisation categories (by age group)"
-)
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between age and presence of somatisation")
+} else {
+  message("There is no significant association between age and somatisation")
+}
 
 
 #FC - 
 contingency_table <- table(CD_phq$cat, CD_phq$somatisation)
 contingency_table
-fisher_result <- fisher.test(contingency_table, simulate.p.value = TRUE)
-fisher_result
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between FC and somatisation")
+} else {
+  message("There is no significant association between FC and somatisation")
+}
 ```
 
 ## UC/IBDU patients only 
 
 * Significant association with sex, more females have higher somatisation scores (p-value =  3.681e-13)
-* higher scores for those reporting flare previous year (p-value = 0.0002)
-* No significant association between age groups and somatic scores (p-value = 0.1329)
-* No significant association with FC (p-value = 0.5887)
+* Higher scores for those reporting flare previous year (p-value = 0.0002)
+* No significant association between age groups and somatic scores (p-value = 0.104)
+* No significant association with FC (p-value = 0.62)
 
 ```{r, UC/IBDU AND SOMATISATION}
 
@@ -414,7 +415,7 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and presence of somatisation")
+  message("There is a significant association between sex and somatisation")
 } else {
   message("There is no significant association between sex and somatisation")
 }
@@ -437,25 +438,34 @@ if (chi_squared_result$p.value < alpha) {
 #age - p-value = 0.13
 contingency_table <- table(UC_phq$AgeGroup, UC_phq$somatisation)
 contingency_table
-fisher_result <- fisher.test(contingency_table, simulate.p.value = TRUE)
-fisher_result
-
-
-table1::table1(~ somatisation | AgeGroup,
-  data = UC_phq,
-  render.continuous = my.render.cont,
-  caption = "Distribution of patients across somatisation categories (by age group)"
-)
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between age and somatisation level")
+} else {
+  message("There is no significant association between age and somatisation level")
+}
 
 
 #FC - 
 contingency_table <- table(UC_phq$cat, UC_phq$somatisation)
 contingency_table
-fisher_result <- fisher.test(contingency_table, simulate.p.value = TRUE)
-fisher_result
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between FC and somatisation level")
+} else {
+  message("There is no significant association between FC and somatisation level")
+}
 ```
 
 ## Survival analysis 
+
+
 ```{r, code for survival analysis}
 cox.summary <- function(fit) {
   cat("Cox model summary:")
@@ -480,10 +490,6 @@ cox.summary <- function(fit) {
 }
 
 
-#create hard and soft data sets for UC and CD separately 
-flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
-flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
-
 
 phq_soft <- phq_clean %>% 
   inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 
@@ -505,24 +511,21 @@ UC_phq_soft <- UC_phq %>%
 UC_phq_hard <- UC_phq %>% 
   inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time)) %>% 
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
-
-
-
 ```
-
-
-# Survival analysis
-## Are somatisation scores associated with different times to flare?
 
 
 ### Whole cohoort
 
 Soft flare
-* Significant at all levels
+
+* Significant at all levels in all analyses, here I report controlling for site, sex, smoking, IMD age and FC
+  * Increase risk with mild somatisation (p-value = 8.2e-05, 95% CI 1.26-2.03)
+  * Increase risk with moderate somatisation (p-value = 3.5e-07 , 95% CI 1.51-2.55)
+  * Increase risk with severe somatisation (p-value = 1.4e-08, 95% CI 1.86-3.59)
+  
 
 Hard flare
-* Mild somatisation significant when controlling for site only 
-* No significant associations in other analyses
+* Mild somatisation significant when controlling for site only (p-value = 0.02, 95% CI 1.06-2.11), not significant for other levels or when controlling for other confounding factors
 
 ```{r, whole cohort}
 #Soft flares
@@ -544,7 +547,7 @@ p1 <- ggsurvplot(fit,
            ggtheme = theme_minimal(),
            palette = c("#0B1D51", "#1C77C3", "#39A9DB", "#A0ECD0"),
            xlab = "Time from study recrutiment (days)",
-           title = "All participants - Time to hard flare - Somatisation (PHQ15)"
+           title = "All participants - Time to soft flare - Somatisation (PHQ15)"
            )
 p1
 
@@ -563,10 +566,6 @@ test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ somatisation, data = phq_ha
 print(test_result)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo), data = phq_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo),
-                data = phq_hard)
-cox.summary(fit.me)
 summary(cox_model)
 
 p1 <- ggsurvplot(fit,
@@ -580,29 +579,39 @@ p1 <- ggsurvplot(fit,
 p1
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = phq_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + IMD + somatisation + frailty(SiteNo),
-                data = phq_hard)
-cox.summary(fit.me)
 summary(cox_model)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + AgeGroup + IMD + Smoke + cat + frailty(SiteNo), data = phq_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + AgeGroup + IMD + cat + frailty(SiteNo),
-                data = phq_hard)
-cox.summary(fit.me)
 summary(cox_model)
 
 ```
 
 
-### Crohn's cohort
+### Survival analysis - Crohn's Disease
 
+Soft flare: 
+n= 807, number of events= 273 
 
-Significant increased risk for flare for mild and severe somatisation scores (not for moderate), when controlling for frailty only. Of note, the lines for mild and moderate overlap. This remains true when controlling for sex, smoking in addition to frailty (site).
-Statistically significant increase in risk for patients in the severe somatisation group, when controlling for FC in addition to the above. 
+* controlling for site only, significant increase in risk at all levels of somatisation
+* controlling for site, sex, smoking and IMD,  significant increase in risk at all levels of somatisation
+* controlling for FC additionally,  significant increase in risk at all levels of somatisation
+  * Mil p-value = 0.0013, 95% CI 1.29-2.86
+  * Moderate p-value = 5.4e-07, 95% CI 1.93-5.25
+  * Severe p-value = 1.6e-07, 95% CI 2.32 - 6.39
+
+Hard flare: 
+
+* Controlling for site only 
+  * Significant increased risk for flare for mild  (p-value = 0.011) and severe (p-value = 0.012) somatisation
+  * No significant increase in risk for moderate somatisation (p-value = 0.11)
+* Controlling for sex, smoking, site, IMD
+  * Significant increased risk for flare for mild  (p-value = 0.029) and severe (p-value = 0.050) somatisation
+  * No significant increase in risk for moderate somatisation (p-value = 0.23)
+* Controlling for FC additionally
+  * Significant increased risk for flare for mild (p-value = 0.044, 95% CI 1.01-3.43) and severe (p-value = 0.046, 95% CI 1.01-5.37) somatisation
+  * No significant increase in risk for moderate somatisation (p-value = 0.20, 95% CI 0.78-3.15)
+  
+
 ```{r, SA for CD patients and PHQ}
 # p-value 0.04
 # testing for somatisation, controlling for frailty only: mild somatisation (p-value mild somatisation 0.015, moderate 0.07, severe 0.006). Those with no somatisation had lower than predicted flares.
@@ -626,24 +635,14 @@ p1 <- ggsurvplot(fit,
            ggtheme = theme_minimal(),
            palette = c("#0B1D51", "#1C77C3", "#39A9DB", "#A0ECD0"),
            xlab = "Time from study recrutiment (days)",
-           title = "Crohn's - Time to hard flare - Somatisation (PHQ15)"
+           title = "Crohn's - Time to soft flare - Somatisation (PHQ15)"
            )
 p1
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + frailty(SiteNo), data = CD_phq_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + frailty(SiteNo),
-                data = CD_phq_soft)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = CD_phq_soft)
 summary(cox_model)
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + cat + frailty(SiteNo), data = CD_phq_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + cat + frailty(SiteNo),
-                data = CD_phq_soft)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = CD_phq_soft)
 summary(cox_model)
 
 
@@ -671,28 +670,33 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + frailty(SiteNo), data = CD_phq_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + frailty(SiteNo),
-                data = CD_phq_hard)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = CD_phq_hard)
 summary(cox_model)
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + cat + frailty(SiteNo), data = CD_phq_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + cat + frailty(SiteNo),
-                data = CD_phq_hard)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = CD_phq_hard)
 summary(cox_model)
 
 ```
 
 ## UC/IBDU 
 
-No significance in any analysis
-Indicative of differences across disease type.
+
+Soft flares:
+n= 794, number of events= 312 
+
+* significant controlling for site only at all somatisation levels
+* significant controlling for site, sex, smoking, IMD at all levels 
+* signifciant when controlling for FC additionally 
+  * mild p-value = 0.005, 95% CI 1.13-2.03
+  * moderate p-value = 0.02, 95% CI 1.06-2.10
+  * severe p-value = 0.003, 95% CI 1.24-3.06
+  
+
+Hard flares:   
+n= 774, number of events= 119 
+
+* No significant increase in risk in any analysis
+
 
 ```{r, SA for UC/IBDU patients and PHQ}
 # p-value 0.09
@@ -720,20 +724,10 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + frailty(SiteNo), data = UC_phq_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + frailty(SiteNo),
-                data = UC_phq_soft)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = UC_phq_soft)
 summary(cox_model)
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + cat + frailty(SiteNo), data = UC_phq_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + cat + frailty(SiteNo),
-                data = UC_phq_soft)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = UC_phq_soft)
 summary(cox_model)
 
 
@@ -761,20 +755,10 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + frailty(SiteNo), data = UC_phq_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + frailty(SiteNo),
-                data = UC_phq_hard)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = UC_phq_hard)
 summary(cox_model)
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + cat + frailty(SiteNo), data = UC_phq_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + somatisation + cat + frailty(SiteNo),
-                data = UC_phq_hard)
-cox.summary(fit.me)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = UC_phq_hard)
 summary(cox_model)
 
 ```
