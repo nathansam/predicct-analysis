@@ -74,26 +74,30 @@ flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_sof
 
 ### Sleep Quality - the PSQI at basline
 
-
 Question 39 of the baseline questionnaire
-Questions answered by a partner are not calculate in the score.
 
 
-Component 1: Subjective sleep quality—question 9 (39.6 in PREdiCCt) - "SleepQuality"
-Score 0-3
+Global PSQI score: sum of seven component scores (of note, questions answered by a partner are not calculated in the score).
+Patients were grouped by presence/absence of sleep disturbance using a global PQSI cut off of 5, as score > 5 has a diagnostic sensitivity of 89.6% and specificity of 86.5% in distinguishing good and poor sleepers. 
+
+
+
+Notes on Methods:
+
+Component 1: Subjective sleep quality—question 9 (39.6 in PREdiCCt) - "SleepQuality" (Score 0-3)
 
 Component 2: Sleep latency — questions 2 and 5a
 Q2 ("FallAsleepMns") : <15, 15-30, 31-60, >60 score 0-3 repectively
 Q5a ("CantGetToSleep") : 0-3 (note coded 1-4)
-Cmponent 2 score = addition of the above /2 (rounded up)
+Component 2 score = addition of the above /2 (rounded up)
 
 Component 3: Sleep duration - question 4
 SleepEachNightHrs + SleepEachNightMns: >7h (0), 6-7h (1), 5-6 h (2), <5h (3)
 
 Component 4: Sleep efficiency—questions 1, 3, and 4
-Q1 time gone to bed "BedTimeHrs" + "BedTimeMns" - will need to ensure coded into 24 hour clock
-Q3  wake up time "WokenUpHours" + "Woken Up mins" 
-Q4 - estimated actual hours of sleep (SleepEachNightHrs+ SleepEachNightMns)
+Q1 time gone to bed "BedTimeHrs" + "BedTimeMns" - ensure coded into 24 hour clock
+Q3 wake up time "WokenUpHours" + "Woken Up mins" 
+Q4 estimated actual hours of sleep (SleepEachNightHrs+ SleepEachNightMns)
 
 Sleep efficiency = (# hours slept/# hours in bed) X 100% # hours slept—question 4
 n# of hours in bed—calculated from responses to questions 1 and 3
@@ -106,12 +110,9 @@ Component 5 score (relates to sum): 0 (0), 1-9 (1), 10-18 (2), 19-17 (3)
 Component 6 - Use of sleep medication (question 39.7 "SleepMedicines")
 Score 0-3
 
-Component 7: Daytime dysfuntion (questions 7 and 8 = 39.8 and 39.9, "StayingAwake" and "EnoughEnthusiasm")
+Component 7: Daytime dysfunction (questions 7 and 8 = 39.8 and 39.9, "StayingAwake" and "EnoughEnthusiasm")
 Both scores 0-3, sum/2 and rounded up
 
-Global PSQI score: sum of seven component scores
-
-A score of 5 or above is indicative of sleep disturbance.
 
 
 ``` {r, tidy psqi}
@@ -135,6 +136,38 @@ psqi2 <- psqi2[psqi2$age > 17,]
 
 #make sex into level
 psqi2$Sex <- factor(psqi2$Sex, levels = c(1, 2), labels = c("Male", "Female"))
+
+#make age brackets
+psqi2$AgeGroup <- cut(psqi2$age, 
+                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
+                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+                         include.lowest = TRUE)
+
+psqi2 <- psqi2 %>% 
+  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
+#find missing flare data -> 2 participants, these were excluded
+missing_flare <- psqi2 %>%
+  filter(is.na(FlaresInPastYear))
+psqi2 <- psqi2 %>%
+  filter(!is.na(FlaresInPastYear))
+#create flare groups
+psqi2 <- psqi2 %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
+#make flares into levels
+psqi2$flare_group <- factor(psqi2$flare_group, levels = c( "No Flares","1 or More Flares"))
+
+psqi2 <- psqi2 %>% 
+  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
+#204 are missing FC
+missing_fc <- psqi2 %>% 
+  filter(is.na(cat))
+psqi2 <- psqi2 %>% 
+  filter(!is.na(cat))
+psqi2 <- psqi2 %>% 
+  left_join(smoking %>% select(ParticipantNo, Smoke))
+
+save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+saveRDS(psqi2, paste0(save_path, "psqi_IBD.RDS"))
 
 #delete missing data 
 miss_psqi <- psqi2 %>%
@@ -252,7 +285,6 @@ psqi2 <- psqi2 %>%
          )
 
 
-
 #calculate comp 4
 psqi2 <- psqi2 %>% 
   mutate(SleepEff = TotalSleepMinutes/TotalBedMinutes * 100)
@@ -294,65 +326,26 @@ psqi2 <- psqi2 %>%
 psqi2 <- psqi2 %>% 
   mutate(TotalScore = comp1 + comp2 + comp3 + comp4 + comp5 + comp6 + comp7)
 
-#score 5 or above is "poor sleep"
+#score > 5 is "poor sleep"
 psqi2 <- psqi2 %>%
-  mutate(SleepDisturbance = if_else(TotalScore < 5, "No", "Yes"))
-
-#make age brackets
-psqi2$AgeGroup <- cut(psqi2$age, 
-                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-                         include.lowest = TRUE)
-
-age_counts <- table(psqi2$AgeGroup)
-age_counts_df <- as.data.frame(age_counts)
-colnames(age_counts_df) <- c("Age_Category", "Count")
-age_counts_df
+  mutate(SleepDisturbance = if_else(TotalScore < 6, "No", "Yes"))
 ```
 
 ```{r, tidy psqi2}
-psqi2 <- psqi2[, -(7:24)]
-psqi2 <- psqi2[, -(7:17)]
-psqi2 <- psqi2[, -(12:22)]
+psqi2 <- psqi2[, -(7:35)]
 ```
 
-```{r, join smoking, previous flare, fc}
-#flare data from IBD data set
-psqi_IBD <- psqi2 %>% 
-  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
-#find missing flare data -> 2 participants, these were excluded
-missing_flare <- psqi_IBD %>%
-  filter(is.na(FlaresInPastYear))
-psqi_IBD <- psqi_IBD %>%
-  filter(!is.na(FlaresInPastYear))
-#create flare groups
-psqi_IBD <- psqi_IBD %>%
-  mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
-#make flares into levels
-psqi_IBD$flare_group <- factor(psqi_IBD$flare_group, levels = c( "No Flares","1 or More Flares"))
+## Baseline associations
 
-psqi_IBD <- psqi_IBD %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
-#204 are missing FC
-missing_fc <- psqi_IBD %>% 
-  filter(is.na(cat))
-psqi_IBD <- psqi_IBD %>% 
-  filter(!is.na(cat))
-psqi_IBD <- psqi_IBD %>% 
-  left_join(smoking %>% select(ParticipantNo, Smoke))
+We investigated for associations between presence of sleep disturbance (global PSQI >5) and diagnosis type, sex, flares in last year, FC and age using chi-square test.
+Analyses were carried out for the IBD cohort as a whole, and for CD and UC/IBDU separately.
 
-save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-saveRDS(psqi_IBD, paste0(save_path, "psqi_IBD.RDS"))
-```
-
-
-Sleep disorder distribution (Sleep disturbance =  PSQI score => 5)
-All analyses were carried out with chi-square test unless otherwise specified
+### IBD cohort
 
 All patients: 
 * Sex: females have a statistically increased risk of sleep disturbance (p-value > 0.00001 )
-* IBD type: There is no significant association between IBD type and sleep disturbance (p-value = 0.05), although rates appear higher in Crohn's (see table)
-* Flares in last year: is a significant association between flares in last year and presence of sleep disturbance (p-value = 0.02)
+* IBD type: There is no significant association between IBD type and sleep disturbance (p-value = 0.16)
+* Flares in last year: is a significant association between flares in last year and presence of sleep disturbance (p-value = 0.001)
 * FC category (<50, 20-250, >250): no statistically significant difference (p-value = 0.43)
 * Age: Patients at extremes of age have higher rates of sleep disturbance (p-value > 0.00001)
 
@@ -385,6 +378,7 @@ ggplot(psqi2_percent, aes(x = TotalScore, y = Percentage, colour = Sex)) +
 
 # IBD type
 contingency_table <- table(psqi2$diagnosis2, psqi2$SleepDisturbance)
+print(contingency_table)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
@@ -398,7 +392,7 @@ if (chi_squared_result$p.value < alpha) {
 
 
 # Flare last year
-contingency_table <- table(psqi_IBD$flare_group, psqi_IBD$SleepDisturbance)
+contingency_table <- table(psqi2$flare_group, psqi2$SleepDisturbance)
 #chi.sq__
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
@@ -411,9 +405,9 @@ if (chi_squared_result$p.value < alpha) {
 }
 
 #need a better plot for this
-psqi2_percent <- psqi_IBD %>%
+psqi2_percent <- psqi2 %>%
   group_by(TotalScore, flare_group) %>%
-  summarise(Percentage = n() / nrow(psqi_IBD) * 100) %>%
+  summarise(Percentage = n() / nrow(psqi2) * 100) %>%
   ungroup()
 
 # Plot the line graph
@@ -425,7 +419,7 @@ ggplot(psqi2_percent, aes(x = TotalScore, y = Percentage, colour = flare_group))
   theme_classic()
 
 #use tidy FC dataset (psqi_FC) for this analysis
-percentages <- psqi_IBD %>%
+percentages <- psqi2 %>%
   group_by(cat, SleepDisturbance) %>%
   summarise(count = n()) %>%
   group_by(SleepDisturbance) %>%
@@ -440,21 +434,34 @@ ggplot(percentages, aes(x = cat, y = percentage, color = SleepDisturbance, group
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
   theme_minimal()
 
-contingency_table <- table(psqi_IBD$cat, psqi_IBD$SleepDisturbance)
-contingency_table
+#FC
+contingency_table <- table(psqi2$cat, psqi2$SleepDisturbance)
+#chi.sq__
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between FC and presence of sleep disturbance")
+} else {
+  message("There is no significant association between FC and sleep disturbance")
+}
 
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
 
-#age (grouped) using fishers
-contingency_table <- table(psqi_IBD$AgeGroup, psqi_IBD$SleepDisturbance)
-contingency_table
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
+#age (grouped)
+contingency_table <- table(psqi2$AgeGroup, psqi2$SleepDisturbance)
+#chi.sq__
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between age and presence of sleep disturbance")
+} else {
+  message("There is no significant association between age and sleep disturbance")
+}
 
-percentages <- psqi_IBD %>%
+percentages <- psqi2 %>%
   group_by(AgeGroup, SleepDisturbance) %>%
   summarise(count = n()) %>%
   group_by(AgeGroup) %>%
@@ -463,8 +470,8 @@ percentages <- psqi_IBD %>%
 # Create a line chart to show the percentage of respondents with a certain HADS score
 ggplot(percentages, aes(x = AgeGroup, y = percentage, color = SleepDisturbance, group = SleepDisturbance)) +
   geom_line() +
-  labs(title = "Sleep Distrubance (PSQI =>5) across age groups",
-       subtitle = "Patients at extremes of age have higher rates of sleep disturbnace, p-value > 0.00001",
+  labs(title = "Sleep Distrubance (PSQI >5) across age groups",
+       subtitle = "Older patients have higher rates of sleep disturbnace, p-value > 0.00001",
        x = "Age Groups",
        y = "Percentage of Paricipants") +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
@@ -495,20 +502,23 @@ table1::table1(~ Sex + AgeGroup + diagnosis2 | SleepDisturbance,
 ```
 
 
-Divide into UC/IBDU and CD and add disease location data
+Divide into UC/IBDU and CD
 ``` {r, divide into disease type datasets}
-psqi_UC <- psqi_IBD[psqi_IBD$diagnosis2 == "UC/IBDU",]
-psqi_CD <- psqi_IBD[psqi_IBD$diagnosis2 == "CD",]
+psqi_UC <- psqi2[psqi2$diagnosis2 == "UC/IBDU",]
+psqi_CD <- psqi2[psqi2$diagnosis2 == "CD",]
 ```
 
-Sleep disorder distribution (Sleep disturbance =  PSQI score => 5)
-All analyses were carried out with chi-square test unless otherwise specified, * = Fisher's Exact test
+
+### CD cohort - baseline associations
+
+
+All analyses were carried out with chi-square.
 
 CD patients:
-* Sex: females have a statistically increased risk of sleep disturbance (p-value = 0.0026 )
-* Flares in last year: there is a significant association between flares in last year and presence of sleep disturbance (p-value = 0.001)
-* FC category* (<50, 20-250, >250): no statistically significant difference (p-value = 0.55) 
-* Age*: Patients at extremes of age have higher rates of sleep disturbance (p-value = 0.0005) (highert in 18-24. followed by 55-64)
+* Sex: females have a statistically increased risk of sleep disturbance (p-value = 0.00002 )
+* Flares in last year: there is a significant association between flares in last year and presence of sleep disturbance (p-value = 0.0005)
+* FC category (<50, 20-250, >250): no statistically significant difference (p-value = 0.200) 
+* Age: Patients at extremes of age have higher rates of sleep disturbance (p-value = 0.0002) (highest in 55-64 age group)
 
 
 ``` {r, psqi_CD statistical differencesat baseline}
@@ -542,16 +552,30 @@ if (chi_squared_result$p.value < alpha) {
 #FC cat and SD
 contingency_table <- table(psqi_CD$cat, psqi_CD$SleepDisturbance)
 contingency_table
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
+#chi.sq
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between FC and presence of sleep disturbance")
+} else {
+  message("There is no significant association between FC and sleep disturbance")
+}
+
 
 #age (grouped) using fishers
 contingency_table <- table(psqi_CD$AgeGroup, psqi_CD$SleepDisturbance)
 contingency_table
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between age and presence of sleep disturbance")
+} else {
+  message("There is no significant association between age and sleep disturbance")
+}
 
 percentages <- psqi_CD %>%
   group_by(AgeGroup, SleepDisturbance) %>%
@@ -562,25 +586,24 @@ percentages <- psqi_CD %>%
 # Create a line chart to show the percentage of respondents with a certain HADS score
 ggplot(percentages, aes(x = AgeGroup, y = percentage, color = SleepDisturbance, group = SleepDisturbance)) +
   geom_line() +
-  labs(title = "Sleep Distrubance (PSQI =>5) across age groups",
-       subtitle = "Patients at extremes of age have higher rates of sleep disturbnace, p-value > 0.00001",
+  labs(title = "Sleep Distrubance (PSQI >5) across age groups in CD",
+       subtitle = "Patients at extremes of age have higher rates of sleep disturbnace, p-value > 0.0002",
        x = "Age Groups",
        y = "Percentage of Paricipants") +
   scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
   theme_minimal()
 ```
 
-Sleep disorder distribution (Sleep disturbance =  PSQI score => 5)
-All analyses were carreied out with chi-square test unless otherwise specified, * = Fisher's Exact test
-
-UC/IBDU patients:
-* Sex: females have a statistically increased risk of sleep disturbance (p-value = 0.0005), stronger effect than in CD
-* Flares in last year: there is NO significant association between flares in last year and presence of sleep disturbance (p-value = p-value = 0.67) - Different to CD which IS significant
-* FC category* (<50, 20-250, >250): no statistically significant difference (p-value = 0.424), as in CD
-* Age*: Patients at extremes of age have higher rates of sleep disturbance (p-value = 0.001), less strong than CD. Highest rates in 45-54 age group, followed by 18-24.
+### Baseline associations in UC/IBDU:
 
 
-``` {r, psqi_ UC statistics baseline}
+* Sex: females have a statistically increased risk of sleep disturbance (p-value = 0.00009)
+* Flares in last year: there is NO significant association between flares in last year and presence of sleep disturbance (p-value = p-value = 0.17) - Different to CD where there is a significant association
+* FC category (<50, 20-250, >250): no statistically significant difference (p-value = 0.84), as in CD
+* Age: Patients at extremes of age have higher rates of sleep disturbance (p-value = 0.002). Highest rates in 55-64 age group.
+
+
+``` {r, psqi UC statistics baseline}
 # Sex
 contingency_table <- table(psqi_UC$Sex, psqi_UC$SleepDisturbance)
 #chi.sq
@@ -611,16 +634,27 @@ if (chi_squared_result$p.value < alpha) {
 #FC cat and SD
 contingency_table <- table(psqi_UC$cat, psqi_UC$SleepDisturbance)
 contingency_table
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between FC and presence of sleep disturbance")
+} else {
+  message("There is no significant association between FC and sleep disturbance")
+}
 
 #age (grouped) using fishers
 contingency_table <- table(psqi_UC$AgeGroup, psqi_UC$SleepDisturbance)
-contingency_table
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
+chi_squared_result <- chisq.test(contingency_table)
+print(chi_squared_result)
+# Check if the result is significant at a certain alpha level (e.g., 0.05)
+alpha <- 0.05
+if (chi_squared_result$p.value < alpha) {
+  message("There is a significant association between age and presence of sleep disturbance")
+} else {
+  message("There is no significant association between age and sleep disturbance")
+}
 
 percentages <- psqi_UC %>%
   group_by(AgeGroup, SleepDisturbance) %>%
@@ -631,7 +665,7 @@ percentages <- psqi_UC %>%
 # Create a line chart to show the percentage of respondents with a certain PSQI score
 ggplot(percentages, aes(x = AgeGroup, y = percentage, color = SleepDisturbance, group = SleepDisturbance)) +
   geom_line() +
-  labs(title = "Sleep Distrubance (PSQI =>5) across age groups",
+  labs(title = "Sleep Distrubance (PSQI >5) across age groups in UC/IBDU",
        subtitle = "Patients at extremes of age have higher rates of sleep disturbnace, p-value > 0.00001",
        x = "Age Groups",
        y = "Percentage of Paricipants") +
@@ -677,9 +711,9 @@ flares_hard <- flares_hard %>%
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 #whole cohort datasets
-psqi_soft <- psqi_IBD %>% 
+psqi_soft <- psqi2 %>% 
   inner_join(flares_soft %>% select(ParticipantNo, DiseaseFlareYN, time))
-psqi_hard <- psqi_IBD %>%
+psqi_hard <- psqi2 %>%
   inner_join(flares_hard %>% select(ParticipantNo, DiseaseFlareYN, time)) 
 
 #grouped cohort datasets
@@ -696,10 +730,13 @@ psqi_UC_hard <- psqi_UC %>%
 
 ### Whole cohort and time to flare
 
+
+n= 1569, number of events= 566 
+
 Whole cohort time to soft flare
-* Significant controlling for site only 
-* Significant controlling for site, sex, smoking, IMD, Age group
-* Significant when controlling for FC additionally (p-value 0.003, 95% CI 1.09-1.56)
+* Significant controlling for site only (p-value = 0.00002, 95% CI 1.20-1.68)
+* Significant controlling for site, sex, smoking, IMD, Age group (p-value = 0.001, 95% CI 1.12-1.58)
+* Significant when controlling for FC additionally (p-value 0.0008, 95% CI 1.12-1.59)
 
 Whole cohort time to hard flare
 * Not statistically significant in any analyses
@@ -767,10 +804,25 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + AgeGrou
 summary(cox_model)
 ```
 
+
+
 #### Crohn's disease
 
+Soft flares:
+n= 795, number of events= 266 
 
-```{r, CD and fatigue}
+* significant increase in risk in time to soft flare controlling for site only (p-value = 7.4e-06, 95% CI 1.37-2.24)
+* significant when controlling for site, sex, smoking, IMD, age (p-value = 0.0004, 95% CI 1.22 - 2.04)
+* significant when additionally controlling for FC (p-value = 0.0006, 95% CI 1.12-2.02)
+
+
+Hard flares:
+n= 771, number of events= 98 
+
+* not significant increase in risk of time to flare in any analyses
+
+
+```{r, CD and sleep disturbance}
 
 # soft flares
 #no effect on time to flare in CD
@@ -792,21 +844,11 @@ p1
 
 #sleep only 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + frailty(SiteNo), data = psqi_CD_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  SleepDisturbance ,
-                data = psqi_CD_soft)
-cox.summary(fit.me)
 summary(cox_model)
 
 #no effect when controlling for Sex, Smoke, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + AgeGroup + IMD + Sex + Smoke + frailty(SiteNo), data = psqi_CD_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + IMD + SleepDisturbance + frailty(SiteNo),
-                data = psqi_CD_soft)
-cox.summary(fit.me)
 summary(cox_model)
 
 #with FC
@@ -840,21 +882,11 @@ p1
 
 #sleep only 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + frailty(SiteNo), data = psqi_CD_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  SleepDisturbance + frailty(SiteNo),
-                data = psqi_CD_hard)
-cox.summary(fit.me)
 summary(cox_model)
 
 #no effect when controlling for Sex, Smoke, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + IMD + AgeGroup + Sex + Smoke + frailty(SiteNo), data = psqi_CD_hard)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + SleepDisturbance + IMD + frailty(SiteNo),
-                data = psqi_CD_hard)
-cox.summary(fit.me)
 summary(cox_model)
 
 #with FC
@@ -867,6 +899,20 @@ cox.summary(fit.me)
 summary(cox_model)
 
 ```
+
+
+
+### UC/IBDU 
+
+Soft flares:
+n= 774, number of events= 300 
+
+* no significant increase in risk of time to soft flare in any analyses
+
+Hard flares: 
+* no significant increase in risk of time to soft flare in any analyses
+
+
 ```{r, UC/IBDU and fatigue}
 # soft flare 
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_UC_soft)
@@ -887,20 +933,10 @@ p1
 
 #sleep only 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + frailty(SiteNo), data = psqi_UC_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  SleepDisturbance + frailty(SiteNo),
-                data = psqi_UC_soft)
-cox.summary(fit.me)
 summary(cox_model)
 
 #no effect when controlling for Sex, Smoke, frailty +/- FC
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = psqi_UC_soft)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + SleepDisturbance + IMD + frailty(SiteNo),
-                data = psqi_UC_soft)
-cox.summary(fit.me)
 summary(cox_model)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + Smoke + AgeGroup + cat + frailty(SiteNo), data = psqi_UC_soft)
