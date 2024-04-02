@@ -118,8 +118,8 @@ demo %>%
   geom_histogram(bins = 30, fill = "#64c7ce", color = "#3B9EA4") +
   geom_density() +
   theme_minimal() +
-  xlab("Age (years)") + 
-  ylab("Frequency") 
+  xlab("Age (years)") +
+  ylab("Frequency")
 ```
 
 ## Sex
@@ -164,6 +164,21 @@ considered as a continuous variable.
 #| warning: false
 demo$BMI <- with(demo, Weight / ((Height / 100)^2))
 demo[demo[, "age"] < 18, "BMI"] <- NA
+p <- demo %>%
+  ggplot(aes(x = BMI)) +
+  geom_histogram(color = "#AD013B", fill = "#F0386B", bins = 30) +
+  theme_minimal() +
+  ylab("Frequency")
+
+ggsave("../plots/BMI-full-cohort.png",
+  p,
+  width = 9,
+  height = 6,
+  create.dir = TRUE
+)
+ggsave("../plots/BMI-full-cohort.pdf", p, width = 9, height = 6)
+
+
 demo %>%
   drop_na(cat) %>%
   ggplot(aes(x = BMI)) +
@@ -319,4 +334,3 @@ pander::pander(sessionInfo())
 Licensed by 
 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
  unless otherwise stated.
-
