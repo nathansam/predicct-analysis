@@ -302,3 +302,47 @@ options(expressions = 10000)
 fisher_result_cd <- fisher.test(contingency_table_cd, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
 fisher_result_cd
 ```
+
+
+
+Cleaning and saving longitudinal flare data
+```{r, cleaning flare data }
+all_flares <- all_flares %>%
+  mutate(ParticipantNo = as.character(ParticipantNo))
+
+flares_hard <- all_flares %>% 
+  select(ParticipantNo, ParticipantId, hardflare, hardflare_time)
+
+#2626 patients in all_flares data set
+#175 missing hardflare, 75 missing hardflare_time
+missing_hard <- flares_hard %>% 
+  filter(is.na(hardflare))
+missing_hardtime <- flares_hard %>% 
+  filter(is.na(hardflare_time))
+#exclude all that have missing, this includes all the missing time
+flares_hard <- flares_hard %>% 
+  filter(!is.na(hardflare))
+#tot 2452
+
+#make cut off 2 years, censor at 730 days. 1 row being lost at this step - unclear why.
+flares_hard <- flares_hard %>%
+  mutate(
+    hardflare = ifelse(hardflare_time > 730, 0, hardflare),
+    hardflare_time = ifelse(hardflare_time > 730, 730, hardflare_time)
+  )
+
+
+flares_soft <- all_flares %>% 
+  select(ParticipantNo, ParticipantId, softflare, softflare_time)
+#108 missing both softflare and softflaretime, exclude 
+missing_soft <- flares_soft %>% 
+  filter(is.na(softflare))
+flares_soft <- flares_soft %>% 
+  filter(!is.na(softflare))
+#tot 2518
+
+#save these
+saveRDS(flares_hard, paste0(save_path, "flares_hard.RDS"))
+saveRDS(flares_soft, paste0(save_path, "flares_soft.RDS"))
+
+```
