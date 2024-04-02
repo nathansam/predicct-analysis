@@ -66,22 +66,52 @@ demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 ETOH <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/ETOH.RDS")
 QOL <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
+flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
+flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
 ```
 
 
 In the baseline questionnaire, participants were asked:
+
 Have you had any significant life events in the last month? (Q 45.1)
-This question was then repeated in monthly questionnaires. It is a modified version of Holmes-Rahe Stress inventory.
+Answer options were multiple choice and included a free text option 'other'. The options provided are a modified Holmes-Rahe Stress inventory.
 
-Cleaned data set as others, exclude age <18, exclude missing baseline FC.
+Number of responses:
 
-Results:
-Yes: 298
-No: 1306
+* n 1306 = 0 events
+* n 298 = 1 or more events
+  * n 211 = 1 event
+  * n 63 = 2 events
+  * n 17 = 3 events
+  * n 5 = 4 events
+  * n 2 = 5 events
 
-132 (large majority) people gave "other" as an answer.
+From the baseline questionnaires 298 people reported a stressful life event (n=132 responded other), 1306 reported no life event.
 
-* Females more likely to report a life event
+
+
+Baseline associations whole cohort
+
+* No difference between diagnosis (p-value = 0.1764)
+* Females more likely to report a life event (p-value = 8.635e-07)
+* Difference across age groups (p-value = 0.002117)
+* No difference in flare rates (p-value = 0.7213)
+* No association with FC (p-value = 0.4096)
+
+
+Baseline associations UC/IBDU
+
+* Significant difference between sexes (p-value = 0.004856)
+* Significant differences across age groups (p-value = 0.0009646)
+* No difference across flare groups (p-value = 0.9796)
+* No difference across FC cat (p-value = 0.4423)
+
+Baseline associations CD
+
+* Significant difference between sexes (p-value = 8.58e-05)
+* No significant difference across age groups (p-value = 0.604)
+* No difference across flare groups (p-value = 0.5257)
+* No difference in FC cat (p-value = 0.7413)
 
 
 ```{r, lifeevents}
@@ -112,7 +142,7 @@ lifeevents <- lifeevents %>%
 lifeevents$flare_group <- factor(lifeevents$flare_group, levels = c( "No Flares","1 or More Flares"))
 
 lifeevents <- lifeevents %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
+  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, Smoke, IMD))
 lifeevents <- lifeevents %>% 
   filter(!is.na(cat))
 ```
@@ -132,6 +162,11 @@ variables_of_interest <- lifeevents[, c(
 # Reshape the data into long format
 variables_long <- gather(variables_of_interest, key = "Variable", value = "LifeEvent")
 
+#counts of events
+lifeevents$NumberEvents <- rowSums(!is.na(lifeevents[, 8:25]), na.rm = TRUE)
+event_counts <- table(lifeevents$NumberEvents)
+print(event_counts)
+
 # Plot the counts using geom_bar
 events_baseline <- ggplot(variables_long, aes(x = LifeEvent, fill = Variable)) +
   geom_bar(position = "dodge", color = "black") +
@@ -142,30 +177,291 @@ events_baseline <- ggplot(variables_long, aes(x = LifeEvent, fill = Variable)) +
   theme(axis.ticks.x = element_blank())
 print(events_baseline)
 
-#How many responded yes/no by Sex
-events_sex <- table(lifeevents$AnyLifeEvents, lifeevents$Sex)
-print(events_sex)
-events_age <- table(lifeevents$AnyLifeEvents, lifeevents$AgeGroup)
-print(events_age)
 
-#Distribution of responses
+# baseline associations
+# diagnosis 2
+contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$diagnosis2)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+#sex
+contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$Sex)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# age
+contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$AgeGroup)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# flare
+contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$flare_group)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# fc
+contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$cat)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
 
-#anyone more than 1 life event?
+LE_UC <- lifeevents[lifeevents$diagnosis2 == "UC/IBDU",]
+LE_CD <- lifeevents[lifeevents$diagnosis2 == "CD",]
+
+#baseline association UC/IBDU
+#sex
+contingency_table <- table(LE_UC$AnyLifeEvents, LE_UC$Sex)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# age
+contingency_table <- table(LE_UC$AnyLifeEvents, LE_UC$AgeGroup)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# flare
+contingency_table <- table(LE_UC$AnyLifeEvents, LE_UC$flare_group)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# fc
+contingency_table <- table(LE_UC$AnyLifeEvents, LE_UC$cat)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+
+#baseline associations CD
+#sex
+contingency_table <- table(LE_CD$AnyLifeEvents, LE_CD$Sex)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# age
+contingency_table <- table(LE_CD$AnyLifeEvents, LE_CD$AgeGroup)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# flare
+contingency_table <- table(LE_CD$AnyLifeEvents, LE_CD$flare_group)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
+# fc
+contingency_table <- table(LE_CD$AnyLifeEvents, LE_CD$cat)
+chi_squared <- chisq.test(contingency_table)
+print(chi_squared)
 
 ```
 
 
-Plan: code life event vs no life event and see if there is an association on time to flare. 
+## Survival analysis
+
+```{r, join with flare data}
+flares_soft <- flares_soft %>% 
+  rename(DiseaseFlareYN = softflare, time = softflare_time)
+flares_hard <- flares_hard %>% 
+  rename(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+#whole cohort datasets
+lifeevents_soft <- lifeevents %>% 
+  inner_join(flares_soft %>% select(ParticipantNo, DiseaseFlareYN, time))
+lifeevents_hard <- lifeevents %>%
+  inner_join(flares_hard %>% select(ParticipantNo, DiseaseFlareYN, time)) 
+
+LE_UC_soft <- lifeevents_soft[lifeevents_soft$diagnosis2 == "UC/IBDU",]
+LE_CD_soft <- lifeevents_soft[lifeevents_soft$diagnosis2 == "CD",]
+
+LE_UC_hard <- lifeevents_hard[lifeevents_hard$diagnosis2 == "UC/IBDU",]
+LE_CD_hard <- lifeevents_hard[lifeevents_hard$diagnosis2 == "CD",]
+```
+
+
+#### Whole cohort 
+
+Soft flaree (n= 1596, number of events= 579) - no significance across any analysis.
+Hard flare (n= 1552, number of events= 215) - no significance across any analysis.
+
+```{r, survival analysis whole cohort}
+
+#soft
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = lifeevents_soft)
+
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = lifeevents_soft)
+print(test_result)
+
+p1 <- ggsurvplot(fit,
+           data = lifeevents_soft,
+           conf.int = TRUE,
+           ggtheme = theme_minimal(),
+           legend.title = "All patients, time to soft flare by presence of signficant life event",
+           palette = c("#42213D", "#F51AA4"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to soft flare"
+           )
+p1
+
+#site only 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo), data = lifeevents_soft)
+summary(cox_model)
+
+#no effect when controlling for Sex, Smoke, frailty , age, IMD
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = lifeevents_soft)
+summary(cox_model)
+
+#with FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = lifeevents_soft)
+summary(cox_model)
+
+#hard flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = lifeevents_hard)
+
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = lifeevents_hard)
+print(test_result)
+
+p1 <- ggsurvplot(fit,
+           data = lifeevents_hard,
+           conf.int = TRUE,
+           ggtheme = theme_minimal(),
+           legend.title = "All patients, time to soft flare by presence of signficant life event",
+           palette = c("#BB0A21", "#F39237"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+p1
+
+#site only 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo), data = lifeevents_hard)
+summary(cox_model)
+
+#no effect when controlling for Sex, Smoke, frailty , age, IMD
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = lifeevents_hard)
+summary(cox_model)
+
+#with FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = lifeevents_hard)
+summary(cox_model)
+```
+
+
+### Survival analysis UC/IBDU
+
+
+Soft flare (n= 782, number of events= 305) - no associations. 
+Hard flare (n= 763, number of events= 118) - no associations.
+
+```{r, survival analysis UC/IBDU cohort}
+
+#soft
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_UC_soft)
+
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_UC_soft)
+print(test_result)
+
+p1 <- ggsurvplot(fit,
+           data = LE_UC_soft,
+           conf.int = TRUE,
+           ggtheme = theme_minimal(),
+           legend.title = "UC/IBDU patients, time to soft flare by presence of signficant life event",
+           palette = c("#42213D", "#F51AA4"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to soft flare"
+           )
+p1
+
+#site only 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo), data = LE_UC_soft)
+summary(cox_model)
+
+#no effect when controlling for Sex, Smoke, frailty , age, IMD
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = LE_UC_soft)
+summary(cox_model)
+
+#with FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = LE_UC_soft)
+summary(cox_model)
+
+#hard flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_UC_hard)
+
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_UC_hard)
+print(test_result)
+
+p1 <- ggsurvplot(fit,
+           data = LE_UC_hard,
+           conf.int = TRUE,
+           ggtheme = theme_minimal(),
+           legend.title = "UC/IBDU patients, time to soft flare by presence of signficant life event",
+           palette = c("#BB0A21", "#F39237"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+p1
+
+#site only 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo), data = LE_UC_hard)
+summary(cox_model)
+
+#no effect when controlling for Sex, Smoke, frailty , age, IMD
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = LE_UC_hard)
+summary(cox_model)
+
+#with FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = LE_UC_hard)
+summary(cox_model)
+```
 
 
 
+### Survival analysis CD cohort
 
+Soft flare (n= 814, number of events= 274) - no significance across any analysis.
+Hard flare (n= 789, number of events= 97) - no significance across any analysis.
 
+```{r, survival analysis whole cohort}
 
+#soft
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_CD_soft)
 
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_CD_soft)
+print(test_result)
 
-# Quality of life 
+p1 <- ggsurvplot(fit,
+           data = LE_CD_soft,
+           conf.int = TRUE,
+           ggtheme = theme_minimal(),
+           legend.title = "CD patients, time to soft flare by presence of signficant life event",
+           palette = c("#42213D", "#F51AA4"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to soft flare"
+           )
+p1
 
-Higher scores indicate better answer
-Reverse code: GeneralHealth, PainInterfere, CalmAndPeaceful, DownheartedBlue
+#site only 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo), data = LE_CD_soft)
+summary(cox_model)
 
+#no effect when controlling for Sex, Smoke, frailty , age, IMD
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = LE_CD_soft)
+summary(cox_model)
+
+#with FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = LE_CD_soft)
+summary(cox_model)
+
+#hard flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_CD_hard)
+
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_CD_hard)
+print(test_result)
+
+p1 <- ggsurvplot(fit,
+           data = LE_CD_hard,
+           conf.int = TRUE,
+           ggtheme = theme_minimal(),
+           legend.title = "CD patients, time to soft flare by presence of signficant life event",
+           palette = c("#BB0A21", "#F39237"),
+           xlab = "Time from study recrutiment (days)",
+           title = "Time to hard flare"
+           )
+p1
+
+#site only 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + frailty(SiteNo), data = LE_CD_hard)
+summary(cox_model)
+
+#no effect when controlling for Sex, Smoke, frailty , age, IMD
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + AgeGroup + Sex + Smoke + IMD + frailty(SiteNo), data = LE_CD_hard)
+summary(cox_model)
+
+#with FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup + Smoke + cat + IMD +  frailty(SiteNo), data = LE_CD_hard)
+summary(cox_model)
+```
