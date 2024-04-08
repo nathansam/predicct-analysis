@@ -1066,15 +1066,95 @@ demo.cd %>%
 ```
 
 
+### Smoking
+
+```{R}
+percPrev <- round(sum(temp$Smoke == "Previous", na.rm = TRUE) / nrow(temp), 2) * 100
+```
+
+We consider smoking for CD and UC separately as smoking is often reported to
+worsen outcomes in CD but is possibly protective in UC. Smoking status is
+self-reported by study participants. 
+
+Whilst most subjects have never been a smoker, a substantial proportion of
+subjects (`r percPrev`%) have previously been smokers. 
+
+```{R}
+#| label: fig-smoke-cd
+#| fig-cap: "Smoking status for CD subjects in the FC cohort."
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
+  geom_bar() +
+  xlab("Smoking status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "Smoking status"),
+    color = guide_legend(title = "Smoking status")
+  )
+```
+
+Smoking status is associated with FC at recruitment for CD subjects. 
+
+```{R}
+#| label: tbl-smoke-cd
+#| tbl-cap: "Chi-squared test between between smoking status and FC groups for CD subjects."
+pander(chisq.test(demo.cd$Smoke, demo.cd$cat))
+```
+
+### E-cigarette use
+
+The vast majority of participants do not report using some form of e-cigarettes.
+It should be noted that as recruitment ended March 2020, these day may not
+reflect more modern trends. 
+
+```{R}
+#| label: fig-esmoke-cd
+#| fig-cap: "E-cigarette usage for CD subjects in the FC cohort."
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
+  geom_bar() +
+  xlab("E-cigarette status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "E-cigarette status"),
+    color = guide_legend(title = "E-cigarette status")
+  )
+```
+
+```{R}
+#| label: tbl-esmoke-cd
+#| tbl-cap: "Chi-squared test between between E-cigarettte usage and FC groups for CD subjects."
+pander(chisq.test(demo.cd$ECigs, demo.cd$cat))
+```
+
 ## Variables only relevant to ulcerative colitis/IBDU subjects
 
 This section looks at variables only relevant to UC/IBDU subjects: Montreal
 extent, Mayo score, Smoking status and E-cigarette use. 
 
-As PREdiCCt required subjects to be able to flare,
-this effectively excluded UC subjects who had undergone a proctocolectomy. As
-such, previous surgery is not considered. Montreal severity was not collected
-by PREdiCCt.
+As PREdiCCt required subjects to be able to flare, this effectively excluded UC
+subjects who had undergone a proctocolectomy. As such, previous surgery is not
+considered. Montreal severity was not collected by PREdiCCt.
 
 ### Montreal extent
 
@@ -1219,6 +1299,79 @@ demo.uc %>%
 ```
 
 
+### Smoking
+
+As with CD subjects, smoking status for UC/IBDU subjects is self-reported. 
+
+```{R}
+#| label: fig-smoke-uc
+#| fig-cap: "Smoking status for UC/IBDU subjects in the FC cohort."
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
+  geom_bar() +
+  xlab("Smoking status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "Smoking status"),
+    color = guide_legend(title = "Smoking status")
+  )
+```
+
+As with CD, smoking status is significantly associated with FC. 
+
+```{R}
+#| label: tbl-smoke-uc
+#| tbl-cap: "Chi-squared test between between smoking status and FC groups for UC subjects."
+pander(chisq.test(demo.uc$Smoke, demo.uc$cat))
+```
+
+### E-cigarette use
+
+Similar to CD, very few subjects reported using E-cigarettes. 
+
+```{R}
+#| label: fig-esmoke-uc
+#| fig-cap: "E-cigarette usage for UC subjects in the FC cohort."
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
+  geom_bar() +
+  xlab("E-cigarette status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "E-cigarette status"),
+    color = guide_legend(title = "E-cigarette status")
+  )
+```
+
+E-cigarette use was found to significantly differ between FC groups in UC.
+However, the low number of subjects reported to use E-cigarettes
+(@fig-esmoke-uc) should be beared in mind when interpretting this finding. 
+
+```{R}
+#| label: tbl-esmoke-uc
+#| tbl-cap: "Chi-squared test between between E-cigarettte usage and FC groups for UC subjects."
+pander(fisher.test(demo.uc$ECigs, demo.uc$cat))
+```
 
 
 ```{R}

@@ -122,6 +122,12 @@ demo %>%
   ylab("Frequency")
 ```
 
+```{R}
+#| label: tbl-age-fc
+#| tbl-cap: "ANOVA between age and FC groups."
+pander(summary(aov(age ~ cat, data = demo)))
+```
+
 ## Sex
 
 Sex was self-reported via subject questionnaires. As can be seen in

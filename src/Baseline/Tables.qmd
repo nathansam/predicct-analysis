@@ -138,16 +138,28 @@ pander(summary(aov(Age ~ cohort, data = comp)))
 pander(chisq.test(comp$Sex, comp$cohort))
 ```
 
-#### IBD type
+#### Body mass index
 
 ```{R}
-pander(chisq.test(comp$diagnosis2, comp$cohort))
+pander(summary(aov(BMI ~ cohort, data = comp)))
+```
+
+#### Ethnicity
+
+```{R}
+pander(chisq.test(comp$Ethnicity, comp$cohort))
 ```
 
 #### Index of multiple deprivation
 
 ```{R}
 pander(chisq.test(comp$IMD, comp$cohort))
+```
+
+#### IBD type
+
+```{R}
+pander(chisq.test(comp$diagnosis2, comp$cohort))
 ```
 
 #### Disease duration
@@ -166,12 +178,6 @@ pander(summary(aov(control_8 ~ cohort, data = comp)))
 
 ```{R}
 pander(chisq.test(comp$vas_control, comp$cohort))
-```
-
-#### Body mass index
-
-```{R}
-pander(summary(aov(BMI ~ cohort, data = comp)))
 ```
 
 #### Faecal calprotectin
