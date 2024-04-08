@@ -25,7 +25,6 @@ suppressPackageStartupMessages(library(table1))
 library(knitr)
 library(pander)
 suppressPackageStartupMessages(library(kableExtra))
-
 # Generate flowchart of cohort derivation
 library(DiagrammeR)
 library(DiagrammeRsvg)
@@ -623,6 +622,8 @@ chi_squared_result_dep %>%
 ```{R}
 contingency_table_depression <- table(depression_cd$AgeGroup,
                                       depression_cd$score_group)
+cat(sum(table(depression_cd$AgeGroup, depression_cd$score_group) < 5),
+    " cells have fewer than 5 observations. Using Fisher's exact test.\n")
 chi_squared_result_dep <- fisher.test(contingency_table_depression,
                                       simulate.p.value = TRUE,
                                       B = 100000)
@@ -634,6 +635,8 @@ chi_squared_result_dep %>%
 ```{R}
 contingency_table_depression <- table(depression_uc$AgeGroup,
                                       depression_uc$score_group)
+cat(sum(table(depression_cd$AgeGroup, depression_cd$score_group) < 5),
+    " cells have fewer than 5 observations. Using Fisher's exact test.\n")
 chi_squared_result_dep <- fisher.test(contingency_table_depression,
                                       simulate.p.value = TRUE,
                                       B = 100000)
