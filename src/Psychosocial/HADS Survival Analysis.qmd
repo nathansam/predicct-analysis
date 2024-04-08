@@ -16,29 +16,26 @@ set.seed(123)
 library(plyr) # Used for mapping values
 suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
 library(readxl) # Read in Excel files
-library(datefixR) # Standardise dates  
+library(datefixR) # Standardise dates
 library(openxlsx)
 library(tidyr)
 library(ggdist)
-library(rstatix)
+suppressPackageStartupMessages(library(rstatix))
 
 suppressPackageStartupMessages(library(table1))
 library(knitr)
 library(pander)
-library(kableExtra)
+suppressPackageStartupMessages(library(kableExtra))
 
 # Generate flowchart of cohort derivation
 library(DiagrammeR)
 library(DiagrammeRsvg)
 
-#cox-regression
+# cox-regression
 library(survival)
-library(survminer)
+suppressPackageStartupMessages(library(survminer))
 library(finalfit)
 
-```
-
-```{r access to data}
 # paths to PREdiCCt data
 if (file.exists("/.dockerenv")) {
   # If running in docker
@@ -53,11 +50,9 @@ if (file.exists("/.dockerenv")) {
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
-```
 
-```{r load data}
-#read-in data
-#hads is question 42 of the baseline questionnaire
+# read-in data
+# hads is question 42 of the baseline questionnaire
 hads <- read.xlsx(paste0(data.path, "Baseline2022/hads.xlsx"))
 health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 flarecause <- read.xlsx(paste0(data.path, "Baseline2022/flarecause.xlsx"))
@@ -67,201 +62,311 @@ IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 ffq <- read.xlsx(paste0(prefix, "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"))
 demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
 flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
-smoking <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/smoking.rds")
 hads_for_analysis <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_for_analysis.rds")
 demo_uc <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-uc.RDS")
-demo_cd <-readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.RDS")
+demo_cd <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.RDS")
 flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
 flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
 ```
 
 
-## HADS scores and time to flare
+## Introduction
 
-Here we present survival analysis (time to soft and hard flare) using cox-regression models, stratifying by HADS anxiety/depression groups. 
+Here we present survival analysis (time to soft and hard flare) using
+cox-regression models, stratifying by HADS anxiety/depression groups. 
 
 We conducted three survival analyses:
+
 1. Controlling for site only
-2. Controlling for sex, smoking, IMD, site +/- age (if this was found to be signifjcantly associated with scores at baseline). 
+2. Controlling for sex, IMD, site +/- age (if this was found to be
+   significantly associated with scores at baseline). 
 3. Controlling for factors above and faecal calprotectin additionally. 
 
-Each analysis was conducted for the whole IBD cohort, and for UC/IBDU and CD separately.
+Each analysis was conducted for the whole IBD cohort, and for UC/IBDU and CD
+separately.
 
 Full results of baseline analysis can be found in separate report (HADS Baseline).
 
 
 
 ```{r, dataset hads and hads flares}
-
-hardflare_hads <- hads_for_analysis %>% 
-  inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time), by = "ParticipantNo") %>% 
+hardflare_hads <- hads_for_analysis %>%
+  inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
-#3508 here
-softflare_hads <- hads_for_analysis %>% 
-  inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 
+# 3508 here
+softflare_hads <- hads_for_analysis %>%
+  inner_join(
+    flares_soft %>%
+      select(ParticipantNo, softflare, softflare_time),
+    by = join_by(ParticipantNo)
+  ) %>%
   rename(DiseaseFlareYN = softflare, time = softflare_time)
-#3620 here
+# 3620 here
 
-#create hard flare data sets for both UC/IBDU and CD
-flare_uc <- hardflare_hads[hardflare_hads$diagnosis2 == "UC/IBDU",]
-flare_uc_anx <- flare_uc[flare_uc$hads_type == "anxiety_hads",]
-flare_uc_dep <- flare_uc[flare_uc$hads_type == "depression_hads",]
-
-
-flare_cd <- hardflare_hads[hardflare_hads$diagnosis2 == "CD",]
-flare_cd_anx <- flare_cd[flare_cd$hads_type == "anxiety_hads",]
-flare_cd_dep <- flare_cd[flare_cd$hads_type == "depression_hads",]
-
-#hard flares, IBD whole cohort
-hard_anxiety_IBD <- hardflare_hads[hardflare_hads$hads_type == "anxiety_hads",]
-hard_depression_IBD <- hardflare_hads[hardflare_hads$hads_type == "depression_hads",]
+# create hard flare data sets for both UC/IBDU and CD
+flare_uc <- hardflare_hads[hardflare_hads$diagnosis2 == "UC/IBDU", ]
+flare_uc_anx <- flare_uc[flare_uc$hads_type == "anxiety_hads", ]
+flare_uc_dep <- flare_uc[flare_uc$hads_type == "depression_hads", ]
 
 
-#create soft flare data sets for both UC/IBDU and CD
-soft_uc <- softflare_hads[softflare_hads$diagnosis2 == "UC/IBDU",]
-soft_uc_anx <- soft_uc[soft_uc$hads_type == "anxiety_hads",]
-soft_uc_dep <- soft_uc[soft_uc$hads_type == "depression_hads",]
+flare_cd <- hardflare_hads[hardflare_hads$diagnosis2 == "CD", ]
+flare_cd_anx <- flare_cd[flare_cd$hads_type == "anxiety_hads", ]
+flare_cd_dep <- flare_cd[flare_cd$hads_type == "depression_hads", ]
 
-soft_cd <- softflare_hads[softflare_hads$diagnosis2 == "CD",]
-soft_cd_anx <- soft_cd[soft_cd$hads_type == "anxiety_hads",]
-soft_cd_dep <- soft_cd[soft_cd$hads_type == "depression_hads",]
+# hard flares, IBD whole cohort
+hard_anxiety_IBD <- hardflare_hads[hardflare_hads$hads_type == "anxiety_hads", ]
+hard_depression_IBD <- hardflare_hads[hardflare_hads$hads_type == "depression_hads", ]
 
-#soft flares, IBD whole cohort
-soft_anxiety_IBD <- softflare_hads[softflare_hads$hads_type == "anxiety_hads",]
-soft_depression_IBD <- softflare_hads[softflare_hads$hads_type == "depression_hads",]
+# create soft flare data sets for both UC/IBDU and CD
+soft_uc <- softflare_hads[softflare_hads$diagnosis2 == "UC/IBDU", ]
+soft_uc_anx <- soft_uc[soft_uc$hads_type == "anxiety_hads", ]
+soft_uc_dep <- soft_uc[soft_uc$hads_type == "depression_hads", ]
 
+soft_cd <- softflare_hads[softflare_hads$diagnosis2 == "CD", ]
+soft_cd_anx <- soft_cd[soft_cd$hads_type == "anxiety_hads", ]
+soft_cd_dep <- soft_cd[soft_cd$hads_type == "depression_hads", ]
+
+# soft flares, IBD whole cohort
+soft_anxiety_IBD <- softflare_hads[softflare_hads$hads_type == "anxiety_hads", ]
+soft_depression_IBD <- softflare_hads[softflare_hads$hads_type == "depression_hads", ]
 ```
 
 
 ```{r, code for tidy tables}
+#| output: "asis"
 cox.summary <- function(fit) {
   cat("Cox model summary:")
   fit %>%
-    finalfit::fit2df(condense = FALSE) %>% 
-    knitr::kable(col.names = c("Variable",
-                               "HR",
-                               "Lower 95%",
-                               "Upper 95%",
-                               "P-value"),
-                 digits = 4) %>%
+    finalfit::fit2df(condense = FALSE) %>%
+    knitr::kable(
+      col.names = c(
+        "Variable",
+        "HR",
+        "Lower 95%",
+        "Upper 95%",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
     print()
-  cat("Proportional hazards assumption test:")
+
+  cat("\\newline
+
+Diagnostics: \\newline
+
+")
+
+  cat("\\newline
+
+::: {.panel-tabset}
+
+      ")
+
+  cat("
+
+###### Proportional hazards assumption test \\newline
+
+  ")
   cox.zph(fit)$table %>%
-    knitr::kable(col.names = c("",
-                               "Chi-squared statistic",
-                               "DF",
-                               "P-value"),
-                 digits = 4) %>%
+    knitr::kable(
+      col.names = c(
+        "",
+        "Chi-squared statistic",
+        "DF",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
     print()
+
+  cat("\\newline
+
+###### DF betas \\newline
+
+  ")
+
+  print(ggcoxdiagnostics(fit, type = "dfbeta"))
+
+  cat("\\newline
+
+###### Martignale residuals \\newline
+
+      ")
+
+  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+
+  cat("\\newline
+
+:::
+
+      ")
   return()
 }
 ```
 
-
 ## Analysis for whole cohort 
-
-
 
 ### Anxiety and soft flare
 
-
-* controlling for site only, significant association both moderate (p=value = 9.5e-05) and severe (p-value = 1.1e-07) anxiety
-* remains significant both groups when controlling for IMD, sex, smoking, age group, site - moderate (p-value = 0.0023, 95% CI 1.12-1.70) and severe (p-value = 0.00001, 95% CI 1.30-2.00)
-* remains significant when controlling for FC additionally for moderate (p-value = 0.001, 95% CI 1.14-1.73) and severe (p-value < 0.00001, 95% CI 1.31-2.02)
-
+* Controlling for site only, significant association both moderate (p=value =
+  9.5e-05) and severe (p-value = 1.1e-07) anxiety
+* Remains significant both groups when controlling for IMD, sex, age
+  group, site - moderate (p-value = 0.0023, 95% CI 1.12-1.70) and severe
+  (p-value = 0.00001, 95% CI 1.30-2.00)
+* Remains significant when controlling for FC additionally for moderate
+  (p-value = 0.001, 95% CI 1.14-1.73) and severe (p-value < 0.00001, 95% CI
+  1.31-2.02)
 
 ```{r, soft flares all anxiety}
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_anxiety_IBD)
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_anxiety_IBD
+)
 
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_anxiety_IBD)
-print(test_result)
-
-p1 <- ggsurvplot(fit,
-           data = soft_anxiety_IBD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Anxiety scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#42213D", "#BD4089", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "Whole cohort - Time to soft flare"
-           )
-p1
-
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_anxiety_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = soft_anxiety_IBD)
-summary(cox_model)
-
-#analysis 2 (not controlling for smoking??)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo), data = soft_anxiety_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo),
-                data = soft_anxiety_IBD)
-summary(cox_model)
-
-#analysis 3
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo), data = soft_anxiety_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo),
-                data = soft_anxiety_IBD)
-summary(cox_model)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_anxiety_IBD
+)
+test_result %>%
+  pander()
 ```
 
+```{R}
+p1 <- ggsurvplot(fit,
+  data = soft_anxiety_IBD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Anxiety scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#42213D", "#BD4089", "#F51AA4"),
+  xlab = "Time from study recruitment (days)",
+  title = "Whole cohort - Time to soft flare"
+)
+p1
+```
+
+
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    frailty(SiteNo),
+  data = soft_anxiety_IBD
+)
+
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    frailty(SiteNo),
+  data = soft_anxiety_IBD
+)
+
+
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 3
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = soft_anxiety_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
 ### Depression and soft flares:
 
 
-* controlling for site only, significant for moderate (p-value = 0.0009, 95% CI 1.18-1.95) and severe (p-value 0.014, 95% CI 1.08-2.07)
-* controlling for sex, smoking, IMD, age amd site - significant for moderate (0.0019, 95% CI 1.15-1.92) and severe (p-value = 0.03, 95% CI 1.03-1.99) depression
-* controlling for FC additionally - significant for moderate (0.0008, 95% CI 1.19-1.99) and severe (p-value = 0.043, 95% CI 1.01-1.95) depression
+* Controlling for site only, significant for moderate (p-value = 0.0009, 95% CI
+  1.18-1.95) and severe (p-value 0.014, 95% CI 1.08-2.07)
+* Controlling for sex, IMD, age and site - significant for moderate
+  (0.0019, 95% CI 1.15-1.92) and severe (p-value = 0.03, 95% CI 1.03-1.99)
+  depression
+* Controlling for FC additionally - significant for moderate (0.0008, 95% CI
+  1.19-1.99) and severe (p-value = 0.043, 95% CI 1.01-1.95) depression
 
 ```{r, soft flares all depression}
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_depression_IBD)
 
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_depression_IBD)
-print(test_result)
+test_result %>%
+  pander()
+```
 
+```{R}
 p1 <- ggsurvplot(fit,
-           data = soft_anxiety_IBD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#344055", "#266DD3", "#78CDD7"),
-           xlab = "Time from study recrutiment (days)",
-           title = "Whole cohort - Time to soft flare"
-           )
+  data = soft_anxiety_IBD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#344055", "#266DD3", "#78CDD7"),
+  xlab = "Time from study recruitment (days)",
+  title = "Whole cohort - Time to soft flare"
+)
 p1
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_depression_IBD)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    frailty(SiteNo),
+  data = soft_depression_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = soft_depression_IBD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    frailty(SiteNo),
+  data = soft_depression_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 2 (controlling for smoking??)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo), data = soft_depression_IBD)
+```{R}
+#| output: "asis"
+# analysis 3
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = soft_depression_IBD
+)
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo),
-                data = soft_depression_IBD)
-summary(cox_model)
-
-#analysis 3
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo), data = soft_depression_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo),
-                data = soft_depression_IBD)
-summary(cox_model)
+invisible(cox.summary(cox_model))
 ```
 
 ### Hard flare and anxiety (whole cohort)
@@ -272,219 +377,317 @@ Anxiety and hard flare
 ```{r, hard flare anxiety whole}
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_anxiety_IBD)
 
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_anxiety_IBD)
-print(test_result)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_anxiety_IBD
+)
 
+test_result %>%
+  pander()
+```
+
+```{R}
 p1 <- ggsurvplot(fit,
-           data = hard_anxiety_IBD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Anxiety scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#42213D", "#BD4089", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "Whole cohort - Time to hard flare"
-           )
+  data = hard_anxiety_IBD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Anxiety scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#42213D", "#BD4089", "#F51AA4"),
+  xlab = "Time from study recruitment (days)",
+  title = "Whole cohort - Time to hard flare"
+)
 p1
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = hard_anxiety_IBD)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    frailty(SiteNo),
+  data = hard_anxiety_IBD
+)
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = hard_anxiety_IBD)
-summary(cox_model)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 2 (not controlling for smoking??)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo), data = hard_anxiety_IBD)
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    frailty(SiteNo),
+  data = hard_anxiety_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo),
-                data = hard_anxiety_IBD)
-summary(cox_model)
-
-#analysis 3
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo), data = hard_anxiety_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo),
-                data = hard_anxiety_IBD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 3
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = hard_anxiety_IBD
+)
+invisible(cox.summary(cox_model))
 ```
 
 ### Depression and hard flare:
 
 
-* Controlling for site only, significant association with moderate depression (p-value 0.005, 95% CI 1.18-2.60) but no significant association with severe depression
-* Significant for moderate depression (p-value = 0.012, 95% CI 1.12-2.48) in analysis 2
-* Controlling for FC additionally, significiant for moderate depression (p-value = 0.009, 95% CI 1.14-2.54)
+* Controlling for site only, significant association with moderate depression
+  (p-value 0.005, 95% CI 1.18-2.60) but no significant association with severe
+  depression
+* Significant for moderate depression (p-value = 0.012, 95% CI 1.12-2.48) in
+  analysis 2
+* Controlling for FC additionally, significant for moderate depression
+  (p-value = 0.009, 95% CI 1.14-2.54)
 
 ```{r, hard flares all depression whole}
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_depression_IBD)
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_depression_IBD
+)
 
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_depression_IBD)
-print(test_result)
-
-p1 <- ggsurvplot(fit,
-           data = hard_depression_IBD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#344055", "#266DD3", "#78CDD7"),
-           xlab = "Time from study recrutiment (days)",
-           title = "Whole cohort - Time to hard flare"
-           )
-p1
-
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = hard_depression_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = hard_depression_IBD)
-summary(cox_model)
-
-#analysis 2 (controlling for smoking??)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo), data = hard_depression_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + frailty(SiteNo),
-                data = hard_depression_IBD)
-summary(cox_model)
-
-#analysis 3
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo), data = hard_depression_IBD)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + IMD + Smoke + Sex + AgeGroup + cat + frailty(SiteNo),
-                data = hard_depression_IBD)
-summary(cox_model)
-
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_depression_IBD
+)
+test_result %>% pander()
 ```
 
+```{R}
+p1 <- ggsurvplot(fit,
+  data = hard_depression_IBD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#344055", "#266DD3", "#78CDD7"),
+  xlab = "Time from study recruitment (days)",
+  title = "Whole cohort - Time to hard flare"
+)
+p1
+```
 
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = hard_depression_IBD
+)
 
+invisible(cox.summary(cox_model))
+```
 
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    frailty(SiteNo),
+  data = hard_depression_IBD
+)
+
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 3
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~ score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = hard_depression_IBD
+)
+
+invisible(cox.summary(cox_model))
+```
 
 ## Analyses by subgroups (UC/IBDU vs CD)
 
+### UC/IBDU and soft flares
+
+#### UC/IBDU anxiety scores and soft flares
 
 
-### UC/IBDU
-
-
-### UC/IBDU anxiety scores and soft flares
-
-
-*	Controlling for site only, significant association with severe anxiety and risk of flare (p-value = 0.0024, 95% CI 1.17 - 2.14)
-*	Controlling for site, sex, smoking, IMD and age group significant association with severe anxiety and risk of flare (p-value = 0.021, 95% CI 1.05 - 1.95)
-*	Controlling for site, sex, smoking, IMD, age group and FC significant association with severe anxiety and risk of flare (p-value = 0.011, 95% CI 1.09- 2.02)
+*	Controlling for site only, significant association with severe anxiety and
+  risk of flare (p-value = 0.0024, 95% CI 1.17 - 2.14)
+*	Controlling for site, sex, IMD and age group significant association
+  with severe anxiety and risk of flare (p-value = 0.021, 95% CI 1.05 - 1.95)
+*	Controlling for site, sex, IMD, age group and FC significant
+  association with severe anxiety and risk of flare (p-value = 0.011, 95% CI
+  1.09- 2.02)
 
 
 #### UC/IBDU depression scores and soft flares
 
-*	Controlling for site only, significant association with moderate depression and risk of flare (p-value = 0.008, 95% CI 1.12 - 2.25) and severe depression (p-value = 0.037, 95% CI 1.032-2.652)
-*	Controlling for site, sex, smoking, IMD and age group, significant association with moderate (p-value = 0.009, 95% CI 1.13- 2.25) and severe (p-value = 0.040, 95% CI 1.02 - 2.66) depression and risk of flare
-*	Controlling for site, sex, smoking and FC significant association with moderate (p-value = 0.004, 95% CI 1.27- 2.56) and severe (p-value = 0.048, 95% CI 1.01 - 2.62) depression and risk of flare 
-
+*	Controlling for site only, significant association with moderate depression
+  and risk of flare (p-value = 0.008, 95% CI 1.12 - 2.25) and severe depression
+  (p-value = 0.037, 95% CI 1.032-2.652)
+*	Controlling for site, sex, IMD and age group, significant association
+  with moderate (p-value = 0.009, 95% CI 1.13- 2.25) and severe (p-value =
+  0.040, 95% CI 1.02 - 2.66) depression and risk of flare
+*	Controlling for site, sex, and FC significant association with
+  moderate (p-value = 0.004, 95% CI 1.27- 2.56) and severe (p-value = 0.048,
+  95% CI 1.01 - 2.62) depression and risk of flare 
 
 ```{r, soft flare UC/IBDU}
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_uc_anx)
 
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_uc_anx)
-print(test_result)
-
-p1 <- ggsurvplot(fit,
-           data = soft_uc_anx,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Anxiety scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#42213D", "#BD4089", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare"
-           )
-p1
-
-#site only
-# moderate p-value 0.09, severe p-value = 0.0004, 95% CI 1.24 - 2.18)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_uc_anx)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = soft_uc_anx)
-summary(cox_model)
-
-#site/sex/smoke/IMD/age
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = soft_uc_anx)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + score_group + AgeGroup + IMD + frailty(SiteNo),
-                data = soft_uc_anx)
-summary(cox_model)
-
-#3 +FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = soft_uc_anx)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + score_group + cat + frailty(SiteNo),
-                data = soft_uc_anx)
-summary(cox_model)
-
-
-
-# depression
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_uc_dep)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_uc_dep)
-print(test_result)
-
-p2 <- ggsurvplot(fit,
-           data = soft_uc_dep,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#344055", "#266DD3", "#78CDD7"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare"
-           )
-p2
-
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_uc_dep)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = soft_uc_dep)
-summary(cox_model)
-
-#site/sex/smoke
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = soft_uc_dep)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + score_group + AgeGroup + IMD + frailty(SiteNo),
-                data = soft_uc_dep)
-summary(cox_model)
-
-#site/sex/smoke/fc
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = soft_uc_dep)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + score_group + cat + AgeGroup + IMD + frailty(SiteNo),
-                data = soft_uc_dep)
-summary(cox_model)
-
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_uc_anx
+)
+test_result %>%
+  pander()
 ```
 
+```{R}
+p1 <- ggsurvplot(fit,
+  data = soft_uc_anx,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Anxiety scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#42213D", "#BD4089", "#F51AA4"),
+  xlab = "Time from study recruitment (days)",
+  title = "UC/IBDU - Time to soft flare"
+)
+p1
+```
 
+```{R}
+#| output: "asis"
+# site only
+# moderate p-value 0.09, severe p-value = 0.0004, 95% CI 1.24 - 2.18)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    frailty(SiteNo),
+  data = soft_uc_anx
+)
+invisible(cox.summary(cox_model))
+```
 
-## UC/IBDU and Hard Flares
+```{R}
+#| output: "asis"
+# site/sex/IMD/age
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    frailty(SiteNo),
+  data = soft_uc_anx
+)
+invisible(cox.summary(cox_model))
+```
 
+```{R}
+#| output: "asis"
+# 3 +FC
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = soft_uc_anx
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+# depression
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_uc_dep)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_uc_dep
+)
+test_result %>%
+  pander()
+```
+
+```{R}
+p2 <- ggsurvplot(fit,
+  data = soft_uc_dep,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#344055", "#266DD3", "#78CDD7"),
+  xlab = "Time from study recruitment (days)",
+  title = "UC/IBDU - Time to soft flare"
+)
+p2
+```
+
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    frailty(SiteNo),
+  data = soft_uc_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# site/sex
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    frailty(SiteNo),
+  data = soft_uc_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# site/sex/fc
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = soft_uc_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+### UC/IBDU and Hard Flares
 
 ```{r, table for participants}
-
-#Nathan's code for tables function
+# Nathan's code for tables function
 my.render.cont <- function(x) {
   with(
     stats.apply.rounding(stats.default(x),
@@ -495,223 +698,318 @@ my.render.cont <- function(x) {
   )
 }
 
-#Make table showing how many in each group (anxiety/depression for UC)
+# Make table showing how many in each group (anxiety/depression for UC)
 table1::table1(~ score_group | hads_type,
   data = flare_uc,
   render.continuous = my.render.cont,
   caption = "UC/IBDU Participants within each score group"
 )
-
 ```
-
-
-### UC/IBDU Hard flares
-
-n= 780, number of events= 119 
-
 
 #### UC/IBDU Anxiety and time to hard flare
 
 * Controlling for site only no significant association
-* Controlling for site, sex, smoking, IMD and age, no significant association
-* Controlling for site, sex, smoking, IMD, age and FC, no significant association
+* Controlling for site, sex, IMD and age, no significant association
+* Controlling for site, sex, IMD, age and FC, no significant
+  association
 
 
 #### UC/IBDU Depression and time to hard flare
 
 Note: violation of proportional hazards assumption
 
-* Controlling for site only, significant association with moderate (8-10) depression and increased risk of hard flare (p-value 0.004, 95% CI 1.29-3.56)
-* Controlling for site, sex, smoking, IMD and age, significant association with moderate (8-10) (p-value = 0.002, 95% CI 1.32-3.80) and severe (p-value = 0.034, 95% CI 1.06-4.79) depression
-* Controlling for confounders above and FC, significant association with moderate (8-10) (p-value = 0.0003, 95% CI 1.57-4.67) and severe (p-value = 0.041, 95% CI 1.03-4.69) depression
+* Controlling for site only, significant association with moderate (8-10)
+  depression and increased risk of hard flare (p-value 0.004, 95% CI 1.29-3.56)
+* Controlling for site, sex, IMD and age, significant association with
+  moderate (8-10) (p-value = 0.002, 95% CI 1.32-3.80) and severe (p-value =
+  0.034, 95% CI 1.06-4.79) depression
+* Controlling for confounders above and FC, significant association with
+  moderate (8-10) (p-value = 0.0003, 95% CI 1.57-4.67) and severe
+  (p-value = 0.041, 95% CI 1.03-4.69) depression
 
 ``` {r, flare (hard) and UC }
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_anx)
 
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_anx)
-print(test_result)
-
-p1 <- ggsurvplot(fit,
-           data = flare_uc_anx,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Anxiety scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#42213D", "#BD4089", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to hard flare"
-           )
-p1
-
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = flare_uc_anx)
-summary(cox_model)
-
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = flare_uc_anx)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + score_group + AgeGroup + IMD + frailty(SiteNo),
-                data = flare_uc_anx)
-cox.summary(fit.me)
-summary(cox_model)
-
-#analysis 3 (FC cat)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = flare_uc_anx)
-summary(cox_model)
-
-
-# UC and depression hard flares
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_dep)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_dep)
-print(test_result)
-
-p2 <- ggsurvplot(fit,
-           data = flare_uc_dep,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#344055", "#266DD3", "#78CDD7"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to hard flare"
-           )
-p2
-
-
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = flare_uc_dep)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = flare_uc_dep)
-cox.summary(fit.me)
-summary(cox_model)
-
-#analysis 2
-
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = flare_uc_dep)
-cox.summary(fit.me)
-summary(cox_model)
-
-#analysis 3 (FC cat)
-
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + cat + frailty(SiteNo), data = flare_uc_dep)
-cox.summary(fit.me)
-summary(cox_model)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = flare_uc_anx
+)
+test_result %>%
+  pander()
 ```
 
+```{R}
+p1 <- ggsurvplot(fit,
+  data = flare_uc_anx,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Anxiety scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#42213D", "#BD4089", "#F51AA4"),
+  xlab = "Time from study recruitment (days)",
+  title = "UC/IBDU - Time to hard flare"
+)
+p1
+```
 
-### Soft flares CD
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group + frailty(SiteNo),
+  data = flare_uc_anx
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    frailty(SiteNo),
+  data = flare_uc_anx
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 3 (FC cat)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = flare_uc_anx
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+# UC and depression hard flares
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_dep)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = flare_uc_dep
+)
+test_result %>%
+  pander()
+```
+
+```{R}
+p2 <- ggsurvplot(fit,
+  data = flare_uc_dep,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#344055", "#266DD3", "#78CDD7"),
+  xlab = "Time from study recruitment (days)",
+  title = "UC/IBDU - Time to hard flare"
+)
+p2
+```
+
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = flare_uc_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = flare_uc_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 3 (FC cat)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = flare_uc_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+### CD and Soft flares 
 
 n= 820, number of events= 279
 
 
 #### CD anxiety scores
 
-* Controlling for site only, significant associations with moderate (p-value = 0.0013, 95% CI 1.32-2.36) and severe anxiety (p-value > 0.00001, 95% CI 1.48-2.64) (remains strongly associate using FC dataset)
-* Controlling for site, sex, smoking, IMD and age group, significant associations with moderate (p-value = 0.013, 95% CI 1.21-2.22) and severe anxiety (p-value > 0.0001, 95% CI 1.37-2.50)
-*	Controlling for site, sex, smoking, IMD and age group, FC significant associations with moderate (p-value = 0.002, 95% CI 1.21-2.21) and severe anxiety (p-value > 0.0001, 95% CI 1.36-2.49) 
+* Controlling for site only, significant associations with moderate (p-value =
+  0.0013, 95% CI 1.32-2.36) and severe anxiety (p-value > 0.00001, 95% CI
+  1.48-2.64) (remains strongly associate using FC dataset)
+* Controlling for site, sex, IMD and age group, significant
+  associations with moderate (p-value = 0.013, 95% CI 1.21-2.22) and severe
+  anxiety (p-value > 0.0001, 95% CI 1.37-2.50)
+*	Controlling for site, sex, IMD and age group, FC significant
+  associations with moderate (p-value = 0.002, 95% CI 1.21-2.21) and severe
+  anxiety (p-value > 0.0001, 95% CI 1.36-2.49) 
 
 #### CD depression scores
 
-*	Controlling for site only – significant for moderate depression (p-value = 0.038, 95% CI 1.02-2.09)
-*	Controlling for site, sex, smoking and IMD – no significant associations
-*	Controlling for site, sex, smoking, IMD and FC – no significant associations
-
+*	Controlling for site only – significant for moderate depression (p-value =
+  0.038, 95% CI 1.02-2.09)
+*	Controlling for site, sex and IMD – no significant associations
+*	Controlling for site, sex, IMD and FC – no significant associations
 
 ```{r, soft flare CD}
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_cd_anx)
 
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_cd_anx)
-print(test_result)
+test_result %>%
+  pander()
+```
 
+```{R}
 p1 <- ggsurvplot(fit,
-           data = soft_cd_anx,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Anxiety scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#42213D", "#BD4089", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "CD - Time to soft flare"
-           )
+  data = soft_cd_anx,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Anxiety scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#42213D", "#BD4089", "#F51AA4"),
+  xlab = "Time from study recruitment (days)",
+  title = "CD - Time to soft flare"
+)
 p1
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_cd_anx)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    frailty(SiteNo),
+  data = soft_cd_anx
+)
+invisible(cox.summary(cox_model))
+```
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = soft_cd_anx)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# site/sex
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    frailty(SiteNo),
+  data = soft_cd_anx
+)
+invisible(cox.summary(cox_model))
+```
 
-#site/sex/smoke
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + AgeGroup + IMD + Smoke + frailty(SiteNo), data = soft_cd_anx)
+```{R}
+#| output: "asis"
+# site/sex/fc
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    AgeGroup +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = soft_cd_anx
+)
+invisible(cox.summary(cox_model))
+```
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + score_group + AgeGroup + IMD + frailty(SiteNo),
-                data = soft_cd_anx)
-summary(cox_model)
-
-#site/sex/smoke/fc
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + AgeGroup + IMD + cat + frailty(SiteNo), data = soft_cd_anx)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + score_group + cat + AgeGroup + IMD + frailty(SiteNo),
-                data = soft_cd_anx)
-summary(cox_model)
-
-
-
+```{R}
 # depression
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_cd_dep)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_cd_dep)
-print(test_result)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_cd_dep
+)
+test_result %>%
+  pander()
+```
 
+```{R}
 p2 <- ggsurvplot(fit,
-           data = soft_cd_dep,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#344055", "#266DD3", "#78CDD7"),
-           xlab = "Time from study recrutiment (days)",
-           title = "CD - Time to soft flare"
-           )
+  data = soft_cd_dep,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#344055", "#266DD3", "#78CDD7"),
+  xlab = "Time from study recruitment (days)",
+  title = "CD - Time to soft flare"
+)
 p2
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_cd_dep)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = soft_cd_dep
+)
+invisible(cox.summary(cox_model))
+```
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  score_group + frailty(SiteNo),
-                data = soft_cd_dep)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# site/sex/IMD/age
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    frailty(SiteNo),
+  data = soft_cd_dep
+)
+invisible(cox.summary(cox_model))
+```
 
-#site/sex/smoke/IMD/age
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + IMD + Smoke + frailty(SiteNo), data = soft_cd_dep)
+```{R}
+#| output: "asis"
+# add FC
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = soft_cd_dep
+)
 
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + IMD + score_group + frailty(SiteNo),
-                data = soft_cd_dep)
-summary(cox_model)
-
-#add FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + IMD + Smoke + cat + frailty(SiteNo), data = soft_cd_dep)
-
-fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + IMD + score_group + cat + frailty(SiteNo),
-                data = soft_cd_dep)
-summary(cox_model)
-
+invisible(cox.summary(cox_model))
 ```
  
- 
- 
- 
-### Hard Flares CD
-
+### CD and Hard Flares
 
 The table below shows the numbers in each score group at baseline.
 
@@ -736,69 +1034,131 @@ table1::table1(~ score_group | hads_type,
 * No significant increase in risk in any analysis
 
 
-
 ```{r, hads survival in CD hard flare}
-
-#CD hard flare, anxiety
+# CD hard flare, anxiety
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_cd_anx)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_cd_anx)
-print(test_result)
-p3 <- ggsurvplot(fit,
-           data = flare_cd_anx,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Anxiety scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#42213D", "#BD4089", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "CD - Time to hard flare"
-           )
-p3
-
-#site only 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = flare_cd_anx)
-summary(cox_model)
-
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = flare_cd_anx)
-summary(cox_model)
-
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + cat + frailty(SiteNo), data = flare_cd_anx)
-summary(cox_model)
-
-
-#CD hard flare depression
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_cd_dep)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_cd_dep)
-print(test_result)
-p4 <- ggsurvplot(fit,
-           data = flare_cd_dep,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-10", "11-21"),
-           palette = c("#344055", "#266DD3", "#78CDD7"),
-           xlab = "Time from study recrutiment (days)",
-           title = "CD - Time to hard flare"
-           )
-p4
-
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = flare_cd_dep)
-summary(cox_model)
-
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + frailty(SiteNo), data = flare_cd_dep)
-summary(cox_model)
-
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + cat + frailty(SiteNo), data = flare_cd_dep)
-summary(cox_model)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = flare_cd_anx
+)
+test_result %>%
+  pander()
 ```
 
+```{R}
+p3 <- ggsurvplot(fit,
+  data = flare_cd_anx,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Anxiety scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#42213D", "#BD4089", "#F51AA4"),
+  xlab = "Time from study recruitment (days)",
+  title = "CD - Time to hard flare"
+)
+p3
+```
 
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = flare_cd_anx
+)
+invisible(cox.summary(cox_model))
+```
 
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = flare_cd_anx
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = flare_cd_anx
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+# CD hard flare depression
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_cd_dep)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = flare_cd_dep
+)
+test_result %>%
+  pander()
+```
+
+```{R}
+p4 <- ggsurvplot(fit,
+  data = flare_cd_dep,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-10", "11-21"),
+  palette = c("#344055", "#266DD3", "#78CDD7"),
+  xlab = "Time from study recruitment (days)",
+  title = "CD - Time to hard flare"
+)
+p4
+```
+
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = flare_cd_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    frailty(SiteNo),
+  data = flare_cd_dep
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = flare_cd_dep
+)
+invisible(cox.summary(cox_model))
+```
 
 ## Grouping moderate and severe together to analyse depression scores
 
@@ -806,242 +1166,465 @@ Dividing into 2 groups: HADS-Depression 0-7 and 8-21
 
 ### Soft Flares
 
-
-* Whole cohort and soft flare
+* Whole cohort and soft flare:
   * Significant controlling for site only (p-value > 0.0001, 95% CI 1.23-1.86)
-  * Significant controlling for site, sex, smoking, age, IMD  and age group (p-value = 0.0003, 95% CI 1.19-1.81)
-  * Significant controlling fo FC additionally (p-value = 0.0002, 95% CI 1.20-1.84)
-* CD only and soft flare
-  * Significantly only when controlling for site only (p-value 0.016, 95% CI 1.20-1.93)
-* UC only and soft flare
+  * Significant controlling for site, sex, age, IMD  and age group
+    (p-value = 0.0003, 95% CI 1.19-1.81)
+  * Significant controlling fo FC additionally (p-value = 0.0002, 95% CI
+    1.20-1.84)
+* CD only and soft flare:
+  * Significantly only when controlling for site only (p-value 0.016, 95% CI
+    1.20-1.93)
+* UC only and soft flare:
   * Significant controlling for site only (p-value = 0.0013, 95% CI 1.20-2.15)
-  * Significant controlling for site, sex, smoking, age, IMD (p-value = 0.0015, 95% CI 1.20-2.16)
-  * Significant controlling fo FC additionally (p-value = 0.0008, 95% CI 1.23-2.23)
-
-
+  * Significant controlling for site, sex, age, IMD (p-value = 0.0015,
+    95% CI 1.20-2.16)
+  * Significant controlling fo FC additionally (p-value = 0.0008, 95% CI
+    1.23-2.23)
 
 ```{r, changing cut off score}
-
-#hard flares
-hard_dep_grouped_IBD <- hardflare_hads[hardflare_hads$hads_type == "depression_hads",] %>% 
+# hard flares
+hard_dep_grouped_IBD <-
+  hardflare_hads[hardflare_hads$hads_type == "depression_hads", ] %>%
   mutate(score_group = case_when(
     score_group %in% c("8-10", "11-21") ~ "8-21",
     TRUE ~ score_group
   ))
 
-hard_dep_grouped_CD <- hard_dep_grouped_IBD[hard_dep_grouped_IBD$diagnosis2 == "CD",]
-hard_dep_grouped_UC <- hard_dep_grouped_IBD[hard_dep_grouped_IBD$diagnosis2 == "UC/IBDU",]
+hard_dep_grouped_CD <-
+  hard_dep_grouped_IBD[hard_dep_grouped_IBD$diagnosis2 == "CD", ]
+hard_dep_grouped_UC <-
+  hard_dep_grouped_IBD[hard_dep_grouped_IBD$diagnosis2 == "UC/IBDU", ]
 
-#soft flares
-soft_dep_grouped_IBD <- softflare_hads[softflare_hads$hads_type == "depression_hads",] %>% 
+# soft flares
+soft_dep_grouped_IBD <-
+  softflare_hads[softflare_hads$hads_type == "depression_hads", ] %>%
   mutate(score_group = case_when(
     score_group %in% c("8-10", "11-21") ~ "8-21",
     TRUE ~ score_group
   ))
 
-soft_dep_grouped_CD <- soft_dep_grouped_IBD[soft_dep_grouped_IBD$diagnosis2 == "CD",]
-soft_dep_grouped_UC <- soft_dep_grouped_IBD[soft_dep_grouped_IBD$diagnosis2 == "UC/IBDU",]
-
+soft_dep_grouped_CD <-
+  soft_dep_grouped_IBD[soft_dep_grouped_IBD$diagnosis2 == "CD", ]
+soft_dep_grouped_UC <-
+  soft_dep_grouped_IBD[soft_dep_grouped_IBD$diagnosis2 == "UC/IBDU", ]
 ```
 
 
 ``` {r, survival analysis depression grouped - soft flares}
-#all IBD soft flare
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_dep_grouped_IBD)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_dep_grouped_IBD)
-print(test_result)
+# all IBD soft flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_dep_grouped_IBD
+)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_dep_grouped_IBD
+)
+test_result %>% pander()
+```
+
+```{R}
 p5 <- ggsurvplot(fit,
-           data = soft_dep_grouped_IBD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-21"),
-           palette = c("#344055", "#266DD3"),
-           xlab = "Time from study recrutiment (days)",
-           title = "All patients - Time to soft flare"
-           )
+  data = soft_dep_grouped_IBD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-21"),
+  palette = c("#344055", "#266DD3"),
+  xlab = "Time from study recruitment (days)",
+  title = "All patients - Time to soft flare"
+)
 p5
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_dep_grouped_IBD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = soft_dep_grouped_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = soft_dep_grouped_IBD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = soft_dep_grouped_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + cat + AgeGroup + frailty(SiteNo), data = soft_dep_grouped_IBD)
-summary(cox_model)
-
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    AgeGroup +
+    frailty(SiteNo),
+  data = soft_dep_grouped_IBD
+)
+invisible(cox.summary(cox_model))
 ```
 
 
-```{r, CD, depression grouped and soft flares}
-#CD soft flare
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_dep_grouped_CD)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_dep_grouped_CD)
-print(test_result)
+```{R, CD, depression grouped and soft flares}
+# CD soft flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_dep_grouped_CD
+)
+test_result <- survdiff(
+  Surv(time, DiseaseFlareYN) ~
+    score_group,
+  data = soft_dep_grouped_CD
+)
+test_result %>%
+  pander()
+```
+
+```{R}
 p5 <- ggsurvplot(fit,
-           data = soft_dep_grouped_CD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-21"),
-           palette = c("#344055", "#266DD3"),
-           xlab = "Time from study recrutiment (days)",
-           title = "CD - Time to soft flare"
-           )
+  data = soft_dep_grouped_CD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-21"),
+  palette = c("#344055", "#266DD3"),
+  xlab = "Time from study recruitment (days)",
+  title = "CD - Time to soft flare"
+)
 p5
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_dep_grouped_CD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    frailty(SiteNo),
+  data = soft_dep_grouped_CD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + frailty(SiteNo), data = soft_dep_grouped_CD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    frailty(SiteNo),
+  data = soft_dep_grouped_CD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + cat + frailty(SiteNo), data = soft_dep_grouped_CD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = soft_dep_grouped_CD
+)
+invisible(cox.summary(cox_model))
 ```
 
 ```{r, soft flare UC depression grouped}
-#UC soft flare
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_dep_grouped_UC)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_dep_grouped_UC)
-print(test_result)
-p5 <- ggsurvplot(fit,
-           data = soft_dep_grouped_UC,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-21"),
-           palette = c("#344055", "#266DD3"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare"
-           )
-p5
-
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = soft_dep_grouped_UC)
-summary(cox_model)
-
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = soft_dep_grouped_UC)
-summary(cox_model)
-
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + cat + AgeGroup + frailty(SiteNo), data = soft_dep_grouped_UC)
-summary(cox_model)
+# UC soft flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_dep_grouped_UC
+)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = soft_dep_grouped_UC
+)
+test_result %>%
+  pander()
 ```
 
+```{R}
+p5 <- ggsurvplot(fit,
+  data = soft_dep_grouped_UC,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-21"),
+  palette = c("#344055", "#266DD3"),
+  xlab = "Time from study recruitment (days)",
+  title = "UC/IBDU - Time to soft flare"
+)
+p5
+```
+
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = soft_dep_grouped_UC
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = soft_dep_grouped_UC
+)
+invisible(cox.summary(cox_model))
+```
+
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    AgeGroup +
+    frailty(SiteNo),
+  data = soft_dep_grouped_UC
+)
+invisible(cox.summary(cox_model))
+```
 
 ### Hard flares
 
 Time to hard flare for
 * Whole cohort (n= 1574, number of events= 217)
-  * statistically significant controlling for site only (p-value = 0.0059, 95% CI 1.14 - 2.24)
-  * statistically significant controlling for site, sex, smoking, IMD, age group (p-value = 0.008, 95% CI 1.12-2.22)
-  * statistically significant controlling fro FC category additionally (p-value = 0.008, 95% CI 1.12-2.22)
+  * Statistically significant controlling for site only (p-value = 0.0059,
+    95% CI 1.14 - 2.24)
+  * Statistically significant controlling for site, sex, IMD, age group
+    (p-value = 0.008, 95% CI 1.12-2.22)
+  * Statistically significant controlling for FC category additionally (p-value
+    = 0.008, 95% CI 1.12-2.22)
 * CD only (n= 786, number of events= 98) 
-  * not significant in any analyses
+  * Not significant in any analyses
 * UC only (n= 771, number of events= 119)
-  * significant controlling for site only (p-value = 0.0015, 95% CI 1.31-3.20)
-  * statistically significant controlling for site, sex, smoking, IMD, age group (p-value = 0.0005, 95% CI 1.42-3.55)
-  * statistically significant controlling for FC category additionally (p-value = 0.00009, 95% CI (1.58-4.02))
-  
-
+  * Significant controlling for site only (p-value = 0.0015, 95% CI 1.31-3.20)
+  * Statistically significant controlling for site, sex, IMD, age group
+    (p-value = 0.0005, 95% CI 1.42-3.55)
+  * Statistically significant controlling for FC category additionally (p-value
+    = 0.00009, 95% CI (1.58-4.02))
 
 ```{r, IBD all hard flare and depression (grouped)}
-#all IBD soft flare
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_dep_grouped_IBD)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_dep_grouped_IBD)
-print(test_result)
+# all IBD soft flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_dep_grouped_IBD
+)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_dep_grouped_IBD
+)
+test_result %>%
+  pander()
+```
+
+```{R}
 p5 <- ggsurvplot(fit,
-           data = hard_dep_grouped_IBD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-21"),
-           palette = c("#6F73D2", "#A3D5FF"),
-           xlab = "Time from study recrutiment (days)",
-           title = "All patients - Time to hard flare"
-           )
+  data = hard_dep_grouped_IBD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-21"),
+  palette = c("#6F73D2", "#A3D5FF"),
+  xlab = "Time from study recruitment (days)",
+  title = "All patients - Time to hard flare"
+)
 p5
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = hard_dep_grouped_IBD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = hard_dep_grouped_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = hard_dep_grouped_IBD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = hard_dep_grouped_IBD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + cat + AgeGroup + frailty(SiteNo), data = hard_dep_grouped_IBD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    AgeGroup +
+    frailty(SiteNo),
+  data = hard_dep_grouped_IBD
+)
+invisible(cox.summary(cox_model))
 ```
 
 ```{r, hard flare, depression grouped and CD only}
-#all IBD soft flare
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_dep_grouped_CD)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_dep_grouped_CD)
-print(test_result)
+# all IBD soft flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_dep_grouped_CD
+)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_dep_grouped_CD
+)
+test_result %>%
+  pander()
+```
+
+```{R}
 p5 <- ggsurvplot(fit,
-           data = hard_dep_grouped_CD,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-21"),
-           palette = c("#6F73D2", "#A3D5FF"),
-           xlab = "Time from study recrutiment (days)",
-           title = "CD patients - Time to hard flare"
-           )
+  data = hard_dep_grouped_CD,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-21"),
+  palette = c("#6F73D2", "#A3D5FF"),
+  xlab = "Time from study recruitment (days)",
+  title = "CD patients - Time to hard flare"
+)
 p5
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = hard_dep_grouped_CD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = hard_dep_grouped_CD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + frailty(SiteNo), data = hard_dep_grouped_CD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    frailty(SiteNo),
+  data = hard_dep_grouped_CD
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + cat + frailty(SiteNo), data = hard_dep_grouped_CD)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = hard_dep_grouped_CD
+)
+invisible(cox.summary(cox_model))
 ```
 
 ```{r, hard flare, depression grouped and UC/IBDU only}
-#all IBD soft flare
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_dep_grouped_UC)
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_dep_grouped_UC)
-print(test_result)
+# all IBD soft flare
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_dep_grouped_UC
+)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
+  data = hard_dep_grouped_UC
+)
+test_result %>%
+  pander()
+```
+
+```{R}
 p5 <- ggsurvplot(fit,
-           data = hard_dep_grouped_UC,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "HADS-Depression scores",
-           legend.labs = c("0-7", "8-21"),
-           palette = c("#6F73D2", "#A3D5FF"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU patients - Time to hard flare"
-           )
+  data = hard_dep_grouped_UC,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "HADS-Depression scores",
+  legend.labs = c("0-7", "8-21"),
+  palette = c("#6F73D2", "#A3D5FF"),
+  xlab = "Time from study recruitment (days)",
+  title = "UC/IBDU patients - Time to hard flare"
+)
 p5
+```
 
-#site only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo), data = hard_dep_grouped_UC)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# site only
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + frailty(SiteNo),
+  data = hard_dep_grouped_UC
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 2
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = hard_dep_grouped_UC)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 2
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = hard_dep_grouped_UC
+)
+invisible(cox.summary(cox_model))
+```
 
-#analysis 3 (FC)
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ score_group + Sex + Smoke + IMD + cat + AgeGroup + frailty(SiteNo), data = hard_dep_grouped_UC)
-summary(cox_model)
+```{R}
+#| output: "asis"
+# analysis 3 (FC)
+cox_model <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    Sex +
+    IMD +
+    cat +
+    AgeGroup +
+    frailty(SiteNo),
+  data = hard_dep_grouped_UC
+)
+invisible(cox.summary(cox_model))
 ```
 
 ## Reproduction and reproducibility {.appendix}
