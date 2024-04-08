@@ -670,8 +670,8 @@ correlation_result_age_depression %>%
 
 ```{R}
 #| label: fig-age-anxiety-lm
-#| fig-cap: "Relationship between Age and Anxiety Score"
-#| fig-subcap: Younger age is associated with higher anxiety scores."
+#| fig-cap: "Relationship between age and anxiety scores"
+#| fig-subcap: "Younger age is associated with higher anxiety scores."
 ggplot(filtered_data_anxiety, aes(x = age, y = hads_score)) +
   geom_point(alpha = 0.2) +  # Scatter plot, add alpha (transparency)
   geom_smooth(method = "lm", se = FALSE, color = "#5BC0EB") +  # Regression line
