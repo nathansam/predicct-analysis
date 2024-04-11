@@ -39,8 +39,6 @@ if (file.exists("/docker")) { # If running in docker
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
 
-if (!dir.exists("plots")) dir.create("plots")
-
 demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
@@ -59,21 +57,21 @@ cox.summary <- function(fit) {
       digits = 4
     ) %>%
     print()
-  
-  cat("\\newline
-  
-Diagnostics: \\newline
-  
-")
-  
-  cat('\\newline
-  
-::: {.panel-tabset} 
 
-      ')
-  
+  cat("\\newline
+
+Diagnostics: \\newline
+
+")
+
+  cat("\\newline
+
+::: {.panel-tabset}
+
+      ")
+
   cat("
-  
+
 ###### Proportional hazards assumption test \\newline
 
   ")
@@ -88,25 +86,25 @@ Diagnostics: \\newline
       digits = 4
     ) %>%
     print()
-  
+
   cat("\\newline
 
 ###### DF betas \\newline
 
   ")
-  
+
   print(ggcoxdiagnostics(fit, type = "dfbeta"))
-  
-  cat("\\newline 
-  
-###### Martignale residuals \\newline
-      
-      ")
-  
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-  
+
   cat("\\newline
-  
+
+###### Martingale residuals \\newline
+
+      ")
+
+  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+
+  cat("\\newline
+
 :::
 
       ")
@@ -130,10 +128,11 @@ flare.uc.df <- readRDS(paste0(outdir, "flares-controlled-uc.RDS"))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6.5
-flare.cd.df$Agecat <- cut(flare.cd.df$Age, 
-                          c(0, 18, 30, 45, 65, Inf),
-                          labels = c("< 18", "18-29", "30-44", "45-64", ">=65"),
-                          right = FALSE)
+flare.cd.df$Agecat <- cut(flare.cd.df$Age,
+  c(0, 18, 30, 45, 65, Inf),
+  labels = c("< 18", "18-29", "30-44", "45-64", ">=65"),
+  right = FALSE
+)
 
 
 fit <- survfit(Surv(softflare_time, softflare) ~ Agecat,
@@ -154,7 +153,16 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/Age-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/demographics/age.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/demographics/age.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -195,7 +203,16 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/Age-full-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/demographics/age.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/demographics/age.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -223,10 +240,11 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6.5
 
-flare.uc.df$Agecat <- cut(flare.uc.df$Age, 
-                          c(0, 18, 30, 45, 65, Inf),
-                          labels = c("< 18", "18-29", "30-44", "45-64", ">=65"),
-                          right = FALSE)
+flare.uc.df$Agecat <- cut(flare.uc.df$Age,
+  c(0, 18, 30, 45, 65, Inf),
+  labels = c("< 18", "18-29", "30-44", "45-64", ">=65"),
+  right = FALSE
+)
 
 
 fit <- survfit(Surv(softflare_time, softflare) ~ Agecat,
@@ -247,9 +265,19 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/Age-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/demographics/age.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/demographics/age.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 
@@ -287,9 +315,19 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/Age-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/demographics/age.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/demographics/age.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 
@@ -336,7 +374,16 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/Sex-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/demographics/sex.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/demographics/sex.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -377,7 +424,16 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/Sex-full-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/demographics/sex.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/demographics/sex.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -423,9 +479,19 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/Sex-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/demographics/sex.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/demographics/sex.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 
@@ -463,9 +529,19 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/Age-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/demographics/sex.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/demographics/sex.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 
@@ -511,7 +587,16 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/BMI-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/demographics/bmi.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/demographics/bmi.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -551,7 +636,16 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/BMI-full-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/demographics/bmi.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/demographics/bmi.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -596,9 +690,19 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/BMI-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/demographics/bmi.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/demographics/bmi.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 
@@ -635,9 +739,19 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/BMI-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/demographics/bmi.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/demographics/bmi.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 
@@ -673,4 +787,3 @@ pander::pander(sessionInfo())
 Licensed by 
 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
  unless otherwise stated.
-

@@ -1,5 +1,6 @@
 project:
   type: website
+  pre-render: makeplotdir.R
   render:
     - "index.qmd"
     - "Baseline/Introduction.qmd"

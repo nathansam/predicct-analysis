@@ -39,8 +39,6 @@ if (file.exists("/docker")) { # If running in docker
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
 
-if (!dir.exists("plots")) dir.create("plots")
-
 demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
@@ -59,21 +57,21 @@ cox.summary <- function(fit) {
       digits = 4
     ) %>%
     print()
-  
-  cat("\\newline
-  
-Diagnostics: \\newline
-  
-")
-  
-  cat('\\newline
-  
-::: {.panel-tabset} 
 
-      ')
-  
+  cat("\\newline
+
+Diagnostics: \\newline
+
+")
+
+  cat("\\newline
+
+::: {.panel-tabset}
+
+      ")
+
   cat("
-  
+
 ###### Proportional hazards assumption test \\newline
 
   ")
@@ -88,25 +86,25 @@ Diagnostics: \\newline
       digits = 4
     ) %>%
     print()
-  
+
   cat("\\newline
 
 ###### DF betas \\newline
 
   ")
-  
+
   print(ggcoxdiagnostics(fit, type = "dfbeta"))
-  
-  cat("\\newline 
-  
-###### Martignale residuals \\newline
-      
-      ")
-  
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-  
+
   cat("\\newline
-  
+
+###### Martingale residuals \\newline
+
+      ")
+
+  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+
+  cat("\\newline
+
 :::
 
       ")
@@ -117,7 +115,6 @@ flare.df <- readRDS(paste0(outdir, "flares-biochem.RDS"))
 flare.cd.df <- readRDS(paste0(outdir, "flares-biochem-cd.RDS"))
 flare.uc.df <- readRDS(paste0(outdir, "flares-biochem-uc.RDS"))
 ```
-
 
 ## Total meat protein
 
@@ -155,15 +152,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Meat protein quantiles",
   legend.labs = levels(flare.cd.df$Meat_sum_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200
 )
 
-cairo_pdf("plots/meat-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/Diet/meat.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/meat.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -193,15 +200,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Meat protein quantiles",
   legend.labs = levels(flare.cd.df$Meat_sum_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
   break.time.by = 500
 )
 
-cairo_pdf("plots/meat-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/Diet/meat.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/meat.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -245,16 +262,26 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Meat protein quantiles",
   legend.labs = levels(flare.uc.df$Meat_sum_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("plots/meat-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/Diet/meat.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/meat.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -287,16 +314,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Meat protein quantiles",
   legend.labs = levels(flare.uc.df$Meat_sum_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  break.time.by = 500
 )
 
-cairo_pdf("plots/meat-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/Diet/meat.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/meat.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -342,15 +378,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Fibre quantiles",
   legend.labs = levels(flare.cd.df$fibre_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200
 )
 
-cairo_pdf("plots/fibre-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/Diet/fibre.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/fibre.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -380,15 +426,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Fibre quantiles",
   legend.labs = levels(flare.cd.df$fibre_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
   break.time.by = 500
 )
 
-cairo_pdf("plots/fibre-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/Diet/fibre.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/fibre.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -430,16 +486,26 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Fibre quantiles",
   legend.labs = levels(flare.uc.df$fibre_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("plots/fibre-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/Diet/fibre.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/fibre.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -472,16 +538,26 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Fibre quantiles",
   legend.labs = levels(flare.uc.df$fibre_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
   break.time.by = 500,
   xlim = c(0, 750)
 )
 
-cairo_pdf("plots/fibre-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/Diet/fibre.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/fibre.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -530,15 +606,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "PUFA intake (by g) quantiles",
   legend.labs = levels(flare.cd.df$PUFA_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200
 )
 
-cairo_pdf("plots/PUFA-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/Diet/pufa.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/pufa.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -568,15 +654,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "PUFA intake (by g) quantiles",
   legend.labs = levels(flare.cd.df$PUFA_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
   break.time.by = 500
 )
 
-cairo_pdf("plots/PUFA-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/Diet/pufa.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/pufa.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -620,16 +716,26 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "PUFA intake (by g) quantiles",
   legend.labs = levels(flare.uc.df$fibre_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("plots/PUFA-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/Diet/pufa.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/pufa.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -661,16 +767,26 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "PUFA intake (by g) quantiles",
   legend.labs = levels(flare.uc.df$PUFA_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
   break.time.by = 500,
   xlim = c(0, 750)
 )
 
-cairo_pdf("plots/PUFA-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/Diet/pufa.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/pufa.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -713,15 +829,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Nova score",
   legend.labs = levels(flare.cd.df$NOVAScore_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200
 )
 
-cairo_pdf("plots/Nova-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/Diet/nova.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/nova.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -751,15 +877,25 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Nova Score",
   legend.labs = levels(flare.cd.df$NOVAScore_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
   break.time.by = 500
 )
 
-cairo_pdf("plots/Nova-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/Diet/nova.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/nova.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -797,16 +933,26 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Nova score",
   legend.labs = levels(flare.uc.df$NOVAScore_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("plots/Nova-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/Diet/nova.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/nova.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -838,16 +984,26 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Nova score",
   legend.labs = levels(flare.uc.df$NOVAScore_cat),
-  palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
   break.time.by = 500,
   xlim = c(0, 750)
 )
 
-cairo_pdf("plots/PUFA-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/Diet/nova.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/nova.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -876,4 +1032,3 @@ pander::pander(sessionInfo())
 Licensed by 
 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
  unless otherwise stated.
-

@@ -173,7 +173,7 @@ Diagnostics: \\newline
 
   cat("\\newline
 
-###### Martignale residuals \\newline
+###### Martingale residuals \\newline
 
       ")
 

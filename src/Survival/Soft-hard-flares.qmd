@@ -255,7 +255,7 @@ p <- ggsurvplot(fit,
                 xlim = c(0, 2200)
 )
 
-cairo_pdf("plots/hard-soft-flares.pdf", width = 7, height = 6.5)
+cairo_pdf("../plots/flare-comparison.pdf", width = 7, height = 7)
 p
 invisible(dev.off())
 

@@ -39,8 +39,6 @@ if (file.exists("/docker")) { # If running in docker
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
 
-if (!dir.exists("plots")) dir.create("plots")
-
 demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
@@ -99,7 +97,7 @@ Diagnostics: \\newline
   
   cat("\\newline 
   
-###### Martignale residuals \\newline
+###### Martingale residuals \\newline
       
       ")
   
@@ -156,9 +154,18 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/control-8-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/ibd/control-8.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/soft-flare/ibd/control-8.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -196,7 +203,15 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/control-8-full-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/ibd/control-8.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/ibd/control-8.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
@@ -251,9 +266,19 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/control-8-uc-KM.pdf")
+
+cairo_pdf("../plots/uc/soft-flare/ibd/control-8.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/ibd/control-8.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -291,9 +316,18 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/control-8-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/ibd/control-8.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/ibd/control-8.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -340,7 +374,15 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/control-vas-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/ibd/control-vas.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/ibd/control-vas.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -380,7 +422,16 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/control-8-full-cd-KM.pdf")
+
+cairo_pdf("../plots/cd/hard-flare/ibd/control-vas.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/ibd/control-vas.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
@@ -426,11 +477,19 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/control-vas-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/ibd/control-vas.pdf")
 p
 invisible(dev.off())
-p
 
+png("../plots/uc/soft-flare/ibd/control-vas.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
+p
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + vas_control + frailty(SiteNo),
@@ -465,9 +524,18 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/control-vas-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/ibd/control-vas.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/ibd/control-vas.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -523,20 +591,18 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("plots/EOF-flare-Surgery-cd-cut.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/soft-flare/ibd/surgery.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Surgery-cd-cut.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/soft-flare/ibd/surgery.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
-
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -569,18 +635,18 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("plots/EOF-flare-Surgery-cd-full.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/hard-flare/ibd/surgery.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Surgery-cd-full.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/hard-flare/ibd/surgery.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
+
 p
 
 fit.me <- coxph(
@@ -619,16 +685,15 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("plots/EOF-flare-Location-cd-cut.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/soft-flare/ibd/location.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Location-cd-cut.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/soft-flare/ibd/location.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -664,16 +729,15 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("plots/EOF-flare-Location-cd-full.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/hard-flare/ibd/location.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Location-cd-full.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/hard-flare/ibd/location.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -714,16 +778,15 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("plots/EOF-flare-L4-cd-cut.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/soft-flare/ibd/l4.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-L4-cd-cut.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/soft-flare/ibd/l4.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -759,19 +822,19 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("plots/EOF-flare-L4-cd-full.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/hard-flare/ibd/l4.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-L4-cd-full.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/hard-flare/ibd/l4.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
+
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -809,16 +872,15 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("plots/EOF-flare-Behaviour-cd-cut.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/soft-flare/ibd/behaviour.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Behaviour-cd-cut.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/soft-flare/ibd/behaviour.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -853,19 +915,19 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("plots/EOF-flare-Behaviour-cd-full.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/hard-flare/ibd/behaviour.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Behaviour-cd-full.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/hard-flare/ibd/behaviour.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
+
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -903,16 +965,15 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("plots/EOF-flare-Perianal-cd-cut.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/soft-flare/ibd/perinal.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Perianal-cd-cut.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/soft-flare/ibd/perinal.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -947,16 +1008,15 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("plots/EOF-flare-Perianal-cd-full.pdf", width = 9, height = 7)
+cairo_pdf("../plots/cd/hard-flare/ibd/perinal.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Perianal-cd-full.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/cd/hard-flare/ibd/perinal.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -1010,16 +1070,16 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("plots/EOF-flare-Extent-uc-cut.pdf", width = 9, height = 7)
+
+cairo_pdf("../plots/uc/soft-flare/ibd/extent.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Extent-uc-cut.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/uc/soft-flare/ibd/extent.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -1054,16 +1114,15 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("plots/EOF-flare-Extent-uc-full.pdf", width = 9, height = 7)
+cairo_pdf("../plots/uc/hard-flare/ibd/extent.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Montreal-uc-full.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/uc/hard-flare/ibd/extent.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -1111,16 +1170,15 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("plots/EOF-flare-Mayo-uc-cut.pdf", width = 9, height = 7)
+cairo_pdf("../plots/uc/soft-flare/ibd/mayo.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Mayo-uc-cut.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/uc/soft-flare/ibd/mayo.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
@@ -1155,16 +1213,15 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("plots/EOF-flare-Mayo-uc-full.pdf", width = 9, height = 7)
+cairo_pdf("../plots/uc/hard-flare/ibd/mayo.pdf")
 p
 invisible(dev.off())
 
-png("plots/EOF-flare-Mayo-uc-full.png",
-  width = 9,
-  height = 7,
-  units = "in",
-  res = 300
-)
+png("../plots/uc/hard-flare/ibd/mayo.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 p
