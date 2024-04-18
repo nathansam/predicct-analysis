@@ -57,6 +57,9 @@ demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
 demo.uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
 ```
 
+This page explores data which describes subjects' IBD, primarily consisting of 
+clinical data. 
+
 ## IBD type
 
 For this study, we have grouped ulcerative colitis (UC) and inflammatory bowel
@@ -474,7 +477,7 @@ for (i in 1:nrow(drugs)) {
 drugs$category <- factor(drugs$category,
   levels = 1:4,
   labels = c(
-    "5ASA",
+    "5-ASA",
     "Mono immunotherapy",
     "Mono biologic",
     "Combo therapy"
@@ -485,7 +488,7 @@ drugs <- merge(drugs, demo[, c("ParticipantNo", "cat", "diagnosis2")], by = "Par
 colnames(drugs)[5] <- "Treatment"
 ```
 
-For IBD treatment, subjects are categorised as being on either a 5ASA, mono
+For IBD treatment, subjects are categorised as being on either a 5-ASA, mono
 immunotherapy, mono biologic, or immuno-biologic combination treatment strategy
 based upon REDCap data provided by participants' IBD care teams. 
 
@@ -507,10 +510,10 @@ Biologics are defined as:
 * Vedolizumab
 * Ustekinumab
 
-Patients are only categorised as receiving a 5ASA treatment plan if 5ASA is the
+Patients are only categorised as receiving a 5-ASA treatment plan if 5-ASA is the
 only IBD treatment they are receiving (I.E no immunotherapy or biologics).
 
-As should be expected given poor efficacy in CD, a 5ASA treatment strategy is
+As should be expected given poor efficacy in CD, a 5-ASA treatment strategy is
 much more common for UC/IBDU participants (@fig-treatments). Mono biologic
 therapy is the most common treatment strategy for CD subjects.
 
@@ -1042,6 +1045,7 @@ pander(summary(aov(HBI ~ cat, data = demo.cd)))
 Sum of liquid stools per day and abdominal pain. 
 
 ```{R}
+#| warning: false
 PRO2 <- redcap[, c("participantno", "liq_stool_day", "abdo_pain")]
 PRO2$liq_stool_day <- as.numeric(PRO2$liq_stool_day) # Drop ileostomies
 
@@ -1054,9 +1058,7 @@ demo.cd <- merge(demo.cd,
   all.x = TRUE,
   all.y = FALSE
 )
-```
 
-```{R}
 demo.cd %>%
   ggplot(aes(x = as.factor(PRO2))) +
   geom_bar(fill = "#FF8552", color = "#D2632A") +
@@ -1286,9 +1288,7 @@ demo.uc <- merge(demo.uc,
   all.x = TRUE,
   all.y = FALSE
 )
-```
 
-```{R}
 demo.uc %>%
   ggplot(aes(x = as.factor(PRO2), fill = diagnosis2, color = diagnosis2)) +
   geom_bar() +

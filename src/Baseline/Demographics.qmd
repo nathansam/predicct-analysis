@@ -47,9 +47,7 @@ if (file.exists("/docker")) { # If running in docker
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
-```
 
-```{R}
 demo <- read_xlsx(paste0(data.path, "Baseline2022/demographics.xlsx"),
   col_types = c(
     "text",
@@ -104,9 +102,11 @@ demo$cat <- factor(demo$cat,
 names(demo)[12] <- "FC" # Result ~> FC
 ```
 
+This page describes key demographic data collected by the PREdiCCt study.
+
 ## Age
 
-The distribution of age in the study cohort is approximately normally
+The distribution of age for the study cohort is approximately normally
 distributed. 
 
 ```{R}
@@ -121,6 +121,8 @@ demo %>%
   xlab("Age (years)") +
   ylab("Frequency")
 ```
+
+Age is significantly associated with faecal calprotectin. 
 
 ```{R}
 #| label: tbl-age-fc
@@ -160,9 +162,9 @@ pander(chisq.test(demo$Sex, demo$cat))
 
 Body mass index is given by weight (in $Kg$) divided by height (in $M$) squared.
 
-As threshold differ in the paediatric population, differing by age and sex, BMI
-has not been calculated for those less than 18 years of age. BMI is first
-considered as a continuous variable. 
+As thresholds differ in the paediatric population, and are dependent on both age
+and sex, BMI has not been calculated for those less than 18 years of age. BMI is
+first considered as a continuous variable. 
 
 ```{R}
 #| label: fig-BMI-dist
@@ -283,9 +285,10 @@ pander(chisq.test(demo$Ethnicity, demo$cat))
 ## Index of multiple deprivation
 
 The PREdiCCt SAP states the primary analyses will be controlled for by index
-of multiple deprivation (IMD). However, the PREdiCCt study recruited across the
-UK and there is no consistent measure of IMD across the UK. Instead IMD measures
-are specific to constituent nations.  
+of multiple deprivation (IMD). It should be noted that the PREdiCCt study
+recruited across the UK and there is no consistent measure of IMD across the
+whole of the UK. Instead, IMD measures are handled slightly differently by each 
+constituent nation.  
 
 ```{R}
 #| label: fig-imd-dist

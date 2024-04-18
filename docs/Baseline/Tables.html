@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.550">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2024-04-08">
+<meta name="dcterms.date" content="2024-04-18">
 <title>PREdiCCt analyses - Overall tables</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Overall tables">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2024-04-08">
-<meta name="citation_cover_date" content="2024-04-08">
+<meta name="citation_publication_date" content="2024-04-18">
+<meta name="citation_cover_date" content="2024-04-18">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-04-08">
+<meta name="citation_online_date" content="2024-04-18">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Location is important: Differentiation between ileal and colonic crohn’s disease;,citation_author=Raja Atreya;,citation_author=Britta Siegmund;,citation_publication_date=2021-03;,citation_cover_date=2021-03;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.1038/s41575-021-00424-6;,citation_issue=8;,citation_doi=10.1038/s41575-021-00424-6;,citation_issn=1759-5053;,citation_volume=18;,citation_journal_title=Nature Reviews Gastroenterology &amp;amp;amp; Hepatology;,citation_publisher=Springer Science; Business Media LLC;">
 <meta name="citation_reference" content="citation_title=Between-assay variability of faecal calprotectin enzyme-linked immunosorbent assay kits;,citation_author=S J Whitehead;,citation_author=J French;,citation_author=M J Brookes;,citation_author=C Ford;,citation_author=R Gama;,citation_publication_date=2012-11;,citation_cover_date=2012-11;,citation_year=2012;,citation_fulltext_html_url=http://dx.doi.org/10.1258/acb.2012.011272;,citation_issue=1;,citation_doi=10.1258/acb.2012.011272;,citation_issn=1758-1001;,citation_volume=50;,citation_journal_title=Annals of Clinical Biochemistry: International Journal of Laboratory Medicine;,citation_publisher=SAGE Publications;">
@@ -395,7 +395,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 8, 2024</p>
+      <p class="date">April 18, 2024</p>
     </div>
   </div>
   
@@ -448,6 +448,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>On this page, you will find key demographic/phenotypic tables for the cohorts. You will also find statistical tests exploring if participant characteristics differ across cohorts.</p>
+<p>In addition to the FC cohort (PREdiCCt subjects with a baseline FC available), there is also the FFQ cohort which consists of subjects with analysed FFQs available. All subjects in the FFQ cohort also have a baseline FC available and are therefore also in the FC cohort.</p>
 </section><section id="table-of-baseline-data-by-cohort" class="level2"><h2 class="anchored" data-anchor-id="table-of-baseline-data-by-cohort">Table of baseline data by cohort</h2>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my.render.cont</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -952,7 +954,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="associations-with-cohort-membership" class="level3"><h3 class="anchored" data-anchor-id="associations-with-cohort-membership">Associations with cohort membership</h3>
 <p>Only age, biologic use, and albumin were found to be significantly different across cohorts.</p>
 <section id="age" class="level4"><h4 class="anchored" data-anchor-id="age">Age</h4>
-<p>There is a significant difference in age across cohorts with subjects in the FFQ sub-cohort being more likely to be older than the Full or FC cohorts.</p>
+<p>There is a significant difference in age across cohorts with subjects in the FFQ sub-cohort being more likely to be older than the full or FC cohorts.</p>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/pander/man/pander.html">pander</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/aov.html">aov</a></span><span class="op">(</span><span class="va">Age</span> <span class="op">~</span> <span class="va">cohort</span>, data <span class="op">=</span> <span class="va">comp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
@@ -4578,474 +4580,482 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb39-57"><a href="#cb39-57" aria-hidden="true" tabindex="-1"></a>))</span>
 <span id="cb39-58"><a href="#cb39-58" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-59"><a href="#cb39-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-60"><a href="#cb39-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-61"><a href="#cb39-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of baseline data by cohort</span></span>
-<span id="cb39-62"><a href="#cb39-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-60"><a href="#cb39-60" aria-hidden="true" tabindex="-1"></a>On this page, you will find key demographic/phenotypic tables for the cohorts.</span>
+<span id="cb39-61"><a href="#cb39-61" aria-hidden="true" tabindex="-1"></a>You will also find statistical tests exploring if participant characteristics</span>
+<span id="cb39-62"><a href="#cb39-62" aria-hidden="true" tabindex="-1"></a>differ across cohorts. </span>
 <span id="cb39-63"><a href="#cb39-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-66"><a href="#cb39-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-67"><a href="#cb39-67" aria-hidden="true" tabindex="-1"></a>my.render.cont <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb39-68"><a href="#cb39-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(</span>
-<span id="cb39-69"><a href="#cb39-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stats.apply.rounding</span>(<span class="fu">stats.default</span>(x),</span>
-<span id="cb39-70"><a href="#cb39-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb39-71"><a href="#cb39-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">round.integers =</span> <span class="cn">FALSE</span></span>
-<span id="cb39-72"><a href="#cb39-72" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb39-73"><a href="#cb39-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"Median (IQR)"</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%s (%s - %s)"</span>, MEDIAN, Q1, Q3))</span>
-<span id="cb39-74"><a href="#cb39-74" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-75"><a href="#cb39-75" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb39-76"><a href="#cb39-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-77"><a href="#cb39-77" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>control_8 <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(demo<span class="sc">$</span>control_8)</span>
-<span id="cb39-78"><a href="#cb39-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-79"><a href="#cb39-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-80"><a href="#cb39-80" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> demo</span>
-<span id="cb39-81"><a href="#cb39-81" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"All"</span></span>
-<span id="cb39-82"><a href="#cb39-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-83"><a href="#cb39-83" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> demo <span class="sc">%&gt;%</span></span>
-<span id="cb39-84"><a href="#cb39-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat)</span>
-<span id="cb39-85"><a href="#cb39-85" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FC"</span></span>
+<span id="cb39-64"><a href="#cb39-64" aria-hidden="true" tabindex="-1"></a>In addition to the FC cohort (PREdiCCt subjects with a baseline FC available),</span>
+<span id="cb39-65"><a href="#cb39-65" aria-hidden="true" tabindex="-1"></a>there is also the FFQ cohort which consists of subjects with analysed FFQs</span>
+<span id="cb39-66"><a href="#cb39-66" aria-hidden="true" tabindex="-1"></a>available. All subjects in the FFQ cohort also have a baseline FC available and</span>
+<span id="cb39-67"><a href="#cb39-67" aria-hidden="true" tabindex="-1"></a>are therefore also in the FC cohort. </span>
+<span id="cb39-68"><a href="#cb39-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-69"><a href="#cb39-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of baseline data by cohort</span></span>
+<span id="cb39-70"><a href="#cb39-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-71"><a href="#cb39-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-74"><a href="#cb39-74" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-75"><a href="#cb39-75" aria-hidden="true" tabindex="-1"></a>my.render.cont <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb39-76"><a href="#cb39-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(</span>
+<span id="cb39-77"><a href="#cb39-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stats.apply.rounding</span>(<span class="fu">stats.default</span>(x),</span>
+<span id="cb39-78"><a href="#cb39-78" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb39-79"><a href="#cb39-79" aria-hidden="true" tabindex="-1"></a>      <span class="at">round.integers =</span> <span class="cn">FALSE</span></span>
+<span id="cb39-80"><a href="#cb39-80" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb39-81"><a href="#cb39-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">""</span>, <span class="st">"Median (IQR)"</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%s (%s - %s)"</span>, MEDIAN, Q1, Q3))</span>
+<span id="cb39-82"><a href="#cb39-82" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-83"><a href="#cb39-83" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb39-84"><a href="#cb39-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-85"><a href="#cb39-85" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>control_8 <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(demo<span class="sc">$</span>control_8)</span>
 <span id="cb39-86"><a href="#cb39-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-87"><a href="#cb39-87" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
-<span id="cb39-88"><a href="#cb39-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">subset</span>(demo, ParticipantNo <span class="sc">%in%</span> FFQ<span class="sc">$</span>participantno)</span>
-<span id="cb39-90"><a href="#cb39-90" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FFQ"</span></span>
-<span id="cb39-91"><a href="#cb39-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-92"><a href="#cb39-92" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
-<span id="cb39-93"><a href="#cb39-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-94"><a href="#cb39-94" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="fu">factor</span>(comp<span class="sc">$</span>cohort,</span>
-<span id="cb39-95"><a href="#cb39-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All"</span>, <span class="st">"FC"</span>, <span class="st">"FFQ"</span>),</span>
-<span id="cb39-96"><a href="#cb39-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Full cohort"</span>, <span class="st">"FC cohort"</span>, <span class="st">"FFQ cohort"</span>)</span>
-<span id="cb39-97"><a href="#cb39-97" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb39-98"><a href="#cb39-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-99"><a href="#cb39-99" aria-hidden="true" tabindex="-1"></a><span class="fu">table1</span>(</span>
-<span id="cb39-100"><a href="#cb39-100" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> Age <span class="sc">+</span></span>
-<span id="cb39-101"><a href="#cb39-101" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
-<span id="cb39-102"><a href="#cb39-102" aria-hidden="true" tabindex="-1"></a>    Ethnicity <span class="sc">+</span></span>
-<span id="cb39-103"><a href="#cb39-103" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
-<span id="cb39-104"><a href="#cb39-104" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
-<span id="cb39-105"><a href="#cb39-105" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
-<span id="cb39-106"><a href="#cb39-106" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
-<span id="cb39-107"><a href="#cb39-107" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
-<span id="cb39-108"><a href="#cb39-108" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
-<span id="cb39-109"><a href="#cb39-109" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
-<span id="cb39-110"><a href="#cb39-110" aria-hidden="true" tabindex="-1"></a>    CReactiveProtein <span class="sc">+</span></span>
-<span id="cb39-111"><a href="#cb39-111" aria-hidden="true" tabindex="-1"></a>    Haemoglobin <span class="sc">+</span></span>
-<span id="cb39-112"><a href="#cb39-112" aria-hidden="true" tabindex="-1"></a>    WCC <span class="sc">+</span></span>
-<span id="cb39-113"><a href="#cb39-113" aria-hidden="true" tabindex="-1"></a>    Albumin <span class="sc">+</span></span>
-<span id="cb39-114"><a href="#cb39-114" aria-hidden="true" tabindex="-1"></a>    Meat_sum <span class="sc">+</span></span>
-<span id="cb39-115"><a href="#cb39-115" aria-hidden="true" tabindex="-1"></a>    fibre <span class="sc">+</span></span>
-<span id="cb39-116"><a href="#cb39-116" aria-hidden="true" tabindex="-1"></a>    PUFA_percEng <span class="sc">+</span></span>
-<span id="cb39-117"><a href="#cb39-117" aria-hidden="true" tabindex="-1"></a>    NOVAScore_cat <span class="sc">+</span></span>
-<span id="cb39-118"><a href="#cb39-118" aria-hidden="true" tabindex="-1"></a>    Biologic <span class="sc">|</span> cohort,</span>
-<span id="cb39-119"><a href="#cb39-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> comp,</span>
-<span id="cb39-120"><a href="#cb39-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">render.continuous =</span> my.render.cont,</span>
-<span id="cb39-121"><a href="#cb39-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">FALSE</span></span>
-<span id="cb39-122"><a href="#cb39-122" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb39-123"><a href="#cb39-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-124"><a href="#cb39-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-125"><a href="#cb39-125" aria-hidden="true" tabindex="-1"></a><span class="fu">### Associations with cohort membership </span></span>
-<span id="cb39-126"><a href="#cb39-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-127"><a href="#cb39-127" aria-hidden="true" tabindex="-1"></a>Only age, biologic use, and albumin were found to be significantly different</span>
-<span id="cb39-128"><a href="#cb39-128" aria-hidden="true" tabindex="-1"></a>across cohorts. </span>
-<span id="cb39-129"><a href="#cb39-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-130"><a href="#cb39-130" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Age</span></span>
-<span id="cb39-131"><a href="#cb39-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-132"><a href="#cb39-132" aria-hidden="true" tabindex="-1"></a>There is a significant difference in age across cohorts with subjects in the FFQ</span>
-<span id="cb39-133"><a href="#cb39-133" aria-hidden="true" tabindex="-1"></a>sub-cohort being more likely to be older than the Full or FC cohorts. </span>
+<span id="cb39-87"><a href="#cb39-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-88"><a href="#cb39-88" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> demo</span>
+<span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"All"</span></span>
+<span id="cb39-90"><a href="#cb39-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-91"><a href="#cb39-91" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> demo <span class="sc">%&gt;%</span></span>
+<span id="cb39-92"><a href="#cb39-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat)</span>
+<span id="cb39-93"><a href="#cb39-93" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FC"</span></span>
+<span id="cb39-94"><a href="#cb39-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-95"><a href="#cb39-95" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
+<span id="cb39-96"><a href="#cb39-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-97"><a href="#cb39-97" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">subset</span>(demo, ParticipantNo <span class="sc">%in%</span> FFQ<span class="sc">$</span>participantno)</span>
+<span id="cb39-98"><a href="#cb39-98" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FFQ"</span></span>
+<span id="cb39-99"><a href="#cb39-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-100"><a href="#cb39-100" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
+<span id="cb39-101"><a href="#cb39-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-102"><a href="#cb39-102" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="fu">factor</span>(comp<span class="sc">$</span>cohort,</span>
+<span id="cb39-103"><a href="#cb39-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All"</span>, <span class="st">"FC"</span>, <span class="st">"FFQ"</span>),</span>
+<span id="cb39-104"><a href="#cb39-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Full cohort"</span>, <span class="st">"FC cohort"</span>, <span class="st">"FFQ cohort"</span>)</span>
+<span id="cb39-105"><a href="#cb39-105" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-106"><a href="#cb39-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-107"><a href="#cb39-107" aria-hidden="true" tabindex="-1"></a><span class="fu">table1</span>(</span>
+<span id="cb39-108"><a href="#cb39-108" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> Age <span class="sc">+</span></span>
+<span id="cb39-109"><a href="#cb39-109" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
+<span id="cb39-110"><a href="#cb39-110" aria-hidden="true" tabindex="-1"></a>    Ethnicity <span class="sc">+</span></span>
+<span id="cb39-111"><a href="#cb39-111" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
+<span id="cb39-112"><a href="#cb39-112" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
+<span id="cb39-113"><a href="#cb39-113" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb39-114"><a href="#cb39-114" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb39-115"><a href="#cb39-115" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
+<span id="cb39-116"><a href="#cb39-116" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
+<span id="cb39-117"><a href="#cb39-117" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
+<span id="cb39-118"><a href="#cb39-118" aria-hidden="true" tabindex="-1"></a>    CReactiveProtein <span class="sc">+</span></span>
+<span id="cb39-119"><a href="#cb39-119" aria-hidden="true" tabindex="-1"></a>    Haemoglobin <span class="sc">+</span></span>
+<span id="cb39-120"><a href="#cb39-120" aria-hidden="true" tabindex="-1"></a>    WCC <span class="sc">+</span></span>
+<span id="cb39-121"><a href="#cb39-121" aria-hidden="true" tabindex="-1"></a>    Albumin <span class="sc">+</span></span>
+<span id="cb39-122"><a href="#cb39-122" aria-hidden="true" tabindex="-1"></a>    Meat_sum <span class="sc">+</span></span>
+<span id="cb39-123"><a href="#cb39-123" aria-hidden="true" tabindex="-1"></a>    fibre <span class="sc">+</span></span>
+<span id="cb39-124"><a href="#cb39-124" aria-hidden="true" tabindex="-1"></a>    PUFA_percEng <span class="sc">+</span></span>
+<span id="cb39-125"><a href="#cb39-125" aria-hidden="true" tabindex="-1"></a>    NOVAScore_cat <span class="sc">+</span></span>
+<span id="cb39-126"><a href="#cb39-126" aria-hidden="true" tabindex="-1"></a>    Biologic <span class="sc">|</span> cohort,</span>
+<span id="cb39-127"><a href="#cb39-127" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> comp,</span>
+<span id="cb39-128"><a href="#cb39-128" aria-hidden="true" tabindex="-1"></a>  <span class="at">render.continuous =</span> my.render.cont,</span>
+<span id="cb39-129"><a href="#cb39-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">FALSE</span></span>
+<span id="cb39-130"><a href="#cb39-130" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-131"><a href="#cb39-131" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-132"><a href="#cb39-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-133"><a href="#cb39-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### Associations with cohort membership </span></span>
 <span id="cb39-134"><a href="#cb39-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-137"><a href="#cb39-137" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-138"><a href="#cb39-138" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Age <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
-<span id="cb39-139"><a href="#cb39-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-140"><a href="#cb39-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-141"><a href="#cb39-141" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Sex</span></span>
+<span id="cb39-135"><a href="#cb39-135" aria-hidden="true" tabindex="-1"></a>Only age, biologic use, and albumin were found to be significantly different</span>
+<span id="cb39-136"><a href="#cb39-136" aria-hidden="true" tabindex="-1"></a>across cohorts. </span>
+<span id="cb39-137"><a href="#cb39-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-138"><a href="#cb39-138" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Age</span></span>
+<span id="cb39-139"><a href="#cb39-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-140"><a href="#cb39-140" aria-hidden="true" tabindex="-1"></a>There is a significant difference in age across cohorts with subjects in the FFQ</span>
+<span id="cb39-141"><a href="#cb39-141" aria-hidden="true" tabindex="-1"></a>sub-cohort being more likely to be older than the full or FC cohorts. </span>
 <span id="cb39-142"><a href="#cb39-142" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-145"><a href="#cb39-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-146"><a href="#cb39-146" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Sex, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-146"><a href="#cb39-146" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Age <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-147"><a href="#cb39-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-148"><a href="#cb39-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-149"><a href="#cb39-149" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Body mass index</span></span>
+<span id="cb39-149"><a href="#cb39-149" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Sex</span></span>
 <span id="cb39-150"><a href="#cb39-150" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-153"><a href="#cb39-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-154"><a href="#cb39-154" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(BMI <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-154"><a href="#cb39-154" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Sex, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-155"><a href="#cb39-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-156"><a href="#cb39-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-157"><a href="#cb39-157" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Ethnicity</span></span>
+<span id="cb39-157"><a href="#cb39-157" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Body mass index</span></span>
 <span id="cb39-158"><a href="#cb39-158" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-161"><a href="#cb39-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-162"><a href="#cb39-162" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Ethnicity, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-162"><a href="#cb39-162" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(BMI <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-163"><a href="#cb39-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-164"><a href="#cb39-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-165"><a href="#cb39-165" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Index of multiple deprivation</span></span>
+<span id="cb39-165"><a href="#cb39-165" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Ethnicity</span></span>
 <span id="cb39-166"><a href="#cb39-166" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-169"><a href="#cb39-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-170"><a href="#cb39-170" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>IMD, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-170"><a href="#cb39-170" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Ethnicity, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-171"><a href="#cb39-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-172"><a href="#cb39-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-173"><a href="#cb39-173" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IBD type</span></span>
+<span id="cb39-173"><a href="#cb39-173" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Index of multiple deprivation</span></span>
 <span id="cb39-174"><a href="#cb39-174" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-177"><a href="#cb39-177" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-178"><a href="#cb39-178" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>diagnosis2, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-178"><a href="#cb39-178" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>IMD, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-179"><a href="#cb39-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-180"><a href="#cb39-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-181"><a href="#cb39-181" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Disease duration</span></span>
+<span id="cb39-181"><a href="#cb39-181" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IBD type</span></span>
 <span id="cb39-182"><a href="#cb39-182" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-185"><a href="#cb39-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-186"><a href="#cb39-186" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(<span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-186"><a href="#cb39-186" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>diagnosis2, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-187"><a href="#cb39-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-188"><a href="#cb39-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-189"><a href="#cb39-189" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IBD Control-8</span></span>
+<span id="cb39-189"><a href="#cb39-189" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Disease duration</span></span>
 <span id="cb39-190"><a href="#cb39-190" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-193"><a href="#cb39-193" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-194"><a href="#cb39-194" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(control_8 <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-194"><a href="#cb39-194" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(<span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-195"><a href="#cb39-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-196"><a href="#cb39-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-197"><a href="#cb39-197" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IBD visual analogue score</span></span>
+<span id="cb39-197"><a href="#cb39-197" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IBD Control-8</span></span>
 <span id="cb39-198"><a href="#cb39-198" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-201"><a href="#cb39-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-202"><a href="#cb39-202" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>vas_control, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-202"><a href="#cb39-202" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(control_8 <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-203"><a href="#cb39-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-204"><a href="#cb39-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-205"><a href="#cb39-205" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Faecal calprotectin</span></span>
+<span id="cb39-205"><a href="#cb39-205" aria-hidden="true" tabindex="-1"></a><span class="fu">#### IBD visual analogue score</span></span>
 <span id="cb39-206"><a href="#cb39-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-207"><a href="#cb39-207" aria-hidden="true" tabindex="-1"></a>FC has been treated as a continuous variable for this test. FC has not been </span>
-<span id="cb39-208"><a href="#cb39-208" aria-hidden="true" tabindex="-1"></a>discretised.</span>
-<span id="cb39-209"><a href="#cb39-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-212"><a href="#cb39-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-213"><a href="#cb39-213" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(FC <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
-<span id="cb39-214"><a href="#cb39-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-215"><a href="#cb39-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-216"><a href="#cb39-216" aria-hidden="true" tabindex="-1"></a><span class="fu">#### C-reactive protein</span></span>
+<span id="cb39-209"><a href="#cb39-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-210"><a href="#cb39-210" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>vas_control, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-211"><a href="#cb39-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-212"><a href="#cb39-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-213"><a href="#cb39-213" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Faecal calprotectin</span></span>
+<span id="cb39-214"><a href="#cb39-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-215"><a href="#cb39-215" aria-hidden="true" tabindex="-1"></a>FC has been treated as a continuous variable for this test. FC has not been </span>
+<span id="cb39-216"><a href="#cb39-216" aria-hidden="true" tabindex="-1"></a>discretised.</span>
 <span id="cb39-217"><a href="#cb39-217" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-220"><a href="#cb39-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-221"><a href="#cb39-221" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(CReactiveProtein <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-221"><a href="#cb39-221" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(FC <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-222"><a href="#cb39-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-223"><a href="#cb39-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-224"><a href="#cb39-224" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Haemoglobin</span></span>
+<span id="cb39-224"><a href="#cb39-224" aria-hidden="true" tabindex="-1"></a><span class="fu">#### C-reactive protein</span></span>
 <span id="cb39-225"><a href="#cb39-225" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-228"><a href="#cb39-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-229"><a href="#cb39-229" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Haemoglobin <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-229"><a href="#cb39-229" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(CReactiveProtein <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-230"><a href="#cb39-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-231"><a href="#cb39-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-232"><a href="#cb39-232" aria-hidden="true" tabindex="-1"></a><span class="fu">#### White cell count</span></span>
+<span id="cb39-232"><a href="#cb39-232" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Haemoglobin</span></span>
 <span id="cb39-233"><a href="#cb39-233" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-236"><a href="#cb39-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-237"><a href="#cb39-237" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(WCC <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-237"><a href="#cb39-237" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Haemoglobin <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-238"><a href="#cb39-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-239"><a href="#cb39-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-240"><a href="#cb39-240" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Albumin </span></span>
+<span id="cb39-240"><a href="#cb39-240" aria-hidden="true" tabindex="-1"></a><span class="fu">#### White cell count</span></span>
 <span id="cb39-241"><a href="#cb39-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-242"><a href="#cb39-242" aria-hidden="true" tabindex="-1"></a>There is a significant difference in albumin across the cohorts. However, this</span>
-<span id="cb39-243"><a href="#cb39-243" aria-hidden="true" tabindex="-1"></a>difference appears to be negligible. </span>
-<span id="cb39-244"><a href="#cb39-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-247"><a href="#cb39-247" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-248"><a href="#cb39-248" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Albumin <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
-<span id="cb39-249"><a href="#cb39-249" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-250"><a href="#cb39-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-251"><a href="#cb39-251" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Dietary data</span></span>
+<span id="cb39-244"><a href="#cb39-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-245"><a href="#cb39-245" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(WCC <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-246"><a href="#cb39-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-247"><a href="#cb39-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-248"><a href="#cb39-248" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Albumin </span></span>
+<span id="cb39-249"><a href="#cb39-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-250"><a href="#cb39-250" aria-hidden="true" tabindex="-1"></a>There is a significant difference in albumin across the cohorts. However, this</span>
+<span id="cb39-251"><a href="#cb39-251" aria-hidden="true" tabindex="-1"></a>difference appears to be negligible. </span>
 <span id="cb39-252"><a href="#cb39-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-253"><a href="#cb39-253" aria-hidden="true" tabindex="-1"></a>Dietary data have not been compared across cohorts.</span>
-<span id="cb39-254"><a href="#cb39-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-255"><a href="#cb39-255" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Biologic usage</span></span>
-<span id="cb39-256"><a href="#cb39-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-257"><a href="#cb39-257" aria-hidden="true" tabindex="-1"></a>There is a significant difference in biologic usage across the cohorts with</span>
-<span id="cb39-258"><a href="#cb39-258" aria-hidden="true" tabindex="-1"></a>subjects in the FFQ sub-cohort being less likely to have been prescribed a</span>
-<span id="cb39-259"><a href="#cb39-259" aria-hidden="true" tabindex="-1"></a>biologic than the full cohort or the FC sub-cohort. </span>
+<span id="cb39-255"><a href="#cb39-255" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-256"><a href="#cb39-256" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Albumin <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-257"><a href="#cb39-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-258"><a href="#cb39-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-259"><a href="#cb39-259" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Dietary data</span></span>
 <span id="cb39-260"><a href="#cb39-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-263"><a href="#cb39-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-264"><a href="#cb39-264" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Biologic, comp<span class="sc">$</span>cohort))</span>
-<span id="cb39-265"><a href="#cb39-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-266"><a href="#cb39-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-267"><a href="#cb39-267" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of baseline data by FC groups</span></span>
+<span id="cb39-261"><a href="#cb39-261" aria-hidden="true" tabindex="-1"></a>Dietary data have not been compared across cohorts.</span>
+<span id="cb39-262"><a href="#cb39-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-263"><a href="#cb39-263" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Biologic usage</span></span>
+<span id="cb39-264"><a href="#cb39-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-265"><a href="#cb39-265" aria-hidden="true" tabindex="-1"></a>There is a significant difference in biologic usage across the cohorts with</span>
+<span id="cb39-266"><a href="#cb39-266" aria-hidden="true" tabindex="-1"></a>subjects in the FFQ sub-cohort being less likely to have been prescribed a</span>
+<span id="cb39-267"><a href="#cb39-267" aria-hidden="true" tabindex="-1"></a>biologic than the full cohort or the FC sub-cohort. </span>
 <span id="cb39-268"><a href="#cb39-268" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-271"><a href="#cb39-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-272"><a href="#cb39-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-tab2</span></span>
-<span id="cb39-273"><a href="#cb39-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Baseline data by FC."</span></span>
+<span id="cb39-272"><a href="#cb39-272" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Biologic, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-273"><a href="#cb39-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-274"><a href="#cb39-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-275"><a href="#cb39-275" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb39-276"><a href="#cb39-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb39-277"><a href="#cb39-277" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table1</span>(</span>
-<span id="cb39-278"><a href="#cb39-278" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Age <span class="sc">+</span></span>
-<span id="cb39-279"><a href="#cb39-279" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
-<span id="cb39-280"><a href="#cb39-280" aria-hidden="true" tabindex="-1"></a>    Ethnicity <span class="sc">+</span></span>
-<span id="cb39-281"><a href="#cb39-281" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
-<span id="cb39-282"><a href="#cb39-282" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
-<span id="cb39-283"><a href="#cb39-283" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
-<span id="cb39-284"><a href="#cb39-284" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
-<span id="cb39-285"><a href="#cb39-285" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
-<span id="cb39-286"><a href="#cb39-286" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
-<span id="cb39-287"><a href="#cb39-287" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
-<span id="cb39-288"><a href="#cb39-288" aria-hidden="true" tabindex="-1"></a>    CReactiveProtein <span class="sc">+</span></span>
-<span id="cb39-289"><a href="#cb39-289" aria-hidden="true" tabindex="-1"></a>    Haemoglobin <span class="sc">+</span></span>
-<span id="cb39-290"><a href="#cb39-290" aria-hidden="true" tabindex="-1"></a>    WCC <span class="sc">+</span></span>
-<span id="cb39-291"><a href="#cb39-291" aria-hidden="true" tabindex="-1"></a>    Albumin <span class="sc">+</span></span>
-<span id="cb39-292"><a href="#cb39-292" aria-hidden="true" tabindex="-1"></a>    Meat_sum <span class="sc">+</span></span>
-<span id="cb39-293"><a href="#cb39-293" aria-hidden="true" tabindex="-1"></a>    fibre <span class="sc">+</span></span>
-<span id="cb39-294"><a href="#cb39-294" aria-hidden="true" tabindex="-1"></a>    PUFA_percEng <span class="sc">+</span></span>
-<span id="cb39-295"><a href="#cb39-295" aria-hidden="true" tabindex="-1"></a>    NOVAScore_cat <span class="sc">+</span></span>
-<span id="cb39-296"><a href="#cb39-296" aria-hidden="true" tabindex="-1"></a>    Biologic <span class="sc">|</span> cat,</span>
-<span id="cb39-297"><a href="#cb39-297" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
-<span id="cb39-298"><a href="#cb39-298" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-299"><a href="#cb39-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-300"><a href="#cb39-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-301"><a href="#cb39-301" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of baseline data by IBD type</span></span>
-<span id="cb39-302"><a href="#cb39-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-305"><a href="#cb39-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-306"><a href="#cb39-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-tab1</span></span>
-<span id="cb39-307"><a href="#cb39-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Baseline data by IBD type."</span></span>
+<span id="cb39-275"><a href="#cb39-275" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of baseline data by FC groups</span></span>
+<span id="cb39-276"><a href="#cb39-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-279"><a href="#cb39-279" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-280"><a href="#cb39-280" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-tab2</span></span>
+<span id="cb39-281"><a href="#cb39-281" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Baseline data by FC."</span></span>
+<span id="cb39-282"><a href="#cb39-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-283"><a href="#cb39-283" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb39-284"><a href="#cb39-284" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb39-285"><a href="#cb39-285" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table1</span>(</span>
+<span id="cb39-286"><a href="#cb39-286" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Age <span class="sc">+</span></span>
+<span id="cb39-287"><a href="#cb39-287" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
+<span id="cb39-288"><a href="#cb39-288" aria-hidden="true" tabindex="-1"></a>    Ethnicity <span class="sc">+</span></span>
+<span id="cb39-289"><a href="#cb39-289" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
+<span id="cb39-290"><a href="#cb39-290" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
+<span id="cb39-291"><a href="#cb39-291" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb39-292"><a href="#cb39-292" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb39-293"><a href="#cb39-293" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
+<span id="cb39-294"><a href="#cb39-294" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
+<span id="cb39-295"><a href="#cb39-295" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
+<span id="cb39-296"><a href="#cb39-296" aria-hidden="true" tabindex="-1"></a>    CReactiveProtein <span class="sc">+</span></span>
+<span id="cb39-297"><a href="#cb39-297" aria-hidden="true" tabindex="-1"></a>    Haemoglobin <span class="sc">+</span></span>
+<span id="cb39-298"><a href="#cb39-298" aria-hidden="true" tabindex="-1"></a>    WCC <span class="sc">+</span></span>
+<span id="cb39-299"><a href="#cb39-299" aria-hidden="true" tabindex="-1"></a>    Albumin <span class="sc">+</span></span>
+<span id="cb39-300"><a href="#cb39-300" aria-hidden="true" tabindex="-1"></a>    Meat_sum <span class="sc">+</span></span>
+<span id="cb39-301"><a href="#cb39-301" aria-hidden="true" tabindex="-1"></a>    fibre <span class="sc">+</span></span>
+<span id="cb39-302"><a href="#cb39-302" aria-hidden="true" tabindex="-1"></a>    PUFA_percEng <span class="sc">+</span></span>
+<span id="cb39-303"><a href="#cb39-303" aria-hidden="true" tabindex="-1"></a>    NOVAScore_cat <span class="sc">+</span></span>
+<span id="cb39-304"><a href="#cb39-304" aria-hidden="true" tabindex="-1"></a>    Biologic <span class="sc">|</span> cat,</span>
+<span id="cb39-305"><a href="#cb39-305" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
+<span id="cb39-306"><a href="#cb39-306" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-307"><a href="#cb39-307" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-308"><a href="#cb39-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-309"><a href="#cb39-309" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb39-310"><a href="#cb39-310" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb39-311"><a href="#cb39-311" aria-hidden="true" tabindex="-1"></a>  table1<span class="sc">::</span><span class="fu">table1</span>(</span>
-<span id="cb39-312"><a href="#cb39-312" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Age <span class="sc">+</span></span>
-<span id="cb39-313"><a href="#cb39-313" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
-<span id="cb39-314"><a href="#cb39-314" aria-hidden="true" tabindex="-1"></a>    Ethnicity <span class="sc">+</span></span>
-<span id="cb39-315"><a href="#cb39-315" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
-<span id="cb39-316"><a href="#cb39-316" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
-<span id="cb39-317"><a href="#cb39-317" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
-<span id="cb39-318"><a href="#cb39-318" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
-<span id="cb39-319"><a href="#cb39-319" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
-<span id="cb39-320"><a href="#cb39-320" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
-<span id="cb39-321"><a href="#cb39-321" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
-<span id="cb39-322"><a href="#cb39-322" aria-hidden="true" tabindex="-1"></a>    CReactiveProtein <span class="sc">+</span></span>
-<span id="cb39-323"><a href="#cb39-323" aria-hidden="true" tabindex="-1"></a>    Haemoglobin <span class="sc">+</span></span>
-<span id="cb39-324"><a href="#cb39-324" aria-hidden="true" tabindex="-1"></a>    WCC <span class="sc">+</span></span>
-<span id="cb39-325"><a href="#cb39-325" aria-hidden="true" tabindex="-1"></a>    Albumin <span class="sc">+</span></span>
-<span id="cb39-326"><a href="#cb39-326" aria-hidden="true" tabindex="-1"></a>    Meat_sum <span class="sc">+</span></span>
-<span id="cb39-327"><a href="#cb39-327" aria-hidden="true" tabindex="-1"></a>    fibre <span class="sc">+</span></span>
-<span id="cb39-328"><a href="#cb39-328" aria-hidden="true" tabindex="-1"></a>    PUFA_percEng <span class="sc">+</span></span>
-<span id="cb39-329"><a href="#cb39-329" aria-hidden="true" tabindex="-1"></a>    NOVAScore_cat <span class="sc">+</span></span>
-<span id="cb39-330"><a href="#cb39-330" aria-hidden="true" tabindex="-1"></a>    Biologic <span class="sc">|</span></span>
-<span id="cb39-331"><a href="#cb39-331" aria-hidden="true" tabindex="-1"></a>      diagnosis2,</span>
-<span id="cb39-332"><a href="#cb39-332" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
-<span id="cb39-333"><a href="#cb39-333" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-334"><a href="#cb39-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-335"><a href="#cb39-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-336"><a href="#cb39-336" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of Crohn's disease variables</span></span>
-<span id="cb39-337"><a href="#cb39-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-340"><a href="#cb39-340" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-341"><a href="#cb39-341" aria-hidden="true" tabindex="-1"></a>demo.cd <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-cd.RDS"</span>))</span>
-<span id="cb39-342"><a href="#cb39-342" aria-hidden="true" tabindex="-1"></a>demo.cd <span class="sc">%&gt;%</span></span>
-<span id="cb39-343"><a href="#cb39-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb39-344"><a href="#cb39-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table1</span>(</span>
-<span id="cb39-345"><a href="#cb39-345" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Location <span class="sc">+</span></span>
-<span id="cb39-346"><a href="#cb39-346" aria-hidden="true" tabindex="-1"></a>      L4 <span class="sc">+</span></span>
-<span id="cb39-347"><a href="#cb39-347" aria-hidden="true" tabindex="-1"></a>      HBI <span class="sc">+</span></span>
-<span id="cb39-348"><a href="#cb39-348" aria-hidden="true" tabindex="-1"></a>      PRO2 <span class="sc">+</span></span>
-<span id="cb39-349"><a href="#cb39-349" aria-hidden="true" tabindex="-1"></a>      Behaviour <span class="sc">+</span></span>
-<span id="cb39-350"><a href="#cb39-350" aria-hidden="true" tabindex="-1"></a>      Perianal <span class="sc">+</span></span>
-<span id="cb39-351"><a href="#cb39-351" aria-hidden="true" tabindex="-1"></a>      Surgery <span class="sc">+</span></span>
-<span id="cb39-352"><a href="#cb39-352" aria-hidden="true" tabindex="-1"></a>      Smoke <span class="sc">+</span></span>
-<span id="cb39-353"><a href="#cb39-353" aria-hidden="true" tabindex="-1"></a>      ECigs <span class="sc">|</span></span>
-<span id="cb39-354"><a href="#cb39-354" aria-hidden="true" tabindex="-1"></a>      cat,</span>
-<span id="cb39-355"><a href="#cb39-355" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
-<span id="cb39-356"><a href="#cb39-356" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-357"><a href="#cb39-357" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-358"><a href="#cb39-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-359"><a href="#cb39-359" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of Crohn's disease variables by cohort</span></span>
-<span id="cb39-360"><a href="#cb39-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-363"><a href="#cb39-363" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-364"><a href="#cb39-364" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> demo.cd</span>
-<span id="cb39-365"><a href="#cb39-365" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"All"</span></span>
+<span id="cb39-309"><a href="#cb39-309" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of baseline data by IBD type</span></span>
+<span id="cb39-310"><a href="#cb39-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-313"><a href="#cb39-313" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-314"><a href="#cb39-314" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-tab1</span></span>
+<span id="cb39-315"><a href="#cb39-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Baseline data by IBD type."</span></span>
+<span id="cb39-316"><a href="#cb39-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-317"><a href="#cb39-317" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb39-318"><a href="#cb39-318" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb39-319"><a href="#cb39-319" aria-hidden="true" tabindex="-1"></a>  table1<span class="sc">::</span><span class="fu">table1</span>(</span>
+<span id="cb39-320"><a href="#cb39-320" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Age <span class="sc">+</span></span>
+<span id="cb39-321"><a href="#cb39-321" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
+<span id="cb39-322"><a href="#cb39-322" aria-hidden="true" tabindex="-1"></a>    Ethnicity <span class="sc">+</span></span>
+<span id="cb39-323"><a href="#cb39-323" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
+<span id="cb39-324"><a href="#cb39-324" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
+<span id="cb39-325"><a href="#cb39-325" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb39-326"><a href="#cb39-326" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb39-327"><a href="#cb39-327" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
+<span id="cb39-328"><a href="#cb39-328" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
+<span id="cb39-329"><a href="#cb39-329" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
+<span id="cb39-330"><a href="#cb39-330" aria-hidden="true" tabindex="-1"></a>    CReactiveProtein <span class="sc">+</span></span>
+<span id="cb39-331"><a href="#cb39-331" aria-hidden="true" tabindex="-1"></a>    Haemoglobin <span class="sc">+</span></span>
+<span id="cb39-332"><a href="#cb39-332" aria-hidden="true" tabindex="-1"></a>    WCC <span class="sc">+</span></span>
+<span id="cb39-333"><a href="#cb39-333" aria-hidden="true" tabindex="-1"></a>    Albumin <span class="sc">+</span></span>
+<span id="cb39-334"><a href="#cb39-334" aria-hidden="true" tabindex="-1"></a>    Meat_sum <span class="sc">+</span></span>
+<span id="cb39-335"><a href="#cb39-335" aria-hidden="true" tabindex="-1"></a>    fibre <span class="sc">+</span></span>
+<span id="cb39-336"><a href="#cb39-336" aria-hidden="true" tabindex="-1"></a>    PUFA_percEng <span class="sc">+</span></span>
+<span id="cb39-337"><a href="#cb39-337" aria-hidden="true" tabindex="-1"></a>    NOVAScore_cat <span class="sc">+</span></span>
+<span id="cb39-338"><a href="#cb39-338" aria-hidden="true" tabindex="-1"></a>    Biologic <span class="sc">|</span></span>
+<span id="cb39-339"><a href="#cb39-339" aria-hidden="true" tabindex="-1"></a>      diagnosis2,</span>
+<span id="cb39-340"><a href="#cb39-340" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
+<span id="cb39-341"><a href="#cb39-341" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-342"><a href="#cb39-342" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-343"><a href="#cb39-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-344"><a href="#cb39-344" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of Crohn's disease variables</span></span>
+<span id="cb39-345"><a href="#cb39-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-348"><a href="#cb39-348" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-349"><a href="#cb39-349" aria-hidden="true" tabindex="-1"></a>demo.cd <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-cd.RDS"</span>))</span>
+<span id="cb39-350"><a href="#cb39-350" aria-hidden="true" tabindex="-1"></a>demo.cd <span class="sc">%&gt;%</span></span>
+<span id="cb39-351"><a href="#cb39-351" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb39-352"><a href="#cb39-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table1</span>(</span>
+<span id="cb39-353"><a href="#cb39-353" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Location <span class="sc">+</span></span>
+<span id="cb39-354"><a href="#cb39-354" aria-hidden="true" tabindex="-1"></a>      L4 <span class="sc">+</span></span>
+<span id="cb39-355"><a href="#cb39-355" aria-hidden="true" tabindex="-1"></a>      HBI <span class="sc">+</span></span>
+<span id="cb39-356"><a href="#cb39-356" aria-hidden="true" tabindex="-1"></a>      PRO2 <span class="sc">+</span></span>
+<span id="cb39-357"><a href="#cb39-357" aria-hidden="true" tabindex="-1"></a>      Behaviour <span class="sc">+</span></span>
+<span id="cb39-358"><a href="#cb39-358" aria-hidden="true" tabindex="-1"></a>      Perianal <span class="sc">+</span></span>
+<span id="cb39-359"><a href="#cb39-359" aria-hidden="true" tabindex="-1"></a>      Surgery <span class="sc">+</span></span>
+<span id="cb39-360"><a href="#cb39-360" aria-hidden="true" tabindex="-1"></a>      Smoke <span class="sc">+</span></span>
+<span id="cb39-361"><a href="#cb39-361" aria-hidden="true" tabindex="-1"></a>      ECigs <span class="sc">|</span></span>
+<span id="cb39-362"><a href="#cb39-362" aria-hidden="true" tabindex="-1"></a>      cat,</span>
+<span id="cb39-363"><a href="#cb39-363" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
+<span id="cb39-364"><a href="#cb39-364" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-365"><a href="#cb39-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-366"><a href="#cb39-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-367"><a href="#cb39-367" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> demo.cd <span class="sc">%&gt;%</span></span>
-<span id="cb39-368"><a href="#cb39-368" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat)</span>
-<span id="cb39-369"><a href="#cb39-369" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FC"</span></span>
-<span id="cb39-370"><a href="#cb39-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-371"><a href="#cb39-371" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
-<span id="cb39-372"><a href="#cb39-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-373"><a href="#cb39-373" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">subset</span>(demo.cd, ParticipantNo <span class="sc">%in%</span> FFQ<span class="sc">$</span>participantno)</span>
-<span id="cb39-374"><a href="#cb39-374" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FFQ"</span></span>
-<span id="cb39-375"><a href="#cb39-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-376"><a href="#cb39-376" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
-<span id="cb39-377"><a href="#cb39-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-378"><a href="#cb39-378" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="fu">factor</span>(comp<span class="sc">$</span>cohort,</span>
-<span id="cb39-379"><a href="#cb39-379" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All"</span>, <span class="st">"FC"</span>, <span class="st">"FFQ"</span>),</span>
-<span id="cb39-380"><a href="#cb39-380" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Full cohort"</span>, <span class="st">"FC cohort"</span>, <span class="st">"FFQ cohort"</span>)</span>
-<span id="cb39-381"><a href="#cb39-381" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb39-382"><a href="#cb39-382" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-383"><a href="#cb39-383" aria-hidden="true" tabindex="-1"></a><span class="fu">table1</span>(</span>
-<span id="cb39-384"><a href="#cb39-384" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> Location <span class="sc">+</span></span>
-<span id="cb39-385"><a href="#cb39-385" aria-hidden="true" tabindex="-1"></a>    L4 <span class="sc">+</span></span>
-<span id="cb39-386"><a href="#cb39-386" aria-hidden="true" tabindex="-1"></a>    HBI <span class="sc">+</span></span>
-<span id="cb39-387"><a href="#cb39-387" aria-hidden="true" tabindex="-1"></a>    PRO2 <span class="sc">+</span></span>
-<span id="cb39-388"><a href="#cb39-388" aria-hidden="true" tabindex="-1"></a>    Behaviour <span class="sc">+</span></span>
-<span id="cb39-389"><a href="#cb39-389" aria-hidden="true" tabindex="-1"></a>    Perianal <span class="sc">+</span></span>
-<span id="cb39-390"><a href="#cb39-390" aria-hidden="true" tabindex="-1"></a>    Surgery <span class="sc">+</span></span>
-<span id="cb39-391"><a href="#cb39-391" aria-hidden="true" tabindex="-1"></a>    Smoke <span class="sc">+</span></span>
-<span id="cb39-392"><a href="#cb39-392" aria-hidden="true" tabindex="-1"></a>    ECigs <span class="sc">|</span></span>
-<span id="cb39-393"><a href="#cb39-393" aria-hidden="true" tabindex="-1"></a>    cohort,</span>
-<span id="cb39-394"><a href="#cb39-394" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> comp,</span>
-<span id="cb39-395"><a href="#cb39-395" aria-hidden="true" tabindex="-1"></a>  <span class="at">render.continuous =</span> my.render.cont,</span>
-<span id="cb39-396"><a href="#cb39-396" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">FALSE</span></span>
-<span id="cb39-397"><a href="#cb39-397" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb39-398"><a href="#cb39-398" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-399"><a href="#cb39-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-400"><a href="#cb39-400" aria-hidden="true" tabindex="-1"></a><span class="fu">### Associations between Crohn's Disease-only variables and cohort membership</span></span>
-<span id="cb39-401"><a href="#cb39-401" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-402"><a href="#cb39-402" aria-hidden="true" tabindex="-1"></a>None of the CD-only variables were found to significantly differ across cohorts. </span>
-<span id="cb39-403"><a href="#cb39-403" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-404"><a href="#cb39-404" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Montreal location</span></span>
-<span id="cb39-405"><a href="#cb39-405" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-408"><a href="#cb39-408" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-409"><a href="#cb39-409" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">fisher.test</span>(comp<span class="sc">$</span>Location, comp<span class="sc">$</span>cohort, <span class="at">workspace =</span> <span class="dv">200000000</span>))</span>
-<span id="cb39-410"><a href="#cb39-410" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-367"><a href="#cb39-367" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of Crohn's disease variables by cohort</span></span>
+<span id="cb39-368"><a href="#cb39-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-371"><a href="#cb39-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-372"><a href="#cb39-372" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> demo.cd</span>
+<span id="cb39-373"><a href="#cb39-373" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"All"</span></span>
+<span id="cb39-374"><a href="#cb39-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-375"><a href="#cb39-375" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> demo.cd <span class="sc">%&gt;%</span></span>
+<span id="cb39-376"><a href="#cb39-376" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat)</span>
+<span id="cb39-377"><a href="#cb39-377" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FC"</span></span>
+<span id="cb39-378"><a href="#cb39-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-379"><a href="#cb39-379" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
+<span id="cb39-380"><a href="#cb39-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-381"><a href="#cb39-381" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">subset</span>(demo.cd, ParticipantNo <span class="sc">%in%</span> FFQ<span class="sc">$</span>participantno)</span>
+<span id="cb39-382"><a href="#cb39-382" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FFQ"</span></span>
+<span id="cb39-383"><a href="#cb39-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-384"><a href="#cb39-384" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
+<span id="cb39-385"><a href="#cb39-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-386"><a href="#cb39-386" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="fu">factor</span>(comp<span class="sc">$</span>cohort,</span>
+<span id="cb39-387"><a href="#cb39-387" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All"</span>, <span class="st">"FC"</span>, <span class="st">"FFQ"</span>),</span>
+<span id="cb39-388"><a href="#cb39-388" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Full cohort"</span>, <span class="st">"FC cohort"</span>, <span class="st">"FFQ cohort"</span>)</span>
+<span id="cb39-389"><a href="#cb39-389" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-390"><a href="#cb39-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-391"><a href="#cb39-391" aria-hidden="true" tabindex="-1"></a><span class="fu">table1</span>(</span>
+<span id="cb39-392"><a href="#cb39-392" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span> Location <span class="sc">+</span></span>
+<span id="cb39-393"><a href="#cb39-393" aria-hidden="true" tabindex="-1"></a>    L4 <span class="sc">+</span></span>
+<span id="cb39-394"><a href="#cb39-394" aria-hidden="true" tabindex="-1"></a>    HBI <span class="sc">+</span></span>
+<span id="cb39-395"><a href="#cb39-395" aria-hidden="true" tabindex="-1"></a>    PRO2 <span class="sc">+</span></span>
+<span id="cb39-396"><a href="#cb39-396" aria-hidden="true" tabindex="-1"></a>    Behaviour <span class="sc">+</span></span>
+<span id="cb39-397"><a href="#cb39-397" aria-hidden="true" tabindex="-1"></a>    Perianal <span class="sc">+</span></span>
+<span id="cb39-398"><a href="#cb39-398" aria-hidden="true" tabindex="-1"></a>    Surgery <span class="sc">+</span></span>
+<span id="cb39-399"><a href="#cb39-399" aria-hidden="true" tabindex="-1"></a>    Smoke <span class="sc">+</span></span>
+<span id="cb39-400"><a href="#cb39-400" aria-hidden="true" tabindex="-1"></a>    ECigs <span class="sc">|</span></span>
+<span id="cb39-401"><a href="#cb39-401" aria-hidden="true" tabindex="-1"></a>    cohort,</span>
+<span id="cb39-402"><a href="#cb39-402" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> comp,</span>
+<span id="cb39-403"><a href="#cb39-403" aria-hidden="true" tabindex="-1"></a>  <span class="at">render.continuous =</span> my.render.cont,</span>
+<span id="cb39-404"><a href="#cb39-404" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">FALSE</span></span>
+<span id="cb39-405"><a href="#cb39-405" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-406"><a href="#cb39-406" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-407"><a href="#cb39-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-408"><a href="#cb39-408" aria-hidden="true" tabindex="-1"></a><span class="fu">### Associations between Crohn's Disease-only variables and cohort membership</span></span>
+<span id="cb39-409"><a href="#cb39-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-410"><a href="#cb39-410" aria-hidden="true" tabindex="-1"></a>None of the CD-only variables were found to significantly differ across cohorts. </span>
 <span id="cb39-411"><a href="#cb39-411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-412"><a href="#cb39-412" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Upper gastrointestinal inflammation</span></span>
+<span id="cb39-412"><a href="#cb39-412" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Montreal location</span></span>
 <span id="cb39-413"><a href="#cb39-413" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-416"><a href="#cb39-416" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-417"><a href="#cb39-417" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>L4, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-417"><a href="#cb39-417" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">fisher.test</span>(comp<span class="sc">$</span>Location, comp<span class="sc">$</span>cohort, <span class="at">workspace =</span> <span class="dv">200000000</span>))</span>
 <span id="cb39-418"><a href="#cb39-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-419"><a href="#cb39-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-420"><a href="#cb39-420" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Harvey-Bradshaw index</span></span>
+<span id="cb39-420"><a href="#cb39-420" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Upper gastrointestinal inflammation</span></span>
 <span id="cb39-421"><a href="#cb39-421" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-424"><a href="#cb39-424" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-425"><a href="#cb39-425" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(HBI <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-425"><a href="#cb39-425" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>L4, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-426"><a href="#cb39-426" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-427"><a href="#cb39-427" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-428"><a href="#cb39-428" aria-hidden="true" tabindex="-1"></a><span class="fu">#### PRO2</span></span>
+<span id="cb39-428"><a href="#cb39-428" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Harvey-Bradshaw index</span></span>
 <span id="cb39-429"><a href="#cb39-429" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-432"><a href="#cb39-432" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-433"><a href="#cb39-433" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(PRO2 <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-433"><a href="#cb39-433" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(HBI <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-434"><a href="#cb39-434" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-435"><a href="#cb39-435" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-436"><a href="#cb39-436" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Montreal behaviour</span></span>
+<span id="cb39-436"><a href="#cb39-436" aria-hidden="true" tabindex="-1"></a><span class="fu">#### PRO2</span></span>
 <span id="cb39-437"><a href="#cb39-437" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-440"><a href="#cb39-440" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-441"><a href="#cb39-441" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Behaviour, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-441"><a href="#cb39-441" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(PRO2 <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-442"><a href="#cb39-442" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-443"><a href="#cb39-443" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-444"><a href="#cb39-444" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Perianal disease</span></span>
+<span id="cb39-444"><a href="#cb39-444" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Montreal behaviour</span></span>
 <span id="cb39-445"><a href="#cb39-445" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-448"><a href="#cb39-448" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-449"><a href="#cb39-449" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Perianal, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-449"><a href="#cb39-449" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Behaviour, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-450"><a href="#cb39-450" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-451"><a href="#cb39-451" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-452"><a href="#cb39-452" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Surgery</span></span>
+<span id="cb39-452"><a href="#cb39-452" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Perianal disease</span></span>
 <span id="cb39-453"><a href="#cb39-453" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-456"><a href="#cb39-456" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-457"><a href="#cb39-457" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Surgery, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-457"><a href="#cb39-457" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Perianal, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-458"><a href="#cb39-458" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-459"><a href="#cb39-459" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-460"><a href="#cb39-460" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Smoking status</span></span>
+<span id="cb39-460"><a href="#cb39-460" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Surgery</span></span>
 <span id="cb39-461"><a href="#cb39-461" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-464"><a href="#cb39-464" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-465"><a href="#cb39-465" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Smoke, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-465"><a href="#cb39-465" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Surgery, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-466"><a href="#cb39-466" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-467"><a href="#cb39-467" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-468"><a href="#cb39-468" aria-hidden="true" tabindex="-1"></a><span class="fu">#### E-cigarette use</span></span>
+<span id="cb39-468"><a href="#cb39-468" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Smoking status</span></span>
 <span id="cb39-469"><a href="#cb39-469" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-472"><a href="#cb39-472" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-473"><a href="#cb39-473" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>ECigs, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-473"><a href="#cb39-473" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Smoke, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-474"><a href="#cb39-474" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-475"><a href="#cb39-475" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-476"><a href="#cb39-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-477"><a href="#cb39-477" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of ulcerative colitis/IBDU variables</span></span>
-<span id="cb39-478"><a href="#cb39-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-481"><a href="#cb39-481" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-482"><a href="#cb39-482" aria-hidden="true" tabindex="-1"></a>demo.uc <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-uc.RDS"</span>))</span>
+<span id="cb39-476"><a href="#cb39-476" aria-hidden="true" tabindex="-1"></a><span class="fu">#### E-cigarette use</span></span>
+<span id="cb39-477"><a href="#cb39-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-480"><a href="#cb39-480" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-481"><a href="#cb39-481" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>ECigs, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-482"><a href="#cb39-482" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-483"><a href="#cb39-483" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-484"><a href="#cb39-484" aria-hidden="true" tabindex="-1"></a>demo.uc <span class="sc">%&gt;%</span></span>
-<span id="cb39-485"><a href="#cb39-485" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb39-486"><a href="#cb39-486" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table1</span>(</span>
-<span id="cb39-487"><a href="#cb39-487" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Extent <span class="sc">+</span> Mayo <span class="sc">+</span> PRO2 <span class="sc">+</span> Smoke <span class="sc">+</span> ECigs <span class="sc">|</span> cat,</span>
-<span id="cb39-488"><a href="#cb39-488" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
-<span id="cb39-489"><a href="#cb39-489" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb39-490"><a href="#cb39-490" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-484"><a href="#cb39-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-485"><a href="#cb39-485" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of ulcerative colitis/IBDU variables</span></span>
+<span id="cb39-486"><a href="#cb39-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-489"><a href="#cb39-489" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-490"><a href="#cb39-490" aria-hidden="true" tabindex="-1"></a>demo.uc <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-uc.RDS"</span>))</span>
 <span id="cb39-491"><a href="#cb39-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-492"><a href="#cb39-492" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of Ulcerative colitis/IBDU variables by cohort</span></span>
-<span id="cb39-493"><a href="#cb39-493" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-496"><a href="#cb39-496" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-497"><a href="#cb39-497" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> demo.uc</span>
-<span id="cb39-498"><a href="#cb39-498" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"All"</span></span>
+<span id="cb39-492"><a href="#cb39-492" aria-hidden="true" tabindex="-1"></a>demo.uc <span class="sc">%&gt;%</span></span>
+<span id="cb39-493"><a href="#cb39-493" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb39-494"><a href="#cb39-494" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table1</span>(</span>
+<span id="cb39-495"><a href="#cb39-495" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="sc">~</span> Extent <span class="sc">+</span> Mayo <span class="sc">+</span> PRO2 <span class="sc">+</span> Smoke <span class="sc">+</span> ECigs <span class="sc">|</span> cat,</span>
+<span id="cb39-496"><a href="#cb39-496" aria-hidden="true" tabindex="-1"></a>    <span class="at">render.continuous =</span> my.render.cont</span>
+<span id="cb39-497"><a href="#cb39-497" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-498"><a href="#cb39-498" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-499"><a href="#cb39-499" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-500"><a href="#cb39-500" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> demo.uc <span class="sc">%&gt;%</span></span>
-<span id="cb39-501"><a href="#cb39-501" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat)</span>
-<span id="cb39-502"><a href="#cb39-502" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FC"</span></span>
-<span id="cb39-503"><a href="#cb39-503" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-504"><a href="#cb39-504" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
-<span id="cb39-505"><a href="#cb39-505" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-506"><a href="#cb39-506" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">subset</span>(demo.uc, ParticipantNo <span class="sc">%in%</span> FFQ<span class="sc">$</span>participantno)</span>
-<span id="cb39-507"><a href="#cb39-507" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FFQ"</span></span>
-<span id="cb39-508"><a href="#cb39-508" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-509"><a href="#cb39-509" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
-<span id="cb39-510"><a href="#cb39-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-511"><a href="#cb39-511" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="fu">factor</span>(comp<span class="sc">$</span>cohort,</span>
-<span id="cb39-512"><a href="#cb39-512" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All"</span>, <span class="st">"FC"</span>, <span class="st">"FFQ"</span>),</span>
-<span id="cb39-513"><a href="#cb39-513" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Full cohort"</span>, <span class="st">"FC cohort"</span>, <span class="st">"FFQ cohort"</span>)</span>
-<span id="cb39-514"><a href="#cb39-514" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb39-515"><a href="#cb39-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-500"><a href="#cb39-500" aria-hidden="true" tabindex="-1"></a><span class="fu">## Table of Ulcerative colitis/IBDU variables by cohort</span></span>
+<span id="cb39-501"><a href="#cb39-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-504"><a href="#cb39-504" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-505"><a href="#cb39-505" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> demo.uc</span>
+<span id="cb39-506"><a href="#cb39-506" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"All"</span></span>
+<span id="cb39-507"><a href="#cb39-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-508"><a href="#cb39-508" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> demo.uc <span class="sc">%&gt;%</span></span>
+<span id="cb39-509"><a href="#cb39-509" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat)</span>
+<span id="cb39-510"><a href="#cb39-510" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FC"</span></span>
+<span id="cb39-511"><a href="#cb39-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-512"><a href="#cb39-512" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
+<span id="cb39-513"><a href="#cb39-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-514"><a href="#cb39-514" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">subset</span>(demo.uc, ParticipantNo <span class="sc">%in%</span> FFQ<span class="sc">$</span>participantno)</span>
+<span id="cb39-515"><a href="#cb39-515" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="st">"FFQ"</span></span>
 <span id="cb39-516"><a href="#cb39-516" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-517"><a href="#cb39-517" aria-hidden="true" tabindex="-1"></a><span class="fu">table1</span>(<span class="sc">~</span> Extent <span class="sc">+</span> Mayo <span class="sc">+</span> PRO2 <span class="sc">+</span> Smoke <span class="sc">+</span> ECigs <span class="sc">|</span> cohort,</span>
-<span id="cb39-518"><a href="#cb39-518" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> comp,</span>
-<span id="cb39-519"><a href="#cb39-519" aria-hidden="true" tabindex="-1"></a>  <span class="at">render.continuous =</span> my.render.cont,</span>
-<span id="cb39-520"><a href="#cb39-520" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">FALSE</span></span>
-<span id="cb39-521"><a href="#cb39-521" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb39-522"><a href="#cb39-522" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-517"><a href="#cb39-517" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(comp, temp)</span>
+<span id="cb39-518"><a href="#cb39-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-519"><a href="#cb39-519" aria-hidden="true" tabindex="-1"></a>comp<span class="sc">$</span>cohort <span class="ot">&lt;-</span> <span class="fu">factor</span>(comp<span class="sc">$</span>cohort,</span>
+<span id="cb39-520"><a href="#cb39-520" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All"</span>, <span class="st">"FC"</span>, <span class="st">"FFQ"</span>),</span>
+<span id="cb39-521"><a href="#cb39-521" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Full cohort"</span>, <span class="st">"FC cohort"</span>, <span class="st">"FFQ cohort"</span>)</span>
+<span id="cb39-522"><a href="#cb39-522" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb39-523"><a href="#cb39-523" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-524"><a href="#cb39-524" aria-hidden="true" tabindex="-1"></a><span class="fu">### Associations between Crohn's Disease-only variables and cohort membership</span></span>
-<span id="cb39-525"><a href="#cb39-525" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-526"><a href="#cb39-526" aria-hidden="true" tabindex="-1"></a>None of the UC/IBDU-only variables were found to significantly differ across</span>
-<span id="cb39-527"><a href="#cb39-527" aria-hidden="true" tabindex="-1"></a>cohorts. </span>
-<span id="cb39-528"><a href="#cb39-528" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-529"><a href="#cb39-529" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Montreal extent</span></span>
-<span id="cb39-530"><a href="#cb39-530" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-533"><a href="#cb39-533" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-534"><a href="#cb39-534" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Extent, comp<span class="sc">$</span>cohort))</span>
-<span id="cb39-535"><a href="#cb39-535" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-524"><a href="#cb39-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-525"><a href="#cb39-525" aria-hidden="true" tabindex="-1"></a><span class="fu">table1</span>(<span class="sc">~</span> Extent <span class="sc">+</span> Mayo <span class="sc">+</span> PRO2 <span class="sc">+</span> Smoke <span class="sc">+</span> ECigs <span class="sc">|</span> cohort,</span>
+<span id="cb39-526"><a href="#cb39-526" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> comp,</span>
+<span id="cb39-527"><a href="#cb39-527" aria-hidden="true" tabindex="-1"></a>  <span class="at">render.continuous =</span> my.render.cont,</span>
+<span id="cb39-528"><a href="#cb39-528" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">FALSE</span></span>
+<span id="cb39-529"><a href="#cb39-529" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-530"><a href="#cb39-530" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-531"><a href="#cb39-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-532"><a href="#cb39-532" aria-hidden="true" tabindex="-1"></a><span class="fu">### Associations between Crohn's Disease-only variables and cohort membership</span></span>
+<span id="cb39-533"><a href="#cb39-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-534"><a href="#cb39-534" aria-hidden="true" tabindex="-1"></a>None of the UC/IBDU-only variables were found to significantly differ across</span>
+<span id="cb39-535"><a href="#cb39-535" aria-hidden="true" tabindex="-1"></a>cohorts. </span>
 <span id="cb39-536"><a href="#cb39-536" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-537"><a href="#cb39-537" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Mayo score</span></span>
+<span id="cb39-537"><a href="#cb39-537" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Montreal extent</span></span>
 <span id="cb39-538"><a href="#cb39-538" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-541"><a href="#cb39-541" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-542"><a href="#cb39-542" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Mayo <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-542"><a href="#cb39-542" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Extent, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-543"><a href="#cb39-543" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-544"><a href="#cb39-544" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-545"><a href="#cb39-545" aria-hidden="true" tabindex="-1"></a><span class="fu">#### PRO2</span></span>
+<span id="cb39-545"><a href="#cb39-545" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Mayo score</span></span>
 <span id="cb39-546"><a href="#cb39-546" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-549"><a href="#cb39-549" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-550"><a href="#cb39-550" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(PRO2 <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
+<span id="cb39-550"><a href="#cb39-550" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(Mayo <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-551"><a href="#cb39-551" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-552"><a href="#cb39-552" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-553"><a href="#cb39-553" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Smoking status</span></span>
+<span id="cb39-553"><a href="#cb39-553" aria-hidden="true" tabindex="-1"></a><span class="fu">#### PRO2</span></span>
 <span id="cb39-554"><a href="#cb39-554" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-557"><a href="#cb39-557" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-558"><a href="#cb39-558" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Smoke, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-558"><a href="#cb39-558" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(PRO2 <span class="sc">~</span> cohort, <span class="at">data =</span> comp)))</span>
 <span id="cb39-559"><a href="#cb39-559" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-560"><a href="#cb39-560" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-561"><a href="#cb39-561" aria-hidden="true" tabindex="-1"></a><span class="fu">#### E-cigarette use</span></span>
+<span id="cb39-561"><a href="#cb39-561" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Smoking status</span></span>
 <span id="cb39-562"><a href="#cb39-562" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-565"><a href="#cb39-565" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-566"><a href="#cb39-566" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>ECigs, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-566"><a href="#cb39-566" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>Smoke, comp<span class="sc">$</span>cohort))</span>
 <span id="cb39-567"><a href="#cb39-567" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-568"><a href="#cb39-568" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-569"><a href="#cb39-569" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-572"><a href="#cb39-572" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb39-573"><a href="#cb39-573" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb39-574"><a href="#cb39-574" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb39-575"><a href="#cb39-575" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo.RDS"</span>))</span>
+<span id="cb39-569"><a href="#cb39-569" aria-hidden="true" tabindex="-1"></a><span class="fu">#### E-cigarette use</span></span>
+<span id="cb39-570"><a href="#cb39-570" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-573"><a href="#cb39-573" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-574"><a href="#cb39-574" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(comp<span class="sc">$</span>ECigs, comp<span class="sc">$</span>cohort))</span>
+<span id="cb39-575"><a href="#cb39-575" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb39-576"><a href="#cb39-576" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-577"><a href="#cb39-577" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb39-578"><a href="#cb39-578" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-full.RDS"</span>))</span>
-<span id="cb39-579"><a href="#cb39-579" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-580"><a href="#cb39-580" aria-hidden="true" tabindex="-1"></a>demo.cd <span class="sc">%&gt;%</span></span>
-<span id="cb39-581"><a href="#cb39-581" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-cd.RDS"</span>))</span>
-<span id="cb39-582"><a href="#cb39-582" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-583"><a href="#cb39-583" aria-hidden="true" tabindex="-1"></a>demo.uc <span class="sc">%&gt;%</span></span>
-<span id="cb39-584"><a href="#cb39-584" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-uc.RDS"</span>))</span>
-<span id="cb39-585"><a href="#cb39-585" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb39-586"><a href="#cb39-586" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-587"><a href="#cb39-587" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
-<span id="cb39-588"><a href="#cb39-588" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-589"><a href="#cb39-589" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
-<span id="cb39-590"><a href="#cb39-590" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
-<span id="cb39-591"><a href="#cb39-591" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-592"><a href="#cb39-592" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
-<span id="cb39-593"><a href="#cb39-593" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
-<span id="cb39-594"><a href="#cb39-594" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
-<span id="cb39-595"><a href="#cb39-595" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-577"><a href="#cb39-577" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-580"><a href="#cb39-580" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb39-581"><a href="#cb39-581" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb39-582"><a href="#cb39-582" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb39-583"><a href="#cb39-583" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo.RDS"</span>))</span>
+<span id="cb39-584"><a href="#cb39-584" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-585"><a href="#cb39-585" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb39-586"><a href="#cb39-586" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-full.RDS"</span>))</span>
+<span id="cb39-587"><a href="#cb39-587" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-588"><a href="#cb39-588" aria-hidden="true" tabindex="-1"></a>demo.cd <span class="sc">%&gt;%</span></span>
+<span id="cb39-589"><a href="#cb39-589" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-cd.RDS"</span>))</span>
+<span id="cb39-590"><a href="#cb39-590" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-591"><a href="#cb39-591" aria-hidden="true" tabindex="-1"></a>demo.uc <span class="sc">%&gt;%</span></span>
+<span id="cb39-592"><a href="#cb39-592" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-uc.RDS"</span>))</span>
+<span id="cb39-593"><a href="#cb39-593" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-594"><a href="#cb39-594" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-595"><a href="#cb39-595" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
 <span id="cb39-596"><a href="#cb39-596" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-597"><a href="#cb39-597" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
-<span id="cb39-598"><a href="#cb39-598" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-599"><a href="#cb39-599" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
-<span id="cb39-600"><a href="#cb39-600" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
-<span id="cb39-601"><a href="#cb39-601" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
+<span id="cb39-597"><a href="#cb39-597" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
+<span id="cb39-598"><a href="#cb39-598" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
+<span id="cb39-599"><a href="#cb39-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-600"><a href="#cb39-600" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
+<span id="cb39-601"><a href="#cb39-601" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
+<span id="cb39-602"><a href="#cb39-602" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
+<span id="cb39-603"><a href="#cb39-603" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb39-604"><a href="#cb39-604" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-605"><a href="#cb39-605" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<span id="cb39-606"><a href="#cb39-606" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-607"><a href="#cb39-607" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
+<span id="cb39-608"><a href="#cb39-608" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
+<span id="cb39-609"><a href="#cb39-609" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

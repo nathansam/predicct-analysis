@@ -30,10 +30,6 @@ if (file.exists("/docker")) { # If running in docker
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
 
-```
-
-
-```{R}
 # Demographic data as reported by subjects
 demo <- read_xlsx(paste0(data.path, "Baseline2022/demographics.xlsx"),
   col_types = c(
@@ -51,35 +47,6 @@ demo <- read_xlsx(paste0(data.path, "Baseline2022/demographics.xlsx"),
   )
 )
 ```
-
-
-### Month of recruitment
-
-There is potential for seasonality to confound interpretations of our results,
-particularly when making inferences regarding diet. As such,
-month of recruitment is explored ([@fig-month]).
-
-Recruitment was low in December, which is to be as expected as there are
-typically fewer clinic appointments in December and participants were recruited
-in IBD clinics.
-
-However, recruitment was also low in April and July. As such, the impact of
-seasonality is likely to be minimal for this cohort and will be ignored for all
-analyses. 
-
-```{R}
-#| label: fig-month
-#| fig-cap: "Distribution of month of diagnosis."
-demo$entry_date <- as.Date(demo$entry_date)
-demo$month <- month(demo$entry_date, label = TRUE)
-ggplot(demo, aes(x = as.factor(month), color = as.factor(month), fill = as.factor(month))) +
-  geom_bar() +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  xlab("Month of recruitment") +
-  ylab("Frequency")
-```
-
 
 ### Country of recruitment
 
@@ -114,6 +81,33 @@ sites %>%
   ylab("Frequency") +
   scale_fill_manual(values = plt.cols) +
   scale_color_manual(values = colorspace::darken(plt.cols, 0.2))
+```
+
+### Month of recruitment
+
+There is potential for seasonality to confound interpretations of our results,
+particularly when making inferences regarding diet. As such,
+month of recruitment is explored ([@fig-month]).
+
+Recruitment was low in December, which is to be as expected as there are
+typically fewer clinic appointments in December and participants were recruited
+in IBD clinics.
+
+However, recruitment was also low in April and July. As such, the impact of
+seasonality is likely to be minimal for this cohort and will be ignored for all
+analyses. 
+
+```{R}
+#| label: fig-month
+#| fig-cap: "Distribution of month of diagnosis."
+demo$entry_date <- as.Date(demo$entry_date)
+demo$month <- month(demo$entry_date, label = TRUE)
+ggplot(demo, aes(x = as.factor(month), color = as.factor(month), fill = as.factor(month))) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  xlab("Month of recruitment") +
+  ylab("Frequency")
 ```
 
 ### Cohort derivation

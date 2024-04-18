@@ -89,6 +89,9 @@ cox.summary <- function(fit) {
 }
 ```
 
+This page explores soft and hard flares. Survival curves are compared across
+diseases, and soft and hard flares are compared directly. 
+
 
 ## Primary outcome: First soft flare
 

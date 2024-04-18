@@ -315,15 +315,18 @@ pander(chisq.test(demo$NOVAScore_cat, demo$cat))
 saveRDS(demo, paste0(outdir, "demo-diet.RDS"))
 ```
 
-
 ## Comparison
 
-```{R}
+@fig-diet-dist presents macronutrient, PUFA and UPF intake as percentages of
+total energy intake.
 
+```{R}
+#| label: fig-diet-dist
+#| fig-cap: "Dietary distribution of the FFQ subcohort expressed as percentages of energy intake and stratified by sex and diagnosis of either Crohn’s disease or ulcerative colitis/inflammatory bowel disease unclassified."
+#| warning: false
+#| fig-width: 8
 FFQ$Prot_percEng <- ((FFQ$Protng * 4)/FFQ$EnergykCAL) * 100
-```
 
-```{R}
 comparison <- reshape2::melt(FFQ,
                id.vars = "ParticipantNo",
                measure.vars =  c("CHO_percEng",
@@ -384,6 +387,7 @@ p <- ggplot(comparison,
 
 ggsave("../plots/baseline/diet.png", p, width = 12 * 0.8, height = 7 * 0.8)
 ggsave("../plots/baseline/diet.pdf", p, width = 12 * 0.8, height = 7 * 0.8)
+p
 ```
 
 ## Reproduction and reproducibility {.appendix}

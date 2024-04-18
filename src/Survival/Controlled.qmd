@@ -116,18 +116,15 @@ flare.cd.df <- subset(flare.df, diagnosis2 == "CD")
 flare.uc.df <- subset(flare.df, diagnosis2 == "UC/IBDU")
 ```
 
-Before exploring dietary variables of interest, the variables being controlled
-for will be first investigated.
+The variables being controlled for in later cox models analyses are first
+investigated.
 
-As smoking status is believe to act in opposite directions for CD and UC (being
-protective for UC but associated with worse outcomes in CD [@Birrenbach_2004]),
-the diseases will be modelled separately.
+Although smoking status was originally planned to be controlled for, the
+[high degree of missingness](../Baseline/IBD.qmd#smoking) for these data and
+the [lack of significant associations with time to flare](#smoking-status) has
+resulted in smoking status not being controlled for in later analyses. 
 
-Of these variables, only sex was found to be associated with disease flare. At
-present, the SAP will continue to be followed and these factors will still be
-modelled. However, this means subjects without smoking status available are
-being excluded whilst smoking status does not appear to be contributing
-meaningfully to the models. 
+Of the variables considered here, only sex is associated with disease flare. 
 
 ## Sex
 
@@ -429,7 +426,7 @@ p
 
 :::
 
-## Deprivation
+## Social deprivation
 
 
 ### Crohn's disease
