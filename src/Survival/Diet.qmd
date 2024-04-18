@@ -158,6 +158,8 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
+saveRDS(p, paste0(outdir, "meat-cd-soft.RDS"))
+
 cairo_pdf("../plots/cd/soft-flare/Diet/meat.pdf")
 p
 invisible(dev.off())
@@ -205,6 +207,8 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare",
   break.time.by = 500
 )
+
+saveRDS(p, paste0(outdir, "meat-cd-hard.RDS"))
 
 cairo_pdf("../plots/cd/hard-flare/Diet/meat.pdf")
 p
@@ -268,7 +272,7 @@ p <- ggsurvplot(fit,
   break.time.by = 200,
   xlim = c(0, 750)
 )
-
+saveRDS(p, paste0(outdir, "meat-uc-soft.RDS"))
 cairo_pdf("../plots/uc/soft-flare/Diet/meat.pdf")
 p
 invisible(dev.off())
@@ -319,7 +323,7 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare",
   break.time.by = 500
 )
-
+saveRDS(p, paste0(outdir, "meat-uc-hard.RDS"))
 cairo_pdf("../plots/uc/hard-flare/Diet/meat.pdf")
 p
 invisible(dev.off())

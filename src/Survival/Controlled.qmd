@@ -612,6 +612,8 @@ png("../plots/cd/soft-flare/controlled/fc.png",
 p
 invisible(dev.off())
 
+saveRDS(p, paste0(outdir, "fc-cd-soft.RDS"))
+
 p
 ```
 
@@ -644,6 +646,8 @@ png("../plots/cd/hard-flare/controlled/fc.png",
     res = 300)
 p
 invisible(dev.off())
+
+saveRDS(p, paste0(outdir, "fc-cd-hard.RDS"))
 
 p
 ```
@@ -683,6 +687,7 @@ png("../plots/uc/soft-flare/controlled/fc.png",
     res = 300)
 p
 invisible(dev.off())
+saveRDS(p, paste0(outdir, "fc-uc-soft.RDS"))
 
 p
 ```
@@ -716,6 +721,8 @@ png("../plots/uc/hard-flare/controlled/fc.png",
     res = 300)
 p
 invisible(dev.off())
+
+saveRDS(p, paste0(outdir, "fc-uc-hard.RDS"))
 
 p
 ```

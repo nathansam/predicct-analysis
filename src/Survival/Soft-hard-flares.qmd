@@ -246,18 +246,19 @@ p <- ggsurvplot(fit,
                 pval.method = FALSE,
                 ggtheme = theme_minimal(),
                 risk.table = TRUE,
-                palette = c("#00A6ED", "#F6511D"),
+                palette = c("#4a938e", "#e493a3"),
                 xlab = "Time from study recrutiment (days)",
                 legend.title = "Flare type",
                 tables.y.text = FALSE,
                 tables.col = "strata",
                 break.time.by = 300,
                 xlim = c(0, 2200)
-)
+) 
 
 cairo_pdf("../plots/flare-comparison.pdf", width = 7, height = 7)
 p
 invisible(dev.off())
+saveRDS(p, paste0(outdir, "flare-comparison.RDS"))
 
 p
 ```
