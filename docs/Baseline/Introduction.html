@@ -8,7 +8,7 @@
 
 <meta name="author" content="Nathan Constantine-Cooke">
 <meta name="author" content="Chiara Cotronei">
-<meta name="dcterms.date" content="2024-03-26">
+<meta name="dcterms.date" content="2024-04-18">
 
 <title>PREdiCCt analyses - Introduction</title>
 <style>
@@ -121,10 +121,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="citation_title" content="Introduction">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
 <meta name="citation_author" content="Chiara Cotronei">
-<meta name="citation_publication_date" content="2024-03-26">
-<meta name="citation_cover_date" content="2024-03-26">
+<meta name="citation_publication_date" content="2024-04-18">
+<meta name="citation_cover_date" content="2024-04-18">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-03-26">
+<meta name="citation_online_date" content="2024-04-18">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Location is important: Differentiation between ileal and colonic crohn’s disease;,citation_author=Raja Atreya;,citation_author=Britta Siegmund;,citation_publication_date=2021-03;,citation_cover_date=2021-03;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.1038/s41575-021-00424-6;,citation_issue=8;,citation_doi=10.1038/s41575-021-00424-6;,citation_issn=1759-5053;,citation_volume=18;,citation_journal_title=Nature Reviews Gastroenterology &amp;amp;amp; Hepatology;,citation_publisher=Springer Science; Business Media LLC;">
 <meta name="citation_reference" content="citation_title=Between-assay variability of faecal calprotectin enzyme-linked immunosorbent assay kits;,citation_author=S J Whitehead;,citation_author=J French;,citation_author=M J Brookes;,citation_author=C Ford;,citation_author=R Gama;,citation_publication_date=2012-11;,citation_cover_date=2012-11;,citation_year=2012;,citation_fulltext_html_url=http://dx.doi.org/10.1258/acb.2012.011272;,citation_issue=1;,citation_doi=10.1258/acb.2012.011272;,citation_issn=1758-1001;,citation_volume=50;,citation_journal_title=Annals of Clinical Biochemistry: International Journal of Laboratory Medicine;,citation_publisher=SAGE Publications;">
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 26, 2024</p>
+      <p class="date">April 18, 2024</p>
     </div>
   </div>
   
@@ -370,14 +370,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>This section of the website explores the baseline data for the PREdiCCt study, generating inferences and producing display items for publication.</p>
+<p>For all baseline reports, only the <em>faecal calprotecin</em> cohort, the sub-cohort defined as subjects with baseline faecal calprotecin available, are described (unless otherwise stated). For each variable considered, associations with faecal calprotectin categories (&lt;50, 50–250, &gt;250) are presented using chi-squared tests and ANOVA for categorical and continuous data respectively.</p>
 <p>There are three main data sources for baseline demographic and phenotypic data in PREdiCCt:</p>
 <ol type="1">
 <li>Participant questionnaires.</li>
-<li>Forms completed by a subject’s clinical team (via REDCap) during recruitment.</li>
+<li>Forms completed by a subject’s clinical team (via <a href="https://www.project-redcap.org/">REDCap</a>) during recruitment.</li>
 <li>Data collected retrospectively during the end-of-study (EoS) phenotyping which was completed by a member of the subject’s IBD care team.</li>
 </ol>
 <p>As all three are used, it will be made clear which source the data presented originate from.</p>
-<p>A docker image, <a href="#future-link">nathansam/predicct</a>, has been used to ensure this analysis remains reproducible.</p>
 
 
 <!-- -->
@@ -997,19 +997,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>This section of the website explores the baseline data for the PREdiCCt study,</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>generating inferences and producing display items for publication.</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>There are three main data sources for baseline demographic and phenotypic data</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>in PREdiCCt: </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Participant questionnaires.</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Forms completed by a subject's clinical team (via REDCap) during recruitment.</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Data collected retrospectively during the end-of-study (EoS) phenotyping</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>   which was completed by a member of the subject's IBD care team.</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>As all three are used, it will be made clear which source the data</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>presented originate from. </span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>A docker image, <span class="co">[</span><span class="ot">nathansam/predicct</span><span class="co">](#future-link)</span>, has been used to ensure this </span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>analysis remains reproducible.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>For all baseline reports, only the _faecal calprotecin_ cohort, the sub-cohort</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>defined as subjects with baseline faecal calprotecin available, are described</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>(unless otherwise stated). For each variable considered, associations with</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>faecal calprotectin categories (&lt;50, 50--250, &gt;250) are presented using</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>chi-squared tests and ANOVA for categorical and continuous data respectively. </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>There are three main data sources for baseline demographic and phenotypic data</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>in PREdiCCt: </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Participant questionnaires.</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Forms completed by a subject's clinical team (via</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>   <span class="co">[</span><span class="ot">REDCap</span><span class="co">](https://www.project-redcap.org/)</span>) during recruitment.</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Data collected retrospectively during the end-of-study (EoS) phenotyping</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>   which was completed by a member of the subject's IBD care team.</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>As all three are used, it will be made clear which source the data</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>presented originate from. </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

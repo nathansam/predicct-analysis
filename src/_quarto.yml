@@ -1,5 +1,6 @@
 project:
   type: website
+  pre-render: makeplotdir.R
   render:
     - "index.qmd"
     - "Baseline/Introduction.qmd"
@@ -16,6 +17,7 @@ project:
     - "Survival/IBD.qmd"
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
+  post-render: arrangeplots.R
   output-dir: "../docs"
   resources:
     - "robots.txt"

@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.550">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2024-03-26">
+<meta name="dcterms.date" content="2024-04-18">
 <title>PREdiCCt analyses - Biochemistry data</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Biochemistry data">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2024-03-26">
-<meta name="citation_cover_date" content="2024-03-26">
+<meta name="citation_publication_date" content="2024-04-18">
+<meta name="citation_cover_date" content="2024-04-18">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-03-26">
+<meta name="citation_online_date" content="2024-04-18">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Location is important: Differentiation between ileal and colonic crohn’s disease;,citation_author=Raja Atreya;,citation_author=Britta Siegmund;,citation_publication_date=2021-03;,citation_cover_date=2021-03;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.1038/s41575-021-00424-6;,citation_issue=8;,citation_doi=10.1038/s41575-021-00424-6;,citation_issn=1759-5053;,citation_volume=18;,citation_journal_title=Nature Reviews Gastroenterology &amp;amp;amp; Hepatology;,citation_publisher=Springer Science; Business Media LLC;">
 <meta name="citation_reference" content="citation_title=Between-assay variability of faecal calprotectin enzyme-linked immunosorbent assay kits;,citation_author=S J Whitehead;,citation_author=J French;,citation_author=M J Brookes;,citation_author=C Ford;,citation_author=R Gama;,citation_publication_date=2012-11;,citation_cover_date=2012-11;,citation_year=2012;,citation_fulltext_html_url=http://dx.doi.org/10.1258/acb.2012.011272;,citation_issue=1;,citation_doi=10.1258/acb.2012.011272;,citation_issn=1758-1001;,citation_volume=50;,citation_journal_title=Annals of Clinical Biochemistry: International Journal of Laboratory Medicine;,citation_publisher=SAGE Publications;">
@@ -335,7 +335,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 26, 2024</p>
+      <p class="date">April 18, 2024</p>
     </div>
   </div>
   
@@ -405,7 +405,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">demo</span>, <span class="va">labs</span>, by <span class="op">=</span> <span class="st">"ParticipantNo"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span>, all.y <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Participants’ IBD care teams reported biochemistry results via REDCap. Whilst data from many types of blood tests were collected, only the tests most relevant to IBD will be presented here. Where possible, reference levels have been denoted on plots via vertical lines.</p>
+<p>Participants’ IBD care teams reported biochemistry results via REDCap. Whilst data from many types of blood tests were collected, only the most relevant tests are presented here. Where possible, reference levels have been denoted on plots via vertical lines.</p>
 </section><section id="c-reactive-protein" class="level2"><h2 class="anchored" data-anchor-id="c-reactive-protein">C-reactive protein</h2>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">perc</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">demo</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -861,8 +861,8 @@ Session info
 <p><strong>Platform:</strong> aarch64-apple-darwin20 (64-bit)</p>
 <p><strong>locale:</strong> en_GB.UTF-8||en_GB.UTF-8||en_GB.UTF-8||C||en_GB.UTF-8||en_GB.UTF-8</p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
-<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.5)</em>, <em>knitr(v.1.45)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.2.0)</em>, <em>datefixR(v.1.6.1)</em>, <em>readxl(v.1.4.3)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.0)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
-<p><strong>loaded via a namespace (and not attached):</strong> <em>gtable(v.0.3.4)</em>, <em>xfun(v.0.43)</em>, <em>httr2(v.1.0.0)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>visNetwork(v.2.1.2)</em>, <em>websocket(v.1.4.1)</em>, <em>processx(v.3.8.4)</em>, <em>tzdb(v.0.4.0)</em>, <em>vctrs(v.0.6.5)</em>, <em>tools(v.4.3.3)</em>, <em>ps(v.1.7.6)</em>, <em>generics(v.0.1.3)</em>, <em>curl(v.5.2.1)</em>, <em>fansi(v.1.0.6)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>lifecycle(v.1.0.4)</em>, <em>farver(v.2.1.1)</em>, <em>compiler(v.4.3.3)</em>, <em>munsell(v.0.5.0)</em>, <em>chromote(v.0.2.0)</em>, <em>codetools(v.0.2-19)</em>, <em>htmltools(v.0.5.8)</em>, <em>yaml(v.2.3.8)</em>, <em>Formula(v.1.2-5)</em>, <em>later(v.1.3.2)</em>, <em>pillar(v.1.9.0)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rvest(v.1.0.4)</em>, <em>digest(v.0.6.35)</em>, <em>stringi(v.1.8.3)</em>, <em>labeling(v.0.4.3)</em>, <em>fastmap(v.1.1.1)</em>, <em>grid(v.4.3.3)</em>, <em>colorspace(v.2.1-0)</em>, <em>cli(v.3.6.2)</em>, <em>magrittr(v.2.0.3)</em>, <em>utf8(v.1.2.4)</em>, <em>withr(v.3.0.0)</em>, <em>scales(v.1.3.0)</em>, <em>promises(v.1.2.1)</em>, <em>rappdirs(v.0.3.3)</em>, <em>timechange(v.0.3.0)</em>, <em>rmarkdown(v.2.26)</em>, <em>httr(v.1.4.7)</em>, <em>cellranger(v.1.1.0)</em>, <em>clisymbols(v.1.2.0)</em>, <em>hms(v.1.1.3)</em>, <em>evaluate(v.0.23)</em>, <em>V8(v.4.4.2)</em>, <em>rlang(v.1.1.3)</em>, <em>Rcpp(v.1.0.12)</em>, <em>glue(v.1.7.0)</em>, <em>xml2(v.1.3.6)</em>, <em>jsonlite(v.1.8.8)</em> and <em>R6(v.2.5.1)</em></p>
+<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.5)</em>, <em>knitr(v.1.46)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.2.0)</em>, <em>datefixR(v.1.6.1)</em>, <em>readxl(v.1.4.3)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.0)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong> <em>gtable(v.0.3.4)</em>, <em>xfun(v.0.43)</em>, <em>httr2(v.1.0.1)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>visNetwork(v.2.1.2)</em>, <em>websocket(v.1.4.1)</em>, <em>processx(v.3.8.4)</em>, <em>tzdb(v.0.4.0)</em>, <em>vctrs(v.0.6.5)</em>, <em>tools(v.4.3.3)</em>, <em>ps(v.1.7.6)</em>, <em>generics(v.0.1.3)</em>, <em>curl(v.5.2.1)</em>, <em>fansi(v.1.0.6)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>lifecycle(v.1.0.4)</em>, <em>farver(v.2.1.1)</em>, <em>compiler(v.4.3.3)</em>, <em>munsell(v.0.5.1)</em>, <em>chromote(v.0.2.0)</em>, <em>codetools(v.0.2-19)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>yaml(v.2.3.8)</em>, <em>Formula(v.1.2-5)</em>, <em>later(v.1.3.2)</em>, <em>pillar(v.1.9.0)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rvest(v.1.0.4)</em>, <em>digest(v.0.6.35)</em>, <em>stringi(v.1.8.3)</em>, <em>labeling(v.0.4.3)</em>, <em>fastmap(v.1.1.1)</em>, <em>grid(v.4.3.3)</em>, <em>colorspace(v.2.1-0)</em>, <em>cli(v.3.6.2)</em>, <em>magrittr(v.2.0.3)</em>, <em>utf8(v.1.2.4)</em>, <em>withr(v.3.0.0)</em>, <em>scales(v.1.3.0)</em>, <em>promises(v.1.3.0)</em>, <em>rappdirs(v.0.3.3)</em>, <em>timechange(v.0.3.0)</em>, <em>rmarkdown(v.2.26)</em>, <em>httr(v.1.4.7)</em>, <em>cellranger(v.1.1.0)</em>, <em>clisymbols(v.1.2.0)</em>, <em>hms(v.1.1.3)</em>, <em>evaluate(v.0.23)</em>, <em>V8(v.4.4.2)</em>, <em>rlang(v.1.1.3)</em>, <em>Rcpp(v.1.0.12)</em>, <em>glue(v.1.7.0)</em>, <em>xml2(v.1.3.6)</em>, <em>jsonlite(v.1.8.8)</em> and <em>R6(v.2.5.1)</em></p>
 </div>
 </div>
 </details><p>Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.</p>
@@ -1537,9 +1537,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a>Participants' IBD care teams reported biochemistry results via REDCap. Whilst</span>
-<span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a>data from many types of blood tests were collected, only the tests most relevant</span>
-<span id="cb18-79"><a href="#cb18-79" aria-hidden="true" tabindex="-1"></a>to IBD will be presented here. Where possible, reference levels have been</span>
-<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a>denoted on plots via vertical lines. </span>
+<span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a>data from many types of blood tests were collected, only the most relevant tests</span>
+<span id="cb18-79"><a href="#cb18-79" aria-hidden="true" tabindex="-1"></a>are presented here. Where possible, reference levels have been denoted on plots</span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a>via vertical lines. </span>
 <span id="cb18-81"><a href="#cb18-81" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a><span class="fu">## C-reactive protein</span></span>
 <span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a></span>

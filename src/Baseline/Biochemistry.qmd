@@ -73,9 +73,9 @@ demo <- merge(demo, labs, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
 ```
 
 Participants' IBD care teams reported biochemistry results via REDCap. Whilst
-data from many types of blood tests were collected, only the tests most relevant
-to IBD will be presented here. Where possible, reference levels have been
-denoted on plots via vertical lines. 
+data from many types of blood tests were collected, only the most relevant tests
+are presented here. Where possible, reference levels have been denoted on plots
+via vertical lines. 
 
 ## C-reactive protein
 

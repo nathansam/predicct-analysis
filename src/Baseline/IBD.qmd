@@ -57,6 +57,9 @@ demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
 demo.uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
 ```
 
+This page explores data which describes subjects' IBD, primarily consisting of 
+clinical data. 
+
 ## IBD type
 
 For this study, we have grouped ulcerative colitis (UC) and inflammatory bowel
@@ -156,6 +159,30 @@ duration[duration[, "duration"] < 0, "duration"] <- 0
 duration.cd <- subset(duration, diagnosis == "1")
 
 duration.uc <- subset(duration, diagnosis != "1")
+
+p <- duration %>%
+  ggplot(aes(x = duration, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  labs(
+    x = "Duration (years)",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  )
+ggsave("../plots/Duration-full-cohort.png",
+  p,
+  width = 9,
+  height = 6,
+  create.dir = TRUE
+)
+ggsave("../plots/Duration-full-cohort.pdf", p, width = 9, height = 6)
 
 
 duration %>%
@@ -308,7 +335,7 @@ p2 <- demo %>%
   ylab("Frequency") +
   geom_vline(xintercept = 85, color = "#FF4B3E") +
   scale_x_continuous(breaks = seq(0, 100, 10))
-p1/p2 + plot_annotation(tag_levels = 'A')
+p1 / p2 + plot_annotation(tag_levels = "A")
 ```
 
 IBD-Control-8 scores and VAS were both found to be significantly associated with
@@ -450,7 +477,7 @@ for (i in 1:nrow(drugs)) {
 drugs$category <- factor(drugs$category,
   levels = 1:4,
   labels = c(
-    "5ASA",
+    "5-ASA",
     "Mono immunotherapy",
     "Mono biologic",
     "Combo therapy"
@@ -461,7 +488,7 @@ drugs <- merge(drugs, demo[, c("ParticipantNo", "cat", "diagnosis2")], by = "Par
 colnames(drugs)[5] <- "Treatment"
 ```
 
-For IBD treatment, subjects are categorised as being on either a 5ASA, mono
+For IBD treatment, subjects are categorised as being on either a 5-ASA, mono
 immunotherapy, mono biologic, or immuno-biologic combination treatment strategy
 based upon REDCap data provided by participants' IBD care teams. 
 
@@ -483,10 +510,10 @@ Biologics are defined as:
 * Vedolizumab
 * Ustekinumab
 
-Patients are only categorised as receiving a 5ASA treatment plan if 5ASA is the
+Patients are only categorised as receiving a 5-ASA treatment plan if 5-ASA is the
 only IBD treatment they are receiving (I.E no immunotherapy or biologics).
 
-As should be expected given poor efficacy in CD, a 5ASA treatment strategy is
+As should be expected given poor efficacy in CD, a 5-ASA treatment strategy is
 much more common for UC/IBDU participants (@fig-treatments). Mono biologic
 therapy is the most common treatment strategy for CD subjects.
 
@@ -1018,6 +1045,7 @@ pander(summary(aov(HBI ~ cat, data = demo.cd)))
 Sum of liquid stools per day and abdominal pain. 
 
 ```{R}
+#| warning: false
 PRO2 <- redcap[, c("participantno", "liq_stool_day", "abdo_pain")]
 PRO2$liq_stool_day <- as.numeric(PRO2$liq_stool_day) # Drop ileostomies
 
@@ -1025,13 +1053,12 @@ PRO2$PRO2 <- with(PRO2, liq_stool_day + abdo_pain)
 
 PRO2$ParticipantNo <- PRO2$participantno
 demo.cd <- merge(demo.cd,
-              PRO2[, c("ParticipantNo", "PRO2")],
-              by = "ParticipantNo",
-              all.x = TRUE,
-              all.y = FALSE)
-```
+  PRO2[, c("ParticipantNo", "PRO2")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
 
-```{R}
 demo.cd %>%
   ggplot(aes(x = as.factor(PRO2))) +
   geom_bar(fill = "#FF8552", color = "#D2632A") +
@@ -1041,15 +1068,95 @@ demo.cd %>%
 ```
 
 
+### Smoking
+
+```{R}
+percPrev <- round(sum(temp$Smoke == "Previous", na.rm = TRUE) / nrow(temp), 2) * 100
+```
+
+We consider smoking for CD and UC separately as smoking is often reported to
+worsen outcomes in CD but is possibly protective in UC. Smoking status is
+self-reported by study participants. 
+
+Whilst most subjects have never been a smoker, a substantial proportion of
+subjects (`r percPrev`%) have previously been smokers. 
+
+```{R}
+#| label: fig-smoke-cd
+#| fig-cap: "Smoking status for CD subjects in the FC cohort."
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
+  geom_bar() +
+  xlab("Smoking status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "Smoking status"),
+    color = guide_legend(title = "Smoking status")
+  )
+```
+
+Smoking status is associated with FC at recruitment for CD subjects. 
+
+```{R}
+#| label: tbl-smoke-cd
+#| tbl-cap: "Chi-squared test between between smoking status and FC groups for CD subjects."
+pander(chisq.test(demo.cd$Smoke, demo.cd$cat))
+```
+
+### E-cigarette use
+
+The vast majority of participants do not report using some form of e-cigarettes.
+It should be noted that as recruitment ended March 2020, these day may not
+reflect more modern trends. 
+
+```{R}
+#| label: fig-esmoke-cd
+#| fig-cap: "E-cigarette usage for CD subjects in the FC cohort."
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
+  geom_bar() +
+  xlab("E-cigarette status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "E-cigarette status"),
+    color = guide_legend(title = "E-cigarette status")
+  )
+```
+
+```{R}
+#| label: tbl-esmoke-cd
+#| tbl-cap: "Chi-squared test between between E-cigarettte usage and FC groups for CD subjects."
+pander(chisq.test(demo.cd$ECigs, demo.cd$cat))
+```
+
 ## Variables only relevant to ulcerative colitis/IBDU subjects
 
 This section looks at variables only relevant to UC/IBDU subjects: Montreal
 extent, Mayo score, Smoking status and E-cigarette use. 
 
-As PREdiCCt required subjects to be able to flare,
-this effectively excluded UC subjects who had undergone a proctocolectomy. As
-such, previous surgery is not considered. Montreal severity was not collected
-by PREdiCCt.
+As PREdiCCt required subjects to be able to flare, this effectively excluded UC
+subjects who had undergone a proctocolectomy. As such, previous surgery is not
+considered. Montreal severity was not collected by PREdiCCt.
 
 ### Montreal extent
 
@@ -1176,13 +1283,12 @@ PRO2$PRO2 <- with(PRO2, stool_freq + rectal_bleed)
 
 PRO2$ParticipantNo <- PRO2$participantno
 demo.uc <- merge(demo.uc,
-              PRO2[, c("ParticipantNo", "PRO2")],
-              by = "ParticipantNo",
-              all.x = TRUE,
-              all.y = FALSE)
-```
+  PRO2[, c("ParticipantNo", "PRO2")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
 
-```{R}
 demo.uc %>%
   ggplot(aes(x = as.factor(PRO2), fill = diagnosis2, color = diagnosis2)) +
   geom_bar() +
@@ -1193,6 +1299,79 @@ demo.uc %>%
 ```
 
 
+### Smoking
+
+As with CD subjects, smoking status for UC/IBDU subjects is self-reported. 
+
+```{R}
+#| label: fig-smoke-uc
+#| fig-cap: "Smoking status for UC/IBDU subjects in the FC cohort."
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
+  geom_bar() +
+  xlab("Smoking status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "Smoking status"),
+    color = guide_legend(title = "Smoking status")
+  )
+```
+
+As with CD, smoking status is significantly associated with FC. 
+
+```{R}
+#| label: tbl-smoke-uc
+#| tbl-cap: "Chi-squared test between between smoking status and FC groups for UC subjects."
+pander(chisq.test(demo.uc$Smoke, demo.uc$cat))
+```
+
+### E-cigarette use
+
+Similar to CD, very few subjects reported using E-cigarettes. 
+
+```{R}
+#| label: fig-esmoke-uc
+#| fig-cap: "E-cigarette usage for UC subjects in the FC cohort."
+demo.uc %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
+  geom_bar() +
+  xlab("E-cigarette status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "E-cigarette status"),
+    color = guide_legend(title = "E-cigarette status")
+  )
+```
+
+E-cigarette use was found to significantly differ between FC groups in UC.
+However, the low number of subjects reported to use E-cigarettes
+(@fig-esmoke-uc) should be beared in mind when interpretting this finding. 
+
+```{R}
+#| label: tbl-esmoke-uc
+#| tbl-cap: "Chi-squared test between between E-cigarettte usage and FC groups for UC subjects."
+pander(fisher.test(demo.uc$ECigs, demo.uc$cat))
+```
 
 
 ```{R}

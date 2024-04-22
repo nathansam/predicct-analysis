@@ -39,8 +39,6 @@ if (file.exists("/docker")) { # If running in docker
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
 
-if (!dir.exists("plots")) dir.create("plots")
-
 demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
@@ -99,7 +97,7 @@ Diagnostics: \\newline
   
   cat("\\newline 
   
-###### Martignale residuals \\newline
+###### Martingale residuals \\newline
       
       ")
   
@@ -158,7 +156,15 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/CRP-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/biochem/crp.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/biochem/crp.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
@@ -200,11 +206,21 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/CRP-full-cd-KM.pdf")
+
+cairo_pdf("../plots/cd/hard-flare/biochem/crp.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/biochem/crp.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
 p
+
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -255,9 +271,18 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/CRP-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/biochem/crp.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/biochem/crp.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -296,9 +321,18 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/CRP-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/biochem/crp.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/biochem/crp.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -351,7 +385,15 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/haemoglobin-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/biochem/haemoglobin.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/biochem/haemoglobin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
@@ -393,7 +435,15 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/haemoglobin-full-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/biochem/haemoglobin.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/biochem/haemoglobin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
@@ -446,11 +496,19 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/haemoglobin-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/biochem/haemoglobin.pdf")
 p
 invisible(dev.off())
-p
 
+png("../plots/uc/soft-flare/biochem/haemoglobin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
+p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -487,9 +545,18 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/haemoglobin-full-uc-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/biochem/haemoglobin.pdf")
 p
 invisible(dev.off())
+
+png("../plots/cd/hard-flare/biochem/haemoglobin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -542,7 +609,15 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/WCC-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/biochem/wcc.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/biochem/wcc.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
@@ -583,7 +658,15 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/WCC-full-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/biochem/wcc.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/biochem/wcc.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
@@ -636,11 +719,19 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/WCC-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/biochem/wcc.pdf")
 p
 invisible(dev.off())
-p
 
+png("../plots/uc/soft-flare/biochem/wcc.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
+p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -677,9 +768,18 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/WCC-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/biochem/wcc.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/biochem/wcc.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -732,11 +832,20 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/Albumin-cd-KM.pdf")
+cairo_pdf("../plots/cd/soft-flare/biochem/albumin.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/biochem/albumin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
 p
+
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -773,11 +882,20 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/Albumin-full-cd-KM.pdf")
+cairo_pdf("../plots/cd/hard-flare/biochem/albumin.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/biochem/albumin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
 invisible(dev.off())
 
 p
+
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -826,9 +944,18 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("plots/Albumin-uc-KM.pdf")
+cairo_pdf("../plots/uc/soft-flare/biochem/albumin.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/soft-flare/biochem/albumin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
 p
 
 
@@ -867,10 +994,20 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("plots/Albumin-full-uc-KM.pdf")
+cairo_pdf("../plots/uc/hard-flare/biochem/albumin.pdf")
 p
 invisible(dev.off())
+
+png("../plots/uc/hard-flare/biochem/albumin.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
 p
+invisible(dev.off())
+
+p
+
 
 
 fit.me <- coxph(

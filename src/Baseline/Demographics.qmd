@@ -47,9 +47,7 @@ if (file.exists("/docker")) { # If running in docker
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
 }
-```
 
-```{R}
 demo <- read_xlsx(paste0(data.path, "Baseline2022/demographics.xlsx"),
   col_types = c(
     "text",
@@ -104,9 +102,11 @@ demo$cat <- factor(demo$cat,
 names(demo)[12] <- "FC" # Result ~> FC
 ```
 
+This page describes key demographic data collected by the PREdiCCt study.
+
 ## Age
 
-The distribution of age in the study cohort is approximately normally
+The distribution of age for the study cohort is approximately normally
 distributed. 
 
 ```{R}
@@ -118,8 +118,16 @@ demo %>%
   geom_histogram(bins = 30, fill = "#64c7ce", color = "#3B9EA4") +
   geom_density() +
   theme_minimal() +
-  xlab("Age (years)") + 
-  ylab("Frequency") 
+  xlab("Age (years)") +
+  ylab("Frequency")
+```
+
+Age is significantly associated with faecal calprotectin. 
+
+```{R}
+#| label: tbl-age-fc
+#| tbl-cap: "ANOVA between age and FC groups."
+pander(summary(aov(age ~ cat, data = demo)))
 ```
 
 ## Sex
@@ -154,9 +162,9 @@ pander(chisq.test(demo$Sex, demo$cat))
 
 Body mass index is given by weight (in $Kg$) divided by height (in $M$) squared.
 
-As threshold differ in the paediatric population, differing by age and sex, BMI
-has not been calculated for those less than 18 years of age. BMI is first
-considered as a continuous variable. 
+As thresholds differ in the paediatric population, and are dependent on both age
+and sex, BMI has not been calculated for those less than 18 years of age. BMI is
+first considered as a continuous variable. 
 
 ```{R}
 #| label: fig-BMI-dist
@@ -164,6 +172,21 @@ considered as a continuous variable.
 #| warning: false
 demo$BMI <- with(demo, Weight / ((Height / 100)^2))
 demo[demo[, "age"] < 18, "BMI"] <- NA
+p <- demo %>%
+  ggplot(aes(x = BMI)) +
+  geom_histogram(color = "#AD013B", fill = "#F0386B", bins = 30) +
+  theme_minimal() +
+  ylab("Frequency")
+
+ggsave("../plots/BMI-full-cohort.png",
+  p,
+  width = 9,
+  height = 6,
+  create.dir = TRUE
+)
+ggsave("../plots/BMI-full-cohort.pdf", p, width = 9, height = 6)
+
+
 demo %>%
   drop_na(cat) %>%
   ggplot(aes(x = BMI)) +
@@ -262,9 +285,10 @@ pander(chisq.test(demo$Ethnicity, demo$cat))
 ## Index of multiple deprivation
 
 The PREdiCCt SAP states the primary analyses will be controlled for by index
-of multiple deprivation (IMD). However, the PREdiCCt study recruited across the
-UK and there is no consistent measure of IMD across the UK. Instead IMD measures
-are specific to constituent nations.  
+of multiple deprivation (IMD). It should be noted that the PREdiCCt study
+recruited across the UK and there is no consistent measure of IMD across the
+whole of the UK. Instead, IMD measures are handled slightly differently by each 
+constituent nation.  
 
 ```{R}
 #| label: fig-imd-dist
@@ -319,4 +343,3 @@ pander::pander(sessionInfo())
 Licensed by 
 <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
  unless otherwise stated.
-
