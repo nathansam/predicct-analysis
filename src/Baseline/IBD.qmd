@@ -179,8 +179,7 @@ p <- duration %>%
 ggsave("../plots/Duration-full-cohort.png",
   p,
   width = 9,
-  height = 6,
-  create.dir = TRUE
+  height = 6
 )
 ggsave("../plots/Duration-full-cohort.pdf", p, width = 9, height = 6)
 
