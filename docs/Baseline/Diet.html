@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.550">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2024-04-18">
+<meta name="dcterms.date" content="2024-04-30">
 <title>PREdiCCt analyses - Diet</title>
 <style>
 code{white-space: pre-wrap;}
@@ -171,10 +171,10 @@ window.Quarto = {
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Diet">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2024-04-18">
-<meta name="citation_cover_date" content="2024-04-18">
+<meta name="citation_publication_date" content="2024-04-30">
+<meta name="citation_cover_date" content="2024-04-30">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-04-18">
+<meta name="citation_online_date" content="2024-04-30">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Location is important: Differentiation between ileal and colonic crohn’s disease;,citation_author=Raja Atreya;,citation_author=Britta Siegmund;,citation_publication_date=2021-03;,citation_cover_date=2021-03;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.1038/s41575-021-00424-6;,citation_issue=8;,citation_doi=10.1038/s41575-021-00424-6;,citation_issn=1759-5053;,citation_volume=18;,citation_journal_title=Nature Reviews Gastroenterology &amp;amp;amp; Hepatology;,citation_publisher=Springer Science; Business Media LLC;">
 <meta name="citation_reference" content="citation_title=Between-assay variability of faecal calprotectin enzyme-linked immunosorbent assay kits;,citation_author=S J Whitehead;,citation_author=J French;,citation_author=M J Brookes;,citation_author=C Ford;,citation_author=R Gama;,citation_publication_date=2012-11;,citation_cover_date=2012-11;,citation_year=2012;,citation_fulltext_html_url=http://dx.doi.org/10.1258/acb.2012.011272;,citation_issue=1;,citation_doi=10.1258/acb.2012.011272;,citation_issn=1758-1001;,citation_volume=50;,citation_journal_title=Annals of Clinical Biochemistry: International Journal of Laboratory Medicine;,citation_publisher=SAGE Publications;">
@@ -401,7 +401,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 18, 2024</p>
+      <p class="date">April 30, 2024</p>
     </div>
   </div>
   
@@ -746,7 +746,7 @@ y= \frac{x}{z}
 N = \sum_{i = 1}^{169} (y_i M_i)
 </span></p>
 </section><section id="results" class="level3"><h3 class="anchored" data-anchor-id="results">Results</h3>
-<p>The distribution of Nova intake score appears to be uniform across the cohort.</p>
+<p>The distribution of Nova intake score appears to be uniform across the cohort, as such, it seems likely that these data have been mapped to quantiles and are no longer describing Nova Score categories.</p>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">demo</span><span class="op">$</span><span class="va">NOVAScore_cat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">NOVAScore_cat</span>,</span>
 <span>  levels <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,</span>
@@ -1789,144 +1789,146 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb12-281"><a href="#cb12-281" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-282"><a href="#cb12-282" aria-hidden="true" tabindex="-1"></a><span class="fu">### Results</span></span>
 <span id="cb12-283"><a href="#cb12-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-284"><a href="#cb12-284" aria-hidden="true" tabindex="-1"></a>The distribution of Nova intake score appears to be uniform across the cohort.</span>
-<span id="cb12-285"><a href="#cb12-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-288"><a href="#cb12-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb12-289"><a href="#cb12-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-novas-dist</span></span>
-<span id="cb12-290"><a href="#cb12-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of Nova intake scores."</span></span>
-<span id="cb12-291"><a href="#cb12-291" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>NOVAScore_cat <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>NOVAScore_cat,</span>
-<span id="cb12-292"><a href="#cb12-292" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,</span>
-<span id="cb12-293"><a href="#cb12-293" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(</span>
-<span id="cb12-294"><a href="#cb12-294" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Unprocessed"</span>,</span>
-<span id="cb12-295"><a href="#cb12-295" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Processed culinary"</span>,</span>
-<span id="cb12-296"><a href="#cb12-296" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Procesed food"</span>,</span>
-<span id="cb12-297"><a href="#cb12-297" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ultra-processed"</span></span>
-<span id="cb12-298"><a href="#cb12-298" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-299"><a href="#cb12-299" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-300"><a href="#cb12-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-301"><a href="#cb12-301" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb12-302"><a href="#cb12-302" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(NOVAScore_cat) <span class="sc">%&gt;%</span></span>
-<span id="cb12-303"><a href="#cb12-303" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> NOVAScore_cat, <span class="at">color =</span> diagnosis2, <span class="at">fill =</span> diagnosis2)) <span class="sc">+</span></span>
-<span id="cb12-304"><a href="#cb12-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb12-305"><a href="#cb12-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb12-306"><a href="#cb12-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb12-307"><a href="#cb12-307" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb12-308"><a href="#cb12-308" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Nova intake score"</span>,</span>
-<span id="cb12-309"><a href="#cb12-309" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span>,</span>
-<span id="cb12-310"><a href="#cb12-310" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"IBD type"</span>,</span>
-<span id="cb12-311"><a href="#cb12-311" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"IBD type"</span></span>
-<span id="cb12-312"><a href="#cb12-312" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb12-313"><a href="#cb12-313" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb12-314"><a href="#cb12-314" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#CDEDF6"</span>, <span class="st">"#FF6B6B"</span>)</span>
-<span id="cb12-315"><a href="#cb12-315" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb12-316"><a href="#cb12-316" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb12-317"><a href="#cb12-317" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#5EB1BF"</span>, <span class="st">"#C24343"</span>)</span>
-<span id="cb12-318"><a href="#cb12-318" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb12-319"><a href="#cb12-319" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(diagnosis2))</span>
-<span id="cb12-320"><a href="#cb12-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-321"><a href="#cb12-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-322"><a href="#cb12-322" aria-hidden="true" tabindex="-1"></a>No significant association was observed between Nova intake scores and FC</span>
-<span id="cb12-323"><a href="#cb12-323" aria-hidden="true" tabindex="-1"></a>groups. </span>
-<span id="cb12-324"><a href="#cb12-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-327"><a href="#cb12-327" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb12-328"><a href="#cb12-328" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between Nova intake score and FC groups."</span></span>
-<span id="cb12-329"><a href="#cb12-329" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>NOVAScore_cat, demo<span class="sc">$</span>cat))</span>
-<span id="cb12-330"><a href="#cb12-330" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-331"><a href="#cb12-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-334"><a href="#cb12-334" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb12-335"><a href="#cb12-335" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(demo, <span class="fu">paste0</span>(outdir, <span class="st">"demo-diet.RDS"</span>))</span>
-<span id="cb12-336"><a href="#cb12-336" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-337"><a href="#cb12-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-338"><a href="#cb12-338" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison</span></span>
+<span id="cb12-284"><a href="#cb12-284" aria-hidden="true" tabindex="-1"></a>The distribution of Nova intake score appears to be uniform across the cohort,</span>
+<span id="cb12-285"><a href="#cb12-285" aria-hidden="true" tabindex="-1"></a>as such, it seems likely that these data have been mapped to quantiles and are</span>
+<span id="cb12-286"><a href="#cb12-286" aria-hidden="true" tabindex="-1"></a>no longer describing Nova Score categories. </span>
+<span id="cb12-287"><a href="#cb12-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-290"><a href="#cb12-290" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb12-291"><a href="#cb12-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-novas-dist</span></span>
+<span id="cb12-292"><a href="#cb12-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of Nova intake scores."</span></span>
+<span id="cb12-293"><a href="#cb12-293" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>NOVAScore_cat <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>NOVAScore_cat,</span>
+<span id="cb12-294"><a href="#cb12-294" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,</span>
+<span id="cb12-295"><a href="#cb12-295" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(</span>
+<span id="cb12-296"><a href="#cb12-296" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Unprocessed"</span>,</span>
+<span id="cb12-297"><a href="#cb12-297" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Processed culinary"</span>,</span>
+<span id="cb12-298"><a href="#cb12-298" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Procesed food"</span>,</span>
+<span id="cb12-299"><a href="#cb12-299" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ultra-processed"</span></span>
+<span id="cb12-300"><a href="#cb12-300" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-301"><a href="#cb12-301" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-302"><a href="#cb12-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-303"><a href="#cb12-303" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb12-304"><a href="#cb12-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(NOVAScore_cat) <span class="sc">%&gt;%</span></span>
+<span id="cb12-305"><a href="#cb12-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> NOVAScore_cat, <span class="at">color =</span> diagnosis2, <span class="at">fill =</span> diagnosis2)) <span class="sc">+</span></span>
+<span id="cb12-306"><a href="#cb12-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb12-307"><a href="#cb12-307" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-308"><a href="#cb12-308" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb12-309"><a href="#cb12-309" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-310"><a href="#cb12-310" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Nova intake score"</span>,</span>
+<span id="cb12-311"><a href="#cb12-311" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span>,</span>
+<span id="cb12-312"><a href="#cb12-312" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"IBD type"</span>,</span>
+<span id="cb12-313"><a href="#cb12-313" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"IBD type"</span></span>
+<span id="cb12-314"><a href="#cb12-314" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-315"><a href="#cb12-315" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb12-316"><a href="#cb12-316" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#CDEDF6"</span>, <span class="st">"#FF6B6B"</span>)</span>
+<span id="cb12-317"><a href="#cb12-317" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-318"><a href="#cb12-318" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb12-319"><a href="#cb12-319" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#5EB1BF"</span>, <span class="st">"#C24343"</span>)</span>
+<span id="cb12-320"><a href="#cb12-320" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-321"><a href="#cb12-321" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">rows =</span> <span class="fu">vars</span>(diagnosis2))</span>
+<span id="cb12-322"><a href="#cb12-322" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-323"><a href="#cb12-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-324"><a href="#cb12-324" aria-hidden="true" tabindex="-1"></a>No significant association was observed between Nova intake scores and FC</span>
+<span id="cb12-325"><a href="#cb12-325" aria-hidden="true" tabindex="-1"></a>groups. </span>
+<span id="cb12-326"><a href="#cb12-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-329"><a href="#cb12-329" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb12-330"><a href="#cb12-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between Nova intake score and FC groups."</span></span>
+<span id="cb12-331"><a href="#cb12-331" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>NOVAScore_cat, demo<span class="sc">$</span>cat))</span>
+<span id="cb12-332"><a href="#cb12-332" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-333"><a href="#cb12-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-336"><a href="#cb12-336" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb12-337"><a href="#cb12-337" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(demo, <span class="fu">paste0</span>(outdir, <span class="st">"demo-diet.RDS"</span>))</span>
+<span id="cb12-338"><a href="#cb12-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb12-339"><a href="#cb12-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-340"><a href="#cb12-340" aria-hidden="true" tabindex="-1"></a>@fig-diet-dist presents macronutrient, PUFA and UPF intake as percentages of</span>
-<span id="cb12-341"><a href="#cb12-341" aria-hidden="true" tabindex="-1"></a>total energy intake.</span>
-<span id="cb12-342"><a href="#cb12-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-345"><a href="#cb12-345" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb12-346"><a href="#cb12-346" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-diet-dist</span></span>
-<span id="cb12-347"><a href="#cb12-347" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Dietary distribution of the FFQ subcohort expressed as percentages of energy intake and stratified by sex and diagnosis of either Crohn’s disease or ulcerative colitis/inflammatory bowel disease unclassified."</span></span>
-<span id="cb12-348"><a href="#cb12-348" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb12-349"><a href="#cb12-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
-<span id="cb12-350"><a href="#cb12-350" aria-hidden="true" tabindex="-1"></a>FFQ<span class="sc">$</span>Prot_percEng <span class="ot">&lt;-</span> ((FFQ<span class="sc">$</span>Protng <span class="sc">*</span> <span class="dv">4</span>)<span class="sc">/</span>FFQ<span class="sc">$</span>EnergykCAL) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb12-351"><a href="#cb12-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-352"><a href="#cb12-352" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(FFQ,</span>
-<span id="cb12-353"><a href="#cb12-353" aria-hidden="true" tabindex="-1"></a>               <span class="at">id.vars =</span> <span class="st">"ParticipantNo"</span>,</span>
-<span id="cb12-354"><a href="#cb12-354" aria-hidden="true" tabindex="-1"></a>               <span class="at">measure.vars =</span>  <span class="fu">c</span>(<span class="st">"CHO_percEng"</span>,</span>
-<span id="cb12-355"><a href="#cb12-355" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"Fat_percEng"</span>,</span>
-<span id="cb12-356"><a href="#cb12-356" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"Prot_percEng"</span>,</span>
-<span id="cb12-357"><a href="#cb12-357" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"SatFat_percEng"</span>,</span>
-<span id="cb12-358"><a href="#cb12-358" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"PUFA_percEng"</span>,</span>
-<span id="cb12-359"><a href="#cb12-359" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"UPF_perenergy"</span>))</span>
-<span id="cb12-360"><a href="#cb12-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-361"><a href="#cb12-361" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> <span class="fu">merge</span>(comparison,</span>
-<span id="cb12-362"><a href="#cb12-362" aria-hidden="true" tabindex="-1"></a>                    demo[,<span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"Sex"</span>, <span class="st">"diagnosis2"</span>)],</span>
-<span id="cb12-363"><a href="#cb12-363" aria-hidden="true" tabindex="-1"></a>                    <span class="at">by =</span> <span class="st">"ParticipantNo"</span>,</span>
-<span id="cb12-364"><a href="#cb12-364" aria-hidden="true" tabindex="-1"></a>                    <span class="at">all.x =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-365"><a href="#cb12-365" aria-hidden="true" tabindex="-1"></a>                    <span class="at">all.y =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb12-366"><a href="#cb12-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-367"><a href="#cb12-367" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(comparison,</span>
-<span id="cb12-368"><a href="#cb12-368" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">color =</span> variable, <span class="at">fill =</span> variable,  <span class="at">y =</span> value, <span class="at">x =</span> Sex)) <span class="sc">+</span></span>
-<span id="cb12-369"><a href="#cb12-369" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
-<span id="cb12-370"><a href="#cb12-370" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span>diagnosis2,</span>
-<span id="cb12-371"><a href="#cb12-371" aria-hidden="true" tabindex="-1"></a>             <span class="at">scales =</span> <span class="st">"free_x"</span>,</span>
-<span id="cb12-372"><a href="#cb12-372" aria-hidden="true" tabindex="-1"></a>             <span class="at">space =</span> <span class="st">"free_x"</span>, </span>
-<span id="cb12-373"><a href="#cb12-373" aria-hidden="true" tabindex="-1"></a>             <span class="at">switch =</span> <span class="st">"x"</span>) <span class="sc">+</span></span>
-<span id="cb12-374"><a href="#cb12-374" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb12-375"><a href="#cb12-375" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.placement =</span> <span class="st">"outside"</span>,                      </span>
-<span id="cb12-376"><a href="#cb12-376" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>), </span>
-<span id="cb12-377"><a href="#cb12-377" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.clip =</span> <span class="st">"on"</span>,</span>
-<span id="cb12-378"><a href="#cb12-378" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb12-379"><a href="#cb12-379" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb12-380"><a href="#cb12-380" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#4F359B"</span>,</span>
-<span id="cb12-381"><a href="#cb12-381" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#FFED49"</span>,</span>
-<span id="cb12-382"><a href="#cb12-382" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#2EC4B6"</span>,</span>
-<span id="cb12-383"><a href="#cb12-383" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#E71D36"</span>,</span>
-<span id="cb12-384"><a href="#cb12-384" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#FF9F1C"</span>,</span>
-<span id="cb12-385"><a href="#cb12-385" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#80BF56"</span>),</span>
-<span id="cb12-386"><a href="#cb12-386" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Carbohydrate"</span>,</span>
-<span id="cb12-387"><a href="#cb12-387" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Fat"</span>,</span>
-<span id="cb12-388"><a href="#cb12-388" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Protein"</span>,</span>
-<span id="cb12-389"><a href="#cb12-389" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Saturated fat"</span>,</span>
-<span id="cb12-390"><a href="#cb12-390" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Polyunsaturated fatty acids"</span>, </span>
-<span id="cb12-391"><a href="#cb12-391" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Ultra-processed foods"</span>)) <span class="sc">+</span></span>
-<span id="cb12-392"><a href="#cb12-392" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#392376"</span>,</span>
-<span id="cb12-393"><a href="#cb12-393" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#ADA009"</span>,</span>
-<span id="cb12-394"><a href="#cb12-394" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#00877C"</span>,</span>
-<span id="cb12-395"><a href="#cb12-395" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#9F1C29"</span>,</span>
-<span id="cb12-396"><a href="#cb12-396" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#B06B01"</span>,</span>
-<span id="cb12-397"><a href="#cb12-397" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#568238"</span>),</span>
-<span id="cb12-398"><a href="#cb12-398" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Carbohydrate"</span>,</span>
-<span id="cb12-399"><a href="#cb12-399" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Fat"</span>,</span>
-<span id="cb12-400"><a href="#cb12-400" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Protein"</span>,</span>
-<span id="cb12-401"><a href="#cb12-401" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Saturated fat"</span>,</span>
-<span id="cb12-402"><a href="#cb12-402" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Polyunsaturated fatty acids"</span>, </span>
-<span id="cb12-403"><a href="#cb12-403" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Ultra-processed foods"</span>)) <span class="sc">+</span></span>
-<span id="cb12-404"><a href="#cb12-404" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"% of total energy intake"</span>, </span>
-<span id="cb12-405"><a href="#cb12-405" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">""</span>,</span>
-<span id="cb12-406"><a href="#cb12-406" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">""</span>) <span class="sc">+</span> </span>
-<span id="cb12-407"><a href="#cb12-407" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>),</span>
-<span id="cb12-408"><a href="#cb12-408" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>))</span>
-<span id="cb12-409"><a href="#cb12-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-410"><a href="#cb12-410" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"../plots/baseline/diet.png"</span>, p, <span class="at">width =</span> <span class="dv">12</span> <span class="sc">*</span> <span class="fl">0.8</span>, <span class="at">height =</span> <span class="dv">7</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
-<span id="cb12-411"><a href="#cb12-411" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"../plots/baseline/diet.pdf"</span>, p, <span class="at">width =</span> <span class="dv">12</span> <span class="sc">*</span> <span class="fl">0.8</span>, <span class="at">height =</span> <span class="dv">7</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
-<span id="cb12-412"><a href="#cb12-412" aria-hidden="true" tabindex="-1"></a>p</span>
-<span id="cb12-413"><a href="#cb12-413" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-414"><a href="#cb12-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-415"><a href="#cb12-415" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
+<span id="cb12-340"><a href="#cb12-340" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison</span></span>
+<span id="cb12-341"><a href="#cb12-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-342"><a href="#cb12-342" aria-hidden="true" tabindex="-1"></a>@fig-diet-dist presents macronutrient, PUFA and UPF intake as percentages of</span>
+<span id="cb12-343"><a href="#cb12-343" aria-hidden="true" tabindex="-1"></a>total energy intake.</span>
+<span id="cb12-344"><a href="#cb12-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-347"><a href="#cb12-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb12-348"><a href="#cb12-348" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-diet-dist</span></span>
+<span id="cb12-349"><a href="#cb12-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Dietary distribution of the FFQ subcohort expressed as percentages of energy intake and stratified by sex and diagnosis of either Crohn’s disease or ulcerative colitis/inflammatory bowel disease unclassified."</span></span>
+<span id="cb12-350"><a href="#cb12-350" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb12-351"><a href="#cb12-351" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
+<span id="cb12-352"><a href="#cb12-352" aria-hidden="true" tabindex="-1"></a>FFQ<span class="sc">$</span>Prot_percEng <span class="ot">&lt;-</span> ((FFQ<span class="sc">$</span>Protng <span class="sc">*</span> <span class="dv">4</span>)<span class="sc">/</span>FFQ<span class="sc">$</span>EnergykCAL) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb12-353"><a href="#cb12-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-354"><a href="#cb12-354" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(FFQ,</span>
+<span id="cb12-355"><a href="#cb12-355" aria-hidden="true" tabindex="-1"></a>               <span class="at">id.vars =</span> <span class="st">"ParticipantNo"</span>,</span>
+<span id="cb12-356"><a href="#cb12-356" aria-hidden="true" tabindex="-1"></a>               <span class="at">measure.vars =</span>  <span class="fu">c</span>(<span class="st">"CHO_percEng"</span>,</span>
+<span id="cb12-357"><a href="#cb12-357" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"Fat_percEng"</span>,</span>
+<span id="cb12-358"><a href="#cb12-358" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"Prot_percEng"</span>,</span>
+<span id="cb12-359"><a href="#cb12-359" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"SatFat_percEng"</span>,</span>
+<span id="cb12-360"><a href="#cb12-360" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"PUFA_percEng"</span>,</span>
+<span id="cb12-361"><a href="#cb12-361" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"UPF_perenergy"</span>))</span>
+<span id="cb12-362"><a href="#cb12-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-363"><a href="#cb12-363" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> <span class="fu">merge</span>(comparison,</span>
+<span id="cb12-364"><a href="#cb12-364" aria-hidden="true" tabindex="-1"></a>                    demo[,<span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"Sex"</span>, <span class="st">"diagnosis2"</span>)],</span>
+<span id="cb12-365"><a href="#cb12-365" aria-hidden="true" tabindex="-1"></a>                    <span class="at">by =</span> <span class="st">"ParticipantNo"</span>,</span>
+<span id="cb12-366"><a href="#cb12-366" aria-hidden="true" tabindex="-1"></a>                    <span class="at">all.x =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-367"><a href="#cb12-367" aria-hidden="true" tabindex="-1"></a>                    <span class="at">all.y =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-368"><a href="#cb12-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-369"><a href="#cb12-369" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(comparison,</span>
+<span id="cb12-370"><a href="#cb12-370" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">color =</span> variable, <span class="at">fill =</span> variable,  <span class="at">y =</span> value, <span class="at">x =</span> Sex)) <span class="sc">+</span></span>
+<span id="cb12-371"><a href="#cb12-371" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb12-372"><a href="#cb12-372" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span>diagnosis2,</span>
+<span id="cb12-373"><a href="#cb12-373" aria-hidden="true" tabindex="-1"></a>             <span class="at">scales =</span> <span class="st">"free_x"</span>,</span>
+<span id="cb12-374"><a href="#cb12-374" aria-hidden="true" tabindex="-1"></a>             <span class="at">space =</span> <span class="st">"free_x"</span>, </span>
+<span id="cb12-375"><a href="#cb12-375" aria-hidden="true" tabindex="-1"></a>             <span class="at">switch =</span> <span class="st">"x"</span>) <span class="sc">+</span></span>
+<span id="cb12-376"><a href="#cb12-376" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-377"><a href="#cb12-377" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.placement =</span> <span class="st">"outside"</span>,                      </span>
+<span id="cb12-378"><a href="#cb12-378" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>), </span>
+<span id="cb12-379"><a href="#cb12-379" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.clip =</span> <span class="st">"on"</span>,</span>
+<span id="cb12-380"><a href="#cb12-380" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb12-381"><a href="#cb12-381" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb12-382"><a href="#cb12-382" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#4F359B"</span>,</span>
+<span id="cb12-383"><a href="#cb12-383" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#FFED49"</span>,</span>
+<span id="cb12-384"><a href="#cb12-384" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#2EC4B6"</span>,</span>
+<span id="cb12-385"><a href="#cb12-385" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#E71D36"</span>,</span>
+<span id="cb12-386"><a href="#cb12-386" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#FF9F1C"</span>,</span>
+<span id="cb12-387"><a href="#cb12-387" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#80BF56"</span>),</span>
+<span id="cb12-388"><a href="#cb12-388" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Carbohydrate"</span>,</span>
+<span id="cb12-389"><a href="#cb12-389" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Fat"</span>,</span>
+<span id="cb12-390"><a href="#cb12-390" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Protein"</span>,</span>
+<span id="cb12-391"><a href="#cb12-391" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Saturated fat"</span>,</span>
+<span id="cb12-392"><a href="#cb12-392" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Polyunsaturated fatty acids"</span>, </span>
+<span id="cb12-393"><a href="#cb12-393" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Ultra-processed foods"</span>)) <span class="sc">+</span></span>
+<span id="cb12-394"><a href="#cb12-394" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#392376"</span>,</span>
+<span id="cb12-395"><a href="#cb12-395" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#ADA009"</span>,</span>
+<span id="cb12-396"><a href="#cb12-396" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#00877C"</span>,</span>
+<span id="cb12-397"><a href="#cb12-397" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#9F1C29"</span>,</span>
+<span id="cb12-398"><a href="#cb12-398" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#B06B01"</span>,</span>
+<span id="cb12-399"><a href="#cb12-399" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"#568238"</span>),</span>
+<span id="cb12-400"><a href="#cb12-400" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Carbohydrate"</span>,</span>
+<span id="cb12-401"><a href="#cb12-401" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Fat"</span>,</span>
+<span id="cb12-402"><a href="#cb12-402" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Protein"</span>,</span>
+<span id="cb12-403"><a href="#cb12-403" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Saturated fat"</span>,</span>
+<span id="cb12-404"><a href="#cb12-404" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Polyunsaturated fatty acids"</span>, </span>
+<span id="cb12-405"><a href="#cb12-405" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Ultra-processed foods"</span>)) <span class="sc">+</span></span>
+<span id="cb12-406"><a href="#cb12-406" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"% of total energy intake"</span>, </span>
+<span id="cb12-407"><a href="#cb12-407" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">""</span>,</span>
+<span id="cb12-408"><a href="#cb12-408" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">""</span>) <span class="sc">+</span> </span>
+<span id="cb12-409"><a href="#cb12-409" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>),</span>
+<span id="cb12-410"><a href="#cb12-410" aria-hidden="true" tabindex="-1"></a>         <span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>))</span>
+<span id="cb12-411"><a href="#cb12-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-412"><a href="#cb12-412" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"../plots/baseline/diet.png"</span>, p, <span class="at">width =</span> <span class="dv">12</span> <span class="sc">*</span> <span class="fl">0.8</span>, <span class="at">height =</span> <span class="dv">7</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
+<span id="cb12-413"><a href="#cb12-413" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"../plots/baseline/diet.pdf"</span>, p, <span class="at">width =</span> <span class="dv">12</span> <span class="sc">*</span> <span class="fl">0.8</span>, <span class="at">height =</span> <span class="dv">7</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
+<span id="cb12-414"><a href="#cb12-414" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb12-415"><a href="#cb12-415" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb12-416"><a href="#cb12-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-417"><a href="#cb12-417" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
-<span id="cb12-418"><a href="#cb12-418" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
-<span id="cb12-419"><a href="#cb12-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-420"><a href="#cb12-420" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
-<span id="cb12-421"><a href="#cb12-421" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
-<span id="cb12-422"><a href="#cb12-422" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
-<span id="cb12-423"><a href="#cb12-423" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-424"><a href="#cb12-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-425"><a href="#cb12-425" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<span id="cb12-417"><a href="#cb12-417" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
+<span id="cb12-418"><a href="#cb12-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-419"><a href="#cb12-419" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
+<span id="cb12-420"><a href="#cb12-420" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
+<span id="cb12-421"><a href="#cb12-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-422"><a href="#cb12-422" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
+<span id="cb12-423"><a href="#cb12-423" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
+<span id="cb12-424"><a href="#cb12-424" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
+<span id="cb12-425"><a href="#cb12-425" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb12-426"><a href="#cb12-426" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-427"><a href="#cb12-427" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
-<span id="cb12-428"><a href="#cb12-428" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
-<span id="cb12-429"><a href="#cb12-429" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
+<span id="cb12-427"><a href="#cb12-427" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<span id="cb12-428"><a href="#cb12-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-429"><a href="#cb12-429" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
+<span id="cb12-430"><a href="#cb12-430" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
+<span id="cb12-431"><a href="#cb12-431" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

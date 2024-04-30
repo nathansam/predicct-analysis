@@ -267,7 +267,9 @@ $$
 
 ### Results
 
-The distribution of Nova intake score appears to be uniform across the cohort.
+The distribution of Nova intake score appears to be uniform across the cohort,
+as such, it seems likely that these data have been mapped to quantiles and are
+no longer describing Nova Score categories. 
 
 ```{R}
 #| label: fig-novas-dist
