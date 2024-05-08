@@ -949,7 +949,7 @@ invisible(cox.summary(cox_model))
 
 ```{R}
 #| output: "asis"
-#no effect when controlling for Sex, Smoke, frailty , age, IMD
+#no effect when controlling for Sex, frailty , age, IMD
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance + AgeGroup + Sex + IMD + frailty(SiteNo),
                    data = psqi_soft)
@@ -1006,7 +1006,7 @@ invisible(cox.summary(cox_model))
 
 ```{R}
 #| output: "asis"
-#no effect when controlling for Sex, Smoke, frailty +/- FC / age
+#no effect when controlling for Sex, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance + AgeGroup + Sex + IMD + frailty(SiteNo),
@@ -1086,7 +1086,7 @@ invisible(cox.summary(cox_model))
 
 ```{R}
 #| output: "asis"
-#no effect when controlling for Sex, Smoke, frailty +/- FC / age
+#no effect when controlling for Sex, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance +
