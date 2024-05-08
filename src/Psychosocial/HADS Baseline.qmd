@@ -333,6 +333,72 @@ table1::table1(~ score_group | cat,
 ```
 
 ```{R}
+#| label: tbl-vars-by-anxiety_cd
+#| tbl-cap: Distribution of baseline anxiety scores across key variables - CD only
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+#all tables for tables
+
+table1::table1(~ score_group | Sex,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | AgeGroup,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | flare_group,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | cat,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+```
+
+```{R}
+#| label: tbl-vars-by-anxiety
+#| tbl-cap: Distribution of baseline anxiety scores across key variables - UC/IBDU only
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+#all tables for tables
+
+table1::table1(~ score_group | Sex,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | AgeGroup,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | flare_group,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | cat,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+```
+
+
+
+```{R}
 #| label: tbl-vars-by-depression
 #| tbl-cap: "Distribution of Baseline Depression Scores across Key Variables"
 #depression_hads
@@ -373,6 +439,70 @@ table1::table1(~ score_group | cat,
 
 ```
 
+
+```{R}
+#| label: tbl-vars-by-depression_cd
+#| tbl-cap: Distribution of baseline depression scores across key variables - CD only
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
+  data = depression_cd,
+  render.continuous = my.render.cont
+)
+
+#all tables for tables
+
+table1::table1(~ score_group | Sex,
+  data = depression_cd,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | AgeGroup,
+  data = depression_cd,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | flare_group,
+  data = depression_cd,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | cat,
+  data = depression_cd,
+  render.continuous = my.render.cont
+)
+
+```
+
+```{R}
+#| label: tbl-vars-by-depression_uc
+#| tbl-cap: Distribution of baseline depression scores across key variables - UC only
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
+  data = depression_uc,
+  render.continuous = my.render.cont
+)
+
+#all tables for tables
+
+table1::table1(~ score_group | Sex,
+  data = depression_uc,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | AgeGroup,
+  data = depression_uc,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | flare_group,
+  data = depression_uc,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | cat,
+  data = depression_uc,
+  render.continuous = my.render.cont
+)
+
+```
 #### Association of baseline HADS with key variables
 
 ```{R}
