@@ -503,6 +503,8 @@ table1::table1(~ score_group | cat,
 )
 
 ```
+
+
 #### Association of baseline HADS with key variables
 
 ```{R}
