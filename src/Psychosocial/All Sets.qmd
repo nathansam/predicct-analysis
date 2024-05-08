@@ -129,16 +129,16 @@ print(patient_flare_baseline)
 
 #inclusive full dataset 1639
 all_psychosocial <- psqi_IBD %>% 
-  full_join(exercise %>% select(ParticipantNo, MinimumExercise, diagnosis2, AgeGroup, cat, IMD, SiteNo))
+  full_join(exercise %>% select(ParticipantNo, MinimumExercise, diagnosis2, AgeGroup, cat, IMD, SiteNo, Sex))
 
 all_psychosocial <- all_psychosocial %>% 
-  full_join(hads_with_demographics %>% select(ParticipantNo, anxiety_hads, depression_hads, diagnosis2, cat, AgeGroup, IMD, SiteNo))
+  full_join(hads_with_demographics %>% select(ParticipantNo, anxiety_hads, depression_hads, diagnosis2, cat, AgeGroup, IMD, SiteNo, Sex))
 
 all_psychosocial <- all_psychosocial %>% 
-  full_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation, diagnosis2, AgeGroup, cat, IMD, SiteNo))
+  full_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation, diagnosis2, AgeGroup, cat, IMD, SiteNo, Sex))
 
 all_psychosocial <- all_psychosocial %>% 
-  full_join(ETOH %>% select(ParticipantNo, Alcoholg, Alcohol_units_wk, weekly_units, diagnosis2, AgeGroup, cat, IMD, SiteNo))
+  full_join(ETOH %>% select(ParticipantNo, Alcoholg, Alcohol_units_wk, weekly_units, diagnosis2, AgeGroup, cat, IMD, SiteNo, Sex))
 
 
 all_soft <- all_psychosocial %>% 
@@ -150,21 +150,20 @@ all_hard <- all_psychosocial %>%
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 
-missing_soft <- all_soft %>% 
-  filter(is.na(IMD))
-#no missingL DiseaseFlareYN, time, cat, SiteNo (fixed)
+missing_psychosocial <- all_psychosocial %>% 
+  filter(is.na(Sex))
+#no missingL DiseaseFlareYN, time in hard or soft
+#no missing cat, SiteNo (fixed) in psychosocial all/soft/hard
 #17 missing IMD (all in exercise)
 
-missing_allsets <- all_psychosocial %>% 
-  filter(is.na())
-#calculate total soft flare
+#calculate total soft flare in whole cohort
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~  diagnosis2, data = all_soft)
 summary(cox_model)
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = all_soft)
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = all_soft)
 print(test_result)
 
-#caclulate total hard flare
+#caclulate total hard flares in whole cohort
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~  diagnosis2, data = all_hard)
 summary(cox_model)
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = all_hard)
@@ -185,13 +184,13 @@ my.render.cont <- function(x) {
 
 
 # this isnt working with the missing values - made everying disappear when I made na = "missing"
-table1::table1( ~ sex | diagnosis2,
-  data = all_psycosocial,
+table1::table1( ~ Sex | diagnosis2,
+  data = all_hard,
   render.continuous = my.render.cont,
   title = "Psychosocial factors in cohort"
 )
 
-table1::table1( ~ depression_group| diagnosis2,
+table1::table1( ~ depression| diagnosis2,
   data = all_psychosocial,
   render.continuous = my.render.cont,
   title = "Psychosocial factors in cohort"
