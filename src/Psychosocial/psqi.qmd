@@ -796,22 +796,69 @@ ggplot(percentages, aes(x = AgeGroup, y = percentage, color = SleepDisturbance, 
 cox.summary <- function(fit) {
   cat("Cox model summary:")
   fit %>%
-    finalfit::fit2df(condense = FALSE) %>% 
-    knitr::kable(col.names = c("Variable",
-                               "HR",
-                               "Lower 95%",
-                               "Upper 95%",
-                               "P-value"),
-                 digits = 4) %>%
+    finalfit::fit2df(condense = FALSE) %>%
+    knitr::kable(
+      col.names = c(
+        "Variable",
+        "HR",
+        "Lower 95%",
+        "Upper 95%",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
     print()
-  cat("Proportional hazards assumption test:")
+
+  cat("\\newline
+
+Diagnostics: \\newline
+
+")
+
+  cat("\\newline
+
+::: {.panel-tabset}
+
+      ")
+
+  cat("
+
+###### Proportional hazards assumption test \\newline
+
+  ")
   cox.zph(fit)$table %>%
-    knitr::kable(col.names = c("",
-                               "Chi-squared statistic",
-                               "DF",
-                               "P-value"),
-                 digits = 4) %>%
+    knitr::kable(
+      col.names = c(
+        "",
+        "Chi-squared statistic",
+        "DF",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
     print()
+
+  cat("\\newline
+
+###### DF betas \\newline
+
+  ")
+
+  print(ggcoxdiagnostics(fit, type = "dfbeta"))
+
+  cat("\\newline
+
+###### Martingale residuals \\newline
+
+      ")
+
+  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+
+  cat("\\newline
+
+:::
+
+      ")
   return()
 }
 ```
@@ -891,24 +938,27 @@ p1
 ```
 
 ```{R}
+#| output: "asis"
 #site only 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance + frailty(SiteNo),
                    data = psqi_soft)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 ```
 
 
 ```{R}
+#| output: "asis"
 #no effect when controlling for Sex, Smoke, frailty , age, IMD
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance + AgeGroup + Sex + IMD + frailty(SiteNo),
                    data = psqi_soft)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 ```
 
 
 ```{R}
+#| output: "asis"
 #with FC
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance +
@@ -917,7 +967,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      cat +
                      IMD +
                      frailty(SiteNo), data = psqi_soft)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 ```
 
 
@@ -945,27 +995,29 @@ p1
 ```
 
 ```{R}
+#| output: "asis"
 #site only 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance + frailty(SiteNo),
                    data = psqi_hard)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 ```
 
 
 ```{R}
+#| output: "asis"
 #no effect when controlling for Sex, Smoke, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance + AgeGroup + Sex + IMD + frailty(SiteNo),
                    data = psqi_hard)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 ```
 
 
 ```{R}
+#| output: "asis"
 #with FC
-
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance +
                      Sex +
@@ -974,7 +1026,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      cat +
                      frailty(SiteNo),
                    data = psqi_hard)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 
 ```
 
@@ -1001,14 +1053,16 @@ n= 771, number of events= 98
 ```{r, CD and sleep disturbance}
 # soft flares
 #no effect on time to flare in CD
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_CD_soft)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ SleepDisturbance,
+                        data = psqi_CD_soft)
 pander(test_result)
 ```
 
 ```{R}
 #| label: fig-soft-uc
 #| fig-cap: "Time to soft flare by presence of Sleep Disturbance (CD patients)"
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_CD_soft)
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance,
+               data = psqi_CD_soft)
 p1 <- ggsurvplot(fit,
            data = psqi_CD_soft,
            conf.int = TRUE,
@@ -1021,15 +1075,17 @@ p1
 ```
 
 ```{R}
+#| output: "asis"
 #sleep only 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance + frailty(SiteNo),
                    data = psqi_CD_soft)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 ```
 
 
 ```{R}
+#| output: "asis"
 #no effect when controlling for Sex, Smoke, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
@@ -1039,27 +1095,28 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      Sex +
                      frailty(SiteNo),
                    data = psqi_CD_soft)
-pander(summary(cox_model))
+invisible(cox.summary(cox_model))
 ```
 
 
 ```{R}
+#| output: "asis"
 #with FC
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + AgeGroup + SleepDisturbance + IMD + cat + frailty(SiteNo),
                 data = psqi_CD_soft)
-cox.summary(fit.me)
+invisible(cox.summary(fit.me))
 ```
 
-**NATHAN**
 
 #### Hard flares
 
 ```{R}
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_CD_hard)
 
-test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_CD_hard)
-print(test_result)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ SleepDisturbance,
+                        data = psqi_CD_hard)
+pander(test_result)
 
 p1 <- ggsurvplot(fit,
            data = psqi_CD_hard,
@@ -1074,31 +1131,33 @@ p1
 ```
 
 ```{R}
+#| output: "asis"
 #sleep only 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + frailty(SiteNo), data = psqi_CD_hard)
-summary(cox_model)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
+                     SleepDisturbance + frailty(SiteNo),
+                   data = psqi_CD_hard)
+invisible(cox.summary(cox_model))
 ```
 
 
 ```{R}
+#| output: "asis"
 #no effect when controlling for Sex, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + IMD + AgeGroup + Sex + frailty(SiteNo), data = psqi_CD_hard)
-summary(cox_model)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
+                     SleepDisturbance + IMD + AgeGroup + Sex + frailty(SiteNo),
+                   data = psqi_CD_hard)
+invisible(cox.summary(cox_model))
 ```
 
 ```{R}
+#| output: "asis"
 #with FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + AgeGroup + cat + frailty(SiteNo), data = psqi_CD_hard)
-
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + AgeGroup + SleepDisturbance + cat + IMD + frailty(SiteNo),
                 data = psqi_CD_hard)
-cox.summary(fit.me)
-summary(cox_model)
+invisible(cox.summary(fit.me))
 ```
-
-
 
 ### UC/IBDU 
 
@@ -1110,14 +1169,14 @@ n= 774, number of events= 300
 Hard flares: 
 * no significant increase in risk of time to soft flare in any analyses
 
-
 ```{r, UC/IBDU and fatigue}
 # soft flare 
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_UC_soft)
-
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_UC_soft)
-print(test_result)
+pander(test_result)
+```
 
+```{R}
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_UC_soft)
 p1 <- ggsurvplot(fit,
            data = psqi_UC_soft,
            conf.int = TRUE,
@@ -1128,67 +1187,86 @@ p1 <- ggsurvplot(fit,
            title = "Time to soft flare"
            )
 p1
+```
 
+```{R}
+#| output: "asis"
 #sleep only 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + frailty(SiteNo), data = psqi_UC_soft)
-summary(cox_model)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
+                     SleepDisturbance + frailty(SiteNo),
+                   data = psqi_UC_soft)
+invisible(cox.summary(cox_model))
+```
 
+```{R}
+#| output: "asis"
 #no effect when controlling for Sex, frailty +/- FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + AgeGroup + IMD + frailty(SiteNo), data = psqi_UC_soft)
-summary(cox_model)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
+                     SleepDisturbance + Sex + AgeGroup + IMD + frailty(SiteNo),
+                   data = psqi_UC_soft)
+invisible(cox.summary(cox_model))
+```
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + AgeGroup + cat + frailty(SiteNo), data = psqi_UC_soft)
-
+```{R}
+#| output: "asis"
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + SleepDisturbance + AgeGroup + IMD + cat + frailty(SiteNo),
+                  Sex +
+                  SleepDisturbance +
+                  AgeGroup +
+                  IMD +
+                  cat +
+                  frailty(SiteNo),
                 data = psqi_UC_soft)
-cox.summary(fit.me)
-summary(cox_model)
+invisible(cox.summary(fit.me))
+```
 
-
+```{R}
 #hard flare
 #no effect on time to flare in UC (p-value = 0.48)
-fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_UC_hard)
-
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = psqi_UC_hard)
-print(test_result)
+pander(test_result)
+```
 
+```{R}
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance,
+               data = psqi_UC_hard)
 p1 <- ggsurvplot(fit,
            data = psqi_UC_hard,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "UC patients, time to hard flare by presence of Sleep Disturbance",
+           legend.title = paste("UC patients, time to hard flare by presence",
+                                "of Sleep Disturbance"),
            palette = c("#BB0A21", "#F39237"),
            xlab = "Time from study recrutiment (days)",
            title = "Time to hard flare"
            )
 p1
+```
 
+```{R}
+#| output: "asis"
 #sleep only 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + frailty(SiteNo), data = psqi_UC_hard)
-
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   SleepDisturbance + frailty(SiteNo),
                 data = psqi_UC_hard)
-cox.summary(fit.me)
-summary(cox_model)
+invisible(cox.summary(fit.me))
+```
 
+```{R}
+#| output: "asis"
 #no effect when controlling for Sex, frailty +/- FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + AgeGroup + IMD + frailty(SiteNo), data = psqi_UC_hard)
-
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + AgeGroup + SleepDisturbance + IMD + frailty(SiteNo),
                 data = psqi_UC_hard)
-cox.summary(fit.me)
-summary(cox_model)
+invisible(cox.summary(fit.me))
+```
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + AgeGroup + cat + frailty(SiteNo), data = psqi_UC_hard)
-
+```{R}
+#| output: "asis"
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
                   Sex + SleepDisturbance + AgeGroup + IMD+ cat + frailty(SiteNo),
                 data = psqi_UC_hard)
-cox.summary(fit.me)
-summary(cox_model)
+invisible(cox.summary(fit.me))
 ```
 
 
