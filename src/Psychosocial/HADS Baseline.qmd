@@ -171,7 +171,7 @@ hads_with_demographics$AgeGroup <- cut(hads_with_demographics$age,
 
 #add FC data and exclude missing FC
 hads_with_demographics <- hads_with_demographics %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, IMD, Smoke), by = "ParticipantNo")
+  left_join(demo %>% select(ParticipantNo, FC, cat, IMD), by = "ParticipantNo")
 
 n_missing_fc <- hads_with_demographics %>% 
   filter(is.na(cat)) %>%
@@ -234,7 +234,7 @@ chi-square test or Fisher's exact test.
 
 ### Baseline scores
 
-At baseline, anxiety scores tended to be higher for anxiety compared than for
+At baseline, anxiety scores tended to be higher for anxiety compared to
 depression. 
 
 A recent meta-analysis by @Barberio2021 looking at the prevalence of anxiety and
@@ -301,6 +301,12 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
 )
+
+table1::table1(~ score_group | Sex,
+  data = filtered_data_anxiety,
+  render.continuous = my.render.cont
+)
+
 ```
 
 ```{R}
@@ -771,7 +777,7 @@ chi_squared %>%
 
 ```{R}
 #| label: fig-anxiety-prev-flare
-#| fig-cap: "Distribution of baseline HADS-Anxiety scores per age group"
+#| fig-cap: "Distribution of baseline HADS-Anxiety scores and flares reported in the previous year"
 
 #plot- anxiety whole
 percentages <- filtered_data_anxiety %>%
@@ -787,6 +793,49 @@ ggplot(percentages,
            group = flare_group)) +
   geom_line() +
   labs(x = "HADS anxiety score",
+       y = "Number of Participants",
+       colour = "Flares in the last year",
+       group = "Flares in the last year") +
+  # Format y-axis as percentage
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  
+  theme_minimal()
+
+
+#plot- anxiety CD
+percentages <- anxiety_cd %>%
+  group_by(flare_group, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(flare_group) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages,
+       aes(x = score_group,
+           y = percentage,
+           colour = flare_group,
+           group = flare_group)) +
+  geom_line() +
+  labs(x = "HADS anxiety score (CD)",
+       y = "Number of Participants",
+       colour = "Flares in the last year",
+       group = "Flares in the last year") +
+  # Format y-axis as percentage
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  
+  theme_minimal()
+
+#plot- anxiety UC
+percentages <- anxiety_uc %>%
+  group_by(flare_group, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(flare_group) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages,
+       aes(x = score_group,
+           y = percentage,
+           colour = flare_group,
+           group = flare_group)) +
+  geom_line() +
+  labs(x = "HADS anxiety score (UC/IBDU)",
        y = "Number of Participants",
        colour = "Flares in the last year",
        group = "Flares in the last year") +
