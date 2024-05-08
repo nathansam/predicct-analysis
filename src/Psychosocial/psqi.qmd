@@ -172,8 +172,6 @@ missing_fc <- psqi2 %>%
   filter(is.na(cat))
 psqi2 <- psqi2 %>% 
   filter(!is.na(cat))
-psqi2 <- psqi2 %>% 
-  left_join(smoking %>% select(ParticipantNo, Smoke), by = "ParticipantNo")
 
 save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 saveRDS(psqi2, paste0(save_path, "psqi_IBD.RDS"))
@@ -900,6 +898,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
 pander(summary(cox_model))
 ```
 
+
 ```{R}
 #no effect when controlling for Sex, Smoke, frailty , age, IMD
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
@@ -907,6 +906,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                    data = psqi_soft)
 pander(summary(cox_model))
 ```
+
 
 ```{R}
 #with FC
@@ -919,6 +919,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      frailty(SiteNo), data = psqi_soft)
 pander(summary(cox_model))
 ```
+
 
 #### Hard flares
 
@@ -951,6 +952,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
 pander(summary(cox_model))
 ```
 
+
 ```{R}
 #no effect when controlling for Sex, Smoke, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
@@ -960,8 +962,10 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
 pander(summary(cox_model))
 ```
 
+
 ```{R}
 #with FC
+
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      SleepDisturbance +
                      Sex +
@@ -971,6 +975,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
                      frailty(SiteNo),
                    data = psqi_hard)
 pander(summary(cox_model))
+
 ```
 
 ### Crohn's disease
@@ -1023,6 +1028,7 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
 pander(summary(cox_model))
 ```
 
+
 ```{R}
 #no effect when controlling for Sex, Smoke, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
@@ -1036,16 +1042,11 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~
 pander(summary(cox_model))
 ```
 
+
 ```{R}
 #with FC
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex +
-                  Smoke +
-                  AgeGroup +
-                  SleepDisturbance +
-                  IMD +
-                  cat +
-                  frailty(SiteNo),
+                  Sex + AgeGroup + SleepDisturbance + IMD + cat + frailty(SiteNo),
                 data = psqi_CD_soft)
 cox.summary(fit.me)
 ```
@@ -1080,18 +1081,18 @@ summary(cox_model)
 
 
 ```{R}
-#no effect when controlling for Sex, Smoke, frailty +/- FC / age
+#no effect when controlling for Sex, frailty +/- FC / age
 #?need to analyse age groups separately? Find out if the effect exists for specific groups only
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + IMD + AgeGroup + Sex + Smoke + frailty(SiteNo), data = psqi_CD_hard)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + IMD + AgeGroup + Sex + frailty(SiteNo), data = psqi_CD_hard)
 summary(cox_model)
 ```
 
 ```{R}
 #with FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + AgeGroup + Smoke + cat + frailty(SiteNo), data = psqi_CD_hard)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + AgeGroup + cat + frailty(SiteNo), data = psqi_CD_hard)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + SleepDisturbance + cat + IMD + frailty(SiteNo),
+                  Sex + AgeGroup + SleepDisturbance + cat + IMD + frailty(SiteNo),
                 data = psqi_CD_hard)
 cox.summary(fit.me)
 summary(cox_model)
@@ -1132,14 +1133,14 @@ p1
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + frailty(SiteNo), data = psqi_UC_soft)
 summary(cox_model)
 
-#no effect when controlling for Sex, Smoke, frailty +/- FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = psqi_UC_soft)
+#no effect when controlling for Sex, frailty +/- FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + AgeGroup + IMD + frailty(SiteNo), data = psqi_UC_soft)
 summary(cox_model)
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + Smoke + AgeGroup + cat + frailty(SiteNo), data = psqi_UC_soft)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + AgeGroup + cat + frailty(SiteNo), data = psqi_UC_soft)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + SleepDisturbance + AgeGroup + IMD + cat + frailty(SiteNo),
+                  Sex + SleepDisturbance + AgeGroup + IMD + cat + frailty(SiteNo),
                 data = psqi_UC_soft)
 cox.summary(fit.me)
 summary(cox_model)
@@ -1172,19 +1173,19 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
 cox.summary(fit.me)
 summary(cox_model)
 
-#no effect when controlling for Sex, Smoke, frailty +/- FC
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = psqi_UC_hard)
+#no effect when controlling for Sex, frailty +/- FC
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + AgeGroup + IMD + frailty(SiteNo), data = psqi_UC_hard)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + AgeGroup + SleepDisturbance + IMD + frailty(SiteNo),
+                  Sex + AgeGroup + SleepDisturbance + IMD + frailty(SiteNo),
                 data = psqi_UC_hard)
 cox.summary(fit.me)
 summary(cox_model)
 
-cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + Smoke + AgeGroup + cat + frailty(SiteNo), data = psqi_UC_hard)
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ SleepDisturbance + Sex + IMD + AgeGroup + cat + frailty(SiteNo), data = psqi_UC_hard)
 
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + Smoke + SleepDisturbance + AgeGroup + IMD+ cat + frailty(SiteNo),
+                  Sex + SleepDisturbance + AgeGroup + IMD+ cat + frailty(SiteNo),
                 data = psqi_UC_hard)
 cox.summary(fit.me)
 summary(cox_model)

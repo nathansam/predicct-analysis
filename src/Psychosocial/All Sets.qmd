@@ -126,38 +126,52 @@ print(patient_flare_baseline)
 ```
 
 ```{r, join datasets}
-#all sets keeps only those who completed all questionnaires - total 1527
-all_sets <- exercise %>% 
-  inner_join(psqi_IBD %>% select(ParticipantNo, TotalScore, SleepDisturbance)) %>% 
-  rename(PSQIScore = TotalScore)
-all_sets <- all_sets %>% 
-  inner_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation))
-filtered_data_depression <- hads_fc[hads_fc$hads_type == "depression_hads", ]
-filtered_data_anxiety <- hads_fc[hads_fc$hads_type == "anxiety_hads", ]
-all_sets <- all_sets %>% 
-  inner_join(filtered_data_anxiety %>% select(ParticipantNo, hads_score, score_group)) %>% 
-  rename(anxiety_score = hads_score, anxiety_group = score_group)
-all_sets <- all_sets %>% 
-  inner_join(filtered_data_depression %>% select(ParticipantNo, hads_score, score_group)) %>% 
-  rename(depression_score = hads_score, depression_group = score_group)
 
-filtered_data_depression <- hads_fc[hads_fc$hads_type == "depression_hads", ]
-filtered_data_anxiety <- hads_fc[hads_fc$hads_type == "anxiety_hads", ]
 #inclusive full dataset 1639
 all_psychosocial <- psqi_IBD %>% 
-  full_join(exercise %>% select(ParticipantNo, MinimumExercise, diagnosis2, AgeGroup, cat))
+  full_join(exercise %>% select(ParticipantNo, MinimumExercise, diagnosis2, AgeGroup, cat, IMD, SiteNo, Sex))
+
 all_psychosocial <- all_psychosocial %>% 
-  full_join(filtered_data_anxiety %>% select(ParticipantNo, hads_score, score_group, diagnosis2, cat)) %>% 
-  rename(anxiety_score = hads_score, anxiety_group = score_group)
+  full_join(hads_with_demographics %>% select(ParticipantNo, anxiety_hads, depression_hads, diagnosis2, cat, AgeGroup, IMD, SiteNo, Sex))
+
 all_psychosocial <- all_psychosocial %>% 
-  full_join(filtered_data_depression %>% select(ParticipantNo, hads_score, score_group, diagnosis2, cat)) %>%
-  rename(depression_score = hads_score, depression_group = score_group)
+  full_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation, diagnosis2, AgeGroup, cat, IMD, SiteNo, Sex))
+
 all_psychosocial <- all_psychosocial %>% 
-  full_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation, diagnosis2, AgeGroup, cat))
-all_psychosocial <- all_psychosocial %>% 
-  full_join(ETOH %>% select(ParticipantNo, Alcoholg, Alcohol_units_wk, weekly_units, diagnosis2, AgeGroup, cat))
+  full_join(ETOH %>% select(ParticipantNo, Alcoholg, Alcohol_units_wk, weekly_units, diagnosis2, AgeGroup, cat, IMD, SiteNo, Sex))
 
 
+all_soft <- all_psychosocial %>% 
+  inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 
+  rename(DiseaseFlareYN = softflare, time = softflare_time)
+
+all_hard <- all_psychosocial %>% 
+  inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time)) %>% 
+  rename(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+
+missing_psychosocial <- all_psychosocial %>% 
+  filter(is.na(Sex))
+#no missingL DiseaseFlareYN, time in hard or soft
+#no missing cat, SiteNo (fixed) in psychosocial all/soft/hard
+#17 missing IMD (all in exercise)
+
+#calculate total soft flare in whole cohort
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~  diagnosis2, data = all_soft)
+summary(cox_model)
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = all_soft)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = all_soft)
+print(test_result)
+
+#caclulate total hard flares in whole cohort
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~  diagnosis2, data = all_hard)
+summary(cox_model)
+fit <- survfit(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = all_hard)
+test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ diagnosis2, data = all_hard)
+print(test_result)
+
+
+#tot 1641 - no duplicates
 my.render.cont <- function(x) {
   with(
     stats.apply.rounding(stats.default(x),
@@ -170,13 +184,13 @@ my.render.cont <- function(x) {
 
 
 # this isnt working with the missing values - made everying disappear when I made na = "missing"
-table1::table1( ~ Sex + cat + anxiety_group + depression_group | diagnosis2,
-  data = all_psychosocial,
+table1::table1( ~ Sex | diagnosis2,
+  data = all_hard,
   render.continuous = my.render.cont,
   title = "Psychosocial factors in cohort"
 )
 
-table1::table1( ~ depression_group| diagnosis2,
+table1::table1( ~ depression| diagnosis2,
   data = all_psychosocial,
   render.continuous = my.render.cont,
   title = "Psychosocial factors in cohort"
@@ -345,4 +359,42 @@ flares_soft <- flares_soft %>%
 saveRDS(flares_hard, paste0(save_path, "flares_hard.RDS"))
 saveRDS(flares_soft, paste0(save_path, "flares_soft.RDS"))
 
+```
+
+
+
+Code I removed from exercise to keep more in line with WHO guidelines 
+```{r, removed from exercise methods}
+12 patients report over 12 in one area
+screen_exercise <- exercise %>% 
+  filter(
+    VigorousWorkHours >= 12 | 
+    ModerateWorkHours >= 12 | 
+    WalkBicycleHours >= 12 | 
+    VigorousSportHours >= 12 | 
+    ModerateSportHours >= 12 
+  )
+
+#keep those which have been manually checked as true results, exclude those which are misreported/impossible (8). New total is not 1830.
+ids_to_keep <- c(117, 4843, 7174, 9404, 13226)
+exercise <- exercise %>%
+  filter(
+    if_else(ParticipantId %in% ids_to_keep, TRUE, 
+            (is.na(VigorousWorkHours) | VigorousWorkHours < 12) &
+            (is.na(ModerateWorkHours) | ModerateWorkHours < 12) &
+            (is.na(WalkBicycleHours) | WalkBicycleHours < 12) &
+            (is.na(VigorousSportHours) | VigorousSportHours < 12) &
+            (is.na(ModerateSportHours) | ModerateSportHours < 12))
+  )
+
+
+#Find/exclude obvious errors in Vigorous Work - where days are not reported
+VW_wrong <- exercise %>%
+  filter(VigorousWork == 1 & (VigorousWorkDays == 0 | is.na(VigorousWorkDays)))
+#1 ParticipantID 7140 excluded as not including days in response
+exercise <- exercise %>% 
+  filter(!(ParticipantId %in% c(7140)))
+#participantID 1468, 7143, 9587 and 12102 recoded 1 -> 2 as none recording any activity but valid responses in other domains
+exercise <- exercise %>%
+  mutate(VigorousWork = ifelse(ParticipantId %in% c(1468, 7143, 9587, 12102), 2, VigorousWork))
 ```
