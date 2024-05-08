@@ -278,6 +278,7 @@ ggplot(hads_for_analysis, aes(x = hads_score, colour = hads_type)) +
 filtered_data_anxiety <-
   hads_for_analysis[hads_for_analysis$hads_type == "anxiety_hads", ]
 
+
 my.render.cont <- function(x) {
   with(
     stats.apply.rounding(stats.default(x),
@@ -302,7 +303,29 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   render.continuous = my.render.cont
 )
 
+#all tables for tables
+
+table1::table1(~ score_group | diagnosis2,
+  data = filtered_data_anxiety,
+  render.continuous = my.render.cont
+)
+
 table1::table1(~ score_group | Sex,
+  data = filtered_data_anxiety,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | AgeGroup,
+  data = filtered_data_anxiety,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | flare_group,
+  data = filtered_data_anxiety,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | cat,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
 )
@@ -320,6 +343,34 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = filtered_data_depression,
   render.continuous = my.render.cont
 )
+
+#all tables for tables
+
+table1::table1(~ score_group | diagnosis2,
+  data = filtered_data_depression,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | Sex,
+  data = filtered_data_depression,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | AgeGroup,
+  data = filtered_data_depression,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | flare_group,
+  data = filtered_data_depression,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ score_group | cat,
+  data = filtered_data_depression,
+  render.continuous = my.render.cont
+)
+
 ```
 
 #### Association of baseline HADS with key variables
@@ -515,7 +566,7 @@ Age groups and anxiety scores
 Age groups and depression scores
 
 * Significant associations in whole cohort (p-value = 0.031)
-* Not significant in CD or UC/IBDU
+* ? in CD or UC/IBDU
 
 As seen from the graphs below, a higher proportion of young people have moderate
 and high risk for anxiety. Interpretation of associations with age and
@@ -706,10 +757,6 @@ Reported flares in previous year and depression scores:
 * Associated in CD (p-value = 0.007)
 * Not associated in UC (p-value = 0.062)
 
-::: {.callout-note}
-We need to do plots to prove directionality of this relationship (done for whole
-cohort, not for UC/IBDU and CD individually)
-:::
 
 ```{r, chi-sq for association between HADS ands flare group}
 #| output: "asis"
@@ -860,6 +907,44 @@ ggplot(percentages, aes(x = score_group,
                         group = flare_group)) +
   geom_line() +
   labs(x = "HADS Depression score",
+       y = "Number of Participants",
+       colour = "Flares in the last year",
+       group = "Flares in the last year") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_minimal()
+
+# plots to illustrate the above - depression CD
+percentages <- depression_cd %>%
+  group_by(flare_group, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(flare_group) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group,
+                        y = percentage,
+                        colour = flare_group,
+                        group = flare_group)) +
+  geom_line() +
+  labs(x = "HADS Depression score (CD)",
+       y = "Number of Participants",
+       colour = "Flares in the last year",
+       group = "Flares in the last year") +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  theme_minimal()
+
+# plots to illustrate the above - depression UC/IBDU
+percentages <- depression_uc %>%
+  group_by(flare_group, score_group) %>%
+  summarise(count = n()) %>%
+  group_by(flare_group) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+ggplot(percentages, aes(x = score_group,
+                        y = percentage,
+                        colour = flare_group,
+                        group = flare_group)) +
+  geom_line() +
+  labs(x = "HADS Depression score (UC/IBDU)",
        y = "Number of Participants",
        colour = "Flares in the last year",
        group = "Flares in the last year") +
