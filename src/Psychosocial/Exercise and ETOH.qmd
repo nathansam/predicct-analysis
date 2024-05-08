@@ -131,8 +131,6 @@ exercise$flare_group <- factor(exercise$flare_group, levels = c( "No Flares", "1
 exercise <- exercise %>% 
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD)) %>% 
   filter(!is.na(cat))
-exercise <- exercise %>% 
-  left_join(smoking %>% select(ParticipantNo, Smoke))
 
 
 #Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, ModerateSport -> 2 participants
@@ -466,12 +464,6 @@ if (chi_squared_result$p.value < alpha) {
   message("There is no significant association between achieving minimum exercise and FC in CD patients")
 }
 
-#smoking
-contingency_table <- table(ex_CD$Smoke, ex_CD$MinimumExercise)
-contingency_table
-options(expressions = 10000)
-fisher_result <- fisher.test(contingency_table, workspace = 2e7, hybrid = TRUE, control = list(worksize = 1e7))
-fisher_result
 ```
 
 
@@ -626,11 +618,11 @@ cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = 
 summary(cox_model)
 
 #site, sex, smoking, IMD
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + frailty(SiteNo), data = exercise_soft)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = exercise_soft)
 summary(cox_model)
 
 #control for fc in exercise
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + cat + frailty(SiteNo), data = exercise_soft)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = exercise_soft)
 summary(cox_model)
 
 #Hard flares
@@ -654,12 +646,12 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = exercise_hard)
 summary(cox_model)
 
-#smoke and sex and frailty
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + frailty(SiteNo), data = exercise_hard)
+#sex and frailty
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = exercise_hard)
 summary(cox_model)
 
 #control for fc additionally
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + cat + frailty(SiteNo), data = exercise_hard)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = exercise_hard)
 summary(cox_model)
 ```
 
@@ -712,11 +704,11 @@ cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = 
 summary(cox_model)
 
 #2
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + frailty(SiteNo), data = ex_CD_soft)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_soft)
 summary(cox_model)
 
 #control for fc
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
 summary(cox_model)
 
 
@@ -741,13 +733,13 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_CD_hard)
 summary(cox_model)
 
-#smoke and sex and frailty
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + frailty(SiteNo), data = ex_CD_hard)
+#sex and frailty
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_hard)
 summary(cox_model)
 
 
 #control for fc additionally
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
 summary(cox_model)
 ```
 
@@ -795,12 +787,12 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_soft)
 summary(cox_model)
 
-#controlling for Sex, Smoke, frailty
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + frailty(SiteNo), data = ex_UC_soft)
+#controlling for Sex, frailty
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_soft)
 summary(cox_model)
 
 #control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + Smoke + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
 summary(cox_model)
 
 
@@ -825,12 +817,12 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_hard)
 summary(cox_model)
 
-#smoke and sex frailty IMD
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + Smoke + frailty(SiteNo), data = ex_UC_hard)
+#sex frailty IMD
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_hard)
 summary(cox_model)
 
 #control for FC
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + Smoke + cat + frailty(SiteNo), data = ex_UC_hard)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_hard)
 summary(cox_model)
 ```
 
@@ -898,16 +890,6 @@ missing_cat <- ETOH %>%
   filter(is.na(cat))
 ETOH <- ETOH %>% 
   filter(!is.na(cat))
-
-#add smoking data
-ETOH <- ETOH %>% 
-  left_join(smoking %>% select(ParticipantNo, Smoke))
-
-#3 missing smoking data -> tot participants 1051
-miss_smoke <- ETOH %>% 
-  filter(is.na(Smoke))
-ETOH <- ETOH %>% 
-  filter(!is.na(Smoke))
 
 
 # create new ETOH groups
@@ -1225,12 +1207,12 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_soft)
 summary(cox_model)
 
-#controlling for Sex, Smoke, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = ETOH_soft)
+#controlling for Sex, frailty, age, IMD
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_soft)
 summary(cox_model)
 
 #control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + IMD + cat + AgeGroup + frailty(SiteNo), data = ETOH_soft)
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + cat + AgeGroup + frailty(SiteNo), data = ETOH_soft)
 summary(cox_model)
 
 
@@ -1257,12 +1239,12 @@ cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETO
 summary(cox_model)
 
 
-#controlling for Sex, Smoke, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = ETOH_CD_hard)
+#controlling for Sex, frailty, age, IMD
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + AgeGroup + IMD + frailty(SiteNo), data = ETOH_CD_hard)
 summary(cox_model)
 
 #control for FC additionally
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_hard)
 summary(cox_model)
 ```
 
@@ -1308,12 +1290,12 @@ cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETO
 summary(cox_model)
 
 
-#controlling for Sex, Smoke, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_soft)
+#controlling for Sex, frailty, age, IMD
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_soft)
 summary(cox_model)
 
 #control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + IMD + cat + AgeGroup + frailty(SiteNo), data = ETOH_CD_soft)
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + cat + AgeGroup + frailty(SiteNo), data = ETOH_CD_soft)
 summary(cox_model)
 
 
@@ -1340,12 +1322,12 @@ cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETO
 summary(cox_model)
 
 
-#controlling for Sex, Smoke, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + AgeGroup + IMD + frailty(SiteNo), data = ETOH_CD_hard)
+#controlling for Sex, frailty, age, IMD
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + AgeGroup + IMD + frailty(SiteNo), data = ETOH_CD_hard)
 summary(cox_model)
 
 #control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_hard)
 summary(cox_model)
 ```
 
@@ -1387,12 +1369,12 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_UC_soft)
 summary(cox_model)
 
-#controlling for Sex, Smoke, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_soft)
+#controlling for Sex, frailty, age, IMD
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_soft)
 summary(cox_model)
 
 #control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_soft)
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_soft)
 summary(cox_model)
 
 
@@ -1418,12 +1400,12 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_UC_hard)
 summary(cox_model)
 
-#controlling for Sex, Smoke, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_hard)
+#controlling for Sex, frailty, age, IMD
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_hard)
 summary(cox_model)
 
 #control for FC additinoally
-cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + Smoke + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_hard)
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_hard)
 summary(cox_model)
 ```
 
