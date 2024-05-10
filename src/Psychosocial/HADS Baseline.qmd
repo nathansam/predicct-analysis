@@ -297,34 +297,38 @@ table1::table1(~ score_group | hads_type,
 
 ```{R}
 #| label: tbl-vars-by-anxiety
-#| tbl-cap: Distribution of baseline anxiety scores across key variables
+#| tbl-cap: "Distribution of baseline anxiety scores across key variables"
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
 )
 
 #all tables for tables
-
+#| tbl-cap: "Distribution of baseline anxiety scores by diagnosis type"
 table1::table1(~ score_group | diagnosis2,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by sex"
 table1::table1(~ score_group | Sex,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by age group"
 table1::table1(~ score_group | AgeGroup,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by previous flare"
 table1::table1(~ score_group | flare_group,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by faecal calprotectin"
 table1::table1(~ score_group | cat,
   data = filtered_data_anxiety,
   render.continuous = my.render.cont
@@ -334,29 +338,32 @@ table1::table1(~ score_group | cat,
 
 ```{R}
 #| label: tbl-vars-by-anxiety_cd
-#| tbl-cap: Distribution of baseline anxiety scores across key variables - CD only
+#| tbl-cap: "Distribution of baseline anxiety scores across key variables - CD only"
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = anxiety_cd,
   render.continuous = my.render.cont
 )
 
 #all tables for tables
-
+#| tbl-cap: "Distribution of baseline anxiety scores by sex (CD only)"
 table1::table1(~ score_group | Sex,
   data = anxiety_cd,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by age group (CD only)"
 table1::table1(~ score_group | AgeGroup,
   data = anxiety_cd,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by previous flare (CD only)"
 table1::table1(~ score_group | flare_group,
   data = anxiety_cd,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by faecal calprotectin (CD only)"
 table1::table1(~ score_group | cat,
   data = anxiety_cd,
   render.continuous = my.render.cont
@@ -366,29 +373,32 @@ table1::table1(~ score_group | cat,
 
 ```{R}
 #| label: tbl-vars-by-anxiety
-#| tbl-cap: Distribution of baseline anxiety scores across key variables - UC/IBDU only
+#| tbl-cap: "Distribution of baseline anxiety scores across key variables - UC/IBDU only"
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = anxiety_uc,
   render.continuous = my.render.cont
 )
 
 #all tables for tables
-
+#| tbl-cap: "Distribution of baseline anxiety scores by sex (UC/IBDU only)"
 table1::table1(~ score_group | Sex,
   data = anxiety_uc,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by age group (UC/IBDU only)"
 table1::table1(~ score_group | AgeGroup,
   data = anxiety_uc,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by previous flare (UC/IBDU only)"
 table1::table1(~ score_group | flare_group,
   data = anxiety_uc,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by faecal calprotectin (UC/IBDU only)"
 table1::table1(~ score_group | cat,
   data = anxiety_uc,
   render.continuous = my.render.cont
@@ -411,27 +421,31 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
 )
 
 #all tables for tables
-
+#| tbl-cap: "Distribution of baseline depression scores by digaosis type"
 table1::table1(~ score_group | diagnosis2,
   data = filtered_data_depression,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by sex"
 table1::table1(~ score_group | Sex,
   data = filtered_data_depression,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by age group"
 table1::table1(~ score_group | AgeGroup,
   data = filtered_data_depression,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by previous flare"
 table1::table1(~ score_group | flare_group,
   data = filtered_data_depression,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline anxiety scores by faecal calprotectin (UC/IBDU only)"
 table1::table1(~ score_group | cat,
   data = filtered_data_depression,
   render.continuous = my.render.cont
@@ -442,7 +456,7 @@ table1::table1(~ score_group | cat,
 
 ```{R}
 #| label: tbl-vars-by-depression_cd
-#| tbl-cap: Distribution of baseline depression scores across key variables - CD only
+#| tbl-cap: "Distribution of baseline depression scores across key variables - CD only"
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = depression_cd,
   render.continuous = my.render.cont
@@ -450,21 +464,25 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
 
 #all tables for tables
 
+#| tbl-cap: "Distribution of baseline depression scores by sex (CD only)"
 table1::table1(~ score_group | Sex,
   data = depression_cd,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by age group (CD only)"
 table1::table1(~ score_group | AgeGroup,
   data = depression_cd,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by previous flare (CD only)"
 table1::table1(~ score_group | flare_group,
   data = depression_cd,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by faecal calprotectin (CD only)"
 table1::table1(~ score_group | cat,
   data = depression_cd,
   render.continuous = my.render.cont
@@ -474,29 +492,31 @@ table1::table1(~ score_group | cat,
 
 ```{R}
 #| label: tbl-vars-by-depression_uc
-#| tbl-cap: Distribution of baseline depression scores across key variables - UC only
+#| tbl-cap: "Distribution of baseline depression scores across key variables - UC only"
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = depression_uc,
   render.continuous = my.render.cont
 )
 
-#all tables for tables
-
+#| tbl-cap: "Distribution of baseline depression scores by sex (UC/IBDU only)"
 table1::table1(~ score_group | Sex,
   data = depression_uc,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by age group (UC/IBDU only)"
 table1::table1(~ score_group | AgeGroup,
   data = depression_uc,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by previous flares (UC/IBDU only)"
 table1::table1(~ score_group | flare_group,
   data = depression_uc,
   render.continuous = my.render.cont
 )
 
+#| tbl-cap: "Distribution of baseline depression scores by faecal calprotectin (UC/IBDU only)"
 table1::table1(~ score_group | cat,
   data = depression_uc,
   render.continuous = my.render.cont
@@ -546,9 +566,9 @@ groups between CD and UC/IBDU cohorts.
 ```{r, hads and diagnosis type}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
 
 # Create the contingency table
+#| tbl-cap: "Anxiety scores and IBD type"
 contingency_table_anxiety <- table(filtered_data_anxiety$diagnosis2,
                                    filtered_data_anxiety$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
@@ -567,9 +587,9 @@ chi_squared_result_anxiety %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
 
 # Create the contingency table
+#| tbl-cap: "Depression scores and IBD type"
 contingency_table_depression <- table(filtered_data_depression$diagnosis2,
                                       filtered_data_depression$score_group)
 chi_squared_result_depression <- chisq.test(contingency_table_depression)
@@ -602,9 +622,9 @@ Depression scores and sex:
 ```{r, table for data and chi sq}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
 
 # Create the contingency table
+#| tbl-cap: "Anxiety scores and sex"
 contingency_table_anxiety <- table(filtered_data_anxiety$Sex,
                                    filtered_data_anxiety$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
@@ -622,9 +642,10 @@ chi_squared_result_anxiety %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
 
-#anxiety cd
+
+#anxiety uc
+#| tbl-cap: "Anxiety scores (UC/IBDU) and sex"
 contingency_table_anxiety <- table(anxiety_uc$Sex, anxiety_uc$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 chi_squared_result_anxiety %>%
@@ -634,8 +655,9 @@ chi_squared_result_anxiety %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
-#anxiety UC
+
+#anxiety CD
+#| tbl-cap: "Anxiety scores (CD) and sex"
 contingency_table_anxiety <- table(anxiety_cd$Sex, anxiety_cd$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 chi_squared_result_anxiety %>%
@@ -645,10 +667,9 @@ chi_squared_result_anxiety %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
 
 # Create the contingency table
-
+#| tbl-cap: "Depression scores and sex"
 contingency_table_depression <- table(filtered_data_depression$Sex,
                                       filtered_data_depression$score_group)
 chi_squared_result_depression <- chisq.test(contingency_table_depression)
@@ -666,7 +687,7 @@ chi_squared_result_depression %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (CD) and sex"
 contingency_table_depression <- table(depression_cd$Sex,
                                       depression_cd$score_group)
 chi_squared_result_depression <- chisq.test(contingency_table_depression)
@@ -677,7 +698,7 @@ chi_squared_result_depression %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (UC/IBDU) and sex"
 contingency_table_depression <- table(depression_uc$Sex,
                                       depression_uc$score_group)
 chi_squared_result_depression <- chisq.test(contingency_table_depression)
@@ -731,7 +752,7 @@ ggplot(percentages, aes(x = score_group,
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores and age group"
 contingency_table_anxiety <- table(filtered_data_anxiety$AgeGroup,
                                    filtered_data_anxiety$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
@@ -749,7 +770,7 @@ chi_squared_result_anxiety %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (CD) and age group"
 contingency_table_anxiety <- table(anxiety_cd$AgeGroup, anxiety_cd$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 chi_squared_result_anxiety %>%
@@ -759,7 +780,7 @@ chi_squared_result_anxiety %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (UC/IBDU) and age group"
 contingency_table_anxiety <- table(anxiety_uc$AgeGroup, anxiety_uc$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 chi_squared_result_anxiety %>%
@@ -793,7 +814,7 @@ ggplot(percentages,
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Depression scores and age group"
 contingency_table_depression <- table(filtered_data_depression$AgeGroup,
                                       filtered_data_depression$score_group)
 chi_squared_result_dep <- chisq.test(contingency_table_depression)
@@ -809,6 +830,7 @@ chi_squared_result_dep %>%
 ```
 
 ```{R}
+#| tbl-cap: "Depression scores (CD) and age group"
 contingency_table_depression <- table(depression_cd$AgeGroup,
                                       depression_cd$score_group)
 cat(sum(table(depression_cd$AgeGroup, depression_cd$score_group) < 5),
@@ -822,6 +844,7 @@ chi_squared_result_dep %>%
 ```
 
 ```{R}
+#| tbl-cap: "Depression scores (UC/IBDU) and age group"
 contingency_table_depression <- table(depression_uc$AgeGroup,
                                       depression_uc$score_group)
 cat(sum(table(depression_cd$AgeGroup, depression_cd$score_group) < 5),
@@ -893,8 +916,7 @@ Reported flares in previous year and depression scores:
 ```{r, chi-sq for association between HADS ands flare group}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
-#anxiety
+#| tbl-cap: "Anxiety scores and previous flares"
 contingency_table_anxiety <- table(filtered_data_anxiety$flare_group,
                                    filtered_data_anxiety$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
@@ -905,7 +927,7 @@ chi_squared_result_anxiety %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (CD) and previous flares"
 contingency_cd_anx <- table(anxiety_cd$flare_group, anxiety_cd$score_group)
 chi_squared <- chisq.test(contingency_cd_anx)
 chi_squared %>%
@@ -915,7 +937,7 @@ chi_squared %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (UC/IBDU) and previous flares"
 contingency_uc_anx <- table(anxiety_uc$flare_group, anxiety_uc$score_group)
 chi_squared <- chisq.test(contingency_uc_anx)
 chi_squared %>%
@@ -925,8 +947,7 @@ chi_squared %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
-#depression
+#| tbl-cap: "Depression scores and previous flares"
 contingency_table_depression <- table(filtered_data_depression$flare_group,
                                       filtered_data_depression$score_group)
 chi_squared_result_depression <- chisq.test(contingency_table_depression)
@@ -937,7 +958,7 @@ chi_squared_result_depression %>%
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (CD) and previous flares"
 contingency_cd_dep <- table(depression_cd$flare_group,
                             depression_cd$score_group)
 chi_squared <- chisq.test(contingency_cd_dep)
@@ -947,7 +968,7 @@ chi_squared %>% pander()
 ```{R}
 #| output: "asis"
 #| results: "hold"
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (UC/IBDU) and previous flares"
 contingency_uc_dep <- table(depression_uc$flare_group, depression_uc$score_group)
 chi_squared <- chisq.test(contingency_uc_dep)
 chi_squared %>%
@@ -1090,7 +1111,7 @@ There was no significant association between faecal calprotectin at baseline (gr
 This was true for when looking at UC/IBDU and CD together or separately.
 
 ```{r, difference in FC across anxiety groups}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores and faecal calprotectin"
 #anxiety
 contingency_table <- table(filtered_data_anxiety$cat,
                            filtered_data_anxiety$score_group)
@@ -1100,7 +1121,7 @@ chi_squared_result_anxiety %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (CD) and faecal calprotectin"
 contingency_table <- table(anxiety_cd$cat, anxiety_cd$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table)
 chi_squared_result_anxiety %>%
@@ -1108,7 +1129,7 @@ chi_squared_result_anxiety %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (UC/IBDU) and faecal calprotectin"
 contingency_table <- table(anxiety_uc$cat, anxiety_uc$score_group)
 chi_squared_result_anxiety <- chisq.test(contingency_table)
 chi_squared_result_anxiety %>%
@@ -1116,7 +1137,7 @@ chi_squared_result_anxiety %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores and faecal calprotectin"
 #depression
 contingency_table <- table(filtered_data_depression$cat,
                            filtered_data_depression$score_group)
@@ -1126,7 +1147,7 @@ chi_squared_result_depression %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (CD) and faecal calprotectin"
 contingency_table <- table(depression_cd$cat, depression_cd$score_group)
 chi_squared_result_depression <- chisq.test(contingency_table)
 chi_squared_result_depression %>%
@@ -1134,7 +1155,7 @@ chi_squared_result_depression %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (UC/IBDU) and faecal calprotectin"
 contingency_table <- table(depression_uc$cat, depression_uc$score_group)
 chi_squared_result_depression <- chisq.test(contingency_table)
 chi_squared_result_depression %>%
@@ -1185,7 +1206,7 @@ filtered_data_depression <- hads_control[hads_control$hads_type == "depression_h
 ```
 
 ```{R HADS and control - 8}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores and IBD-Control-8"
 #all participants
 data_flare_a <- hads_control[hads_control$hads_type == "anxiety_hads",]
 contingency_table_flare <- table(data_flare_a$score_group,
@@ -1196,7 +1217,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (CD) and IBD-Control-8"
 #anxiety, cd only
 data_flare_c <- data_flare_a[data_flare_a$diagnosis2 == "CD",]
 contingency_table_c <- table(data_flare_c$score_group,
@@ -1207,7 +1228,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (UC/IBDU) and IBD-Control-8"
 #anxiety, uc/ibdu only
 data_flare_b <- data_flare_a[data_flare_a$diagnosis2 == "UC/IBDU",]
 contingency_table_b <- table(data_flare_b$score_group, data_flare_b$control_grouped)
@@ -1217,7 +1238,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores and IBD-Control-8"
 #depression, all
 data_flare_d <- hads_control[hads_control$hads_type == "depression_hads",]
 contingency_table_flare <- table(data_flare_d$score_group, data_flare_d$control_grouped)
@@ -1227,7 +1248,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (UC/IBDU) and IBD-Control-8"
 #depression, uc/ibdu
 data_flare_e <- data_flare_d[data_flare_d$diagnosis2 == "UC/IBDU",]
 contingency_table_e <- table(data_flare_e$score_group, data_flare_e$control_grouped)
@@ -1237,7 +1258,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (CD) and IBD-Control-8"
 #depression, CD only
 data_flare_f <- data_flare_d[data_flare_d$diagnosis2 == "CD",]
 contingency_table_f <- table(data_flare_f$score_group,
@@ -1332,7 +1353,7 @@ IBD control-8 and depression scores
 
 
 ```{r HADS and control - vas}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores and IBD-Control-VAS"
 #all participants
 data_flare_a <- hads_control[hads_control$hads_type == "anxiety_hads",]
 contingency_table_flare <- table(data_flare_a$score_group, data_flare_a$vas_control)
@@ -1342,7 +1363,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (UC/IBDU) and IBD-Control-VAS"
 #anxiety, uc/ibdu only
 data_flare_b <- data_flare_a[data_flare_a$diagnosis2 == "UC/IBDU",]
 contingency_table_b <- table(data_flare_b$score_group, data_flare_b$vas_control)
@@ -1352,7 +1373,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Anxiety scores (CD) and IBD-Control-VAS"
 #anxiety, cd only
 data_flare_c <- data_flare_a[data_flare_a$diagnosis2 == "CD",]
 contingency_table_c <- table(data_flare_c$score_group, data_flare_c$vas_control)
@@ -1362,7 +1383,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores and IBD-Control-VAS"
 #depression, all
 data_flare_d <- hads_control[hads_control$hads_type == "depression_hads",]
 contingency_table_flare <- table(data_flare_d$score_group, data_flare_d$vas_control)
@@ -1372,7 +1393,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (UC/IBDU) and IBD-Control-VAS"
 #depression, uc/ibdu
 data_flare_e <- data_flare_d[data_flare_d$diagnosis2 == "UC/IBDU",]
 contingency_table_e <- table(data_flare_e$score_group, data_flare_e$vas_control)
@@ -1382,7 +1403,7 @@ chi_squared_result %>%
 ```
 
 ```{R}
-# TO-DO add table caption
+#| tbl-cap: "Depression scores (CD) and IBD-Control-VAS"
 #depression, CD only
 data_flare_f <- data_flare_d[data_flare_d$diagnosis2 == "CD",]
 contingency_table_f <- table(data_flare_f$score_group, data_flare_f$vas_control)
