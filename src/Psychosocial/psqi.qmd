@@ -247,7 +247,7 @@ pander(bedtime_counts)
 
 
 ```{R}
-#exclude participants 110415 and 110463 - cases in which bed time was accurately
+# exclude participants 110415 and 110463 - cases in which bed time was accurately
 # reported in 24 hour format (ascertained by bed time being after 12 on 24h
 # clock), one case of 13 mutated to 1 as wakes up at 8.30 and total sleep
 # reported as 7 hour - likely typo. Exclude? For now just amended
@@ -425,6 +425,7 @@ ggplot(psqi2_percent, aes(x = TotalScore, y = Percentage, colour = Sex)) +
 ```{R}
 #| output: "hold"
 #| results: "asis"
+contingency_table <- table(psqi2$diagnosis2, psqi2$SleepDisturbance)
 chi_squared_result <- chisq.test(contingency_table)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -567,6 +568,31 @@ my.render.cont <- function(x) {
 }
 
 table1::table1(~ Sex + AgeGroup + diagnosis2 | SleepDisturbance,
+  data = psqi2,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ SleepDisturbance | diagnosis2,
+  data = psqi2,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ SleepDisturbance | Sex,
+  data = psqi2,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ SleepDisturbance | AgeGroup,
+  data = psqi2,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ SleepDisturbance | flare_group,
+  data = psqi2,
+  render.continuous = my.render.cont
+)
+
+table1::table1(~ SleepDisturbance | cat,
   data = psqi2,
   render.continuous = my.render.cont
 )
