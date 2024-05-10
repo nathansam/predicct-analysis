@@ -377,7 +377,7 @@ separately.
 All patients: 
 
 * Sex: females have a statistically increased risk of sleep disturbance
-  (p-value > 0.00001 )
+  (p-value < 0.00001 )
 * IBD type: There is no significant association between IBD type and sleep
   disturbance (p-value = 0.16)
 * Flares in last year: is a significant association between flares in last year
@@ -572,30 +572,6 @@ table1::table1(~ Sex + AgeGroup + diagnosis2 | SleepDisturbance,
   render.continuous = my.render.cont
 )
 
-table1::table1(~ SleepDisturbance | diagnosis2,
-  data = psqi2,
-  render.continuous = my.render.cont
-)
-
-table1::table1(~ SleepDisturbance | Sex,
-  data = psqi2,
-  render.continuous = my.render.cont
-)
-
-table1::table1(~ SleepDisturbance | AgeGroup,
-  data = psqi2,
-  render.continuous = my.render.cont
-)
-
-table1::table1(~ SleepDisturbance | flare_group,
-  data = psqi2,
-  render.continuous = my.render.cont
-)
-
-table1::table1(~ SleepDisturbance | cat,
-  data = psqi2,
-  render.continuous = my.render.cont
-)
 ```
 
 
@@ -622,6 +598,26 @@ CD patients:
 * Age: Patients at extremes of age have higher rates of sleep disturbance
   (p-value = 0.0002) (highest in 55-64 age group)
 
+
+```{r, table for sleep disturbance CD}
+#| label: tbl-sleep-cat
+#| tbl-cap: "Sleep Disturbance Across Categories (CD)"
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat | SleepDisturbance,
+  data = psqi_CD,
+  render.continuous = my.render.cont
+)
+
+```
 
 ``` {r, psqi_CD statistical differencesat baseline}
 #| output: "hold"
@@ -727,6 +723,27 @@ ggplot(percentages,
 * FC category (<50, 20-250, >250): no statistically significant difference (p-value = 0.84), as in CD
 * Age: Patients at extremes of age have higher rates of sleep disturbance (p-value = 0.002). Highest rates in 55-64 age group.
 
+
+```{r, table for sleep disturbance CD}
+#| label: tbl-sleep-cat
+#| tbl-cap: "Sleep Disturbance Across Categories (UC/IBDU)"
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat | SleepDisturbance,
+  data = psqi_UC,
+  render.continuous = my.render.cont
+)
+
+```
 
 ``` {r, psqi UC statistics baseline}
 #| output: "hold"
@@ -927,7 +944,7 @@ n= 1569, number of events= 566
 
 Whole cohort time to soft flare
 
-* Significant controlling for site only (p-value = 0.00002, 95% CI 1.20-1.68)
+* Significant controlling for site only (p-value = 0.000049, 95% CI 1.20-1.68)
 * Significant controlling for site, sex, smoking, IMD, Age group (p-value =
   0.001, 95% CI 1.12-1.58)
 * Significant when controlling for FC additionally (p-value 0.0008, 95%
