@@ -658,7 +658,6 @@ cox_model <- coxph(
   Surv(time, DiseaseFlareYN) ~
     score_group +
     Sex +
-    AgeGroup +
     IMD +
     frailty(SiteNo),
   data = soft_uc_dep
@@ -673,7 +672,6 @@ cox_model <- coxph(
   Surv(time, DiseaseFlareYN) ~
     score_group +
     Sex +
-    AgeGroup +
     IMD +
     cat +
     frailty(SiteNo),
@@ -832,7 +830,6 @@ cox_model <- coxph(
     score_group +
     Sex +
     IMD +
-    AgeGroup +
     frailty(SiteNo),
   data = flare_uc_dep
 )
@@ -847,7 +844,6 @@ cox_model <- coxph(
     score_group +
     Sex +
     IMD +
-    AgeGroup +
     cat +
     frailty(SiteNo),
   data = flare_uc_dep
