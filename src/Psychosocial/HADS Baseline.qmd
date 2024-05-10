@@ -856,41 +856,7 @@ chi_squared_result_dep %>%
   pander()
 ```
 
-We additionally used linear modelling to investigate for association between
-HADS scores and age. 
 
-This showed there is a significant correlation between age and anxiety scores
-(Multiple R-squared:  0.03132,	Adjusted R-squared:  0.03079 , p-value:
-2.14e-14), but not between age and depression scores (Multiple R-squared:
-1.505e-06,	Adjusted R-squared:  -0.0005432,  p-value = 0.9581)
-
-```{R, lm anxiety and depression and age}
-correlation_result_age_anxiety <- lm(age ~ hads_score,
-                                     data = filtered_data_anxiety)
-correlation_result_age_anxiety %>%
-  summary() %>%
-  pander()
-```
-
-```{R}
-correlation_result_age_depression <- lm(age ~ hads_score,
-                                        data = filtered_data_depression)
-correlation_result_age_depression %>%
-  summary() %>%
-  pander()
-```
-
-```{R}
-#| label: fig-age-anxiety-lm
-#| fig-cap: "Relationship between age and anxiety scores"
-#| fig-subcap: "Younger age is associated with higher anxiety scores."
-ggplot(filtered_data_anxiety, aes(x = age, y = hads_score)) +
-  geom_point(alpha = 0.2) +  # Scatter plot, add alpha (transparency)
-  geom_smooth(method = "lm", se = FALSE, color = "#5BC0EB") +  # Regression line
-  labs(x = "Age",
-       y = "HADS anxiety score") +
-  theme_minimal()
-```
 
 
 #### Flare groups (flare vs no flare in last year)
