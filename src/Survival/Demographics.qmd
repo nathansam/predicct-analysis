@@ -563,6 +563,9 @@ invisible(cox.summary(fit.me))
 
 ## BMI
 
+Body mass index has been considered as both continiuous and categorical
+variables in seperate Cox models. 
+
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
@@ -615,6 +618,15 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 invisible(cox.summary(fit.me))
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + BMIcat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
 ```
 
 #### Hard flare
@@ -659,6 +671,14 @@ p
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + BMI + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + BMIcat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -718,6 +738,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 invisible(cox.summary(fit.me))
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + BMIcat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
 ```
 
 #### Hard flare
@@ -763,6 +791,15 @@ p
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + BMI + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + BMIcat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
