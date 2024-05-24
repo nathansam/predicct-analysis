@@ -563,8 +563,8 @@ invisible(cox.summary(fit.me))
 
 ## BMI
 
-Body mass index has been considered as both continiuous and categorical
-variables in seperate Cox models. 
+Body mass index has been considered as both continuous and categorical
+variables in separate Cox models. 
 
 ### Crohn's disease
 
