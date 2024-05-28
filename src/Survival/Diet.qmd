@@ -7,6 +7,15 @@ author:
     affiliations:
       - ref: CGEM
       - ref: HGU
+  - name: "Beatriz Gros"
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: Spain
+      - ref: IBD
+  - name: "Maiara Brusco De Freitas"
+    url: "https://scholar.google.com/citations?user=RfXbXL8AAAAJ&hl=en&oi=ao"
+    affiliations:
+      - ref: PREDICT
 bibliography: Survival.bib   
 ---
 
@@ -137,7 +146,8 @@ present, it is difficult to explore this in more detail (e.g. by meat type).
 quants <- quantile(flare.df$Meat_sum, na.rm = TRUE)
 
 flare.cd.df$Meat_sum_cat <- cut(flare.cd.df$Meat_sum,
-  breaks = c(0, quants[2:5])
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
 )
 
 
@@ -248,7 +258,8 @@ invisible(cox.summary(fit.me))
 #| fig-height: 6
 
 flare.uc.df$Meat_sum_cat <- cut(flare.uc.df$Meat_sum,
-  breaks = c(0, quants[2:5])
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
 )
 
 
@@ -367,7 +378,8 @@ invisible(cox.summary(fit.me))
 quants <- quantile(flare.df$fibre, na.rm = TRUE)
 
 flare.cd.df$fibre_cat <- cut(flare.cd.df$fibre,
-  breaks = c(0, quants[2:5])
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
 )
 
 
@@ -474,7 +486,8 @@ invisible(cox.summary(fit.me))
 #| fig-height: 6
 
 flare.uc.df$fibre_cat <- cut(flare.uc.df$fibre,
-  breaks = c(0, quants[2:5])
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
 )
 
 fit <- survfit(Surv(softflare_time, softflare) ~ fibre_cat,
@@ -596,7 +609,8 @@ now, these data will be used.
 quants <- quantile(flare.df$PUFA_percEng, na.rm = TRUE)
 
 flare.cd.df$PUFA_cat <- cut(flare.cd.df$PUFA_percEng,
-  breaks = c(0, quants[2:5])
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
 )
 
 fit <- survfit(Surv(softflare_time, softflare) ~ PUFA_cat,
@@ -702,7 +716,8 @@ invisible(cox.summary(fit.me))
 #| fig-height: 6
 
 flare.uc.df$PUFA_cat <- cut(flare.uc.df$PUFA_percEng,
-  breaks = c(0, quants[2:5])
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
 )
 
 
@@ -1013,6 +1028,2272 @@ p
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + NOVAScore_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+
+## Processed food subgroups
+
+### Breads and cereals
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$breadIntake, na.rm = TRUE)
+
+flare.cd.df$breadIntake_cat <- cut(flare.cd.df$breadIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ breadIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Bread/cereal intake quantiles",
+  legend.labs = levels(flare.cd.df$breadIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/breadIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/breadIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ breadIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Bread/cereal intake quantiles",
+  legend.labs = levels(flare.cd.df$breadIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/breadIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/breadIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$breadIntake_cat <- cut(flare.uc.df$breadIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ breadIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Bread/cereal intake quantiles",
+  legend.labs = levels(flare.uc.df$breadIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/breadIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/breadIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + breadIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ breadIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Bread/cereal intake quantiles",
+  legend.labs = levels(flare.uc.df$breadIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/breadIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/breadIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Sweets and desserts/snack foods
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$sweetIntake, na.rm = TRUE)
+
+flare.cd.df$sweetIntake_cat <- cut(flare.cd.df$sweetIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ sweetIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sweet/dessert/snack intake quantiles",
+  legend.labs = levels(flare.cd.df$sweetIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/sweetIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/sweetIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ sweetIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sweet/dessert/snack intake quantiles",
+  legend.labs = levels(flare.cd.df$sweetIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/sweetIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/sweetIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$sweetIntake_cat <- cut(flare.uc.df$sweetIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ sweetIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sweet/dessert/snack intake quantiles",
+  legend.labs = levels(flare.uc.df$sweetIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/sweetIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/sweetIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + sweetIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ sweetIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Sweet/dessert/snack intake quantiles",
+  legend.labs = levels(flare.uc.df$sweetIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/sweetIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/sweetIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Artificially and sugar-sweetened beverages
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$drinkIntake, na.rm = TRUE)
+
+flare.cd.df$drinkIntake_cat <- cut(flare.cd.df$drinkIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ drinkIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
+  legend.labs = levels(flare.cd.df$drinkIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/drinkIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/drinkIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ drinkIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
+  legend.labs = levels(flare.cd.df$drinkIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/drinkIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/drinkIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$drinkIntake_cat <- cut(flare.uc.df$drinkIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ drinkIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
+  legend.labs = levels(flare.uc.df$drinkIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/drinkIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/drinkIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + drinkIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ drinkIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
+  legend.labs = levels(flare.uc.df$drinkIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/drinkIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/drinkIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Animal-based products (processed meat)
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$processedMeatIntake, na.rm = TRUE)
+
+flare.cd.df$processedMeatIntake_cat <- cut(flare.cd.df$processedMeatIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ processedMeatIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed meat intake quantiles",
+  legend.labs = levels(flare.cd.df$processedMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/processedMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/processedMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ processedMeatIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed meat intake quantiles",
+  legend.labs = levels(flare.cd.df$processedMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/processedMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/processedMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$processedMeatIntake_cat <- cut(flare.uc.df$processedMeatIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ processedMeatIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed meat intake quantiles",
+  legend.labs = levels(flare.uc.df$processedMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/processedMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/processedMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + processedMeatIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ processedMeatIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed meat intake quantiles",
+  legend.labs = levels(flare.uc.df$processedMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/processedMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/processedMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Plant-based alternatives
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$processedPlantIntake, na.rm = TRUE)
+
+flare.cd.df$processedPlantIntake_cat <- cut(flare.cd.df$processedPlantIntake,
+  breaks = unique(c(0, quants[2:5])), # minimum to median all 0. 
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ processedPlantIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed plant-based alternative intake quantiles",
+  legend.labs = levels(flare.cd.df$processedPlantIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/processedPlantIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/processedPlantIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ processedPlantIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed plant-based alternative intake quantiles",
+  legend.labs = levels(flare.cd.df$processedPlantIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/processedPlantIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/processedPlantIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$processedPlantIntake_cat <- cut(flare.uc.df$processedPlantIntake,
+  breaks = unique(c(0, quants[2:5])),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ processedPlantIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed plant-based alternative intake quantiles",
+  legend.labs = levels(flare.uc.df$processedPlantIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/processedPlantIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/processedPlantIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + processedPlantIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ processedPlantIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Processed plant-based alternative intake quantiles",
+  legend.labs = levels(flare.uc.df$processedPlantIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/processedPlantIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/processedPlantIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+## Un-processed/minimally processed food subgroups
+
+### Fruit
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$fruitIntake, na.rm = TRUE)
+
+flare.cd.df$fruitIntake_cat <- cut(flare.cd.df$fruitIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ fruitIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Fruit intake quantiles",
+  legend.labs = levels(flare.cd.df$fruitIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/fruitIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/fruitIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ fruitIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Fruit intake quantiles",
+  legend.labs = levels(flare.cd.df$fruitIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/fruitIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/fruitIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$fruitIntake_cat <- cut(flare.uc.df$fruitIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ fruitIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Fruit intake quantiles",
+  legend.labs = levels(flare.uc.df$fruitIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/fruitIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/fruitIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + fruitIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ fruitIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Fruit intake quantiles",
+  legend.labs = levels(flare.uc.df$fruitIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/fruitIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/fruitIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Vegetable and legumes
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$vegIntake, na.rm = TRUE)
+
+flare.cd.df$vegIntake_cat <- cut(flare.cd.df$vegIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ vegIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Vegetable/legume intake quantiles",
+  legend.labs = levels(flare.cd.df$vegIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/vegIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/vegIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ vegIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Vegetable/legume intake quantiles",
+  legend.labs = levels(flare.cd.df$vegIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/vegIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/vegIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$vegIntake_cat <- cut(flare.uc.df$vegIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ vegIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Vegetable/legume intake quantiles",
+  legend.labs = levels(flare.uc.df$vegIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/vegIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/vegIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + vegIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ vegIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Vegetable/legume intake quantiles",
+  legend.labs = levels(flare.uc.df$vegIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/vegIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/vegIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+
+### Red meat
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$redMeatIntake, na.rm = TRUE)
+
+flare.cd.df$redMeatIntake_cat <- cut(flare.cd.df$redMeatIntake,
+  breaks = unique(c(0, quants[2:5])),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ redMeatIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Red meat intake quantiles",
+  legend.labs = levels(flare.cd.df$redMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/redMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/redMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ redMeatIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Red meat intake quantiles",
+  legend.labs = levels(flare.cd.df$redMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/redMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/redMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$redMeatIntake_cat <- cut(flare.uc.df$redMeatIntake,
+  breaks = unique(c(0, quants[2:5])),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ redMeatIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Red meat intake quantiles",
+  legend.labs = levels(flare.uc.df$redMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/redMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/redMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + redMeatIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ redMeatIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Red meat intake quantiles",
+  legend.labs = levels(flare.uc.df$redMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/redMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/redMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### White meat
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$whiteMeatIntake, na.rm = TRUE)
+
+flare.cd.df$whiteMeatIntake_cat <- cut(flare.cd.df$whiteMeatIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ whiteMeatIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White meat intake quantiles",
+  legend.labs = levels(flare.cd.df$whiteMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/whiteMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/whiteMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteMeatIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White meat intake quantiles",
+  legend.labs = levels(flare.cd.df$whiteMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/whiteMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/whiteMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$whiteMeatIntake_cat <- cut(flare.uc.df$whiteMeatIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ whiteMeatIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White meat intake quantiles",
+  legend.labs = levels(flare.uc.df$whiteMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/whiteMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/whiteMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + whiteMeatIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteMeatIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White meat intake quantiles",
+  legend.labs = levels(flare.uc.df$whiteMeatIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/whiteMeatIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/whiteMeatIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Fish (white and oily)
+
+#### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$whiteFishIntake, na.rm = TRUE)
+
+flare.cd.df$whiteFishIntake_cat <- cut(flare.cd.df$whiteFishIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ whiteFishIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White fish intake quantiles",
+  legend.labs = levels(flare.cd.df$whiteFishIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/Diet/whiteFishIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/Diet/whiteFishIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteFishIntake_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White fish intake quantiles",
+  legend.labs = levels(flare.cd.df$whiteFishIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/Diet/whiteFishIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/Diet/whiteFishIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+#### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$whiteFishIntake_cat <- cut(flare.uc.df$whiteFishIntake,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ whiteFishIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White fish intake quantiles",
+  legend.labs = levels(flare.uc.df$whiteFishIntakecat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/Diet/whiteFishIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/Diet/whiteFishIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + whiteFishIntake +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteFishIntake_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "White fish intake quantiles",
+  legend.labs = levels(flare.uc.df$whiteFishIntake_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/Diet/whiteFishIntake.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/Diet/whiteFishIntake.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
