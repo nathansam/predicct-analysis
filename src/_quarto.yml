@@ -18,9 +18,8 @@ project:
     - "Survival/IBD.qmd"
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
-  post-render:
-    - "Scripts/arrangeplots.R"
-    - "Scripts/forest.R"
+    - "Psychosocial/PHQ.qmd"
+  post-render: arrangeplots.R
   output-dir: "../docs"
   resources:
     - "robots.txt"
@@ -134,8 +133,18 @@ affiliations:
     city: "Edinburgh"
     country: "United Kingdom"
     url: "https://services.nhslothian.scot"
+  - id: Spain
+    name: "Reina Sofía University Hospital, Gastroenterology and Hepatology"
+    city: "Cordoba"
+    country: "Spain"
+    url:
   - id: Turing
     name: "The Alan Turing Institute"
     city: "London"
     country: "United Kingdom"
     url: "https://www.turing.ac.uk"
+  - id: PREDICT
+    name: "Center for Molecular Prediction of Inflammatory Bowel Disease (PREDICT), Aalborg University"
+    city: "Copenhagen"
+    country: "Denmark"
+    url: "https://www.predictibd.dk/"

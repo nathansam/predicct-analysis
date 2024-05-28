@@ -7,12 +7,22 @@ author:
     affiliations:
       - ref: CGEM
       - ref: HGU
+  - name: "Beatriz Gros"
+    url: https://ibd-eii.com/
+    affiliations:
+      - ref: Spain
+      - ref: IBD
+  - name: "Maiara Brusco De Freitas"
+    url: "https://scholar.google.com/citations?user=RfXbXL8AAAAJ&hl=en&oi=ao"
+    affiliations:
+      - ref: PREDICT
+
 bibliography: Baseline.bib   
 ---
 
 ## Introduction
 
-```{R}
+```{R Setup}
 set.seed(123)
 
 ##############
@@ -518,7 +528,7 @@ demo$NOVAScore_cat <- factor(demo$NOVAScore_cat,
   labels = c(
     "Unprocessed",
     "Processed culinary",
-    "Procesed food",
+    "Processed food",
     "Ultra-processed"
   )
 )
@@ -555,6 +565,20 @@ temp <- demo %>%
 
 pander(chisq.test(temp$NOVAScore_cat, temp$cat))
 ```
+
+## Processed food subgroups
+
+In addition to exploring UPF intake as a whole, we also explore UPF intake by
+subcategories. This approach is based on the methodology used by @Cordova_2023.
+The following categories have been identified by Dr Maiara Brusco De Freitas
+using FFQ groupings.
+
+Animal-based products (processed meat) is the only subgroup considered which we
+found to be significantly associated with FC. 
+
+::: {.panel-tabset}
+
+### Breads and cereals 
 
 ```{R}
 #| tbl-cap: "Chi-squared test between Nova intake score and FC groups in UC/IBDU."
@@ -614,10 +638,95 @@ demo %>%
   aov(formula = UPF_perc ~ cat) %>%
   summary() %>%
   pander()
+
+#| label: fig-breadIntake
+#| fig-cap: "Distribution of processed bread and cereal intake divided by daily energy intake."
+FFQ$breadIntake <- with(FFQ,
+                        (bread1a_grams +
+                          bread1b_grams +
+                          bread1c_grams +
+                          bread1d_grams +
+                          cereal2a_grams +
+                          cereal2b_grams +
+                          cereal2c_grams +
+                          cereal2d_grams + 
+                          cereal2e_grams) /
+                          EnergykCAL) * 100
+
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "breadIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(breadIntake) %>%
+  ggplot(aes(x = breadIntake)) +
+  geom_histogram(bins = 25, color = "#5C738F", fill = "#759EB8") +
+  theme_minimal() +
+  xlab("Processed bread and cereal intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-breadIntake
+#| tbl-cap: "ANOVA between processed bread/cereal intake and FC groups."
+pander(summary(aov(breadIntake ~ cat, data = demo)))
+```
+
+### Sweets and desserts/snack foods
+
+
+```{R}
+#| label: fig-sweetIntake
+#| fig-cap: "Distribution of Sweet and dessert/snack intake divided by daily energy intake."
+FFQ$sweetIntake <- with(FFQ,
+                        (Puddings13a_grams +
+                          Puddings13b_grams +
+                          Puddings13c_grams +
+                          Puddings13d_grams +
+                          Puddings13e_grams +
+                          Puddings13f_grams + 
+                          Puddings13g_grams +
+                          Puddings13h_grams +
+                          Chocsetc14a_grams +
+                          Chocsetc14b_grams +
+                          Chocsetc14c_grams +
+                          Chocsetc14d_grams +
+                          Chocsetc14g_grams +
+                          Chocsetc14h_grams +
+                          Chocsetc14i_grams +
+                          Biscuits15a_grams +
+                          Biscuits15b_grams +
+                          Biscuits15c_grams +
+                          Biscuits15d_grams +
+                          Biscuits15e_grams +
+                          Biscuits15g_grams +
+                          Cakes16a_grams +
+                          Cakes16b_grams +
+                          Cakes16c_grams +
+                          Cakes16d_grams +
+                          Cakes16e_grams) /
+                          EnergykCAL) * 100
+
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "sweetIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(sweetIntake) %>%
+  ggplot(aes(x = sweetIntake)) +
+  geom_histogram(bins = 25, color = "#B25966", fill = "#FFA3AF") +
+  theme_minimal() +
+  xlab("Sweet/dessert/snack intake / energy intake (g/kcal)") +
+  ylab("Frequency")
 ```
 
 
 ```{R}
+
 #| label: tbl-upfperc-uc
 #| tbl-cap: "ANOVA between Nova 4 food as a percentage of energy intake and FC for UC/IBDU."
 
@@ -629,9 +738,386 @@ demo %>%
 ```
 
 
+```{R}
+
+#| label: tbl-sweetIntake
+#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups."
+pander(summary(aov(sweetIntake ~ cat, data = demo)))
+```
+
+### Artificially and sugar-sweetened beverages
+
+```{R}
+#| label: fig-drinkIntake
+#| fig-cap: "Distribution of artificially and sugar-sweetened drink intake divided by daily energy intake."
+FFQ$drinkIntake <- with(FFQ,
+                        (Beverages18h_grams + 
+                          Beverages18i_grams +
+                          Beverages18j_grams +
+                          Beverages18k_grams +
+                          Beverages18n_grams +
+                          Beverages18o_grams) /
+                          EnergykCAL) * 100
+
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "drinkIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(drinkIntake) %>%
+  ggplot(aes(x = drinkIntake)) +
+  geom_histogram(bins = 25, color = "#C58500", fill = "#F4AC45") +
+  theme_minimal() +
+  xlab("Artificial/sugar-sweetened beverage intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-drinkIntake
+#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups."
+pander(summary(aov(sweetIntake ~ cat, data = demo)))
+```
+
+### Animal-based products (processed meat)
+
+```{R}
+#| label: fig-processedMeatIntake
+#| fig-cap: "Distribution of processed animal-based product intake divided by daily energy intake."
+FFQ$processedMeatIntake <- with(FFQ,
+                                (meat7b_grams +
+                                  meat7c_grams +
+                                  meat7g_grams +
+                                  meat7i_grams +
+                                  meat7j_grams +
+                                  meat7k_grams +
+                                  meat7l_grams +
+                                  fish8a_grams +
+                                  fish8e_grams +
+                                  fish8k_grams) /
+                                  EnergykCAL) * 100
+
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "processedMeatIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(processedMeatIntake) %>%
+  ggplot(aes(x = processedMeatIntake)) +
+  geom_histogram(bins = 25, color = "#BC0019", fill = "#FF4C55") +
+  theme_minimal() +
+  xlab("Processed animal-based product intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-processedMeatIntake
+#| tbl-cap: "ANOVA between processed meat intake and FC groups."
+pander(summary(aov(processedMeatIntake ~ cat, data = demo)))
+```
+
+From @fig-processedMeatIntake-FC, it appears subjects with FC<50μg/g at
+recruitment were more likely to consume no, or low levels of, processed meat. 
+
+```{R}
+#| label: fig-processedMeatIntake-FC
+#| fig-cap: "Distribution of processed animal-based product intake, divided by daily energy intake, and stratified by faecal calprotectin category."
+demo %>%
+  drop_na(processedMeatIntake, cat) %>%
+  ggplot(aes(x = processedMeatIntake)) +
+  geom_histogram(bins = 25, color = "#BC0019", fill = "#FF4C55") +
+  theme_minimal() +
+  xlab("Processed animal-based product intake / energy intake (g/kcal)") +
+  ylab("Frequency") +
+  facet_grid(rows = vars(cat))
+```
+
+### Plant-based alternatives
+
+As one would likely expect, consumption of processed plant-based alternatives is
+low. 
+
+```{R}
+#| label: fig-plantIntake
+#| fig-cap: "Distribution of processed plant-based alternatives divided by daily energy intake."
+FFQ$processedPlantIntake <- with(FFQ,
+                                (Milk3d_grams +
+                                   Sav_etc10d_grams +
+                                   Sav_etc10e_grams +
+                                   Sav_etc10f_grams) /
+                                  EnergykCAL) * 100
+
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "processedPlantIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(processedPlantIntake) %>%
+  ggplot(aes(x = processedPlantIntake)) +
+  geom_histogram(bins = 25, color = "#069E79", fill = "#08C99B") +
+  theme_minimal() +
+  xlab("Processed plant-based alternative intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-plantIntake
+#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups."
+pander(summary(aov(processedPlantIntake ~ cat, data = demo)))
+```
+
+:::
+
+## Un-processed/minimally processed food subgroups
+
+::: {.panel-tabset}
+
+### Fruit
+
+```{R}
+#| label: fig-fruitIntake
+#| fig-cap: "Distribution of fruit intake divided by daily energy intake."
+FFQ$fruitIntake <- with(FFQ,
+                        (fruit12a_grams + 
+                           fruit12b_grams +
+                           fruit12c_grams +
+                           fruit12c_grams +
+                           fruit12f_grams +
+                           fruit12g_grams +
+                           fruit12h_grams +
+                           fruit12i_grams +
+                           fruit12j_grams) /
+                         EnergykCAL) * 100
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "fruitIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(fruitIntake) %>%
+  ggplot(aes(x = fruitIntake)) +
+  geom_histogram(bins = 25, color =  "#C58901", fill = "#FFD639") +
+  theme_minimal() +
+  xlab("Fruit intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-fruitIntake
+#| tbl-cap: "ANOVA between fruit intake and FC groups."
+pander(summary(aov(fruitIntake ~ cat, data = demo)))
+```
+
+### Vegetable and legumes
+
+```{R}
+#| label: fig-vegIntake
+#| fig-cap: "Distribution of vegetable and legume intake divided by daily energy intake."
+FFQ$vegIntake <- with(FFQ,
+                        (Veg11a_grams + 
+                           Veg11b_grams + 
+                           Veg11c_grams + 
+                           Veg11d_grams +
+                           Veg11e_grams +
+                           Veg11f_grams + 
+                           Veg11g_grams +
+                           Veg11h_grams +
+                           Veg11i_grams + 
+                           Veg11j_grams +
+                           Veg11k_grams + 
+                           Veg11l_grams + 
+                           Veg11m_grams + 
+                           Veg11n_grams + 
+                           Veg11o_grams + 
+                           Veg11p_grams +
+                           Pulses) /
+                         EnergykCAL) * 100
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "vegIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(vegIntake) %>%
+  ggplot(aes(x = vegIntake)) +
+  geom_histogram(bins = 25, color =  "#662E9B", fill = "#A57CD9") +
+  theme_minimal() +
+  xlab("Vegetable and legume intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-vegIntake
+#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups."
+pander(summary(aov(vegIntake ~ cat, data = demo)))
+```
+
+### Red meat
+
+```{R}
+#| label: fig-redMeatIntake
+#| fig-cap: "Distribution of red meat intake divided by daily energy intake."
+FFQ$redMeatIntake <- with(FFQ,
+                        (meat7d_grams + 
+                           meat7e_grams + 
+                           meat7h_grams) /
+                         EnergykCAL) * 100
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "redMeatIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(redMeatIntake) %>%
+  ggplot(aes(x = redMeatIntake)) +
+  geom_histogram(bins = 25, color =  "#93250B", fill = "#F34213") +
+  theme_minimal() +
+  xlab("VRed meat intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-redMeatIntake
+#| tbl-cap: "ANOVA between red meat intake and FC groups."
+pander(summary(aov(redMeatIntake ~ cat, data = demo)))
+```
+
+### White meat
+
+```{R}
+#| label: fig-whiteMeatIntake
+#| fig-cap: "Distribution of white/oily fish intake divided by daily energy intake."
+FFQ$whiteMeatIntake <- with(FFQ,
+                            meat7f_grams /
+                              EnergykCAL) * 100
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "whiteMeatIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(whiteMeatIntake) %>%
+  ggplot(aes(x = whiteMeatIntake)) +
+  geom_histogram(bins = 25, color =  "#829399", fill = "#545F66") +
+  theme_minimal() +
+  xlab("White meat intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
 
 
 ```{R}
+#| label: tbl-whiteMeatIntake
+#| tbl-cap: "ANOVA between white meat intake and FC groups."
+pander(summary(aov(whiteMeatIntake ~ cat, data = demo)))
+```
+
+### Fish (white and oily)
+
+```{R}
+#| label: fig-whiteFishIntake
+#| fig-cap: "Distribution of white/oily fish intake divided by daily energy intake."
+FFQ$whiteFishIntake <- with(FFQ,
+                        (WhiteFish + 
+                           OilyFish) /
+                         EnergykCAL) * 100
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "whiteFishIntake")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(whiteFishIntake) %>%
+  ggplot(aes(x = whiteFishIntake)) +
+  geom_histogram(bins = 25, color =  "#003559", fill = "#006DAA") +
+  theme_minimal() +
+  xlab("White fish intake / energy intake (g/kcal)") +
+  ylab("Frequency")
+```
+
+```{R}
+#| label: tbl-whiteFishIntake
+#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups."
+pander(summary(aov(whiteFishIntake ~ cat, data = demo)))
+```
+
+:::
+
+## Alcohol use
+
+```{R}
+#| label: fig-alcohol
+#| fig-cap: "Distribution of alcohol per energy intake, stratified by sex." 
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "Alcohol_percEng")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(Alcohol_percEng) %>%
+  ggplot(aes(x = Alcohol_percEng, color = Sex, fill = Sex)) +
+  geom_histogram(bins = 20) +
+  facet_grid(cols = vars(Sex)) + 
+  theme_minimal() +
+  labs(x = "Alcohol intake per energy",
+       y = "Frequency",
+       color = "Diagnosis",
+       fill = "Diagnosis") +
+  scale_fill_manual(values = c("#FF966E", "#6A90A3")) +
+  scale_color_manual(values = c("#D16014",  "#114B5F"))
+```
+
+```{R}
+#| label: tbl-alcohol
+#| tbl-cap: "ANOVA between alcohol intake and FC groups."
+pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
+```
+
+## Diet quality
+
+Diet quality is assessed via diet quality index. 
+
+```{R}
+#| label: fig-dqi
+#| fig-cap: "Distribution of diet quality index, stratified by IBD type."
+demo <- merge(demo,
+              FFQ[, c("ParticipantNo", "dqi_tot")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE)
+
+demo %>%
+  drop_na(dqi_tot) %>%
+  ggplot(aes(x = dqi_tot, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 20) +
+  facet_grid(cols = vars(diagnosis2)) + 
+  theme_minimal() +
+  labs(x = "Diet quality index",
+       y = "Frequency",
+       color = "Diagnosis",
+       fill = "Diagnosis") +
+  scale_fill_manual(values = c("#86DEB7", "#FC5A66")) +
+  scale_color_manual(values = c("#529176",  "#AC353F"))
+```
+
+```{R}
+#| label: tbl-dqi
+#| tbl-cap: "ANOVA between diet quality index and FC groups."
+pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
+```
+
+
+```{R Save demo file} 
 saveRDS(demo, paste0(outdir, "demo-diet.RDS"))
 ```
 
@@ -645,6 +1131,7 @@ total energy intake.
 #| fig-cap: "Dietary distribution of the FFQ subcohort expressed as percentages of energy intake and stratified by sex and diagnosis of either Crohn’s disease or ulcerative colitis/inflammatory bowel disease unclassified."
 #| warning: false
 #| fig-width: 8
+
 FFQ$Prot_percEng <- ((FFQ$Protng * 4) / FFQ$EnergykCAL) * 100
 
 FFQ <- merge(FFQ,
@@ -653,6 +1140,9 @@ FFQ <- merge(FFQ,
   all.x = TRUE,
   all.y = FALSE
 )
+
+
+FFQ$Prot_percEng <- ((FFQ$Protng * 4)/FFQ$EnergykCAL)
 
 
 comparison <- reshape2::melt(FFQ,
