@@ -67,9 +67,9 @@ RUN install2.r \
     ggbeeswarm
 
 # Install quarto
-ARG BUILDARCH
-RUN curl -LO https://quarto.org/download/latest/quarto-linux-$BUILDARCH.deb
-RUN gdebi --non-interactive quarto-linux-$BUILDARCH.deb
+ARG TARGETARCH
+RUN curl -LO https://quarto.org/download/latest/quarto-linux-$TARGETARCH.deb
+RUN gdebi --non-interactive quarto-linux-$TARGETARCH.deb
 
 RUN mkdir analysis
 COPY . analysis

@@ -131,9 +131,25 @@ demo %>%
 No association was observed between protein intake from meat and FC.
 
 ```{R}
-#| label: tbl-meat-sum
-#| tbl-cap: "ANOVA between protein intake from meat and FC groups."
-pander(summary(aov(Meat_sum ~ cat, data = demo)))
+#| label: tbl-meat-sum-cd
+#| tbl-cap: "ANOVA between protein intake from meat and FC groups in the CD cohort."
+
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = Meat_sum ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-meat-sum-uc
+#| tbl-cap: "ANOVA between protein intake from meat and FC groups in the UC/IBDU cohort."
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = Meat_sum ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
 ## Dietary fibre
@@ -182,9 +198,23 @@ demo %>%
 No association was found between dietary fibre intake and FC. 
 
 ```{R}
-#| label: tbl-fibre
-#| tbl-cap: "ANOVA between dietary fibre and FC groups."
-pander(summary(aov(fibre ~ cat, data = demo)))
+#| label: tbl-fibre-cd
+#| tbl-cap: "ANOVA between dietary fibre and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = fibre ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-fibre-uc
+#| tbl-cap: "ANOVA between dietary fibre and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = fibre ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
 ## Polyunsaturated fatty acids
@@ -225,9 +255,23 @@ demo %>%
 A significant association was not seen between PUFA intake and FC. 
 
 ```{R}
-#| label: tbl-pufa
-#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups."
-pander(summary(aov(PUFA_percEng ~ cat, data = demo)))
+#| label: tbl-pufa-cd
+#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = PUFA_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-pufa-uc
+#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = PUFA_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
 ## Nova intake score
@@ -320,9 +364,25 @@ No significant association was observed between Nova intake scores and FC
 groups. 
 
 ```{R}
-#| label: tbl-novas-dist
-#| tbl-cap: "Chi-squared test between Nova intake score and FC groups."
-pander(chisq.test(demo$NOVAScore_cat, demo$cat))
+#| label: tbl-novas-dist-cd
+#| tbl-cap: "Chi-squared test between Nova intake score and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  select(NOVAScore_cat, cat) %>%
+  table() %>%
+  chisq.test() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-novas-dist-uc
+#| tbl-cap: "Chi-squared test between Nova intake score and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  select(NOVAScore_cat, cat) %>%
+  table() %>%
+  chisq.test() %>%
+  pander()
 ```
 
 ## Processed food subgroups
@@ -333,7 +393,7 @@ The following categories have been identified by Dr Maiara Brusco De Freitas
 using FFQ groupings.
 
 Animal-based products (processed meat) is the only subgroup considered which we
-found to be significantly associated with FC. 
+found to be significantly associated with FC at recruitment. 
 
 ::: {.panel-tabset}
 
@@ -365,11 +425,19 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(breadIntake) %>%
-  ggplot(aes(x = breadIntake)) +
-  geom_histogram(bins = 25, color = "#5C738F", fill = "#759EB8") +
+  ggplot(aes(x = breadIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("Processed bread and cereal intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 ```{R}
@@ -424,18 +492,41 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(sweetIntake) %>%
-  ggplot(aes(x = sweetIntake)) +
-  geom_histogram(bins = 25, color = "#B25966", fill = "#FFA3AF") +
+  ggplot(aes(x = sweetIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("Sweet/dessert/snack intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 
 ```{R}
-#| label: tbl-sweetIntake
-#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups."
-pander(summary(aov(sweetIntake ~ cat, data = demo)))
+#| label: tbl-sweetIntake-cd
+#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = sweetIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+
+```{R}
+#| label: tbl-sweetIntake-uc
+#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = sweetIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
 ### Artificially and sugar-sweetened beverages
@@ -463,17 +554,39 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(drinkIntake) %>%
-  ggplot(aes(x = drinkIntake)) +
-  geom_histogram(bins = 25, color = "#C58500", fill = "#F4AC45") +
+  ggplot(aes(x = drinkIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("Artificial/sugar-sweetened beverage intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 ```{R}
-#| label: tbl-drinkIntake
-#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups."
-pander(summary(aov(sweetIntake ~ cat, data = demo)))
+#| label: tbl-drinkIntake-cd
+#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = drinkIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-drinkIntake-uc
+#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = drinkIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
 ### Animal-based products (processed meat)
@@ -505,21 +618,48 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(processedMeatIntake) %>%
-  ggplot(aes(x = processedMeatIntake)) +
-  geom_histogram(bins = 25, color = "#BC0019", fill = "#FF4C55") +
+  ggplot(aes(x = processedMeatIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("Processed animal-based product intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
+
 
 ```{R}
-#| label: tbl-processedMeatIntake
-#| tbl-cap: "ANOVA between processed meat intake and FC groups."
-pander(summary(aov(processedMeatIntake ~ cat, data = demo)))
+#| label: tbl-processedMeatIntake-cd
+#| tbl-cap: "ANOVA between processed meat intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = processedMeatIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
-From @fig-processedMeatIntake-FC, it appears subjects with FC<50μg/g at
-recruitment were more likely to consume no, or low levels of, processed meat. 
+
+```{R}
+#| label: tbl-processedMeatIntake-uc
+#| tbl-cap: "ANOVA between processed meat intake and FC groups in the UC/IBDU cohort."
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = processedMeatIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+As intake of processed meat appeared to be associated with FC at recruitment, we
+explored the distribution processed meat intake within FC categories. From
+@fig-processedMeatIntake-FC, it appears subjects with FC<50μg/g at recruitment
+were more likely to consume no, or low levels of, processed meat. 
 
 ```{R}
 #| label: fig-processedMeatIntake-FC
@@ -560,17 +700,201 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(processedPlantIntake) %>%
-  ggplot(aes(x = processedPlantIntake)) +
-  geom_histogram(bins = 25, color = "#069E79", fill = "#08C99B") +
+  ggplot(aes(x = processedPlantIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("Processed plant-based alternative intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 ```{R}
-#| label: tbl-plantIntake
-#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups."
-pander(summary(aov(processedPlantIntake ~ cat, data = demo)))
+#| label: tbl-plantIntake-cd
+#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = processedPlantIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-plantIntake-uc
+#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups in the UC cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = processedPlantIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+:::
+
+## Processed food intake for ileal vs colonic Crohn's disease
+
+We elected to explore potential associations between intake of the previously
+explored processed food subgroups and either ileal or colonic CD. For these
+analyses, ileocolonic disease (Montreal L3) was considered to be an example of
+colonic disease. 
+
+No significant associations were found across any of the processed food
+subgroups considered. 
+
+```{R}
+demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
+
+plt.lab <- "Ileal vs Colonic"
+
+demo.cd$ileal <- plyr::mapvalues(demo.cd$Location,
+  from = c("L1", "L2", "L3", "L4 only"),
+  to = c(
+    "Ileal",
+    "Colonic",
+    "Colonic",
+    NA
+  )
+)
+
+demo.cd <- demo %>%
+  select(
+    ParticipantNo,
+    breadIntake,
+    sweetIntake,
+    drinkIntake,
+    processedMeatIntake,
+    processedPlantIntake
+#    fruitIntake,
+#    vegIntake,
+#    redMeatIntake,
+#    whiteMeatIntake,
+#    whiteFishIntake
+  ) %>%
+  merge(x = demo.cd, y = ., by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
+```
+
+::: {.panel-tabset}
+
+### Breads and cereals
+
+```{R}
+demo.cd %>%
+  drop_na(ileal, breadIntake) %>%
+  ggplot(aes(x = ileal, y = breadIntake, color = ileal)) +
+  geom_violin(fill = "#f8f8f8") +
+  scale_color_manual(values = c("#E98A15", "#59114D")) +
+  geom_quasirandom() +
+  theme_minimal() +
+  labs(
+    x = plt.lab,
+    color = plt.lab,
+    y = "Processed bread and cereal intake / energy intake (g/kcal)"
+  )
+```
+
+```{R}
+#| label: tbl-breadIntake-ileocolonic
+#| tbl-cap: "ANOVA between processed bread/cereal intake and ileal/colonic Crohn's disease."
+pander(summary(aov(breadIntake ~ ileal, data = demo.cd)))
+```
+
+### Sweet/dessert/snack foods
+
+```{R}
+demo.cd %>%
+  drop_na(ileal, sweetIntake) %>%
+  ggplot(aes(x = ileal, y = sweetIntake, color = ileal)) +
+  geom_violin(fill = "#f8f8f8") +
+  scale_color_manual(values = c("#E98A15", "#59114D")) +
+  geom_quasirandom() +
+  theme_minimal() +
+  labs(
+    x = plt.lab,
+    color = plt.lab,
+    y = "Sweet/dessert/snack intake / energy intake (g/kcal)"
+  )
+```
+
+```{R}
+#| label: tbl-sweetIntake-ileocolonic
+#| tbl-cap: "ANOVA between sweet intake and ileal/colonic Crohn's disease."
+pander(summary(aov(sweetIntake ~ ileal, data = demo.cd)))
+```
+
+### Artificially and sugar-sweetened beverages
+
+```{R}
+demo.cd %>%
+  drop_na(ileal, drinkIntake) %>%
+  ggplot(aes(x = ileal, y = drinkIntake, color = ileal)) +
+  geom_violin(fill = "#f8f8f8") +
+  scale_color_manual(values = c("#E98A15", "#59114D")) +
+  geom_quasirandom() +
+  theme_minimal() +
+  labs(
+    x = plt.lab,
+    color = plt.lab,
+    y = "Artificial/sugar-sweetened beverage intake / energy intake (g/kcal)"
+  )
+```
+
+```{R}
+#| label: tbl-drinkIntake-ileocolonic
+#| tbl-cap: "ANOVA between sweetened drink intake and ileal/colonic Crohn's disease."
+pander(summary(aov(drinkIntake ~ ileal, data = demo.cd)))
+```
+
+### Animal-based products (processed meat)
+
+```{R}
+demo.cd %>%
+  drop_na(ileal, processedMeatIntake) %>%
+  ggplot(aes(x = ileal, y = processedMeatIntake, color = ileal)) +
+  geom_violin(fill = "#f8f8f8") +
+  scale_color_manual(values = c("#E98A15", "#59114D")) +
+  geom_quasirandom() +
+  theme_minimal() +
+  labs(
+    x = plt.lab,
+    color = plt.lab,
+    y = "Processed animal-based product intake / energy intake (g/kcal)"
+  )
+```
+
+```{R}
+#| label: tbl-processedMeatIntake-ileocolonic
+#| tbl-cap: "ANOVA between processed meat intake and ileal/colonic Crohn's disease."
+pander(summary(aov(processedMeatIntake ~ ileal, data = demo.cd)))
+```
+
+
+### Plant-based alternatives
+
+```{R}
+demo.cd %>%
+  drop_na(ileal, processedPlantIntake) %>%
+  ggplot(aes(x = ileal, y = processedPlantIntake, color = ileal)) +
+  geom_violin(fill = "#f8f8f8") +
+  scale_color_manual(values = c("#E98A15", "#59114D")) +
+  geom_quasirandom() +
+  theme_minimal() +
+  labs(
+    x = plt.lab,
+    color = plt.lab,
+    y = "Processed plant-based alternative intake / energy intake (g/kcal)"
+  )
+```
+
+```{R}
+#| label: tbl-processedPlantIntake-ileocolonic
+#| tbl-cap: "ANOVA between processed plant-based alternative intake and ileal/colonic Crohn's disease."
+pander(summary(aov(processedPlantIntake ~ ileal, data = demo.cd)))
 ```
 
 :::
@@ -606,17 +930,39 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(fruitIntake) %>%
-  ggplot(aes(x = fruitIntake)) +
-  geom_histogram(bins = 25, color = "#C58901", fill = "#FFD639") +
+  ggplot(aes(x = fruitIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("Fruit intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 ```{R}
-#| label: tbl-fruitIntake
-#| tbl-cap: "ANOVA between fruit intake and FC groups."
-pander(summary(aov(fruitIntake ~ cat, data = demo)))
+#| label: tbl-fruitIntake-cd
+#| tbl-cap: "ANOVA between fruit intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = fruitIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-fruitIntake-uc
+#| tbl-cap: "ANOVA between fruit intake and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = fruitIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
 ```
 
 ### Vegetable and legumes
@@ -654,17 +1000,39 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(vegIntake) %>%
-  ggplot(aes(x = vegIntake)) +
-  geom_histogram(bins = 25, color = "#662E9B", fill = "#A57CD9") +
+  ggplot(aes(x = vegIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("Vegetable and legume intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 ```{R}
-#| label: tbl-vegIntake
-#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups."
-pander(summary(aov(vegIntake ~ cat, data = demo)))
+#| label: tbl-vegIntake-cd
+#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = vegIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-vegIntake-uc
+#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = vegIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
 ```
 
 ### Red meat
@@ -688,17 +1056,39 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(redMeatIntake) %>%
-  ggplot(aes(x = redMeatIntake)) +
-  geom_histogram(bins = 25, color = "#93250B", fill = "#F34213") +
+  ggplot(aes(x = redMeatIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
-  xlab("VRed meat intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  xlab("Red meat intake / energy intake (g/kcal)") +
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 ```{R}
-#| label: tbl-redMeatIntake
-#| tbl-cap: "ANOVA between red meat intake and FC groups."
-pander(summary(aov(redMeatIntake ~ cat, data = demo)))
+#| label: tbl-redMeatIntake-cd
+#| tbl-cap: "ANOVA between red meat intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = redMeatIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-redMeatIntake-uc
+#| tbl-cap: "ANOVA between red meat intake and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = redMeatIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
 ```
 
 ### White meat
@@ -720,18 +1110,41 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(whiteMeatIntake) %>%
-  ggplot(aes(x = whiteMeatIntake)) +
-  geom_histogram(bins = 25, color = "#829399", fill = "#545F66") +
+  ggplot(aes(x = whiteMeatIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("White meat intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 
 ```{R}
-#| label: tbl-whiteMeatIntake
-#| tbl-cap: "ANOVA between white meat intake and FC groups."
-pander(summary(aov(whiteMeatIntake ~ cat, data = demo)))
+#| label: tbl-whiteMeatIntake-cd
+#| tbl-cap: "ANOVA between white meat intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = whiteMeatIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+
+```{R}
+#| label: tbl-whiteMeatIntake-uc
+#| tbl-cap: "ANOVA between white meat intake and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = whiteMeatIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
 ```
 
 ### Fish (white and oily)
@@ -754,17 +1167,39 @@ demo <- merge(demo,
 
 demo %>%
   drop_na(whiteFishIntake) %>%
-  ggplot(aes(x = whiteFishIntake)) +
-  geom_histogram(bins = 25, color = "#003559", fill = "#006DAA") +
+  ggplot(aes(x = whiteFishIntake, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
   theme_minimal() +
   xlab("White fish intake / energy intake (g/kcal)") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  theme(legend.position = "none") +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 ```{R}
-#| label: tbl-whiteFishIntake
-#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups."
-pander(summary(aov(whiteFishIntake ~ cat, data = demo)))
+#| label: tbl-whiteFishIntake-cd
+#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = whiteFishIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-whiteFishIntake-uc
+#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = whiteFishIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
 ```
 
 :::
@@ -798,9 +1233,25 @@ demo %>%
 ```
 
 ```{R}
-#| label: tbl-alcohol
-#| tbl-cap: "ANOVA between alcohol intake and FC groups."
-pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
+#| label: tbl-alcohol-cd
+#| tbl-cap: "ANOVA between alcohol intake and FC groups in the CD cohort."
+
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-alcohol-uc
+#| tbl-cap: "ANOVA between alcohol intake and FC groups in the UC/IBDU cohort."
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
 ```
 
 ## Diet quality
@@ -834,154 +1285,28 @@ demo %>%
 ```
 
 ```{R}
-#| label: tbl-dqi
-#| tbl-cap: "ANOVA between diet quality index and FC groups."
-pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
+#| label: tbl-dqi-cd
+#| tbl-cap: "ANOVA between diet quality index and FC groups in the CD cohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = dqi_tot ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
 ```
 
+```{R}
+#| label: tbl-dqi-uc
+#| tbl-cap: "ANOVA between diet quality index and FC groups in the UC/IBDU cohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = dqi_tot ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
 
 ```{R Save demo file} 
 saveRDS(demo, paste0(outdir, "demo-diet.RDS"))
 ```
-
-## Ileal vs Colonic Crohn's disease
-
-```{R}
-demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
-
-plt.lab <- "Ileal vs Colonic"
-
-demo.cd$ileal <- plyr::mapvalues(demo.cd$Location,
-                                 from = c("L1", "L2", "L3", "L4 only"),
-                                 to = c("Ileal",
-                                        "Colonic",
-                                        "Colonic",
-                                        "Colonic"))
-
-demo.cd <- demo %>%
-  select(ParticipantNo,
-         breadIntake,
-         sweetIntake,
-         drinkIntake,
-         processedMeatIntake,
-         processedPlantIntake,
-         fruitIntake,
-         vegIntake,
-         redMeatIntake,
-         whiteMeatIntake,
-         whiteFishIntake) %>%
- merge(x = demo.cd, y = ., by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
-```
-
-::: {.panel-tabset}
-
-### Breads and cereals
-
-```{R}
-demo.cd %>%
-  drop_na(ileal, breadIntake) %>%
-  ggplot(aes(x = ileal, y = breadIntake, color = ileal)) +
-  geom_violin(fill = "#f8f8f8") +
-  scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
-  theme_minimal() +
-  labs(x = plt.lab,
-       color = plt.lab,
-       y = "Processed bread and cereal intake / energy intake (g/kcal)")
-```
-
-```{R}
-#| label: tbl-breadIntake-ileocolonic
-#| tbl-cap: "ANOVA between processed bread/cereal intake and ileal/colonic Crohn's disease."
-pander(summary(aov(breadIntake ~ ileal, data = demo.cd)))
-```
-
-### Sweet/dessert/snack foods
-
-```{R}
-demo.cd %>%
-  drop_na(ileal, sweetIntake) %>%
-  ggplot(aes(x = ileal, y = sweetIntake, color = ileal)) +
-  geom_violin(fill = "#f8f8f8") +
-  scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
-  theme_minimal() +
-  labs(x = plt.lab,
-       color = plt.lab,
-       y = "Sweet/dessert/snack intake / energy intake (g/kcal)")
-```
-
-```{R}
-#| label: tbl-sweetIntake-ileocolonic
-#| tbl-cap: "ANOVA between sweet intake and ileal/colonic Crohn's disease."
-pander(summary(aov(sweetIntake ~ ileal, data = demo.cd)))
-```
-
-### Artificially and sugar-sweetened beverages
-
-```{R}
-demo.cd %>%
-  drop_na(ileal, drinkIntake) %>%
-  ggplot(aes(x = ileal, y = drinkIntake, color = ileal)) +
-  geom_violin(fill = "#f8f8f8") +
-  scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
-  theme_minimal() +
-  labs(x = plt.lab,
-       color = plt.lab,
-       y = "Artificial/sugar-sweetened beverage intake / energy intake (g/kcal)")
-```
-
-```{R}
-#| label: tbl-drinkIntake-ileocolonic
-#| tbl-cap: "ANOVA between sweetened drink intake and ileal/colonic Crohn's disease."
-pander(summary(aov(drinkIntake ~ ileal, data = demo.cd)))
-```
-
-### Animal-based products (processed meat)
-
-```{R}
-demo.cd %>%
-  drop_na(ileal, processedMeatIntake) %>%
-  ggplot(aes(x = ileal, y = processedMeatIntake, color = ileal)) +
-  geom_violin(fill = "#f8f8f8") +
-  scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
-  theme_minimal() +
-  labs(x = plt.lab,
-       color = plt.lab,
-       y = "Processed animal-based product intake / energy intake (g/kcal)")
-```
-
-```{R}
-#| label: tbl-processedMeatIntake-ileocolonic
-#| tbl-cap: "ANOVA between processed meat intake and ileal/colonic Crohn's disease."
-pander(summary(aov(processedMeatIntake ~ ileal, data = demo.cd)))
-```
-
-
-### Plant-based alternatives
-
-```{R}
-demo.cd %>%
-  drop_na(ileal, processedPlantIntake) %>%
-  ggplot(aes(x = ileal, y = processedPlantIntake, color = ileal)) +
-  geom_violin(fill = "#f8f8f8") +
-  scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
-  theme_minimal() +
-  labs(x = plt.lab,
-       color = plt.lab,
-       y = "Processed plant-based alternative intake / energy intake (g/kcal)")
-```
-
-```{R}
-#| label: tbl-processedPlantIntake-ileocolonic
-#| tbl-cap: "ANOVA between processed plant-based alternative intake and ileal/colonic Crohn's disease."
-pander(summary(aov(processedPlantIntake ~ ileal, data = demo.cd)))
-```
-
-:::
 
 
 ## Comparison
@@ -994,7 +1319,7 @@ total energy intake.
 #| fig-cap: "Dietary distribution of the FFQ subcohort expressed as percentages of energy intake and stratified by sex and diagnosis of either Crohn’s disease or ulcerative colitis/inflammatory bowel disease unclassified."
 #| warning: false
 #| fig-width: 8
-FFQ$Prot_percEng <- ((FFQ$Protng * 4) / FFQ$EnergykCAL)
+FFQ$Prot_percEng <- FFQ$Protng * 4 / FFQ$EnergykCAL
 
 comparison <- reshape2::melt(FFQ,
   id.vars = "ParticipantNo",
