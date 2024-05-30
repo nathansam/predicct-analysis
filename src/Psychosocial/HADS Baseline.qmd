@@ -372,7 +372,7 @@ table1::table1(~ score_group | cat,
 ```
 
 ```{R}
-#| label: tbl-vars-by-anxiety
+#| label: tbl-vars-by-anxiety_uc
 #| tbl-cap: "Distribution of baseline anxiety scores across key variables - UC/IBDU only"
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = anxiety_uc,

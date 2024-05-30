@@ -600,7 +600,7 @@ CD patients:
 
 
 ```{r, table for sleep disturbance CD}
-#| label: tbl-sleep-cat
+#| label: tbl-sleep-cat_cd
 #| tbl-cap: "Sleep Disturbance Across Categories (CD)"
 my.render.cont <- function(x) {
   with(
@@ -725,7 +725,7 @@ ggplot(percentages,
 
 
 ```{r, table for sleep disturbance CD}
-#| label: tbl-sleep-cat
+#| label: tbl-sleep-cat_uc
 #| tbl-cap: "Sleep Disturbance Across Categories (UC/IBDU)"
 my.render.cont <- function(x) {
   with(

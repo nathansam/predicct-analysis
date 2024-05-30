@@ -405,7 +405,7 @@ summary(cox_model)
 Soft flare (n= 814, number of events= 274) - no significance across any analysis.
 Hard flare (n= 789, number of events= 97) - no significance across any analysis.
 
-```{r, survival analysis whole cohort}
+```{r, survival analysis CD cohort}
 
 #soft
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = LE_CD_soft)
