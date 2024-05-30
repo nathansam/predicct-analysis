@@ -1,8 +1,8 @@
-FROM rocker/rstudio:4.3.2
+FROM rocker/rstudio:4.4.0
 
 LABEL "org.opencontainers.image.source"="https://github.com/nathansam/predicct-analysis" \
 "org.opencontainers.image.authors"="Nathan Constantine-Cooke <nathan.constantine-cooke@ed.ac.uk>" \
-    "org.opencontainers.image.base.name"="rocker/tidyverse:4.3.24" \
+    "org.opencontainers.image.base.name"="rocker/tidyverse:4.4.0" \
     "org.opencontainers.image.description"="Docker image for PREdiCCt analysis" \
     "org.opencontainers.image.vendor"="University of Edinburgh"
 
@@ -24,28 +24,53 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg-dev \
     cmake \
     && rm -rf /var/lib/apt/lists/*
+
 RUN install2.r \
     tidyverse \
     plyr \
     readxl \
     knitr \
-    rmarkdown \
+    rmarkdown
+
+RUN install2.r \ 
     quarto \
     pander \
     datefixR \
     DiagrammeR \
-    DiagrammeRsvg \
+    DiagrammeRsvg
+    
+RUN install2.r \
     table1 \
     downlit \
     xml2 \
     survminer \
-    coxme \
-    crayon
+    coxme 
 
+RUN install2.r \
+    crayon \
+    gtsummary \
+    patchwork \
+    colorspace \
+    reshape2
+
+RUN install2.r \
+    viridis \
+    finalfit \
+    ggdist \
+    kableExtra \
+    openxlsx
+
+RUN install2.r \
+    rstatix \
+    scales \
+    DescTools \
+    ggbeeswarm
+
+# Install quarto
 ARG BUILDARCH
-
 RUN curl -LO https://quarto.org/download/latest/quarto-linux-$BUILDARCH.deb
 RUN gdebi --non-interactive quarto-linux-$BUILDARCH.deb
+
 RUN mkdir analysis
 COPY . analysis
 RUN cp analysis/docker/render analysis
