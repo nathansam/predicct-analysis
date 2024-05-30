@@ -17,7 +17,6 @@ project:
     - "Survival/IBD.qmd"
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
-    - "Psychosocial/PHQ.qmd"
   post-render: arrangeplots.R
   output-dir: "../docs"
   resources:
@@ -81,16 +80,6 @@ website:
           - "Survival/IBD.qmd"
           - "Survival/Biochemistry.qmd"
           - "Survival/Diet.qmd"
-#  navbar:
-#    background: "#004276"
-#    search: true
-#    right:
-#      - text: About
-#        file: Index.qmd
-#      - Baseline.qmd
-#      - TTE.qmd
-#      - icon: github
-#        href: https://github.com/nathansam/predicct-analysis
   page-footer:
     background: "#dff1f3"
     foreground: "#000000"

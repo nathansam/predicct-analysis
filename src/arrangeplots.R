@@ -3,10 +3,10 @@ library(patchwork)
 library(survminer)
 
 if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  data.path <- "/analysis/data/final/20221004/"
+  redcap.path <- "/analysis/data/final/20231030/"
+  prefix <- "/analysis/data/end-of-follow-up/"
+  outdir <- "/analysis/data/processed/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"

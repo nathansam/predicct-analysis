@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2024-04-18">
+<meta name="dcterms.date" content="2024-05-30">
 <title>PREdiCCt analyses - Flare overview</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Flare overview">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2024-04-18">
-<meta name="citation_cover_date" content="2024-04-18">
+<meta name="citation_publication_date" content="2024-05-30">
+<meta name="citation_cover_date" content="2024-05-30">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-04-18">
+<meta name="citation_online_date" content="2024-05-30">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Inflammatory bowel disease and smoking: A review of epidemiology, pathophysiology, and therapeutic implications;,citation_author=Tanja Birrenbach;,citation_author=Ulrich Böcker;,citation_publication_date=2004-11;,citation_cover_date=2004-11;,citation_year=2004;,citation_fulltext_html_url=http://dx.doi.org/10.1097/00054725-200411000-00019;,citation_issue=6;,citation_doi=10.1097/00054725-200411000-00019;,citation_issn=1078-0998;,citation_volume=10;,citation_journal_title=Inflammatory Bowel Diseases;,citation_publisher=Oxford University Press;">
 <meta name="citation_reference" content="citation_title=The UN decade of nutrition, the NOVA food classification and the trouble with ultra-processing;,citation_author=Carlos Augusto Monteiro;,citation_author=Geoffrey Cannon;,citation_author=Jean-Claude Moubarac;,citation_author=Renata Bertazzi Levy;,citation_author=Maria Laura C Louzada;,citation_author=Patrícia Constante Jaime;,citation_publication_date=2017-03;,citation_cover_date=2017-03;,citation_year=2017;,citation_fulltext_html_url=http://dx.doi.org/10.1017/S1368980017000234;,citation_issue=1;,citation_doi=10.1017/s1368980017000234;,citation_issn=1475-2727;,citation_volume=21;,citation_journal_title=Public Health Nutrition;,citation_publisher=Cambridge University Press;">
@@ -325,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 18, 2024</p>
+      <p class="date">May 30, 2024</p>
     </div>
   </div>
   
@@ -350,15 +350,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span></span>
 <span><span class="co"># paths to PREdiCCt data</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="st">"/docker"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="co"># If running in docker</span></span>
-<span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
-<span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
-<span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"/analysis/data/final/20221004/"</span></span>
+<span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"/analysis/data/final/20231030/"</span></span>
+<span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"/analysis/data/end-of-follow-up/"</span></span>
+<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"/analysis/data/processed/"</span></span>
+<span>  <span class="va">flaredir</span> <span class="op">&lt;-</span> <span class="st">"/analysis/data/final/20240308/"</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="co"># Run on OS directly</span></span>
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
 <span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"</span></span>
 <span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/processed/"</span></span>
+<span>  <span class="va">flaredir</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20240308/"</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span></span>
@@ -415,10 +417,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section><section id="primary-outcome-first-soft-flare" class="level2"><h2 class="anchored" data-anchor-id="primary-outcome-first-soft-flare">Primary outcome: First soft flare</h2>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">flares</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xlsx</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span></span>
-<span>    <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/"</span>,</span>
-<span>    <span class="st">"final/20240308/Followup/all-flares.xlsx"</span></span>
-<span>  <span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">flaredir</span>, <span class="st">"Followup/all-flares.xlsx"</span><span class="op">)</span>,</span>
 <span>  na <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  sheet <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -575,23 +574,23 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
 <span>  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
 <div>
-<div id="npfqxgsivm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#npfqxgsivm table {
+<div id="hbzqlyrdka" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hbzqlyrdka table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#npfqxgsivm thead, #npfqxgsivm tbody, #npfqxgsivm tfoot, #npfqxgsivm tr, #npfqxgsivm td, #npfqxgsivm th {
+#hbzqlyrdka thead, #hbzqlyrdka tbody, #hbzqlyrdka tfoot, #hbzqlyrdka tr, #hbzqlyrdka td, #hbzqlyrdka th {
   border-style: none;
 }
 
-#npfqxgsivm p {
+#hbzqlyrdka p {
   margin: 0;
   padding: 0;
 }
 
-#npfqxgsivm .gt_table {
+#hbzqlyrdka .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -617,12 +616,12 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-left-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_caption {
+#hbzqlyrdka .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#npfqxgsivm .gt_title {
+#hbzqlyrdka .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -634,7 +633,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-bottom-width: 0;
 }
 
-#npfqxgsivm .gt_subtitle {
+#hbzqlyrdka .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -646,7 +645,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-top-width: 0;
 }
 
-#npfqxgsivm .gt_heading {
+#hbzqlyrdka .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -658,13 +657,13 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-right-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_bottom_border {
+#hbzqlyrdka .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_col_headings {
+#hbzqlyrdka .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -679,7 +678,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-right-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_col_heading {
+#hbzqlyrdka .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -699,7 +698,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   overflow-x: hidden;
 }
 
-#npfqxgsivm .gt_column_spanner_outer {
+#hbzqlyrdka .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -711,15 +710,15 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   padding-right: 4px;
 }
 
-#npfqxgsivm .gt_column_spanner_outer:first-child {
+#hbzqlyrdka .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#npfqxgsivm .gt_column_spanner_outer:last-child {
+#hbzqlyrdka .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#npfqxgsivm .gt_column_spanner {
+#hbzqlyrdka .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -731,11 +730,11 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   width: 100%;
 }
 
-#npfqxgsivm .gt_spanner_row {
+#hbzqlyrdka .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#npfqxgsivm .gt_group_heading {
+#hbzqlyrdka .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -761,7 +760,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   text-align: left;
 }
 
-#npfqxgsivm .gt_empty_group_heading {
+#hbzqlyrdka .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -776,15 +775,15 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   vertical-align: middle;
 }
 
-#npfqxgsivm .gt_from_md > :first-child {
+#hbzqlyrdka .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#npfqxgsivm .gt_from_md > :last-child {
+#hbzqlyrdka .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#npfqxgsivm .gt_row {
+#hbzqlyrdka .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -803,7 +802,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   overflow-x: hidden;
 }
 
-#npfqxgsivm .gt_stub {
+#hbzqlyrdka .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -816,7 +815,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   padding-right: 5px;
 }
 
-#npfqxgsivm .gt_stub_row_group {
+#hbzqlyrdka .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -830,15 +829,15 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   vertical-align: top;
 }
 
-#npfqxgsivm .gt_row_group_first td {
+#hbzqlyrdka .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#npfqxgsivm .gt_row_group_first th {
+#hbzqlyrdka .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#npfqxgsivm .gt_summary_row {
+#hbzqlyrdka .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -848,16 +847,16 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   padding-right: 5px;
 }
 
-#npfqxgsivm .gt_first_summary_row {
+#hbzqlyrdka .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_first_summary_row.thick {
+#hbzqlyrdka .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#npfqxgsivm .gt_last_summary_row {
+#hbzqlyrdka .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -867,7 +866,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-bottom-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_grand_summary_row {
+#hbzqlyrdka .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -877,7 +876,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   padding-right: 5px;
 }
 
-#npfqxgsivm .gt_first_grand_summary_row {
+#hbzqlyrdka .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -887,7 +886,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-top-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_last_grand_summary_row_top {
+#hbzqlyrdka .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -897,11 +896,11 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-bottom-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_striped {
+#hbzqlyrdka .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#npfqxgsivm .gt_table_body {
+#hbzqlyrdka .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -910,7 +909,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-bottom-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_footnotes {
+#hbzqlyrdka .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -924,7 +923,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-right-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_footnote {
+#hbzqlyrdka .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -933,7 +932,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   padding-right: 5px;
 }
 
-#npfqxgsivm .gt_sourcenotes {
+#hbzqlyrdka .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -947,7 +946,7 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   border-right-color: #D3D3D3;
 }
 
-#npfqxgsivm .gt_sourcenote {
+#hbzqlyrdka .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -955,63 +954,63 @@ Figure&nbsp;2: Survival curves for soft and hard flares.
   padding-right: 5px;
 }
 
-#npfqxgsivm .gt_left {
+#hbzqlyrdka .gt_left {
   text-align: left;
 }
 
-#npfqxgsivm .gt_center {
+#hbzqlyrdka .gt_center {
   text-align: center;
 }
 
-#npfqxgsivm .gt_right {
+#hbzqlyrdka .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#npfqxgsivm .gt_font_normal {
+#hbzqlyrdka .gt_font_normal {
   font-weight: normal;
 }
 
-#npfqxgsivm .gt_font_bold {
+#hbzqlyrdka .gt_font_bold {
   font-weight: bold;
 }
 
-#npfqxgsivm .gt_font_italic {
+#hbzqlyrdka .gt_font_italic {
   font-style: italic;
 }
 
-#npfqxgsivm .gt_super {
+#hbzqlyrdka .gt_super {
   font-size: 65%;
 }
 
-#npfqxgsivm .gt_footnote_marks {
+#hbzqlyrdka .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#npfqxgsivm .gt_asterisk {
+#hbzqlyrdka .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#npfqxgsivm .gt_indent_1 {
+#hbzqlyrdka .gt_indent_1 {
   text-indent: 5px;
 }
 
-#npfqxgsivm .gt_indent_2 {
+#hbzqlyrdka .gt_indent_2 {
   text-indent: 10px;
 }
 
-#npfqxgsivm .gt_indent_3 {
+#hbzqlyrdka .gt_indent_3 {
   text-indent: 15px;
 }
 
-#npfqxgsivm .gt_indent_4 {
+#hbzqlyrdka .gt_indent_4 {
   text-indent: 20px;
 }
 
-#npfqxgsivm .gt_indent_5 {
+#hbzqlyrdka .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1054,10 +1053,10 @@ Session info
 </summary><div class="cell">
 <div class="cell-output-display">
 <p><strong>R version 4.4.0 (2024-04-24)</strong></p>
-<p><strong>Platform:</strong> aarch64-apple-darwin20</p>
-<p><strong>locale:</strong> en_GB.UTF-8||en_GB.UTF-8||en_GB.UTF-8||C||en_GB.UTF-8||en_GB.UTF-8</p>
+<p><strong>Platform:</strong> aarch64-unknown-linux-gnu</p>
+<p><strong>locale:</strong> <em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=en_US.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=en_US.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=en_US.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=en_US.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
-<p><strong>other attached packages:</strong> <em>gtsummary(v.1.7.2)</em>, <em>DescTools(v.0.99.54)</em>, <em>finalfit(v.1.0.7)</em>, <em>coxme(v.2.2-20)</em>, <em>bdsmatrix(v.1.3-7)</em>, <em>pander(v.0.6.5)</em>, <em>survminer(v.0.4.9)</em>, <em>ggpubr(v.0.6.0)</em>, <em>survival(v.3.6-4)</em>, <em>datefixR(v.1.6.1)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>readxl(v.1.4.3)</em></p>
+<p><strong>other attached packages:</strong> <em>gtsummary(v.1.7.2)</em>, <em>DescTools(v.0.99.54)</em>, <em>finalfit(v.1.0.7)</em>, <em>coxme(v.2.2-20)</em>, <em>bdsmatrix(v.1.3-7)</em>, <em>pander(v.0.6.5)</em>, <em>survminer(v.0.4.9)</em>, <em>ggpubr(v.0.6.0)</em>, <em>survival(v.3.5-8)</em>, <em>datefixR(v.1.6.1)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>readxl(v.1.4.3)</em></p>
 <p><strong>loaded via a namespace (and not attached):</strong> <em>gridExtra(v.2.3)</em>, <em>gld(v.2.6.6)</em>, <em>rlang(v.1.1.3)</em>, <em>magrittr(v.2.0.3)</em>, <em>e1071(v.1.7-14)</em>, <em>compiler(v.4.4.0)</em>, <em>vctrs(v.0.6.5)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>shape(v.1.4.6.1)</em>, <em>fastmap(v.1.2.0)</em>, <em>backports(v.1.5.0)</em>, <em>labeling(v.0.4.3)</em>, <em>KMsurv(v.0.1-5)</em>, <em>utf8(v.1.2.4)</em>, <em>rmarkdown(v.2.27)</em>, <em>markdown(v.1.12)</em>, <em>tzdb(v.0.4.0)</em>, <em>nloptr(v.2.0.3)</em>, <em>xfun(v.0.44)</em>, <em>glmnet(v.4.1-8)</em>, <em>jomo(v.2.7-6)</em>, <em>jsonlite(v.1.8.8)</em>, <em>pan(v.1.9)</em>, <em>broom(v.1.0.6)</em>, <em>R6(v.2.5.1)</em>, <em>stringi(v.1.8.4)</em>, <em>car(v.3.1-2)</em>, <em>boot(v.1.3-30)</em>, <em>rpart(v.4.1.23)</em>, <em>cellranger(v.1.1.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>iterators(v.1.0.14)</em>, <em>knitr(v.1.46)</em>, <em>zoo(v.1.8-12)</em>, <em>Matrix(v.1.7-0)</em>, <em>splines(v.4.4.0)</em>, <em>nnet(v.7.3-19)</em>, <em>timechange(v.0.3.0)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rstudioapi(v.0.16.0)</em>, <em>abind(v.1.4-5)</em>, <em>yaml(v.2.3.8)</em>, <em>ggtext(v.0.1.2)</em>, <em>codetools(v.0.2-20)</em>, <em>lattice(v.0.22-6)</em>, <em>withr(v.3.0.0)</em>, <em>evaluate(v.0.23)</em>, <em>proxy(v.0.4-27)</em>, <em>xml2(v.1.3.6)</em>, <em>survMisc(v.0.5.6)</em>, <em>pillar(v.1.9.0)</em>, <em>carData(v.3.0-5)</em>, <em>mice(v.3.16.0)</em>, <em>foreach(v.1.5.2)</em>, <em>generics(v.0.1.3)</em>, <em>hms(v.1.1.3)</em>, <em>commonmark(v.1.9.1)</em>, <em>munsell(v.0.5.1)</em>, <em>scales(v.1.3.0)</em>, <em>rootSolve(v.1.8.2.4)</em>, <em>minqa(v.1.2.7)</em>, <em>xtable(v.1.8-4)</em>, <em>class(v.7.3-22)</em>, <em>glue(v.1.7.0)</em>, <em>lmom(v.3.0)</em>, <em>tools(v.4.4.0)</em>, <em>data.table(v.1.15.4)</em>, <em>lme4(v.1.1-35.3)</em>, <em>ggsignif(v.0.6.4)</em>, <em>Exact(v.3.2)</em>, <em>mvtnorm(v.1.2-5)</em>, <em>grid(v.4.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>nlme(v.3.1-164)</em>, <em>cli(v.3.6.2)</em>, <em>km.ci(v.0.5-6)</em>, <em>fansi(v.1.0.6)</em>, <em>expm(v.0.999-9)</em>, <em>broom.helpers(v.1.15.0)</em>, <em>gt(v.0.10.1)</em>, <em>gtable(v.0.3.5)</em>, <em>rstatix(v.0.7.2)</em>, <em>sass(v.0.4.9)</em>, <em>digest(v.0.6.35)</em>, <em>farver(v.2.1.2)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>httr(v.1.4.7)</em>, <em>mitml(v.0.4-5)</em>, <em>gridtext(v.0.1.5)</em> and <em>MASS(v.7.3-60.2)</em></p>
 </div>
 </div>
@@ -1710,278 +1709,276 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co"># paths to PREdiCCt data</span></span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(<span class="st">"/docker"</span>)) { <span class="co"># If running in docker</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed"</span></span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> { <span class="co"># Run on OS directly</span></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"</span></span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/processed/"</span></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-full.RDS"</span>))</span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>FC <span class="ot">&lt;-</span> <span class="fu">log</span>(demo<span class="sc">$</span>FC)</span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>cox.summary <span class="ot">&lt;-</span> <span class="cf">function</span>(fit) {</span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Cox model summary:"</span>)</span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>  fit <span class="sc">%&gt;%</span></span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    finalfit<span class="sc">::</span><span class="fu">fit2df</span>(<span class="at">condense =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(</span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Variable"</span>,</span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HR"</span>,</span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Lower 95%"</span>,</span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Upper 95%"</span>,</span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">"P-value"</span></span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">4</span></span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>()</span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"\ "</span>)</span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Diagnostics:\ "</span>)</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/analysis/data/final/20221004/"</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/analysis/data/final/20231030/"</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"/analysis/data/end-of-follow-up/"</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"/analysis/data/processed/"</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  flaredir <span class="ot">&lt;-</span> <span class="st">"/analysis/data/final/20240308/"</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> { <span class="co"># Run on OS directly</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/processed/"</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>  flaredir <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20240308/"</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(outdir, <span class="st">"demo-full.RDS"</span>))</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>FC <span class="ot">&lt;-</span> <span class="fu">log</span>(demo<span class="sc">$</span>FC)</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>cox.summary <span class="ot">&lt;-</span> <span class="cf">function</span>(fit) {</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Cox model summary:"</span>)</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>  fit <span class="sc">%&gt;%</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    finalfit<span class="sc">::</span><span class="fu">fit2df</span>(<span class="at">condense =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Variable"</span>,</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">"HR"</span>,</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Lower 95%"</span>,</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Upper 95%"</span>,</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>        <span class="st">"P-value"</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">4</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>()</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"\ "</span>)</span>
 <span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">'::: {.panel-tabset group="diagnostics"}\ '</span>)</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Diagnostics:\ "</span>)</span>
 <span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"###### Proportional hazards assumption test \ "</span>)</span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cox.zph</span>(fit)<span class="sc">$</span>table <span class="sc">%&gt;%</span></span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(</span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>        <span class="st">""</span>,</span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Chi-squared statistic"</span>,</span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DF"</span>,</span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">"P-value"</span></span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">4</span></span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>()</span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"###### DF betas \ "</span>)</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">'::: {.panel-tabset group="diagnostics"}\ '</span>)</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"###### Proportional hazards assumption test \ "</span>)</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cox.zph</span>(fit)<span class="sc">$</span>table <span class="sc">%&gt;%</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>        <span class="st">""</span>,</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Chi-squared statistic"</span>,</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>        <span class="st">"DF"</span>,</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">"P-value"</span></span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">4</span></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>()</span>
 <span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">ggcoxdiagnostics</span>(fit, <span class="at">type =</span> <span class="st">"dfbeta"</span>))</span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"###### DF betas \ "</span>)</span>
 <span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"###### Martignale residuals </span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">ggcoxdiagnostics</span>(fit, <span class="at">type =</span> <span class="st">"martingale"</span>, <span class="at">linear.predictions =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">":::"</span>)</span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>()</span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>This page explores soft and hard flares. Survival curves are compared across</span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>diseases, and soft and hard flares are compared directly. </span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Primary outcome: First soft flare</span></span>
-<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>flares <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(</span>
-<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(</span>
-<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/"</span>,</span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>    <span class="st">"final/20240308/Followup/all-flares.xlsx"</span></span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>  <span class="at">na =</span> <span class="st">"."</span>,</span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="dv">1</span></span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ParticipantNo, softflare, softflare_time, hardflare, hardflare_time)</span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>flare.df <span class="ot">&lt;-</span> <span class="fu">merge</span>(demo, flares, <span class="at">by =</span> <span class="st">"ParticipantNo"</span>)</span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>For soft flares, a soft flare is primarily defined by a subject reporting their</span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>disease as uncontrolled. The time of the flare is given by the date the subject</span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>reported their symptoms worsening. </span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>If a date for when the symptoms worsened is given, but the subject did not</span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>answer if their disease was uncontrolled, it is assumed their disease is not</span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>controlled (in other words, it is assumed a soft flare occurred).</span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>If a subject reported their disease as being uncontrolled, but did not give a</span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>date for the worsening of their symptoms, then the earliest date given for</span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>either an IBD outpatient appointment, emergency hospital admission, call with</span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>their IBD care team, or surgery in the questionnaire response was used. If none</span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>of these dates were provided then the date of the questionnaire response was</span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>used instead. </span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>If a hard flare occurs prior to a soft flare then the soft flare is assumed to</span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>occur on the same date as the hard flare.</span>
-<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>A complete description of the steps taken to calculate soft flares is outlined</span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>in the below drop-down section. </span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt; Steps for calculating soft flares &lt;/summary&gt;</span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>If date of flare is before date of entry to study, then delete flare date and</span>
-<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>   recode diseasecontrolled as 1.</span>
-<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>If flare date is after the questionnaire date (I.E in the future), reset</span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>   flare date to questionnaire date.</span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>If questionnaire completed after date of withdrawal, remove.</span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>If date of flare is &gt;2 years after entry, censor soft flare at 2 years.</span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Time is earliest of flare time or end of follow up, from entry date.</span>
-<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>All data censored at 2 years.</span>
-<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Including the hard flares (hard flare data are much more straightforward,</span>
-<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>   flare=<span class="in">`diseaseflareyn`</span> and flare date=<span class="in">`firstflarestartdate`</span> from EOS data)</span>
-<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If both datasets say no flare, soft flare is no and follow up time from</span>
-<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>      hard flare &lt;= 2 years, softflare time is longest of questionnaire and hard</span>
-<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>      flare times</span>
-<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If both datasets say no flare, soft flare is no and follow up time from</span>
-<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>      hard flare &gt; 2 years, softflare time is 2 years</span>
-<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If no flare in questionnaires, but hard flare reported before 2 years of</span>
-<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>      follow up, take hard flare data</span>
-<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If no flare in questionnaires, but hard flare reported after 2 years,</span>
-<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>      softflare is no and softflare time =2 years</span>
-<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If flare in questionnaire and no hard flare, softflare from questionnaire</span>
-<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>      data</span>
-<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If flare in questionnaire and also hard flare, take the earliest time</span>
-<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and no hard flare, soft flare is no and</span>
-<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>      time is earliest of hard flare follow up and 2 years</span>
-<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and hard flare reported within 2 years,</span>
-<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>      softflare taken from hard flare data</span>
-<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and hard flare reported after 2 years</span>
-<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>      then softflare is no and time is 2 years</span>
-<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>Otherwise if questionnaire data is not missing and hardflare is, then</span>
-<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>      softflare taken from questionnaire data</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">ggcoxdiagnostics</span>(fit, <span class="at">type =</span> <span class="st">"dfbeta"</span>))</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"###### Martignale residuals </span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">ggcoxdiagnostics</span>(fit, <span class="at">type =</span> <span class="st">"martingale"</span>, <span class="at">linear.predictions =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">":::"</span>)</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>()</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>This page explores soft and hard flares. Survival curves are compared across</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>diseases, and soft and hard flares are compared directly. </span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a><span class="fu">## Primary outcome: First soft flare</span></span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>flares <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(flaredir, <span class="st">"Followup/all-flares.xlsx"</span>),</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">na =</span> <span class="st">"."</span>,</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="dv">1</span></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ParticipantNo, softflare, softflare_time, hardflare, hardflare_time)</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>flare.df <span class="ot">&lt;-</span> <span class="fu">merge</span>(demo, flares, <span class="at">by =</span> <span class="st">"ParticipantNo"</span>)</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>For soft flares, a soft flare is primarily defined by a subject reporting their</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>disease as uncontrolled. The time of the flare is given by the date the subject</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>reported their symptoms worsening. </span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>If a date for when the symptoms worsened is given, but the subject did not</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>answer if their disease was uncontrolled, it is assumed their disease is not</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>controlled (in other words, it is assumed a soft flare occurred).</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>If a subject reported their disease as being uncontrolled, but did not give a</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>date for the worsening of their symptoms, then the earliest date given for</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>either an IBD outpatient appointment, emergency hospital admission, call with</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>their IBD care team, or surgery in the questionnaire response was used. If none</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>of these dates were provided then the date of the questionnaire response was</span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>used instead. </span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>If a hard flare occurs prior to a soft flare then the soft flare is assumed to</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>occur on the same date as the hard flare.</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>A complete description of the steps taken to calculate soft flares is outlined</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>in the below drop-down section. </span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt; Steps for calculating soft flares &lt;/summary&gt;</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>If date of flare is before date of entry to study, then delete flare date and</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>   recode diseasecontrolled as 1.</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>If flare date is after the questionnaire date (I.E in the future), reset</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>   flare date to questionnaire date.</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>If questionnaire completed after date of withdrawal, remove.</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>If date of flare is &gt;2 years after entry, censor soft flare at 2 years.</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Time is earliest of flare time or end of follow up, from entry date.</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>All data censored at 2 years.</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Including the hard flares (hard flare data are much more straightforward,</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>   flare=<span class="in">`diseaseflareyn`</span> and flare date=<span class="in">`firstflarestartdate`</span> from EOS data)</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If both datasets say no flare, soft flare is no and follow up time from</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>      hard flare &lt;= 2 years, softflare time is longest of questionnaire and hard</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>      flare times</span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If both datasets say no flare, soft flare is no and follow up time from</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>      hard flare &gt; 2 years, softflare time is 2 years</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If no flare in questionnaires, but hard flare reported before 2 years of</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>      follow up, take hard flare data</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If no flare in questionnaires, but hard flare reported after 2 years,</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>      softflare is no and softflare time =2 years</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If flare in questionnaire and no hard flare, softflare from questionnaire</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>      data</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If flare in questionnaire and also hard flare, take the earliest time</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and no hard flare, soft flare is no and</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>      time is earliest of hard flare follow up and 2 years</span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and hard flare reported within 2 years,</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>      softflare taken from hard flare data</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and hard flare reported after 2 years</span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>      then softflare is no and time is 2 years</span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>Otherwise if questionnaire data is not missing and hardflare is, then</span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>      softflare taken from questionnaire data</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>All times are taken from the earliest reported flare.</span>
 <span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>All times are taken from the earliest reported flare.</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
 <span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
-<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-km-soft</span></span>
-<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Kaplan-Meier curves for soft flares stratified by IBD type."</span></span>
-<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> flare.df <span class="sc">%&gt;%</span></span>
-<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> diagnosis2, <span class="at">data =</span> .)</span>
-<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(fit,</span>
-<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.df,</span>
-<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval.method =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>  <span class="at">ggtheme =</span> <span class="fu">theme_minimal</span>(),</span>
-<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title =</span> <span class="st">"IBD Type"</span>,</span>
-<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.labs =</span> <span class="fu">c</span>(<span class="st">"Crohn's disease"</span>, <span class="st">"UC/IBDU"</span>),</span>
-<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#00A6ED"</span>, <span class="st">"#F6511D"</span>),</span>
-<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recrutiment (days)"</span>,</span>
-<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
-<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>p</span>
-<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-km-soft</span></span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Kaplan-Meier curves for soft flares stratified by IBD type."</span></span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> flare.df <span class="sc">%&gt;%</span></span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> diagnosis2, <span class="at">data =</span> .)</span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(fit,</span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.df,</span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval.method =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">ggtheme =</span> <span class="fu">theme_minimal</span>(),</span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title =</span> <span class="st">"IBD Type"</span>,</span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.labs =</span> <span class="fu">c</span>(<span class="st">"Crohn's disease"</span>, <span class="st">"UC/IBDU"</span>),</span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#00A6ED"</span>, <span class="st">"#F6511D"</span>),</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recrutiment (days)"</span>,</span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## Secondary outcome: first hard flare</span></span>
 <span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a><span class="fu">## Secondary outcome: first hard flare</span></span>
-<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>Disease flares been reported by clinical care teams instead of being</span>
-<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>reported by subjects themselves.</span>
-<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> diagnosis2, <span class="at">data =</span> flare.df)</span>
-<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(fit,</span>
-<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.df,</span>
-<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval.method =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>  <span class="at">ggtheme =</span> <span class="fu">theme_minimal</span>(),</span>
-<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>  <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#00A6ED"</span>, <span class="st">"#F6511D"</span>),</span>
-<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recrutiment (days)"</span>,</span>
-<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title =</span> <span class="st">"Flare type"</span>,</span>
-<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">400</span></span>
-<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p)</span>
-<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>Disease flares been reported by clinical care teams instead of being</span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>reported by subjects themselves.</span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> diagnosis2, <span class="at">data =</span> flare.df)</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(fit,</span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.df,</span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>  <span class="at">pval.method =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>  <span class="at">ggtheme =</span> <span class="fu">theme_minimal</span>(),</span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#00A6ED"</span>, <span class="st">"#F6511D"</span>),</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recrutiment (days)"</span>,</span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title =</span> <span class="st">"Flare type"</span>,</span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">400</span></span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p)</span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison of hard and soft flares </span></span>
 <span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison of hard and soft flares </span></span>
-<span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-comb-comp</span></span>
-<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Survival curves for soft and hard flares."</span></span>
-<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>flare.comb <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">ParticipantNo =</span> flares<span class="sc">$</span>ParticipantNo,</span>
-<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>           <span class="at">Cens =</span> flares<span class="sc">$</span>hardflare,</span>
-<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>           <span class="at">time =</span> flares<span class="sc">$</span>hardflare_time,</span>
-<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="st">"hard flare"</span>),</span>
-<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">ParticipantNo =</span> flares<span class="sc">$</span>ParticipantNo,</span>
-<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>             <span class="at">Cens =</span> flares<span class="sc">$</span>softflare,</span>
-<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a>             <span class="at">time =</span> flares<span class="sc">$</span>softflare_time,</span>
-<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a>             <span class="at">type =</span> <span class="st">"soft flare"</span>)</span>
-<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a>flare.comb <span class="ot">&lt;-</span> flare.comb <span class="sc">%&gt;%</span></span>
-<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(Cens, time)</span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-comb-comp</span></span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Survival curves for soft and hard flares."</span></span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a>flare.comb <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">ParticipantNo =</span> flares<span class="sc">$</span>ParticipantNo,</span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>           <span class="at">Cens =</span> flares<span class="sc">$</span>hardflare,</span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a>           <span class="at">time =</span> flares<span class="sc">$</span>hardflare_time,</span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>           <span class="at">type =</span> <span class="st">"hard flare"</span>),</span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">ParticipantNo =</span> flares<span class="sc">$</span>ParticipantNo,</span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>             <span class="at">Cens =</span> flares<span class="sc">$</span>softflare,</span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a>             <span class="at">time =</span> flares<span class="sc">$</span>softflare_time,</span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>             <span class="at">type =</span> <span class="st">"soft flare"</span>)</span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>flare.comb <span class="ot">&lt;-</span> flare.comb <span class="sc">%&gt;%</span></span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(Cens, time)</span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a>flare.comb<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(flare.comb<span class="sc">$</span>type)</span>
 <span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a>flare.comb<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(flare.comb<span class="sc">$</span>type)</span>
-<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(time, Cens) <span class="sc">~</span> type, <span class="at">data =</span> flare.comb)</span>
 <span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(time, Cens) <span class="sc">~</span> type, <span class="at">data =</span> flare.comb)</span>
-<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(fit,</span>
-<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> flare.comb,</span>
-<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a>                <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a>                <span class="at">pval =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a>                <span class="at">pval.method =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a>                <span class="at">ggtheme =</span> <span class="fu">theme_minimal</span>(),</span>
-<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a>                <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a>                <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#4a938e"</span>, <span class="st">"#e493a3"</span>),</span>
-<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab =</span> <span class="st">"Time from study recrutiment (days)"</span>,</span>
-<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a>                <span class="at">legend.title =</span> <span class="st">"Flare type"</span>,</span>
-<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a>                <span class="at">tables.y.text =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a>                <span class="at">tables.col =</span> <span class="st">"strata"</span>,</span>
-<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a>                <span class="at">break.time.by =</span> <span class="dv">300</span>,</span>
-<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2200</span>)</span>
-<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a>) </span>
-<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/flare-comparison.pdf"</span>, <span class="at">width =</span> <span class="dv">7</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
-<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>p</span>
-<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
-<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(p, <span class="fu">paste0</span>(outdir, <span class="st">"flare-comparison.RDS"</span>))</span>
-<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a>p</span>
-<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-comb-comp</span></span>
-<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Survival rates after two years of follow-up."</span></span>
-<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a>fit <span class="sc">%&gt;%</span></span>
-<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tbl_survfit</span>(</span>
-<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>    <span class="at">times =</span> <span class="dv">365</span><span class="sc">*</span><span class="dv">2</span>,</span>
-<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">"Flare type"</span>,</span>
-<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">"{estimate} ({conf.low}, {conf.high})"</span>,</span>
-<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_header =</span> <span class="st">"**2-year survival (95% CI)**"</span></span>
-<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.df, <span class="fu">paste0</span>(outdir, <span class="st">"flares-overview.RDS"</span>))</span>
-<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(fit,</span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> flare.comb,</span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a>                <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a>                <span class="at">pval =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a>                <span class="at">pval.method =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a>                <span class="at">ggtheme =</span> <span class="fu">theme_minimal</span>(),</span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a>                <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a>                <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#4a938e"</span>, <span class="st">"#e493a3"</span>),</span>
+<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab =</span> <span class="st">"Time from study recrutiment (days)"</span>,</span>
+<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a>                <span class="at">legend.title =</span> <span class="st">"Flare type"</span>,</span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a>                <span class="at">tables.y.text =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a>                <span class="at">tables.col =</span> <span class="st">"strata"</span>,</span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a>                <span class="at">break.time.by =</span> <span class="dv">300</span>,</span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2200</span>)</span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/flare-comparison.pdf"</span>, <span class="at">width =</span> <span class="dv">7</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(p, <span class="fu">paste0</span>(outdir, <span class="st">"flare-comparison.RDS"</span>))</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-comb-comp</span></span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Survival rates after two years of follow-up."</span></span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>fit <span class="sc">%&gt;%</span></span>
+<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tbl_survfit</span>(</span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a>    <span class="at">times =</span> <span class="dv">365</span><span class="sc">*</span><span class="dv">2</span>,</span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">"Flare type"</span>,</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">"{estimate} ({conf.low}, {conf.high})"</span>,</span>
+<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_header =</span> <span class="st">"**2-year survival (95% CI)**"</span></span>
+<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-296"><a href="#cb8-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb8-297"><a href="#cb8-297" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.df, <span class="fu">paste0</span>(outdir, <span class="st">"flares-overview.RDS"</span>))</span>
+<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
 <span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
-<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
-<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
-<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
-<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
-<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
-<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
+<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
+<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
+<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
+<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
+<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
 <span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
-<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
-<span id="cb8-315"><a href="#cb8-315" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
-<span id="cb8-316"><a href="#cb8-316" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
+<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
+<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
+<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
