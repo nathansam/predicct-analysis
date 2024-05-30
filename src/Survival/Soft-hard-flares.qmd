@@ -28,15 +28,17 @@ library(gtsummary)
 
 # paths to PREdiCCt data
 if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  data.path <- "/analysis/data/final/20221004/"
+  redcap.path <- "/analysis/data/final/20231030/"
+  prefix <- "/analysis/data/end-of-follow-up/"
+  outdir <- "/analysis/data/processed/"
+  flaredir <- "/analysis/data/final/20240308/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  flaredir <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20240308/"
 }
 
 
@@ -92,16 +94,12 @@ cox.summary <- function(fit) {
 This page explores soft and hard flares. Survival curves are compared across
 diseases, and soft and hard flares are compared directly. 
 
-
 ## Primary outcome: First soft flare
 
 ```{R}
 #| warning: false
 flares <- read_xlsx(
-  paste0(
-    "/Volumes/igmm/cvallejo-predicct/predicct/",
-    "final/20240308/Followup/all-flares.xlsx"
-  ),
+  paste0(flaredir, "Followup/all-flares.xlsx"),
   na = ".",
   sheet = 1
 ) %>%

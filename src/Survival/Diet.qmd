@@ -37,10 +37,10 @@ library(gtsummary)
 
 # paths to PREdiCCt data
 if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  data.path <- "/analysis/data/final/20221004/"
+  redcap.path <- "/analysis/data/final/20231030/"
+  prefix <- "/analysis/data/end-of-follow-up/"
+  outdir <- "/analysis/data/processed/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
@@ -170,11 +170,11 @@ p <- ggsurvplot(fit,
 
 saveRDS(p, paste0(outdir, "meat-cd-soft.RDS"))
 
-cairo_pdf("../plots/cd/soft-flare/Diet/meat.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/meat.png",
+png("../plots/cd/soft-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -220,11 +220,11 @@ p <- ggsurvplot(fit,
 
 saveRDS(p, paste0(outdir, "meat-cd-hard.RDS"))
 
-cairo_pdf("../plots/cd/hard-flare/Diet/meat.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/meat.png",
+png("../plots/cd/hard-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -284,11 +284,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 saveRDS(p, paste0(outdir, "meat-uc-soft.RDS"))
-cairo_pdf("../plots/uc/soft-flare/Diet/meat.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/meat.png",
+png("../plots/uc/soft-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -335,11 +335,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 saveRDS(p, paste0(outdir, "meat-uc-hard.RDS"))
-cairo_pdf("../plots/uc/hard-flare/Diet/meat.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/meat.png",
+png("../plots/uc/hard-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -400,11 +400,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/fibre.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/fibre.png",
+png("../plots/cd/soft-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -448,11 +448,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/fibre.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/fibre.png",
+png("../plots/cd/hard-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -510,11 +510,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/fibre.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/fibre.png",
+png("../plots/uc/soft-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -562,11 +562,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/fibre.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/fibre.png",
+png("../plots/uc/hard-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -630,11 +630,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/pufa.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/pufa.png",
+png("../plots/cd/soft-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -678,11 +678,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/pufa.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/pufa.png",
+png("../plots/cd/hard-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -742,11 +742,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/pufa.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/pufa.png",
+png("../plots/uc/soft-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -793,11 +793,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/pufa.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/pufa.png",
+png("../plots/uc/hard-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -854,11 +854,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/nova.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/nova.png",
+png("../plots/cd/soft-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -902,11 +902,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/nova.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/nova.png",
+png("../plots/cd/hard-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -959,11 +959,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/nova.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/nova.png",
+png("../plots/uc/soft-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1010,11 +1010,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/nova.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/nova.png",
+png("../plots/uc/hard-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1078,11 +1078,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/breadIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/breadIntake.png",
+png("../plots/cd/soft-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1126,11 +1126,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/breadIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/breadIntake.png",
+png("../plots/cd/hard-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1188,11 +1188,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/breadIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/breadIntake.png",
+png("../plots/uc/soft-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1239,11 +1239,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/breadIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/breadIntake.png",
+png("../plots/uc/hard-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1304,11 +1304,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/sweetIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/sweetIntake.png",
+png("../plots/cd/soft-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1352,11 +1352,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/sweetIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/sweetIntake.png",
+png("../plots/cd/hard-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1414,11 +1414,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/sweetIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/sweetIntake.png",
+png("../plots/uc/soft-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1465,11 +1465,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/sweetIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/sweetIntake.png",
+png("../plots/uc/hard-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1530,11 +1530,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/drinkIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/drinkIntake.png",
+png("../plots/cd/soft-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1578,11 +1578,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/drinkIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/drinkIntake.png",
+png("../plots/cd/hard-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1640,11 +1640,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/drinkIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/drinkIntake.png",
+png("../plots/uc/soft-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1691,11 +1691,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/drinkIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/drinkIntake.png",
+png("../plots/uc/hard-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1756,11 +1756,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/processedMeatIntake.png",
+png("../plots/cd/soft-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1804,11 +1804,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/processedMeatIntake.png",
+png("../plots/cd/hard-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1866,11 +1866,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/processedMeatIntake.png",
+png("../plots/uc/soft-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1917,11 +1917,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/processedMeatIntake.png",
+png("../plots/uc/hard-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1960,7 +1960,7 @@ invisible(cox.summary(fit.me))
 quants <- quantile(flare.df$processedPlantIntake, na.rm = TRUE)
 
 flare.cd.df$processedPlantIntake_cat <- cut(flare.cd.df$processedPlantIntake,
-  breaks = unique(c(0, quants[2:5])), # minimum to median all 0. 
+  breaks = unique(c(0, quants[2:5])), # minimum to median all 0.
   include.lowest = TRUE
 )
 
@@ -1982,11 +1982,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/processedPlantIntake.png",
+png("../plots/cd/soft-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2030,11 +2030,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/processedPlantIntake.png",
+png("../plots/cd/hard-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2092,11 +2092,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/processedPlantIntake.png",
+png("../plots/uc/soft-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2143,11 +2143,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/processedPlantIntake.png",
+png("../plots/uc/hard-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2210,11 +2210,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/fruitIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/fruitIntake.png",
+png("../plots/cd/soft-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2258,11 +2258,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/fruitIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/fruitIntake.png",
+png("../plots/cd/hard-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2320,11 +2320,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/fruitIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/fruitIntake.png",
+png("../plots/uc/soft-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2371,11 +2371,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/fruitIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/fruitIntake.png",
+png("../plots/uc/hard-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2436,11 +2436,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/vegIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/vegIntake.png",
+png("../plots/cd/soft-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2484,11 +2484,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/vegIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/vegIntake.png",
+png("../plots/cd/hard-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2546,11 +2546,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/vegIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/vegIntake.png",
+png("../plots/uc/soft-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2597,11 +2597,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/vegIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/vegIntake.png",
+png("../plots/uc/hard-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2663,11 +2663,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/redMeatIntake.png",
+png("../plots/cd/soft-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2711,11 +2711,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/redMeatIntake.png",
+png("../plots/cd/hard-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2773,11 +2773,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/redMeatIntake.png",
+png("../plots/uc/soft-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2824,11 +2824,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/redMeatIntake.png",
+png("../plots/uc/hard-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2889,11 +2889,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/whiteMeatIntake.png",
+png("../plots/cd/soft-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2937,11 +2937,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/whiteMeatIntake.png",
+png("../plots/cd/hard-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2999,11 +2999,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/whiteMeatIntake.png",
+png("../plots/uc/soft-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3050,11 +3050,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/whiteMeatIntake.png",
+png("../plots/uc/hard-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3115,11 +3115,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("../plots/cd/soft-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/whiteFishIntake.png",
+png("../plots/cd/soft-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3163,11 +3163,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("../plots/cd/hard-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/whiteFishIntake.png",
+png("../plots/cd/hard-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3225,11 +3225,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("../plots/uc/soft-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/whiteFishIntake.png",
+png("../plots/uc/soft-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3276,11 +3276,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("../plots/uc/hard-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/whiteFishIntake.png",
+png("../plots/uc/hard-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",

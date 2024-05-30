@@ -19,15 +19,17 @@ library(DiagrammeR)
 library(DiagrammeRsvg)
 
 if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  data.path <- "/analysis/data/final/20221004/"
+  redcap.path <- "/analysis/data/final/20231030/"
+  prefix <- "/analysis/data/end-of-follow-up/"
+  outdir <- "/analysis/data/processed/"
+  metadata <- "/analysis/data/metadata/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  metadata <- "/Volumes/igmm/cvallejo-predicct/predicct/metadata/"
 }
 
 # Demographic data as reported by subjects
@@ -57,8 +59,7 @@ the PREdiCCt cohort by country of the recruiting site.
 ```{R}
 #| label: fig-country
 #| fig-cap: "Distribution of the PREdiCCt cohort by country of recruitment site."
-site.data <- read.csv(paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
-                             "metadata/sites.csv"))
+site.data <- read.csv(paste0(metadata, "sites.csv"))
 sites <- demo %>%
   select(ParticipantNo, SiteNo)
 sites <- merge(sites, site.data, by = "SiteNo", all.x = TRUE, all.y = FALSE)
