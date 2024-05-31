@@ -814,15 +814,17 @@ demo %>%
   pander()
 ```
 
-As intake of processed meat appeared to be associated with FC at recruitment, we
-explored the distribution processed meat intake within FC categories. From
-@fig-processedMeatIntake-FC, it appears subjects with FC<50μg/g at recruitment
-were more likely to consume no, or low levels of, processed meat. 
+As intake of processed meat appeared to be associated with FC at recruitment for
+the UC/IBDU subcohort, we explored the distribution of processed meat intake within
+FC categories for this subcohort. From @fig-processedMeatIntake-FC, it appears
+subjects with FC<50μg/g at recruitment were more likely to consume no, or low
+levels of, processed meat. 
 
 ```{R}
 #| label: fig-processedMeatIntake-FC
-#| fig-cap: "Distribution of processed animal-based product intake, divided by daily energy intake, and stratified by faecal calprotectin category."
+#| fig-cap: "Distribution of processed animal-based product intake, divided by daily energy intake, and stratified by faecal calprotectin category for the UC/IBU cohort."
 demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
   drop_na(processedMeatIntake, cat) %>%
   ggplot(aes(x = processedMeatIntake)) +
   geom_histogram(bins = 25, color = "#BC0019", fill = "#FF4C55") +
@@ -1191,6 +1193,24 @@ demo %>%
   aov(formula = vegIntake ~ cat, data = .) %>%
   summary() %>%
   pander() 
+```
+
+As vegetable/legume intake was found to be significantly associated with FC at
+recruitment for the UC/IBDU cohort, we have plotted the distribution stratified
+by FC category.
+
+```{R}
+#| label: fig-vegIntake-uc-dist
+#| fig-cap: "Distribution of vegetable and legume intake divided by daily energy intake for the UC/IBDU subcohort stratified by FC category."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  drop_na(vegIntake, cat) %>%
+  ggplot(aes(x = vegIntake)) +
+  geom_histogram(bins = 25, color = "#BC0019", fill = "#FF4C55") +
+  theme_minimal() +
+  xlab("Vegetable and legume intake / energy intake (g/kcal)") +
+  ylab("Frequency") +
+  facet_grid(rows = vars(cat))
 ```
 
 ### Red meat
