@@ -90,10 +90,13 @@ will focus on the data outlined in the SAP.
 1. Polyunsaturated fatty acids (PUFAs)
 1. Nova intake score
 
+As additional analyses, we also explore alcohol use and diet quality and daily
+intake of food subgroups standardised by energy intake. 
+
 The data for these variables were extracted from the FFQs. As reported
 associations between dietary data and IBD are often specific to a form of IBD
-rather than IBD as a whole, these data will be presented stratified by disease
-type. 
+rather than IBD as a whole, these data will be presented as stratified by
+disease type. 
 
 ## Protein from meat sources
 
@@ -132,7 +135,7 @@ No association was observed between protein intake from meat and FC.
 
 ```{R}
 #| label: tbl-meat-sum-cd
-#| tbl-cap: "ANOVA between protein intake from meat and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between protein intake from meat and FC groups in the CD subcohort."
 
 demo %>%
   filter(diagnosis2 == "CD") %>%
@@ -143,7 +146,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-meat-sum-uc
-#| tbl-cap: "ANOVA between protein intake from meat and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between protein intake from meat and FC groups in the UC/IBDU subcohort."
 
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
@@ -199,7 +202,7 @@ No association was found between dietary fibre intake and FC.
 
 ```{R}
 #| label: tbl-fibre-cd
-#| tbl-cap: "ANOVA between dietary fibre and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between dietary fibre and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = fibre ~ cat, data = .) %>%
@@ -209,7 +212,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-fibre-uc
-#| tbl-cap: "ANOVA between dietary fibre and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between dietary fibre and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = fibre ~ cat, data = .) %>%
@@ -256,7 +259,7 @@ A significant association was not seen between PUFA intake and FC.
 
 ```{R}
 #| label: tbl-pufa-cd
-#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = PUFA_percEng ~ cat, data = .) %>%
@@ -266,7 +269,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-pufa-uc
-#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between polyunsaturated fatty acids and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = PUFA_percEng ~ cat, data = .) %>%
@@ -365,7 +368,7 @@ groups.
 
 ```{R}
 #| label: tbl-novas-dist-cd
-#| tbl-cap: "Chi-squared test between Nova intake score and FC groups in the CD cohort."
+#| tbl-cap: "Chi-squared test between Nova intake score and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   select(NOVAScore_cat, cat) %>%
@@ -376,7 +379,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-novas-dist-uc
-#| tbl-cap: "Chi-squared test between Nova intake score and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "Chi-squared test between Nova intake score and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   select(NOVAScore_cat, cat) %>%
@@ -385,12 +388,148 @@ demo %>%
   pander()
 ```
 
+## Alcohol use
+
+As there are differences between sexes in terms of both consumption of alcohol
+and risk of alcohol-associated organ damage [@Ceylan_Isik_2010], alcohol intake
+will be stratified by both IBD type and sex. 
+
+```{R}
+#| label: fig-alcohol
+#| fig-cap: "Distribution of alcohol per energy intake, stratified by sex."
+demo <- merge(demo,
+  FFQ[, c("ParticipantNo", "Alcohol_percEng")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
+
+demo %>%
+  drop_na(Alcohol_percEng) %>%
+  ggplot(aes(x = Alcohol_percEng, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 20) +
+  facet_grid(cols = vars(Sex), rows = vars(diagnosis2)) +
+  theme_minimal() +
+  labs(
+    x = "Alcohol intake per energy",
+    y = "Frequency",
+    color = "Diagnosis",
+    fill = "Diagnosis"
+  ) +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  theme(legend.position = "none")
+```
+
+```{R}
+#| label: tbl-alcohol-cd-male
+#| tbl-cap: "ANOVA between alcohol intake and FC groups for males in the CD subcohort."
+
+demo %>%
+  filter(diagnosis2 == "CD" & Sex == "Male") %>%
+  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-alcohol-cd-female
+#| tbl-cap: "ANOVA between alcohol intake and FC groups for females in the CD subcohort."
+
+demo %>%
+  filter(diagnosis2 == "CD" & Sex == "Female") %>%
+  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-alcohol-uc-male
+#| tbl-cap: "ANOVA between alcohol intake and FC groups for males in the UC/IBDU subcohort."
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU" & Sex == "Male") %>%
+  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-alcohol-uc-female
+#| tbl-cap: "ANOVA between alcohol intake and FC groups for females in the UC/IBDU subcohort."
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU" & Sex == "Female") %>%
+  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+## Diet quality
+
+Diet quality is assessed via diet quality index. 
+
+```{R}
+#| label: fig-dqi
+#| fig-cap: "Distribution of diet quality index, stratified by IBD type."
+demo <- merge(demo,
+  FFQ[, c("ParticipantNo", "dqi_tot")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
+
+demo %>%
+  drop_na(dqi_tot) %>%
+  ggplot(aes(x = dqi_tot, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 20) +
+  facet_grid(cols = vars(diagnosis2)) +
+  theme_minimal() +
+  labs(
+    x = "Diet quality index",
+    y = "Frequency",
+    color = "Diagnosis",
+    fill = "Diagnosis"
+  ) +
+  scale_fill_manual(values = c("#86DEB7", "#FC5A66")) +
+  scale_color_manual(values = c("#529176", "#AC353F"))
+```
+
+```{R}
+#| label: tbl-dqi-cd
+#| tbl-cap: "ANOVA between diet quality index and FC groups in the CD subcohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = dqi_tot ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
+```{R}
+#| label: tbl-dqi-uc
+#| tbl-cap: "ANOVA between diet quality index and FC groups in the UC/IBDU subcohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = dqi_tot ~ cat, data = .) %>%
+  summary() %>%
+  pander() 
+```
+
 ## Processed food subgroups
 
 In addition to exploring UPF intake as a whole, we also explore UPF intake by
 subcategories. This approach is based on the methodology used by @Cordova_2023.
 The following categories have been identified by Dr Maiara Brusco De Freitas
 using FFQ groupings.
+
+Total intake of the following subgroups (in grams) have been divided by daily
+kcal intake and then multiplied by 100 to ensure very small values are not
+reported (these small values also cause computational issues in downstream
+analyses).
 
 Animal-based products (processed meat) is the only subgroup considered which we
 found to be significantly associated with FC at recruitment. 
@@ -441,9 +580,23 @@ demo %>%
 ```
 
 ```{R}
-#| label: tbl-breadIntake
-#| tbl-cap: "ANOVA between processed bread/cereal intake and FC groups."
-pander(summary(aov(breadIntake ~ cat, data = demo)))
+#| label: tbl-breadIntake-cd
+#| tbl-cap: "ANOVA between processed bread/cereal intake and FC groups in the CD subcohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = breadIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-breadIntake-uc
+#| tbl-cap: "ANOVA between processed bread/cereal intake and FC groups in the UC/IBDU subcohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = breadIntake ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
 ### Sweets and desserts/snack foods
@@ -510,7 +663,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-sweetIntake-cd
-#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = sweetIntake ~ cat, data = .) %>%
@@ -521,7 +674,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-sweetIntake-uc
-#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between sweet/dessert/snack intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = sweetIntake ~ cat, data = .) %>%
@@ -571,7 +724,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-drinkIntake-cd
-#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = drinkIntake ~ cat, data = .) %>%
@@ -581,7 +734,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-drinkIntake-uc
-#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = drinkIntake ~ cat, data = .) %>%
@@ -636,7 +789,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-processedMeatIntake-cd
-#| tbl-cap: "ANOVA between processed meat intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between processed meat intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = processedMeatIntake ~ cat, data = .) %>%
@@ -647,7 +800,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-processedMeatIntake-uc
-#| tbl-cap: "ANOVA between processed meat intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between processed meat intake and FC groups in the UC/IBDU subcohort."
 
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
@@ -717,7 +870,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-plantIntake-cd
-#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = processedPlantIntake ~ cat, data = .) %>%
@@ -727,7 +880,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-plantIntake-uc
-#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups in the UC cohort."
+#| tbl-cap: "ANOVA between processed plant-based alternatives intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = processedPlantIntake ~ cat, data = .) %>%
@@ -947,7 +1100,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-fruitIntake-cd
-#| tbl-cap: "ANOVA between fruit intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between fruit intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = fruitIntake ~ cat, data = .) %>%
@@ -957,7 +1110,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-fruitIntake-uc
-#| tbl-cap: "ANOVA between fruit intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between fruit intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = fruitIntake ~ cat, data = .) %>%
@@ -1017,7 +1170,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-vegIntake-cd
-#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = vegIntake ~ cat, data = .) %>%
@@ -1027,7 +1180,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-vegIntake-uc
-#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between vegetable/legume intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = vegIntake ~ cat, data = .) %>%
@@ -1073,7 +1226,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-redMeatIntake-cd
-#| tbl-cap: "ANOVA between red meat intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between red meat intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = redMeatIntake ~ cat, data = .) %>%
@@ -1083,7 +1236,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-redMeatIntake-uc
-#| tbl-cap: "ANOVA between red meat intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between red meat intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = redMeatIntake ~ cat, data = .) %>%
@@ -1128,7 +1281,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-whiteMeatIntake-cd
-#| tbl-cap: "ANOVA between white meat intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between white meat intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = whiteMeatIntake ~ cat, data = .) %>%
@@ -1139,7 +1292,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-whiteMeatIntake-uc
-#| tbl-cap: "ANOVA between white meat intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between white meat intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = whiteMeatIntake ~ cat, data = .) %>%
@@ -1184,7 +1337,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-whiteFishIntake-cd
-#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups in the CD cohort."
+#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups in the CD subcohort."
 demo %>%
   filter(diagnosis2 == "CD") %>%
   aov(formula = whiteFishIntake ~ cat, data = .) %>%
@@ -1194,7 +1347,7 @@ demo %>%
 
 ```{R}
 #| label: tbl-whiteFishIntake-uc
-#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups in the UC/IBDU cohort."
+#| tbl-cap: "ANOVA between fish (white and oily) intake and FC groups in the UC/IBDU subcohort."
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = whiteFishIntake ~ cat, data = .) %>%
@@ -1203,106 +1356,6 @@ demo %>%
 ```
 
 :::
-
-## Alcohol use
-
-```{R}
-#| label: fig-alcohol
-#| fig-cap: "Distribution of alcohol per energy intake, stratified by sex."
-demo <- merge(demo,
-  FFQ[, c("ParticipantNo", "Alcohol_percEng")],
-  by = "ParticipantNo",
-  all.x = TRUE,
-  all.y = FALSE
-)
-
-demo %>%
-  drop_na(Alcohol_percEng) %>%
-  ggplot(aes(x = Alcohol_percEng, color = Sex, fill = Sex)) +
-  geom_histogram(bins = 20) +
-  facet_grid(cols = vars(Sex)) +
-  theme_minimal() +
-  labs(
-    x = "Alcohol intake per energy",
-    y = "Frequency",
-    color = "Diagnosis",
-    fill = "Diagnosis"
-  ) +
-  scale_fill_manual(values = c("#FF966E", "#6A90A3")) +
-  scale_color_manual(values = c("#D16014", "#114B5F"))
-```
-
-```{R}
-#| label: tbl-alcohol-cd
-#| tbl-cap: "ANOVA between alcohol intake and FC groups in the CD cohort."
-
-demo %>%
-  filter(diagnosis2 == "CD") %>%
-  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
-  summary() %>%
-  pander() 
-```
-
-```{R}
-#| label: tbl-alcohol-uc
-#| tbl-cap: "ANOVA between alcohol intake and FC groups in the UC/IBDU cohort."
-
-demo %>%
-  filter(diagnosis2 == "UC/IBDU") %>%
-  aov(formula = Alcohol_percEng ~ cat, data = .) %>%
-  summary() %>%
-  pander() 
-```
-
-## Diet quality
-
-Diet quality is assessed via diet quality index. 
-
-```{R}
-#| label: fig-dqi
-#| fig-cap: "Distribution of diet quality index, stratified by IBD type."
-demo <- merge(demo,
-  FFQ[, c("ParticipantNo", "dqi_tot")],
-  by = "ParticipantNo",
-  all.x = TRUE,
-  all.y = FALSE
-)
-
-demo %>%
-  drop_na(dqi_tot) %>%
-  ggplot(aes(x = dqi_tot, color = diagnosis2, fill = diagnosis2)) +
-  geom_histogram(bins = 20) +
-  facet_grid(cols = vars(diagnosis2)) +
-  theme_minimal() +
-  labs(
-    x = "Diet quality index",
-    y = "Frequency",
-    color = "Diagnosis",
-    fill = "Diagnosis"
-  ) +
-  scale_fill_manual(values = c("#86DEB7", "#FC5A66")) +
-  scale_color_manual(values = c("#529176", "#AC353F"))
-```
-
-```{R}
-#| label: tbl-dqi-cd
-#| tbl-cap: "ANOVA between diet quality index and FC groups in the CD cohort."
-demo %>%
-  filter(diagnosis2 == "CD") %>%
-  aov(formula = dqi_tot ~ cat, data = .) %>%
-  summary() %>%
-  pander() 
-```
-
-```{R}
-#| label: tbl-dqi-uc
-#| tbl-cap: "ANOVA between diet quality index and FC groups in the UC/IBDU cohort."
-demo %>%
-  filter(diagnosis2 == "UC/IBDU") %>%
-  aov(formula = dqi_tot ~ cat, data = .) %>%
-  summary() %>%
-  pander() 
-```
 
 ```{R Save demo file} 
 saveRDS(demo, paste0(outdir, "demo-diet.RDS"))
@@ -1319,7 +1372,7 @@ total energy intake.
 #| fig-cap: "Dietary distribution of the FFQ subcohort expressed as percentages of energy intake and stratified by sex and diagnosis of either Crohn’s disease or ulcerative colitis/inflammatory bowel disease unclassified."
 #| warning: false
 #| fig-width: 8
-FFQ$Prot_percEng <- FFQ$Protng * 4 / FFQ$EnergykCAL
+FFQ$Prot_percEng <- (FFQ$Protng * 4 / FFQ$EnergykCAL) * 100
 
 comparison <- reshape2::melt(FFQ,
   id.vars = "ParticipantNo",
@@ -1328,8 +1381,7 @@ comparison <- reshape2::melt(FFQ,
     "Fat_percEng",
     "Prot_percEng",
     "SatFat_percEng",
-    "PUFA_percEng",
-    "UPF_perenergy"
+    "PUFA_percEng"
   )
 )
 
@@ -1364,16 +1416,14 @@ p <- ggplot(
       "#FFED49",
       "#2EC4B6",
       "#E71D36",
-      "#FF9F1C",
-      "#80BF56"
+      "#FF9F1C"
     ),
     labels = c(
       "Carbohydrate",
       "Fat",
       "Protein",
       "Saturated fat",
-      "Polyunsaturated fatty acids",
-      "Ultra-processed foods"
+      "Polyunsaturated fatty acids"
     )
   ) +
   scale_color_manual(
@@ -1382,16 +1432,14 @@ p <- ggplot(
       "#ADA009",
       "#00877C",
       "#9F1C29",
-      "#B06B01",
-      "#568238"
+      "#B06B01"
     ),
     labels = c(
       "Carbohydrate",
       "Fat",
       "Protein",
       "Saturated fat",
-      "Polyunsaturated fatty acids",
-      "Ultra-processed foods"
+      "Polyunsaturated fatty acids"
     )
   ) +
   labs(

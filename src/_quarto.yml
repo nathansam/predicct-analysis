@@ -132,7 +132,7 @@ affiliations:
     country: "United Kingdom"
     url: "https://www.turing.ac.uk"
   - id: PREDICT
-    name: "Center for Molecular Prediction of Inflammatory Bowel Disease (PREDICT), Aalborg University"
+    name: "Center for Molecular Prediction of Inflammatory Bowel Disease (PREDICT)"
     city: "Copenhagen"
     country: "Denmark"
     url: "https://www.predictibd.dk/"
