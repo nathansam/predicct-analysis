@@ -495,8 +495,13 @@ demo %>%
     color = "Diagnosis",
     fill = "Diagnosis"
   ) +
-  scale_fill_manual(values = c("#86DEB7", "#FC5A66")) +
-  scale_color_manual(values = c("#529176", "#AC353F"))
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  theme(legend.position = "none")
 ```
 
 ```{R}
