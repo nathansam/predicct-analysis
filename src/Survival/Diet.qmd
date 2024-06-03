@@ -187,7 +187,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + Meat_sum + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -237,7 +237,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + Meat_sum + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -301,7 +301,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + Meat_sum +
+    Sex + cat + IMD + dqi_tot + Meat_sum +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -352,7 +352,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + Meat_sum + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -417,7 +417,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -465,7 +465,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -527,7 +527,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + fibre +
+    Sex + cat + IMD + dqi_tot + fibre +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -579,7 +579,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -647,7 +647,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -695,7 +695,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -759,7 +759,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + PUFA_percEng +
+    Sex + cat + IMD + dqi_tot + PUFA_percEng +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -810,7 +810,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -871,7 +871,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + NOVAScore_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -919,7 +919,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + NOVAScore_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -976,7 +976,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + NOVAScore_cat +
+    Sex + cat + IMD + dqi_tot + NOVAScore_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1027,7 +1027,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + NOVAScore_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1095,7 +1095,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1143,7 +1143,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1205,7 +1205,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + breadIntake +
+    Sex + cat + IMD + dqi_tot + breadIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1256,7 +1256,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1321,7 +1321,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1369,7 +1369,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1431,7 +1431,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + sweetIntake +
+    Sex + cat + IMD + dqi_tot + sweetIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1482,7 +1482,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1547,7 +1547,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1595,7 +1595,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1657,7 +1657,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + drinkIntake +
+    Sex + cat + IMD + dqi_tot + drinkIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1708,7 +1708,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1773,7 +1773,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1821,7 +1821,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1883,7 +1883,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedMeatIntake +
+    Sex + cat + IMD + dqi_tot + processedMeatIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1934,7 +1934,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1999,7 +1999,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2047,7 +2047,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2109,7 +2109,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedPlantIntake +
+    Sex + cat + IMD + dqi_tot + processedPlantIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2160,7 +2160,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2227,7 +2227,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + fruitIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2275,7 +2275,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + fruitIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2337,7 +2337,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + fruitIntake +
+    Sex + cat + IMD + dqi_tot + fruitIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2388,7 +2388,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + fruitIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2453,7 +2453,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2501,7 +2501,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2563,7 +2563,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + vegIntake +
+    Sex + cat + IMD + dqi_tot + vegIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2614,7 +2614,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2680,7 +2680,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2728,7 +2728,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2790,7 +2790,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + redMeatIntake +
+    Sex + cat + IMD + dqi_tot + redMeatIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2841,7 +2841,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2906,7 +2906,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + whiteMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2954,7 +2954,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + whiteMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3016,7 +3016,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteMeatIntake +
+    Sex + cat + IMD + dqi_tot + whiteMeatIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -3067,7 +3067,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + whiteMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -3132,7 +3132,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3180,7 +3180,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3242,7 +3242,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteFishIntake +
+    Sex + cat + IMD + dqi_tot + whiteFishIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -3293,7 +3293,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
