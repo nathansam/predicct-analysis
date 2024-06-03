@@ -113,12 +113,15 @@ table1(
     FC +
     CReactiveProtein +
     Haemoglobin +
+    Platelets + 
     WCC +
     Albumin +
     Meat_sum +
     fibre +
     PUFA_percEng +
     NOVAScore_cat +
+    EA_VitD + 
+    EA_Fe +
     Biologic | cohort,
   data = comp,
   render.continuous = my.render.cont,
@@ -272,6 +275,8 @@ demo %>%
     fibre +
     PUFA_percEng +
     NOVAScore_cat +
+    EA_VitD + 
+    EA_Fe +
     Biologic | cat,
     render.continuous = my.render.cont
   )
@@ -305,6 +310,8 @@ demo %>%
     fibre +
     PUFA_percEng +
     NOVAScore_cat +
+    EA_VitD + 
+    EA_Fe +
     Biologic |
       diagnosis2,
     render.continuous = my.render.cont

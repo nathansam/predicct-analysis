@@ -388,6 +388,120 @@ demo %>%
   pander()
 ```
 
+## Iron intake
+
+Iron deficiency anaemia is a common complication observed in IBD patients
+[@Res_l_2021]. It should be noted that only dietary intake of iron was collected
+by PREdiCCt. Supplements were not recorded which may skew these data. As iron
+intake guidelines differ by sex, iron intake will be presented stratified by
+both sex and IBD type.
+
+```{R}
+demo <- merge(demo,
+  FFQ[, c("ParticipantNo", "EA_Fe")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
+
+demo %>%
+  drop_na(EA_Fe) %>%
+  ggplot(aes(x = EA_Fe, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 40) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Energy averaged iron intake (g/day)",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2), cols = vars(Sex))
+```
+
+No significant associations were found between energy averaged iron intake and
+FC. 
+
+```{R}
+#| label: tbl-fe-cd
+#| tbl-cap: "ANOVA between dietary iron and FC groups in the CD subcohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = EA_Fe ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-fe-uc
+#| tbl-cap: "ANOVA between dietary iron and FC groups in the UC/IBDU subcohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = EA_Fe ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+## Vitamin D intake
+
+```{R}
+demo <- merge(demo,
+  FFQ[, c("ParticipantNo", "EA_VitD")],
+  by = "ParticipantNo",
+  all.x = TRUE,
+  all.y = FALSE
+)
+
+demo %>%
+  drop_na(EA_VitD) %>%
+  ggplot(aes(x = EA_VitD, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 40) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Energy averaged vitamin D intake (g/day)",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
+```
+
+No significant associations were found between energy averaged vitamin D and FC. 
+
+```{R}
+#| label: tbl-vitD-cd
+#| tbl-cap: "ANOVA between dietary vitamin D and FC groups in the CD subcohort."
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = EA_VitD ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-vitD-uc
+#| tbl-cap: "ANOVA between vitamin D and FC groups in the UC/IBDU subcohort."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = EA_VitD ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+
 ## Alcohol use
 
 As there are differences between sexes in terms of both consumption of alcohol
