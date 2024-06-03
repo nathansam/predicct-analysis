@@ -7,6 +7,10 @@ author:
     affiliations:
       - ref: CGEM
       - ref: HGU
+  - name: "Chiara Cotronei"
+    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
+    affiliations:
+      - ref: Lothian
 bibliography: Survival.bib   
 ---
 
