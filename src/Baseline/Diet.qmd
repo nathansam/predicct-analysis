@@ -524,6 +524,21 @@ demo %>%
   pander() 
 ```
 
+```{R}
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  drop_na(dqi_tot, cat) %>%
+  ggplot(aes(x = dqi_tot)) +
+  geom_histogram(bins = 20, color = "#BC0019", fill = "#FF4C55") +
+  facet_grid(rows = vars(cat)) +
+  theme_minimal() +
+  labs(
+    x = "Diet quality index",
+    y = "Frequency"
+  ) + 
+  theme(legend.position = "none")
+```
+
 ## Processed food subgroups
 
 In addition to exploring UPF intake as a whole, we also explore UPF intake by
