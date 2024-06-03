@@ -794,6 +794,233 @@ invisible(cox.summary(fit.me))
 
 :::
 
+## Platelets
+
+There is significant separation between Kaplan-Meier curves for platelets for
+both soft and hard flares in CD. However, this significance is lost when
+controlling for FC and other variables via Cox regression. No significant
+findings are reported for UC. 
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.cd.df$Platelets_cat <- cut(flare.cd.df$Platelets,
+                                   quantile(flare.df$Platelets,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Platelets_cat,
+               data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Platelets",
+  legend.labs = levels(flare.cd.df$Platelets_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/biochem/Platelets.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/biochem/Platelets.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Platelets + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Platelets_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Platelets",
+  legend.labs = levels(flare.cd.df$Platelets_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/biochem/Platelets.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/biochem/Platelets.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Platelets + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$Platelets_cat <- cut(flare.uc.df$Platelets,
+                                   quantile(flare.df$Platelets,
+                                            na.rm = TRUE),
+                                   include.lowest = TRUE,
+                                   right = FALSE)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Platelets_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Platelets",
+  legend.labs = levels(flare.uc.df$Platelets_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/uc/soft-flare/biochem/Platelets.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/biochem/Platelets.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Platelets + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Platelets_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Platelets",
+  legend.labs = levels(flare.uc.df$Platelets_cat),
+  palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/uc/hard-flare/biochem/Platelets.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/biochem/Platelets.png",
+    width = 7,
+    height = 7,
+    units = "in",
+    res = 300)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Platelets + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
 ## Albumin
 
 ### Crohn's disease
