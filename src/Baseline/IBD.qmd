@@ -833,8 +833,8 @@ demo.cd <- merge(demo.cd, mont.df,
 )
 
 demo.cd$Location <- factor(demo.cd$Location,
-  levels = c(1, 2, 3, 4),
-  labels = c("L1", "L2", "L3", "L4 only")
+  levels = c(1, 2, 3, NA),
+  labels = c("L1", "L2", "L3")
 )
 
 demo.cd$L4 <- factor(demo.cd$L4,
@@ -846,10 +846,10 @@ demo.cd$L4 <- factor(demo.cd$L4,
 Montreal location has been obtained from REDcap data. Rather than being asked
 for Montreal location directly, clinical teams were asked to provide more
 granular detail by ticking boxes if inflammation was in any of the following
-areas `r mapping$definition`. If only any of the first 3 were reported then
-the subject was assigned "L4 only". L1-L3 were assigned as per convention 
-[@silverbergIntegratedClinicalMolecular2005]. If no location was reported then
-location was assigned `NA`. 
+areas `r mapping$definition`. L1-L3 were assigned as per convention 
+[@silverbergIntegratedClinicalMolecular2005]. If the subject was reported as
+only having L4 (no L1-L3), then they were coded as `NA` for the purpose of these
+analyses. If no location was reported then location was assigned `NA`. 
 
 As can be seen in @fig-location, L3 is the most common Montreal location in this
 cohort with  roughly an equal amount of subjects having either L1 or L2. 
@@ -878,16 +878,13 @@ demo.cd %>%
   )
 ```
 
-Due to the low number of subjects with L4-only, Fisher's exact test has been
-used to compare with FC.  
-
 ```{R}
 #| label: tbl-location
 #| tbl-cap: "Fisher's exact test between Montreal location and FC groups."
-pander(fisher.test(demo.cd$Location, demo.cd$cat, workspace = 20000000))
+pander(chisq.test(demo.cd$Location, demo.cd$cat))
 ```
 
-In addition to L4-only being considered, we also investigate L4 as a modifier. 
+We also investigated presence of the L4 (upper GI inflammation) modifier. 
 
 ```{R}
 #| label: fig-L4
