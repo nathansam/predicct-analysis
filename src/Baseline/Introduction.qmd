@@ -17,8 +17,8 @@ bibliography: Baseline.bib
 This section of the website explores the baseline data for the PREdiCCt study,
 generating inferences and producing display items for publication.
 
-For all baseline reports, only the _faecal calprotecin_ cohort, the sub-cohort
-defined as subjects with baseline faecal calprotecin available, are described
+For all baseline reports, only the _faecal calprotectin_ cohort, the sub-cohort
+defined as subjects with baseline faecal calprotectin available, are described
 (unless otherwise stated). For each variable considered, associations with
 faecal calprotectin categories (<50, 50--250, >250) are presented using
 chi-squared tests and ANOVA for categorical and continuous data respectively. 

@@ -552,6 +552,8 @@ fit.me <- coxph(
 invisible(cox.summary(fit.me))
 ```
 
+:::
+
 ## Variables only relevant to Crohn's disease
 
 ```{R}

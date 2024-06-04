@@ -166,7 +166,7 @@ invisible(dev.off())
 p
 ```
 
-#### Hard flares
+#### Hard flare
 
 ```{R}
 #| fig-height: 6
