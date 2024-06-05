@@ -116,6 +116,10 @@ flare.cd.df <- readRDS(paste0(outdir, "flares-IBD-cd.RDS"))
 flare.uc.df <- readRDS(paste0(outdir, "flares-IBD-uc.RDS"))
 ```
 
+Due to strong correlation between FC and routinely collected serological
+inflammatory markers [@Ishida_2021], FC has not been controlled for in the Cox
+models presented on this page. 
+
 ## C-reactive protein
 
 ### Crohn's disease
@@ -173,7 +177,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+    Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -224,7 +228,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+    Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -288,7 +292,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+    Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -338,7 +342,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + CReactiveProtein + frailty(SiteNo),
+    Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -402,7 +406,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+    Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -451,7 +455,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+    Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -512,7 +516,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+    Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -562,7 +566,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + Haemoglobin + frailty(SiteNo),
+    Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -625,7 +629,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + WCC + frailty(SiteNo),
+    Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -674,7 +678,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + WCC + frailty(SiteNo),
+    Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -735,7 +739,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + WCC + frailty(SiteNo),
+    Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -785,7 +789,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + WCC + frailty(SiteNo),
+    Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -853,7 +857,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + Platelets + frailty(SiteNo),
+    Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -902,7 +906,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + Platelets + frailty(SiteNo),
+    Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -963,7 +967,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + Platelets + frailty(SiteNo),
+    Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1012,7 +1016,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + Platelets + frailty(SiteNo),
+    Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1076,7 +1080,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + Albumin + frailty(SiteNo),
+    Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1126,7 +1130,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + Albumin + frailty(SiteNo),
+    Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1188,7 +1192,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + IMD + cat + Albumin + frailty(SiteNo),
+    Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1239,7 +1243,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + IMD + cat + Albumin + frailty(SiteNo),
+    Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
