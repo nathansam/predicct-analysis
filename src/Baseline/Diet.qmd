@@ -68,7 +68,7 @@ FFQ <- read_xlsx(paste0(
 
 FFQ$ParticipantNo <- FFQ$participantno
 demo <- merge(demo,
-  FFQ[, c("ParticipantNo", "Meat_sum", "fibre", "PUFA_percEng", "NOVAScore_cat")],
+  FFQ[, c("ParticipantNo", "Meat_sum", "fibre", "PUFA_percEng", "NOVAScore", "NOVAScore_cat")],
   by = "ParticipantNo",
   all.x = TRUE,
   all.y = FALSE
@@ -325,27 +325,16 @@ $$
 
 ### Results
 
-The distribution of Nova intake score appears to be uniform across the cohort,
-as such, it seems likely that these data have been mapped to quantiles and are
-no longer describing Nova Score categories. 
 
 ```{R}
 #| label: fig-novas-dist
 #| fig-cap: "Distribution of Nova intake scores."
-demo$NOVAScore_cat <- factor(demo$NOVAScore_cat,
-  levels = 1:4,
-  labels = c(
-    "Unprocessed",
-    "Processed culinary",
-    "Procesed food",
-    "Ultra-processed"
-  )
-)
+
 
 demo %>%
-  drop_na(NOVAScore_cat) %>%
-  ggplot(aes(x = NOVAScore_cat, color = diagnosis2, fill = diagnosis2)) +
-  geom_bar() +
+  drop_na(NOVAScore) %>%
+  ggplot(aes(x = NOVAScore, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 40) +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(

@@ -89,17 +89,11 @@ demo$diagnosis <- plyr::mapvalues(demo$diagnosis,
 
 demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = diagnosis2, fill = diagnosis2, color = diagnosis2)) +
-  geom_bar() +
+  ggplot(aes(x = diagnosis2)) +
+  geom_bar(fill = "#2B2D42", color = "#1E203A") +
   ylab("Frequency") +
   xlab("IBD type") +
-  theme_minimal() +
-  scale_fill_manual(values = c("#2B2D42", "#92DCE5")) +
-  scale_color_manual(values = c("#1E203A", "#1D9BA5")) +
-  guides(
-    fill = guide_legend(title = "IBD type"),
-    color = guide_legend(title = "IBD type")
-  )
+  theme_minimal()
 ```
 
 IBD type is significantly associated with FC at recruitment. 
@@ -161,21 +155,14 @@ duration.cd <- subset(duration, diagnosis == "1")
 duration.uc <- subset(duration, diagnosis != "1")
 
 p <- duration %>%
-  ggplot(aes(x = duration, color = diagnosis2, fill = diagnosis2)) +
-  geom_histogram(bins = 25) +
+  ggplot(aes(x = duration)) +
+  geom_histogram(bins = 25, fill = "#CDEDF6", color = "#5EB1BF") +
   theme_minimal() +
   labs(
     x = "Duration (years)",
-    y = "Frequency",
-    color = "IBD type",
-    fill = "IBD type"
+    y = "Frequency"
   ) +
-  scale_fill_manual(
-    values = c("#CDEDF6", "#FF6B6B")
-  ) +
-  scale_color_manual(
-    values = c("#5EB1BF", "#C24343")
-  )
+  facet_grid(rows = vars(diagnosis2))
 ggsave("../plots/Duration-full-cohort.png",
   p,
   width = 9,
@@ -186,21 +173,13 @@ ggsave("../plots/Duration-full-cohort.pdf", p, width = 9, height = 6)
 
 duration %>%
   drop_na(duration) %>%
-  ggplot(aes(x = duration, color = diagnosis2, fill = diagnosis2)) +
-  geom_histogram(bins = 25) +
+  ggplot(aes(x = duration)) +
+  geom_histogram(bins = 25, fill = "#CDEDF6", color = "#5EB1BF") +
   theme_minimal() +
   labs(
     x = "Duration (years)",
-    y = "Frequency",
-    color = "IBD type",
-    fill = "IBD type"
-  ) +
-  scale_fill_manual(
-    values = c("#CDEDF6", "#FF6B6B")
-  ) +
-  scale_color_manual(
-    values = c("#5EB1BF", "#C24343")
-  )
+    y = "Frequency") +
+  facet_grid(rows = vars(diagnosis2))
 ```
 
 Whilst a  low p-value was observed, disease duration was not significantly
@@ -315,14 +294,12 @@ IBD-Control-VAS to be optimal for identifying quiescent disease.
 #| warning: false
 p1 <- demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = control_8, color = control_8, fill = control_8)) +
-  geom_bar() +
+  ggplot(aes(x = control_8)) +
+  geom_bar(fill = "#9381FF", color = "#745FE3") +
   theme_minimal() +
   theme(legend.position = "none") +
   xlab("Control-8 Scores") +
   ylab("Frequency") +
-  scale_color_manual(values = viridis::viridis(15), na.value = "#032B43") +
-  scale_fill_manual(values = viridis::viridis(15), na.value = "#032B43") +
   geom_vline(xintercept = 11.5, color = "#FF4B3E")
 
 p2 <- demo %>%
@@ -364,14 +341,12 @@ demo <- demo %>%
   select(-OverallControl)
 demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = vas_control, color = vas_control, fill = vas_control)) +
-  geom_bar() +
+  ggplot(aes(x = vas_control)) +
+  geom_bar(fill = "#D00000", color = "#D00000") +
   theme_minimal() +
   theme(legend.position = "none") +
   xlab("Visual analogue scores") +
-  ylab("Frequency") +
-  scale_color_manual(values = c("#D00000", "#447604"), na.value = "#032B43") +
-  scale_fill_manual(values = c("#D00000", "#447604"), na.value = "#032B43")
+  ylab("Frequency")
 ```
 
 The discretised VAS is continued to be significantly associated with FC. 
@@ -525,17 +500,12 @@ plt.cols <- c("#52528C", "#DD6E42", "#048A81", "#C585B3")
 
 drugs %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Treatment, fill = Treatment, color = Treatment)) +
-  geom_bar() +
+  ggplot(aes(x = Treatment)) +
+  geom_bar(fill = "#52528C", color = "#3A3A61") +
   theme_minimal() +
   theme(legend.position = "none") +
   xlab("Treatment strategy") +
   ylab("Frequency") +
-  scale_fill_manual(values = plt.cols, na.value = "#032B43") +
-  scale_colour_manual(
-    values = colorspace::darken(plt.cols, 0.3),
-    na.value = "#032B43"
-  ) +
   facet_grid(rows = vars(diagnosis2))
 ```
 
@@ -641,18 +611,11 @@ low prescribing rates during the recruitment period (which ended March 2020).
 #| fig-cap: "Bio-naivety in the FC cohort."
 demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Biologic, fill = Biologic, color = Biologic)) +
-  geom_bar() +
+  ggplot(aes(x = Biologic)) +
+  geom_bar(fill = "#CACF85", color = "#4A6E3F") +
   xlab("Biologic status") +
   ylab("Frequency") +
   theme_minimal() +
-  theme(legend.position = "none") +
-  scale_fill_manual(values = c("#CACF85", "#8CBA80", "#E58F65")) +
-  scale_color_manual(values = c("#747825", "#4A6E3F", "#934D1B")) +
-  guides(
-    fill = guide_legend(title = "Biologic status"),
-    color = guide_legend(title = "Biologic status")
-  ) +
   facet_grid(rows = vars(diagnosis2))
 ```
 
@@ -766,13 +729,11 @@ the preferred data source.
 #| fig-cap: "Previous surgery for Crohn's disease subjects in the FC cohort."
 demo.cd %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Surgery, fill = Surgery, color = Surgery)) +
-  geom_bar() +
+  ggplot(aes(x = Surgery)) +
+  geom_bar(fill = "#F9B9B7", color = "#D06965") +
   xlab("Previous surgery") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(values = c("#F9B9B7", "#96C9DC"), na.value = "#032B43") +
-  scale_color_manual(values = c("#D06965", "#448CA2"), na.value = "#032B43")
+  theme_minimal()
 ```
 
 FC at study recruitment is significantly associated with having previously
@@ -859,23 +820,11 @@ cohort with  roughly an equal amount of subjects having either L1 or L2.
 #| fig-cap: "Montreal location for CD subjects in the FC cohort."
 demo.cd %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Location, fill = Location, color = Location)) +
-  geom_bar() +
+  ggplot(aes(x = Location)) +
+  geom_bar(fill = "#C33C54", color = "#80333E") +
   xlab("Montreal location") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c("#33CA7F", "#96C9DC", "#C33C54", "#FCB97D"),
-    na.value = "#032B43"
-  ) +
-  scale_color_manual(
-    values = c("#318859", "#448CA2", "#80333E", "#BD7700"),
-    na.value = "#032B43"
-  ) +
-  guides(
-    fill = guide_legend(title = "Montreal location"),
-    color = guide_legend(title = "Montreal location")
-  )
+  theme_minimal()
 ```
 
 ```{R}
@@ -891,17 +840,11 @@ We also investigated presence of the L4 (upper GI inflammation) modifier.
 #| fig-cap: "L4 (upper GI involvement) in the FC cohort."
 demo.cd %>%
   drop_na(cat) %>%
-  ggplot(aes(x = L4, fill = L4, color = L4)) +
-  geom_bar() +
+  ggplot(aes(x = L4)) +
+  geom_bar(fill = "#51E5FF", color = "#079DB1") +
   xlab("Presence of L4") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(values = c("#51E5FF", "#EC368D"), na.value = "#032B43") +
-  scale_color_manual(values = c("#079DB1", "#AF0863"), na.value = "#032B43") +
-  guides(
-    fill = guide_legend(title = "Presence of L4"),
-    color = guide_legend(title = "Presence of L4")
-  )
+  theme_minimal()
 ```
 
 ```{R}
@@ -941,23 +884,11 @@ phenotype.
 
 demo.cd %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Behaviour, fill = Behaviour, color = Behaviour)) +
-  geom_bar() +
+  ggplot(aes(x = Behaviour)) +
+  geom_bar(fill = "#440381", color = "#340165") +
   xlab("Montreal behaviour") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c("#7AE7C7", "#440381", "#D64045"),
-    na.value = "#032B43"
-  ) +
-  scale_color_manual(
-    values = c("#07A282", "#340165", "#942E31"),
-    na.value = "#032B43"
-  ) +
-  guides(
-    fill = guide_legend(title = "Montreal behaviour"),
-    color = guide_legend(title = "Montreal behaviour")
-  )
+  theme_minimal()
 ```
 
 Montreal behaviour is not significantly associated with FC at recruitment.
@@ -980,17 +911,11 @@ demo.cd$Perianal <- factor(demo.cd$Perianal,
 
 demo.cd %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Perianal, fill = Perianal, color = Perianal)) +
-  geom_bar() +
+  ggplot(aes(x = Perianal)) +
+  geom_bar(fill = "#AF5B5B", color = "#754242") +
   xlab("Perianal disease") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(values = c("#023C40", "#AF5B5B"), na.value = "#032B43") +
-  scale_color_manual(values = c("#002C30", "#754242"), na.value = "#032B43") +
-  guides(
-    fill = guide_legend(title = "Perianal disease"),
-    color = guide_legend(title = "Perianal disease")
-  )
+  theme_minimal()
 ```
 
 Perianal disease is not associated with FC at recruitment. 
@@ -1060,6 +985,8 @@ demo.cd %>%
   geom_bar(fill = "#FF8552", color = "#D2632A") +
   scale_fill_manual(na.value = "#032B43") +
   scale_color_manual(na.value = "#032B43") +
+  xlab("PRO2") +
+  ylab("Frequency") +
   theme_minimal()
 ```
 
@@ -1082,23 +1009,11 @@ subjects (`r percPrev`%) have previously been smokers.
 #| fig-cap: "Smoking status for CD subjects in the FC cohort."
 demo.cd %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
-  geom_bar() +
+  ggplot(aes(x = Smoke)) +
+  geom_bar(fill = "#1C448E", color = "#033070") +
   xlab("Smoking status") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c("#4E0250", "#517664", "#1C448E"),
-    na.value = "#032B43"
-  ) +
-  scale_color_manual(
-    values = c("#3D003F", "#385245", "#033070"),
-    na.value = "#032B43"
-  ) +
-  guides(
-    fill = guide_legend(title = "Smoking status"),
-    color = guide_legend(title = "Smoking status")
-  )
+  theme_minimal() 
 ```
 
 Smoking status is associated with FC at recruitment for CD subjects. 
@@ -1120,23 +1035,11 @@ reflect more modern trends.
 #| fig-cap: "E-cigarette usage for CD subjects in the FC cohort."
 demo.cd %>%
   drop_na(cat) %>%
-  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
-  geom_bar() +
+  ggplot(aes(x = ECigs)) +
+  geom_bar(fill = "#517664", color = "#385245") +
   xlab("E-cigarette status") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c("#4E0250", "#517664", "#1C448E"),
-    na.value = "#032B43"
-  ) +
-  scale_color_manual(
-    values = c("#3D003F", "#385245", "#033070"),
-    na.value = "#032B43"
-  ) +
-  guides(
-    fill = guide_legend(title = "E-cigarette status"),
-    color = guide_legend(title = "E-cigarette status")
-  )
+  theme_minimal() 
 ```
 
 ```{R}
@@ -1212,23 +1115,11 @@ classification.
 
 demo.uc %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Extent, fill = Extent, color = Extent)) +
-  geom_bar() +
+  ggplot(aes(x = Extent)) +
+  geom_bar(fill = "#440381", color = "#340165") +
   xlab("Montreal extent") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c("#7AE7C7", "#440381", "#D64045"),
-    na.value = "#032B43"
-  ) +
-  scale_color_manual(
-    values = c("#07A282", "#340165", "#942E31"),
-    na.value = "#032B43"
-  ) +
-  guides(
-    fill = guide_legend(title = "Montreal extent"),
-    color = guide_legend(title = "Montreal extent")
-  )
+  theme_minimal()
 ```
 
 Montreal extent is not associated with FC
@@ -1291,9 +1182,10 @@ demo.uc %>%
   scale_fill_manual(values = "#FF8552", na.value = "#032B43") +
   scale_color_manual(values = "#D2632A", na.value = "#032B43") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") + 
+  xlab("PRO2") +
+  ylab("Frequency")
 ```
-
 
 ### Smoking
 
@@ -1304,23 +1196,11 @@ As with CD subjects, smoking status for UC/IBDU subjects is self-reported.
 #| fig-cap: "Smoking status for UC/IBDU subjects in the FC cohort."
 demo.uc %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
-  geom_bar() +
+  ggplot(aes(x = Smoke)) +
+  geom_bar(fill = "#1C448E", color = "#033070") +
   xlab("Smoking status") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c("#4E0250", "#517664", "#1C448E"),
-    na.value = "#032B43"
-  ) +
-  scale_color_manual(
-    values = c("#3D003F", "#385245", "#033070"),
-    na.value = "#032B43"
-  ) +
-  guides(
-    fill = guide_legend(title = "Smoking status"),
-    color = guide_legend(title = "Smoking status")
-  )
+  theme_minimal() 
 ```
 
 As with CD, smoking status is significantly associated with FC. 
@@ -1340,28 +1220,16 @@ Similar to CD, very few subjects reported using E-cigarettes.
 #| fig-cap: "E-cigarette usage for UC subjects in the FC cohort."
 demo.uc %>%
   drop_na(cat) %>%
-  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
-  geom_bar() +
+  ggplot(aes(x = ECigs)) +
+  geom_bar(fill = "#517664", color = "#385245") +
   xlab("E-cigarette status") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(
-    values = c("#4E0250", "#517664", "#1C448E"),
-    na.value = "#032B43"
-  ) +
-  scale_color_manual(
-    values = c("#3D003F", "#385245", "#033070"),
-    na.value = "#032B43"
-  ) +
-  guides(
-    fill = guide_legend(title = "E-cigarette status"),
-    color = guide_legend(title = "E-cigarette status")
-  )
+  theme_minimal() 
 ```
 
 E-cigarette use was found to significantly differ between FC groups in UC.
 However, the low number of subjects reported to use E-cigarettes
-(@fig-esmoke-uc) should be beared in mind when interpretting this finding. 
+(@fig-esmoke-uc) should be considered when interpreting this finding. 
 
 ```{R}
 #| label: tbl-esmoke-uc

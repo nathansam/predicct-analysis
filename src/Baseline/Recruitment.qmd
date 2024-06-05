@@ -103,8 +103,8 @@ analyses.
 #| fig-cap: "Distribution of month of diagnosis."
 demo$entry_date <- as.Date(demo$entry_date)
 demo$month <- month(demo$entry_date, label = TRUE)
-ggplot(demo, aes(x = as.factor(month), color = as.factor(month), fill = as.factor(month))) +
-  geom_bar() +
+ggplot(demo, aes(x = as.factor(month))) +
+  geom_bar(fill = "#384E77", color = "#18314F", ) +
   theme_minimal() +
   theme(legend.position = "none") +
   xlab("Month of recruitment") +

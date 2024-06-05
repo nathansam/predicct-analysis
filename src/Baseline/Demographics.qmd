@@ -142,12 +142,10 @@ demo$Sex <- factor(demo$Sex, levels = c("1", "2"), labels = c("Male", "Female"))
 
 demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Sex, fill = Sex, color = Sex)) +
-  geom_bar() +
+  ggplot(aes(x = Sex)) +
+  geom_bar(fill = "#FCA17D", color = "#B22A21") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(values = c("#FCA17D", "#60D394")) +
-  scale_color_manual(values = c("#B22A21", "#034C3C"))
+  theme_minimal()
 ``` 
 
 Moreover, the distribution of sex is significantly different between FCAL groups. 
@@ -224,20 +222,12 @@ demo$BMIcat <- cut(demo$BMI,
 )
 demo[demo[, "age"] < 18, "BMIcat"] <- NA
 
-plt.cols <- c("#F6AE2D", "#C81D25", "#1481BA", "#7E1F86")
-
-
 demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = BMIcat, color = BMIcat, fill = BMIcat)) +
-  geom_bar() +
+  ggplot(aes(x = BMIcat)) +
+  geom_bar(fill = "#1481BA" ) +
   theme_minimal() +
   theme(legend.position = "none") +
-  scale_fill_manual(values = plt.cols, na.value = "#032B43") +
-  scale_color_manual(
-    values = colorspace::darken(plt.cols, 0.2),
-    na.value = "#032B43"
-  ) +
   xlab("BMI category") +
   ylab("Frequency")
 ```
@@ -267,12 +257,10 @@ colnames(demo)[10:11] <- c("Age", "Ethnicity")
 
 demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = Ethnicity, fill = Ethnicity, color = Ethnicity)) +
-  geom_bar() +
+  ggplot(aes(x = Ethnicity)) +
+  geom_bar(color = "#0B5351", fill = "#00A9A5") +
   ylab("Frequency") +
-  theme_minimal() +
-  scale_fill_manual(values = c("#F24236", "#2E86AB"), na.value = "#032B43") +
-  scale_color_manual(values = c("#C0362C", "#1E556C"), na.value = "#032B43")
+  theme_minimal()
 ```
 
 ```{R}
@@ -300,18 +288,14 @@ names(IMD)[2] <- "IMD"
 demo <- merge(demo, IMD, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
 demo$IMD <- as.factor(demo$IMD)
 
-cols <- c("#A8F9FF", "#EF8275", "#6D326D", "#0B6E4F", "#F4D35E")
-
 demo %>%
   drop_na(cat) %>%
-  ggplot(aes(x = IMD, color = as.factor(IMD), fill = as.factor(IMD))) +
-  geom_bar() +
+  ggplot(aes(x = IMD)) +
+  geom_bar(fill = "#EC7505", color = "#D84A05") +
   theme_minimal() +
   theme(legend.position = "none") +
   ylab("Frequency") +
-  xlab("IMD (most deprived to least deprived)") +
-  scale_fill_manual(values = cols) +
-  scale_color_manual(values = colorspace::darken(cols, amount = 0.3))
+  xlab("IMD (most deprived to least deprived)")
 ```
 
 ```{R}
