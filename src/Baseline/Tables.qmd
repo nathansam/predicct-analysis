@@ -91,6 +91,7 @@ temp$cohort <- "FC"
 comp <- rbind(comp, temp)
 
 temp <- subset(demo, ParticipantNo %in% FFQ$participantno)
+temp <- subset(temp, !is.na(FC))
 temp$cohort <- "FFQ"
 
 comp <- rbind(comp, temp)
@@ -526,9 +527,11 @@ demo %>%
   saveRDS(paste0(outdir, "demo-full.RDS"))
 
 demo.cd %>%
+  drop_na(cat) %>%
   saveRDS(paste0(outdir, "demo-cd.RDS"))
 
 demo.uc %>%
+  drop_na(cat) %>%
   saveRDS(paste0(outdir, "demo-uc.RDS"))
 ```
 
