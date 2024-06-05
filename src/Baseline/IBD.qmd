@@ -1239,13 +1239,13 @@ Montreal extent is not associated with FC
 pander(chisq.test(demo.uc$Extent, demo.uc$cat))
 ```
 
-### Mayo score
+### Partial Mayo score
 
-Mayo score was collected via REDCap and is more complete than HBI. 
+Partial Mayo score was collected via REDCap and is more complete than HBI. 
 
 ```{R}
 #| label: fig-mayo
-#| fig-caption: "Mayo score for UC/IBDU subjects in the FC cohort."
+#| fig-caption: "Partial Mayo score for UC/IBDU subjects in the FC cohort."
 mayo.df <- redcap[, c("participantid", "current_mayo")]
 colnames(mayo.df) <- c("ParticipantId", "Mayo")
 mayo.df <- subset(mayo.df, ParticipantId %in% demo.uc$ParticipantId)
@@ -1257,14 +1257,14 @@ demo.uc %>%
   geom_bar(fill = "#284B63", color = "#153243") +
   theme_minimal() +
   ylab("Frequency") +
-  xlab("Mayo score at time of recruitment")
+  xlab("Partial Mayo score at time of recruitment")
 ```
 
-Mayo score is highly significantly associated with FC. 
+Partial Mayo score is highly significantly associated with FC. 
 
 ```{R}
 #| label: tbl-mayo
-#| tbl-cap: "ANOVA between between Mayo score and FC groups."
+#| tbl-cap: "ANOVA between between Partial Mayo score and FC groups."
 pander(summary(aov(Mayo ~ cat, data = demo.uc)))
 ```
 
