@@ -156,7 +156,8 @@ demo %>%
   geom_histogram(bins = 100, fill = "#76E5FC", color = "#2EB6CD") +
   theme_minimal() +
   xlab("Haemoglobin") +
-  ylab("Frequency")
+  ylab("Frequency") +
+  facet_grid(rows = vars(Sex))
 ```
 
 
@@ -168,13 +169,13 @@ knitr::kable(table(subset(demo, Haemoglobin < 50)$HaemoglobinUnit),
 )
 ```
 
-Having assumed any Haemoglobin < 50 has been reported in g/dL, any Haemoglobin
+Assumed any Haemoglobin < 50 has been reported in g/dL, any Haemoglobin
 observations <50  have been multiplied by 10 to be in g/L units. This results
 in the distribution seen in @fig-hb-dist-new. 
 
 ```{R}
 #| label: fig-hb-dist-new
-#| fig-cap: "Distribution of haemoglobin after processing."
+#| fig-cap: "Distribution of haemoglobin after processing. Vertical red lines indicate the reference range for the respective sex."
 #| warning: false
 demo <- demo %>%
   mutate(Haemoglobin = if_else(Haemoglobin < 50,
@@ -187,7 +188,7 @@ p1 <- demo %>%
   drop_na(cat) %>%
   filter(Sex == "Female") %>%
   ggplot(aes(x = Haemoglobin)) +
-  geom_histogram(bins = 100, fill = "#8789C0", color = "#6A6B9C") +
+  geom_histogram(bins = 100, fill = "#76E5FC", color = "#2EB6CD") +
   theme_minimal() +
   xlab("Haemoglobin (g/L)") +
   ylab("Frequency") +
@@ -201,7 +202,7 @@ p2 <- demo %>%
   drop_na(cat) %>%
   filter(Sex == "Male") %>%
   ggplot(aes(x = Haemoglobin, fill = Sex, color = Sex)) +
-  geom_histogram(bins = 100, fill = "#225560", color = "#044651") +
+  geom_histogram(bins = 100, fill = "#76E5FC", color = "#2EB6CD") +
   theme_minimal() +
   xlab("Haemoglobin (g/L)") +
   ylab("Frequency") +
@@ -212,13 +213,29 @@ p2 <- demo %>%
 (p1 / p2)
 ```
 
-Haemoglobin was not found to be significantly associated with FC at a 5%
-significance level. 
+Haemoglobin was found to be significantly associated with FC at a 5%
+significance level in male, but not in female, subjects. 
 
 ```{R}
-#| label: tbl-hb-fc
-#| tbl-cap: "ANOVA between haemoglobin and FC groups."
-pander(summary(aov(Haemoglobin ~ cat, data = demo)))
+#| label: tbl-hb-fc-male
+#| tbl-cap: "ANOVA between haemoglobin and FC groups in males."
+
+demo %>%
+  filter(Sex == "Male") %>%
+  aov(Haemoglobin ~ cat, data = .) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-hb-fc-female
+#| tbl-cap: "ANOVA between haemoglobin and FC groups in females."
+
+demo %>%
+  filter(Sex == "Female") %>%
+  aov(Haemoglobin ~ cat, data = .) %>%
+  summary() %>%
+  pander()
 ```
 
 ## White cell count
