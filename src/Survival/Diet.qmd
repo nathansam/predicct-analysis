@@ -1489,6 +1489,232 @@ invisible(cox.summary(fit.me))
 
 :::
 
+## Alcohol use
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$Alcohol_percEng, na.rm = TRUE)
+
+flare.cd.df$Alcohol_percEng_cat <- cut(flare.cd.df$Alcohol_percEng,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Alcohol_percEng_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Alcohol intake",
+  legend.labs = levels(flare.cd.df$Alcohol_percEng_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("../plots/cd/soft-flare/diet/Alcohol.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/soft-flare/diet/Alcohol.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + Alcohol_percEng + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Alcohol_percEng_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Alcohol intake",
+  legend.labs = levels(flare.cd.df$Alcohol_percEng_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("../plots/cd/hard-flare/diet/Alcohol.pdf")
+p
+invisible(dev.off())
+
+png("../plots/cd/hard-flare/diet/Alcohol.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + Alcohol_percEng + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$Alcohol_percEng_cat <- cut(flare.uc.df$Alcohol_percEng,
+  breaks = c(0, quants[2:5]),
+  include.lowest = TRUE
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Alcohol_percEng_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Alcohol intake",
+  legend.labs = levels(flare.uc.df$Alcohol_percEng_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/soft-flare/diet/Alcohol.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/soft-flare/diet/Alcohol.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + Alcohol_percEng +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Alcohol_percEng_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Alcohol intake",
+  legend.labs = levels(flare.uc.df$Alcohol_percEng_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500,
+  xlim = c(0, 750)
+)
+
+cairo_pdf("../plots/uc/hard-flare/diet/Alcohol_percEng.pdf")
+p
+invisible(dev.off())
+
+png("../plots/uc/hard-flare/diet/Alcohol_percEng.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + Alcohol_percEng + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
 ## Processed food subgroups
 
 ### Breads and cereals
