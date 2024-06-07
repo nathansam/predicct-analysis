@@ -24,7 +24,7 @@ study questionnaire.
 For soft flares, only the first two years of follow-up are considered as this
 was the time interval in which questionnaires were sent to participants. 
 
-The secondary study endpoint is hard flare, which required elevated CRP and/or
+The secondary study endpoint is hard flare, which required elevated FC and/or
 CRP and for the subject to change medication. Data for this endpoint was
 collected via end-of-study phenotyping. 
 
