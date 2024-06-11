@@ -2,7 +2,7 @@ FROM rocker/rstudio:4.4.0
 
 LABEL "org.opencontainers.image.source"="https://github.com/nathansam/predicct-analysis" \
 "org.opencontainers.image.authors"="Nathan Constantine-Cooke <nathan.constantine-cooke@ed.ac.uk>" \
-    "org.opencontainers.image.base.name"="rocker/tidyverse:4.4.0" \
+    "org.opencontainers.image.base.name"="rocker/rstudio:4.4.0" \
     "org.opencontainers.image.description"="Docker image for PREdiCCt analysis" \
     "org.opencontainers.image.vendor"="University of Edinburgh"
 
@@ -32,19 +32,19 @@ RUN install2.r \
     knitr \
     rmarkdown
 
-RUN install2.r \ 
+RUN install2.r \
     quarto \
     pander \
     datefixR \
     DiagrammeR \
     DiagrammeRsvg
-    
+
 RUN install2.r \
     table1 \
     downlit \
     xml2 \
     survminer \
-    coxme 
+    coxme
 
 RUN install2.r \
     crayon \

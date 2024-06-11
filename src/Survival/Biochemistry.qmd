@@ -42,7 +42,7 @@ if (file.exists("/docker")) { # If running in docker
 demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
-cox.summary <- function(fit) {
+cox.summary <- function(fit, data = NULL) {
   cat("Cox model summary:")
   fit %>%
     finalfit::fit2df(condense = FALSE) %>%
@@ -57,6 +57,34 @@ cox.summary <- function(fit) {
       digits = 4
     ) %>%
     print()
+  
+  if (!is.null (data)) {
+    selector <- colnames(fit$x) %in% colnames(data) # Find continuous vars
+    sd.vec <- apply(as.matrix(fit$x[, selector]), 2, sd)
+    
+    adj.table <- fit %>%
+      finalfit::fit2df(condense = FALSE)
+    adj.table <- adj.table[selector, ]
+    adj.table[, 2:4] <-  adj.table[, 2:4] ^ sd.vec
+    
+    cat("\\newline
+
+HR per SD: \\newline
+
+")
+    
+    adj.table  %>%
+      knitr::kable(
+        col.names = c(
+          "Variable",
+          "HR",
+          "Lower 95%",
+          "Upper 95%",
+          "P-value"),
+      digits = 4,
+      row.names = FALSE) %>%
+      print()
+  }
   
   cat("\\newline
   
@@ -179,9 +207,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 #### Hard flare
@@ -230,9 +259,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 :::
@@ -294,9 +324,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 #### Hard flare
@@ -344,9 +375,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + CReactiveProtein + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 :::
@@ -408,9 +440,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 #### Hard flare
@@ -457,9 +490,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 :::
@@ -518,9 +552,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 #### Hard flare
@@ -568,9 +603,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + Haemoglobin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 :::
@@ -631,9 +667,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 #### Hard flare
@@ -680,9 +717,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 :::
@@ -741,9 +779,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 #### Hard flare
@@ -791,9 +830,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + WCC + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 :::
@@ -859,9 +899,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 #### Hard flare
@@ -908,9 +949,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 :::
@@ -969,9 +1011,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 #### Hard flare
@@ -1018,9 +1061,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + Platelets + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 :::
@@ -1082,9 +1126,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 #### Hard flare
@@ -1132,9 +1177,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.cd.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.cd.df))
 ```
 
 :::
@@ -1194,9 +1240,10 @@ fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 #### Hard flare
@@ -1245,9 +1292,10 @@ fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.uc.df
+  data = flare.uc.df,
+  x = TRUE
 )
-invisible(cox.summary(fit.me))
+invisible(cox.summary(fit.me, data = flare.uc.df))
 ```
 
 :::
