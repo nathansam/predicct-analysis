@@ -35,7 +35,6 @@ library(readxl) # Read in Excel files
 library(lubridate) # Handle dates
 library(datefixR) # Standardise dates
 library(patchwork) # Arrange ggplots
-library(ggbeeswarm)
 
 # Generate tables
 suppressPackageStartupMessages(library(table1))
@@ -1067,7 +1066,6 @@ demo.cd %>%
   ggplot(aes(x = ileal, y = breadIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
   theme_minimal() +
   labs(
     x = plt.lab,
@@ -1090,7 +1088,6 @@ demo.cd %>%
   ggplot(aes(x = ileal, y = sweetIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
   theme_minimal() +
   labs(
     x = plt.lab,
@@ -1113,7 +1110,6 @@ demo.cd %>%
   ggplot(aes(x = ileal, y = drinkIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
   theme_minimal() +
   labs(
     x = plt.lab,
@@ -1136,7 +1132,6 @@ demo.cd %>%
   ggplot(aes(x = ileal, y = processedMeatIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
   theme_minimal() +
   labs(
     x = plt.lab,
@@ -1160,7 +1155,6 @@ demo.cd %>%
   ggplot(aes(x = ileal, y = processedPlantIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
-  geom_quasirandom() +
   theme_minimal() +
   labs(
     x = plt.lab,
