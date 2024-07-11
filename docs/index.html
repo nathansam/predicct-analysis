@@ -320,10 +320,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 </header><section id="introduction" class="level2"><h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>To-do</p>
+<p>The PREdiCCt study (<a href="https://clinicaltrials.gov/study/NCT03282903">NCT03282903</a>) is a UK-wide prospective study of inflammatory bowel disease (IBD) patients.</p>
+<p>The study aimed to determine which aspects of a) baseline habitual diet, b) the environment, c) genetic variation, and d) the gut microbiota, predict disease flare in Crohn’s disease and/or ulcerative colitis and IBD unclassified (IBDU).</p>
+<p>Participants were recruited in remission and were extensively phenotyped via questionnaires completed by patients and care teams. Saliva and stool samples were collected for genetic and microbiome sequencing. Participants were then followed until disease flare.</p>
 <p>This work uses data provided by patients and collected by the NHS as part of their care and support. We are grateful to participants and their IBD care teams for their support.</p>
 </section><section id="using-this-website" class="level2"><h2 class="anchored" data-anchor-id="using-this-website">Using this website</h2>
-<p>The code button at the top of each page can be used to show all code blocks instead of clicking on the code buttons for each individual block of code. Moving the mouse pointer over any citations in a report will produce a pop up box with reference details. Clicking on the citation will link to the bibliography at the bottom of the page.</p>
+<p>The code button at the top of each page can be used to show all code blocks instead of clicking on the code buttons for each individual block of code. Moving the mouse pointer over citations will produce a pop up box with reference details. Clicking on the citation will link to the bibliography at the bottom of the page.</p>
 </section><section id="software-versions" class="level2"><h2 class="anchored" data-anchor-id="software-versions">Software versions</h2>
 <p>All analyses have been generated using <a href="https://www.r-project.org">R version 4.4.0</a>. Please see the Session Information sections at the bottom of each report to see the R packages used for that particular analysis and the respective package versions.</p>
 </section><div id="quarto-appendix" class="default"><section id="section" class="level2 appendix"><h2 class="anchored quarto-appendix-heading"></h2><div class="quarto-appendix-contents">
@@ -964,32 +966,42 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>To-do</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>This work uses data provided by patients and collected by the NHS as part of</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>their care and support. We are grateful to participants and their IBD care</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>teams for their support. </span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Using this website</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>The code button at the top of each page can</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>be used to show all code blocks instead of clicking on the code buttons for each</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>individual block of code. Moving the mouse pointer over any citations in a</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>report will produce a pop up box with reference details. Clicking on the</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>citation will link to the bibliography at the bottom of the page. </span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Software versions</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>The PREdiCCt study (<span class="co">[</span><span class="ot">NCT03282903</span><span class="co">](https://clinicaltrials.gov/study/NCT03282903)</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>is a UK-wide prospective study of inflammatory bowel disease (IBD) patients. </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>The study aimed to determine which aspects of a) baseline habitual diet, b) the</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>environment, c) genetic variation, and d) the gut microbiota, predict disease</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>flare in Crohn’s disease and/or ulcerative colitis and IBD unclassified (IBDU).</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>Participants were recruited in remission and were extensively phenotyped via</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>questionnaires completed by patients and care teams. Saliva and stool samples</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>were collected for genetic and microbiome sequencing. Participants were then</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>followed until disease flare.</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>This work uses data provided by patients and collected by the NHS as part of</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>their care and support. We are grateful to participants and their IBD care</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>teams for their support. </span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>All analyses have been generated using</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`{r} strsplit(R.version$version.string, " (", fixed = TRUE)[[1]</span><span class="co">][1]</span>`](https://www.r-project.org).</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>Please see the Session Information sections at the bottom of each report to see</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>the R packages used for that particular analysis and the respective package</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>versions. </span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## {.appendix}</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Using this website</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>The code button at the top of each page can</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>be used to show all code blocks instead of clicking on the code buttons for each</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>individual block of code. Moving the mouse pointer over citations will produce a</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>pop up box with reference details. Clicking on the citation will link to the</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>bibliography at the bottom of the page. </span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>This website has been generated using the <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org)</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>scientific publishing system built on <span class="co">[</span><span class="ot">pandoc</span><span class="co">](https://pandoc.org)</span>. </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Software versions</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>All analyses have been generated using</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`{r} strsplit(R.version$version.string, " (", fixed = TRUE)[[1]</span><span class="co">][1]</span>`](https://www.r-project.org).</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>Please see the Session Information sections at the bottom of each report to see</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>the R packages used for that particular analysis and the respective package</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>versions. </span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## {.appendix}</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>This website has been generated using the <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org)</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>scientific publishing system built on <span class="co">[</span><span class="ot">pandoc</span><span class="co">](https://pandoc.org)</span>. </span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
