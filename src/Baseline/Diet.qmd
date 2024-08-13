@@ -3,12 +3,12 @@ title: "Diet"
 author:
   - name: "Nathan Constantine-Cooke"
     corresponding: true
-    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    url: "https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao"
     affiliations:
       - ref: CGEM
       - ref: HGU
   - name: "Beatriz Gros"
-    url: https://ibd-eii.com/
+    url: "https://scholar.google.com/citations?user=Y9dqeG0AAAAJ&hl=en&oi=ao"
     affiliations:
       - ref: Spain
       - ref: IBD
@@ -65,6 +65,13 @@ FFQ <- read_xlsx(paste0(
   "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
 ))
 
+n.excluded <- nrow(
+  subset(
+    FFQ,
+    as.character(participantno) %in% subset(demo, is.na(FC))$ParticipantNo
+  )
+)
+
 FFQ$ParticipantNo <- FFQ$participantno
 demo <- merge(demo,
   FFQ[, c("ParticipantNo", "Meat_sum", "fibre", "PUFA_percEng", "NOVAScore", "NOVAScore_cat")],
@@ -97,6 +104,10 @@ associations between dietary data and IBD are often specific to a form of IBD
 rather than IBD as a whole, these data will be presented as stratified by
 disease type. 
 
+It should be noted that there are `r n.excluded` participants with FFQ data
+available but missing an FC at recruitment. These subjects have been excluded
+from the analyses presented on this page.
+
 ## Protein from meat sources
 
 @fig-meat-sum-dist suggests there are relatively few vegetarians in the PREdiCCt
@@ -108,7 +119,7 @@ they remain plausible.
 #| fig-cap: "Distribution of protein intake from meat."
 #| warning: false
 demo %>%
-  drop_na(Meat_sum) %>%
+  drop_na(Meat_sum, cat) %>%
   ggplot(aes(x = Meat_sum, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -177,7 +188,7 @@ UC/IBDU PREdiCCt participants.
 #| fig-cap: "Distribution of dietary fibre."
 #| warning: false
 demo %>%
-  drop_na(fibre) %>%
+  drop_na(fibre, cat) %>%
   ggplot(aes(x = fibre, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -331,7 +342,7 @@ $$
 
 
 demo %>%
-  drop_na(NOVAScore) %>%
+  drop_na(NOVAScore, cat) %>%
   ggplot(aes(x = NOVAScore, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 40) +
   theme_minimal() +
@@ -393,7 +404,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(EA_Fe) %>%
+  drop_na(EA_Fe, cat) %>%
   ggplot(aes(x = EA_Fe, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 40) +
   theme_minimal() +
@@ -447,7 +458,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(EA_VitD) %>%
+  drop_na(EA_VitD, cat) %>%
   ggplot(aes(x = EA_VitD, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 40) +
   theme_minimal() +
@@ -507,7 +518,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(Alcohol_percEng) %>%
+  drop_na(Alcohol_percEng, cat) %>%
   ggplot(aes(x = Alcohol_percEng, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 20) +
   facet_grid(cols = vars(Sex), rows = vars(diagnosis2)) +
@@ -586,7 +597,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(dqi_tot) %>%
+  drop_na(dqi_tot, cat) %>%
   ggplot(aes(x = dqi_tot, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 20) +
   facet_grid(cols = vars(diagnosis2)) +
@@ -685,7 +696,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(breadIntake) %>%
+  drop_na(breadIntake, cat) %>%
   ggplot(aes(x = breadIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -766,7 +777,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(sweetIntake) %>%
+  drop_na(sweetIntake, cat) %>%
   ggplot(aes(x = sweetIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -828,7 +839,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(drinkIntake) %>%
+  drop_na(drinkIntake, cat) %>%
   ggplot(aes(x = drinkIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -892,7 +903,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(processedMeatIntake) %>%
+  drop_na(processedMeatIntake, cat) %>%
   ggplot(aes(x = processedMeatIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -976,7 +987,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(processedPlantIntake) %>%
+  drop_na(processedPlantIntake, cat) %>%
   ggplot(aes(x = processedPlantIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -1062,7 +1073,7 @@ demo.cd <- demo %>%
 
 ```{R}
 demo.cd %>%
-  drop_na(ileal, breadIntake) %>%
+  drop_na(ileal, breadIntake, cat) %>%
   ggplot(aes(x = ileal, y = breadIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
@@ -1084,7 +1095,7 @@ pander(summary(aov(breadIntake ~ ileal, data = demo.cd)))
 
 ```{R}
 demo.cd %>%
-  drop_na(ileal, sweetIntake) %>%
+  drop_na(ileal, sweetIntake, cat) %>%
   ggplot(aes(x = ileal, y = sweetIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
@@ -1106,7 +1117,7 @@ pander(summary(aov(sweetIntake ~ ileal, data = demo.cd)))
 
 ```{R}
 demo.cd %>%
-  drop_na(ileal, drinkIntake) %>%
+  drop_na(ileal, drinkIntake, cat) %>%
   ggplot(aes(x = ileal, y = drinkIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
@@ -1128,7 +1139,7 @@ pander(summary(aov(drinkIntake ~ ileal, data = demo.cd)))
 
 ```{R}
 demo.cd %>%
-  drop_na(ileal, processedMeatIntake) %>%
+  drop_na(ileal, processedMeatIntake, cat) %>%
   ggplot(aes(x = ileal, y = processedMeatIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
@@ -1151,7 +1162,7 @@ pander(summary(aov(processedMeatIntake ~ ileal, data = demo.cd)))
 
 ```{R}
 demo.cd %>%
-  drop_na(ileal, processedPlantIntake) %>%
+  drop_na(ileal, processedPlantIntake, cat) %>%
   ggplot(aes(x = ileal, y = processedPlantIntake, color = ileal)) +
   geom_violin(fill = "#f8f8f8") +
   scale_color_manual(values = c("#E98A15", "#59114D")) +
@@ -1201,7 +1212,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(fruitIntake) %>%
+  drop_na(fruitIntake, cat) %>%
   ggplot(aes(x = fruitIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -1271,7 +1282,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(vegIntake) %>%
+  drop_na(vegIntake, cat) %>%
   ggplot(aes(x = vegIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -1345,7 +1356,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(redMeatIntake) %>%
+  drop_na(redMeatIntake, cat) %>%
   ggplot(aes(x = redMeatIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -1399,7 +1410,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(whiteMeatIntake) %>%
+  drop_na(whiteMeatIntake, cat) %>%
   ggplot(aes(x = whiteMeatIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -1456,7 +1467,7 @@ demo <- merge(demo,
 )
 
 demo %>%
-  drop_na(whiteFishIntake) %>%
+  drop_na(whiteFishIntake, cat) %>%
   ggplot(aes(x = whiteFishIntake, color = diagnosis2, fill = diagnosis2)) +
   geom_histogram(bins = 25) +
   theme_minimal() +
@@ -1523,7 +1534,7 @@ comparison <- reshape2::melt(FFQ,
 )
 
 comparison <- merge(comparison,
-  demo[, c("ParticipantNo", "Sex", "diagnosis2")],
+  demo[, c("ParticipantNo", "Sex", "diagnosis2", "cat")],
   by = "ParticipantNo",
   all.x = TRUE,
   all.y = FALSE
@@ -1534,10 +1545,9 @@ levels(comparison$diagnosis2) <- c(
   "Ulcerative colitis/IBDU"
   )
 
-p <- ggplot(
-  comparison,
-  aes(color = variable, x= variable, fill = variable, y = value)
-) +
+p <- comparison %>%
+  drop_na(cat) %>%
+  ggplot(aes(color = variable, x= variable, fill = variable, y = value)) +
   geom_violin() +
   facet_grid(cols = vars(diagnosis2), rows = vars(Sex), switch = "y") +
   theme_minimal() +
