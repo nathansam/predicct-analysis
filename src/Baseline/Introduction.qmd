@@ -17,6 +17,11 @@ bibliography: Baseline.bib
 This section of the website explores the baseline data for the PREdiCCt study,
 generating inferences and producing display items for publication.
 
+::: {.callout-note}
+P-values are presented unadjusted. Given the many statistical tests performed,
+the issue of multiple testing should be considered whilst interpreting the results. 
+:::
+
 For all baseline reports, only the _faecal calprotectin_ cohort, the sub-cohort
 defined as subjects with baseline faecal calprotectin available, are described
 (unless otherwise stated). For each variable considered, associations with

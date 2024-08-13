@@ -10,12 +10,16 @@ author:
 bibliography: Survival.bib   
 ---
 
-This report explores associations between time to flare and the variables
-recorded at baseline. Time to flare is modelled
-using Cox models with the variable of interest and controlled variables (sex,
-and deprivation) included as fixed effects. A gamma
-frailty term is employed for hospital sites (which may capture inter-hospital
-differences).
+This section explores associations between time to flare and the variables
+recorded at baseline. Time to flare is modelled using Cox models with the
+variable of interest and controlled variables (sex, and deprivation) included as
+fixed effects. A gamma frailty term is employed for hospital sites (which may
+capture inter-hospital differences).
+
+::: {.callout-note}
+P-values are presented unadjusted. Given the many statistical tests performed,
+the issue of multiple testing should be considered whilst interpreting the results. 
+:::
 
 The primary study endpoint is soft flare which is defined as a participant
 reporting their disease as being uncontrolled when they completed a monthly
@@ -30,6 +34,7 @@ collected via end-of-study phenotyping.
 
 For hard flares, the full study follow-up period has been used, from study
 recruitment to the time the end of study phenotyping was completed. 
+
 
 Soft and hard flares have been identified by Dr Linda Williams, the PREdiCCt
 trial statistician. The same flare definitions have been used across all teams

@@ -1,6 +1,6 @@
 library(ggplot2)
 library(patchwork)
-library(survminer)
+suppressPackageStartupMessages(library(survminer))
 
 if (file.exists("/docker")) { # If running in docker
   data.path <- "/analysis/data/final/20221004/"
