@@ -26,9 +26,9 @@ study participants.
 
 ## Usage
 
-![R logo](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)
-[![Docker badge](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/nathansam?tab=packages&repo_name=tofameta)
-![Quarto](https://img.shields.io/badge/built_with-quarto-69b1e9?style=for-the-badge)
+[![R logo](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)](https://cran.r-project.org/)
+[![Docker badge](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/nathansam/predicct-analysis/pkgs/container/predicct)
+[![Quarto](https://img.shields.io/badge/built_with-quarto-69b1e9?style=for-the-badge)](https://quarto.org/docs/get-started/)
 
 Re-rendering these reports requires access to PREdiCCt datasets hosted by the University of
 Edinburgh. For access to these data,
