@@ -100,3 +100,15 @@ python3 -m http.server
 
 This work uses data provided by participants and the NHS. We are grateful to
 the study participants and their IBD care teams for their support.
+
+## Licensing
+
+
+The code is licensed under [GPL-3](LICENSE) whilst this text in the reports is licensed under a
+[Creative Commons Attribution 4.0 International License][cc-by]. 
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![CC BY 4.0][cc-by-image]][cc-by] 
+
+[cc-by]: http://creativecommons.org/licenses/by/4.0/
+[cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
