@@ -107,12 +107,14 @@ the study participants and their IBD care teams for their support.
 
 ## Licensing
 
+<a href = "https://github.com/nathansam/predicct-analysis/blob/main/LICENSE"> <img src = "https://img.shields.io/badge/License-GPLv3-blue.svg" align = left></a>
 
-The code is licensed under [GPL-3](LICENSE) whilst this text in the reports is licensed under a
+<br>
+
+The code is licensed under [GPL-3](LICENSE) whilst the text in the reports is licensed under a
 [Creative Commons Attribution 4.0 International License][cc-by]. 
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![CC BY 4.0][cc-by-image]][cc-by] 
+<a href="https://github.com/nathansam/predicct-analysis/blob/main/LICENSE-CC-BY"> <img src="https://i.creativecommons.org/l/by/4.0/88x31.png" align=right></a>
 
 [cc-by]: http://creativecommons.org/licenses/by/4.0/
 [cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
