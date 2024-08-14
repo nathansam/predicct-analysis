@@ -26,7 +26,8 @@ study participants.
 
 ## Usage
 
-<img src="https://cran.r-project.org/Rlogo.svg" alt="R" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="docker" width="40" height="40"/>
+![R logo](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)
+[![Docker badge](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/nathansam?tab=packages&repo_name=tofameta)
 
 
 This report requires access to PREdiCCt datasets hosted by the University of
