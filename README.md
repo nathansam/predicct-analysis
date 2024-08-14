@@ -1,4 +1,4 @@
-# Analyses for PREdiCCt <img src="images/PREdiCCtlogo.png" style="float: right;" width = 300>
+# Analyses for PREdiCCt <img src="images/PREdiCCtlogo.png" align=right width = 300>
 
 This repository contains the analyses for the PREdiCCt study. The generated
 reports are hosted [here](https://www.constantine-cooke.com/predicct-analysis/).
