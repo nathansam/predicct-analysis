@@ -677,7 +677,6 @@ pander(chi_squared_result)
 ```{R}
 #| output: "hold"
 #| results: "asis"
-#age (grouped) using fishers
 contingency_table <- table(psqi_CD$AgeGroup, psqi_CD$SleepDisturbance)
 contingency_table
 chi_squared_result <- chisq.test(contingency_table)
@@ -724,7 +723,7 @@ ggplot(percentages,
 * Age: Patients at extremes of age have higher rates of sleep disturbance (p-value = 0.002). Highest rates in 55-64 age group.
 
 
-```{r, table for sleep disturbance CD}
+```{r, table for sleep disturbance UC/IBDU}
 #| label: tbl-sleep-cat
 #| tbl-cap: "Sleep Disturbance Across Categories (UC/IBDU)"
 my.render.cont <- function(x) {
@@ -800,7 +799,6 @@ pander(chi_squared_result)
 ```{R}
 #| output: "hold"
 #| results: "asis"
-#age (grouped) using fishers
 contingency_table <- table(psqi_UC$AgeGroup, psqi_UC$SleepDisturbance)
 chi_squared_result <- chisq.test(contingency_table)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
