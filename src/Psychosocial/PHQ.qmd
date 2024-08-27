@@ -169,7 +169,7 @@ saveRDS(phq_clean, paste0(save_path, "phq_clean.RDS"))
 
 Here we present somatisation prevalance across the cohort.
 
-```{r, average somatisation score across groups}
+```{r, average somatisation score across groups, table for whole cohort PHQ}
 my.render.cont <- function(x) {
   with(
     stats.apply.rounding(stats.default(x),
@@ -181,11 +181,12 @@ my.render.cont <- function(x) {
 }
 
 
-table1::table1(~ Sex + AgeGroup + diagnosis2 | somatisation,
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat| somatisation,
   data = phq_clean,
   render.continuous = my.render.cont,
   title = "Sleep Disturbance Across Categories "
 )
+
 ```
 
 
@@ -338,6 +339,53 @@ Here we investigate whether somatisation scores in CD and UC/IBDU patients have 
 
 CD_phq <- phq_clean[phq_clean$diagnosis2 == "CD",]
 #total 811 CD patients
+```
+
+```{r, table for somatization, CD only}
+
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat| somatisation,
+  data = CD_phq,
+  render.continuous = my.render.cont,
+  title = "Sleep Disturbance Across Categories "
+)
+
+table1::table1(~ somatisation| Sex,
+  data = CD_phq,
+  render.continuous = my.render.cont,
+  title = "Sleep Disturbance Across Categories "
+)
+
+table1::table1(~ somatisation| AgeGroup,
+  data = CD_phq,
+  render.continuous = my.render.cont,
+  title = "Sleep Disturbance Across Categories "
+)
+
+table1::table1(~ somatisation| flare_group,
+  data = CD_phq,
+  render.continuous = my.render.cont,
+  title = "Sleep Disturbance Across Categories "
+)
+
+table1::table1(~ somatisation| cat,
+  data = CD_phq,
+  render.continuous = my.render.cont,
+  title = "Sleep Disturbance Across Categories "
+)
+```
+
+```{r, associations in somatization, CD only}
 
 # Sex for CD p-value < 2.2e-16
 contingency_table <- table(CD_phq$Sex, CD_phq$somatisation)
