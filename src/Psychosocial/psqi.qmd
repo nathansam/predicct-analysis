@@ -1305,7 +1305,7 @@ invisible(cox.summary(fit.me))
 ```{R}
 #| output: "asis"
 fit.me <- coxph(Surv(time, DiseaseFlareYN) ~
-                  Sex + SleepDisturbance + AgeGroup + IMD+ cat + frailty(SiteNo),
+                  Sex + SleepDisturbance + AgeGroup + IMD + cat + frailty(SiteNo),
                 data = psqi_UC_hard)
 invisible(cox.summary(fit.me))
 ```

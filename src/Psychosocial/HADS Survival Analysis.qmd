@@ -1613,7 +1613,6 @@ cox_model <- coxph(
     Sex +
     IMD +
     cat +
-    AgeGroup +
     frailty(SiteNo),
   data = hard_dep_grouped_UC
 )

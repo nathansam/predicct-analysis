@@ -184,7 +184,7 @@ my.render.cont <- function(x) {
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat| somatisation,
   data = phq_clean,
   render.continuous = my.render.cont,
-  title = "Sleep Disturbance Across Categories "
+  title = "Somatization Across Categories (Whole Cohort)"
 )
 
 ```
@@ -242,9 +242,9 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and IBD type")
+  message("There is a significant association between IBD type and somatization")
 } else {
-  message("There is no significant association between sex and IBD type")
+  message("There is no significant association between IDB type and somatization")
 }
 
 phq_percent <- phq_clean %>%
@@ -255,8 +255,8 @@ phq_percent <- phq_clean %>%
 # Plot the bar graph (total counts)
 ggplot(phq_percent, aes(x = somatisation, y = Percentage, fill = diagnosis2)) +
   geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Distribution of somatisation by diagnosis type",
-       x = "Somatisation Level",
+  labs(title = "Distribution of somatization by diagnosis type",
+       x = "Somatization Level",
        y = "Percentage of Participants") +
   theme_minimal()
 
@@ -269,9 +269,9 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between somatisation scores and flares in last year")
+  message("There is a significant association between somatization scores and flares in last year")
 } else {
-  message("There is no significant association between somatisation scores and flares in last year")
+  message("There is no significant association between somatization scores and flares in last year")
 }
 
 #age - p-value = 0.02
@@ -357,32 +357,9 @@ my.render.cont <- function(x) {
 table1::table1(~ Sex + AgeGroup + flare_group + cat| somatisation,
   data = CD_phq,
   render.continuous = my.render.cont,
-  title = "Sleep Disturbance Across Categories "
+  title = "Somatization Across Categories (CD) "
 )
 
-table1::table1(~ somatisation| Sex,
-  data = CD_phq,
-  render.continuous = my.render.cont,
-  title = "Sleep Disturbance Across Categories "
-)
-
-table1::table1(~ somatisation| AgeGroup,
-  data = CD_phq,
-  render.continuous = my.render.cont,
-  title = "Sleep Disturbance Across Categories "
-)
-
-table1::table1(~ somatisation| flare_group,
-  data = CD_phq,
-  render.continuous = my.render.cont,
-  title = "Sleep Disturbance Across Categories "
-)
-
-table1::table1(~ somatisation| cat,
-  data = CD_phq,
-  render.continuous = my.render.cont,
-  title = "Sleep Disturbance Across Categories "
-)
 ```
 
 ```{r, associations in somatization, CD only}
@@ -454,8 +431,31 @@ if (chi_squared_result$p.value < alpha) {
 
 UC_phq <- phq_clean[phq_clean$diagnosis2 == "UC/IBDU",]
 #total 904 CD patients
+```
 
-# Sex for CD p-value < 2.2e-16
+```{r, table for somatization UC/IBDU only}
+
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat| somatisation,
+  data = UC_phq,
+  render.continuous = my.render.cont,
+  title = "Somatization Disturbance Across Categories (UC/IBDU) "
+)
+
+```
+
+```{r, associations for somatization in UC/IBDU}
+# Sex
 contingency_table <- table(UC_phq$Sex, UC_phq$somatisation)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
@@ -660,7 +660,7 @@ Hard flare:
   * No significant increase in risk for moderate somatisation (p-value = 0.20, 95% CI 0.78-3.15)
   
 
-```{r, SA for CD patients and PHQ}
+```{r, clinical flare for CD patients and somatization}
 # p-value 0.04
 # testing for somatisation, controlling for frailty only: mild somatisation (p-value mild somatisation 0.015, moderate 0.07, severe 0.006). Those with no somatisation had lower than predicted flares.
 
@@ -687,14 +687,18 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo), data = CD_phq_soft)
+cox.summary(cox_model)
+
+
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = CD_phq_soft)
 summary(cox_model)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = CD_phq_soft)
-summary(cox_model)
+cox.summary(cox_model)
+```
 
-
-
+```{r, CD hard flare and somatization}
 #Hard flares
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = CD_phq_hard)
 
@@ -718,11 +722,15 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
+fit.me <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo),
+                data = CD_phq_hard)
+cox.summary(fit.me)
+
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = CD_phq_hard)
 summary(cox_model)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = CD_phq_hard)
-summary(cox_model)
+cox.summary(cox_model)
 
 ```
 
@@ -746,7 +754,7 @@ n= 774, number of events= 119
 * No significant increase in risk in any analysis
 
 
-```{r, SA for UC/IBDU patients and PHQ}
+```{r, clinical flare for UC/IBDU patients and PHQ}
 # p-value 0.09
 # testing for somatisation, controlling for frailty only: no significance
 #Soft flares
@@ -772,14 +780,17 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo), data = UC_phq_soft)
+cox.summary(cox_model)
+
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = UC_phq_soft)
 summary(cox_model)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = UC_phq_soft)
-summary(cox_model)
+cox.summary(cox_model)
+```
 
-
-
+```{r, hard flare, UC, somatization}
 #hard flares
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = UC_phq_hard)
 
@@ -803,11 +814,14 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
+cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo), data = UC_phq_hard)
+cox.summary(cox_model)
+
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + frailty(SiteNo), data = UC_phq_hard)
 summary(cox_model)
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + Sex + Smoke + IMD + cat + frailty(SiteNo), data = UC_phq_hard)
-summary(cox_model)
+cox.summary(cox_model)
 
 ```
 
