@@ -304,6 +304,81 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
 ```
 
 ```{R}
+<<<<<<< HEAD
+=======
+#| label: tbl-vars-by-anxiety_cd
+#| tbl-cap: "Distribution of baseline anxiety scores across key variables - CD only"
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+#all tables for tables
+#| tbl-cap: "Distribution of baseline anxiety scores by sex (CD only)"
+table1::table1(~ score_group | Sex,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+#| tbl-cap: "Distribution of baseline anxiety scores by age group (CD only)"
+table1::table1(~ score_group | AgeGroup,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+#| tbl-cap: "Distribution of baseline anxiety scores by previous flare (CD only)"
+table1::table1(~ score_group | flare_group,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+#| tbl-cap: "Distribution of baseline anxiety scores by faecal calprotectin (CD only)"
+table1::table1(~ score_group | cat,
+  data = anxiety_cd,
+  render.continuous = my.render.cont
+)
+
+```
+
+```{R}
+#| label: tbl-vars-by-anxiety_uc
+#| tbl-cap: "Distribution of baseline anxiety scores across key variables - UC/IBDU only"
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+#all tables for tables
+#| tbl-cap: "Distribution of baseline anxiety scores by sex (UC/IBDU only)"
+table1::table1(~ score_group | Sex,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+#| tbl-cap: "Distribution of baseline anxiety scores by age group (UC/IBDU only)"
+table1::table1(~ score_group | AgeGroup,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+#| tbl-cap: "Distribution of baseline anxiety scores by previous flare (UC/IBDU only)"
+table1::table1(~ score_group | flare_group,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+#| tbl-cap: "Distribution of baseline anxiety scores by faecal calprotectin (UC/IBDU only)"
+table1::table1(~ score_group | cat,
+  data = anxiety_uc,
+  render.continuous = my.render.cont
+)
+
+```
+
+
+
+```{R}
+>>>>>>> 04bf26582b800cf2dd7d52ac2f6d1c488a06c89f
 #| label: tbl-vars-by-depression
 #| tbl-cap: "Distribution of Baseline Depression Scores across Key Variables"
 #depression_hads
