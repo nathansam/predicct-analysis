@@ -600,7 +600,7 @@ CD patients:
 
 
 ```{r, table for sleep disturbance CD}
-#| label: tbl-sleep-cat
+#| label: tbl-sleep-cat_cd
 #| tbl-cap: "Sleep Disturbance Across Categories (CD)"
 my.render.cont <- function(x) {
   with(
@@ -723,8 +723,13 @@ ggplot(percentages,
 * Age: Patients at extremes of age have higher rates of sleep disturbance (p-value = 0.002). Highest rates in 55-64 age group.
 
 
+<<<<<<< HEAD
 ```{r, table for sleep disturbance UC/IBDU}
 #| label: tbl-sleep-cat
+=======
+```{r, table for sleep disturbance CD}
+#| label: tbl-sleep-cat_uc
+>>>>>>> 04bf26582b800cf2dd7d52ac2f6d1c488a06c89f
 #| tbl-cap: "Sleep Disturbance Across Categories (UC/IBDU)"
 my.render.cont <- function(x) {
   with(
