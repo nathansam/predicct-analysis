@@ -132,7 +132,8 @@ exercise <- exercise %>%
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD)) %>% 
   filter(!is.na(cat))
 
-
+missing_ex_IMD <- exercise %>% 
+  filter(is.na(IMD))
 #Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, ModerateSport -> 2 participants
 filtered_data <- exercise %>%
   filter(is.na(VigorousWork) & is.na(ModerateWork) & is.na(WalkBicycle) & is.na(VigorousSport) & is.na(ModerateSport))
@@ -283,6 +284,9 @@ exercise <- exercise %>%
 exercise <- exercise %>% 
   mutate(MinimumExercise = ifelse(VigorousWeek >= 75 | ModerateWeek >= 150 | METs >= 600, "Yes", "No"))
 
+exercise <- exercise %>% 
+  mutate(LackExercise = ifelse(VigorousWeek < 75 & ModerateWeek < 150 & METs < 600, "Yes", "No"))
+
 #exclude if minute exercise/week >6720
 exercise <- exercise[exercise$ExerciseMins < 6720,]
 
@@ -304,7 +308,7 @@ saveRDS(exercise, paste0(save_path, "exercise.RDS"))
 
 ```
 
-```{r, code for tidy tables}
+```{r, code for tidy tables - exercise whole cohort}
 my.render.cont <- function(x) {
   with(
     stats.apply.rounding(stats.default(x),
@@ -315,10 +319,16 @@ my.render.cont <- function(x) {
   )
 }
 
-table1::table1(~ Sex + AgeGroup + diagnosis2| MinimumExercise,
+table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat| MinimumExercise,
   data = exercise,
   render.continuous = my.render.cont,
-  title = "Exercise"
+  title = "Exercise - whole cohort"
+)
+
+table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat| LackExercise,
+  data = exercise,
+  render.continuous = my.render.cont,
+  title = "Exercise - whole cohort"
 )
 
 #approximately 30% do not meet the minimum requirements of exercise advised by the WHO
@@ -404,6 +414,25 @@ if (chi_squared_result$p.value < alpha) {
 
 ### Baseline associations - CD
 
+```{r, table - exercise in CD only}
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat| MinimumExercise,
+  data = ex_CD,
+  render.continuous = my.render.cont,
+  title = "Exercise - CD only"
+)
+
+```
+
 * There is no significant association between sex and achieving minimum exercise in CD patients (p-value = 0.06)
 * There is no significant association between achieving minimum exercise and reporting flares in the previous year in CD patients (p-value = 0.43)
 * There is no significant association between achieving minimum exercise and age groups in CD (p-value = 0.19)
@@ -473,6 +502,24 @@ if (chi_squared_result$p.value < alpha) {
 * There is no significant association between achieving minimum exercise and reporting flares in the previous year in UC patients (p-value = 0.18)
 * There is no significant association between achieving minimum exercise and age groups in UC (p-value = 0.90)
 * There is no significant association between achieving minimum exercise and FC (p-value = 0.33)
+
+```{r, table - exercise in UC/IBDU only}
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat| MinimumExercise,
+  data = ex_UC,
+  render.continuous = my.render.cont,
+  title = "Exercise - UC/IBDU only"
+)
+```
 
 ```{r, analysis of UC only}
 contingency_table <- table(ex_UC$Sex, ex_UC$MinimumExercise)
@@ -606,7 +653,7 @@ p1 <- ggsurvplot(fit,
            data = ex_CD_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "Metting recommended exercise level",
+           legend.title = "Meeting recommended exercise level",
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
            title = "All participants - Time to soft flare - GPAQ"
@@ -617,7 +664,7 @@ p1
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = exercise_soft)
 summary(cox_model)
 
-#site, sex, smoking, IMD
+#site, sex, IMD
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = exercise_soft)
 summary(cox_model)
 
@@ -644,7 +691,7 @@ p1
 
 #exercise and frailty
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = exercise_hard)
-summary(cox_model)
+cox.summary(cox_model)
 
 #sex and frailty
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = exercise_hard)
@@ -698,10 +745,13 @@ p1 <- ggsurvplot(fit,
            )
 p1
 
-#outstanding - need to control for age
 #frailty only
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_CD_soft)
-summary(cox_model)
+cox.summary(cox_model)
+
+#lack exercise - site only
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_CD_soft)
+cox.summary(cox_model)
 
 #2
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_soft)
@@ -709,9 +759,14 @@ summary(cox_model)
 
 #control for fc
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
-summary(cox_model)
+cox.summary(cox_model)
 
+#lack exercise - controlling for fc
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
+cox.summary(cox_model)
+```
 
+```{r, hard flare, CD, exercise}
 #Hard flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_hard)
 
@@ -722,25 +777,34 @@ p1 <- ggsurvplot(fit,
            data = ex_CD_hard,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "CD patients, time to hard flare by exercise levels",
+           legend.title = "Meeting recommended exercise levels",
            palette = c("#BB0A21", "#F39237"),
            xlab = "Time from study recrutiment (days)",
-           title = "Crohn's - Time to hard flare - GPAQ"
+           title = "CD - Time to hard flare - GPAQ"
            )
 p1
 
 #exercise and frailty
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_CD_hard)
-summary(cox_model)
+cox.summary(cox_model)
 
-#sex and frailty
+#lack exercise - site only 
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_CD_hard)
+cox.summary(cox_model)
+
+#2
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_hard)
 summary(cox_model)
 
 
 #control for fc additionally
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
-summary(cox_model)
+cox.summary(cox_model)
+
+#lack exercise - control for fc additionally
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
+cox.summary(cox_model)
+
 ```
 
 
@@ -785,7 +849,11 @@ p1
 
 #controlling for frailty only 
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_soft)
-summary(cox_model)
+cox.summary(cox_model)
+
+#lack exercise - frailty only 
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_UC_soft)
+cox.summary(cox_model)
 
 #controlling for Sex, frailty
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_soft)
@@ -793,9 +861,15 @@ summary(cox_model)
 
 #control for FC additioally
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
-summary(cox_model)
+cox.summary(cox_model)
 
+# lack exercise - control for FC additioally
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
+cox.summary(cox_model)
 
+```
+
+```{r, UC, hard flare, exercise}
 #Hard flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_hard)
 
@@ -815,7 +889,11 @@ p1
 
 #exercise
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_hard)
-summary(cox_model)
+cox.summary(cox_model)
+
+#lack exercise - hard flare
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_UC_hard)
+cox.summary(cox_model)
 
 #sex frailty IMD
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_hard)
@@ -823,7 +901,11 @@ summary(cox_model)
 
 #control for FC
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_hard)
-summary(cox_model)
+cox.summary(cox_model)
+
+#lack exercise - controlling fc
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_hard)
+cox.summary(cox_model)
 ```
 
 
@@ -902,6 +984,16 @@ ETOH <- ETOH %>%
     )
   )
 
+#create alcohol intake level where 1 = none/very rare; 2 = within recommended limits; 3 = above recommended limits
+ETOH <- ETOH %>%
+  mutate(
+    AlcoholIntake = case_when(
+      Alcohol_units_wk <= 0.1 ~ "1",
+      Alcohol_units_wk > 0.1 & Alcohol_units_wk <= 14 ~ "2",
+      Alcohol_units_wk > 14 ~ "3"
+    )
+  )
+
 #1 patient missign ETOH data, excluded
 missing_etoh <- ETOH %>% 
   filter(is.na(weekly_units))
@@ -927,6 +1019,24 @@ Looking at the whole cohort - are there significant associations at baseline bet
 * Alcohol consumption and age? Yes, p-value = 0.00003. Younger people are more likely to recommended unit of alcohol, older people are more likely not drink at all. Need to do further analysis on this to comment accurately/significantly.
 * Alcohol consumption and FC? No, p-value = 0.17
 
+```{r, table for ETOH whole cohort}
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat| weekly_units,
+  data = ETOH,
+  render.continuous = my.render.cont,
+  title = "Alcohol consumption- whole cohort"
+)
+
+```
 
 ```{r, ETOH all at baseline}
 contingency_table <- table(ETOH$Sex, ETOH$weekly_units)
@@ -1013,7 +1123,6 @@ ggplot(percentages, aes(x = weekly_units, y = percentage, color = Sex, group = S
   theme_minimal()
 
 #age
-
 percentages <- ETOH %>%
   group_by(AgeGroup, weekly_units) %>%
   summarise(count = n()) %>%
@@ -1039,7 +1148,26 @@ ggplot(percentages, aes(x = weekly_units, y = percentage, color = AgeGroup, grou
 * No association between smoking and ETOH intake, p-value = 0.549
 * No association between FC and ETOH intake, p-value = 0.56
 
-```{r, CD only ETOH  at baseline}
+```{r, tables alcohol in CD only}
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+      digits = 3,
+      round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat| weekly_units,
+  data = ETOH_CD,
+  render.continuous = my.render.cont,
+  title = "Alcohol consumption - CD cohort"
+)
+
+```
+
+```{r, CD only ETOH at baseline}
 contingency_table <- table(ETOH_CD$Sex, ETOH_CD$weekly_units)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
@@ -1098,6 +1226,17 @@ if (chi_squared_result$p.value < alpha) {
 * There is no significant association between weekly alcohol consumption (units) and FC in UC, p-value = 0.185
 
 ```{r, UC only ETOH at baseline}
+
+table1::table1(~ Sex + AgeGroup + flare_group + cat | weekly_units,
+  data = ETOH_UC,
+  render.continuous = my.render.cont,
+  caption = "Distribution of patients across alcohol intake groups in UC"
+)
+
+```
+
+```{r, UC and alcohol associations}
+
 contingency_table <- table(ETOH_UC$Sex, ETOH_UC$weekly_units)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
@@ -1205,7 +1344,7 @@ p1
 
 #univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_soft)
-summary(cox_model)
+cox.summary(cox_model)
 
 #controlling for Sex, frailty, age, IMD
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_soft)
@@ -1214,8 +1353,6 @@ summary(cox_model)
 #control for FC additioally
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + cat + AgeGroup + frailty(SiteNo), data = ETOH_soft)
 summary(cox_model)
-
-
 
 #Hard flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_hard)
@@ -1266,7 +1403,7 @@ Hard flares (n= 472, number of events= 55):
 * Not significant when controlling for frailty(site), sex, smoking, IMD and age
 * Not significant when controlling for FC additionally
 
-```{r, survival analysis CD and ETOH}
+```{r, clinical flare, CD and ETOH}
 
 #soft flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_soft)
@@ -1287,8 +1424,11 @@ p1
 
 #site only 
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_CD_soft)
-summary(cox_model)
+cox.summary(cox_model)
 
+#new levels - site only
+cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo), data = ETOH_CD_soft)
+cox.summary(cox_model)
 
 #controlling for Sex, frailty, age, IMD
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_soft)
@@ -1296,9 +1436,15 @@ summary(cox_model)
 
 #control for FC additioally
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + cat + AgeGroup + frailty(SiteNo), data = ETOH_CD_soft)
-summary(cox_model)
+cox.summary(cox_model)
 
+#new levels - controlling for FC
+cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + Sex + IMD + cat + AgeGroup + frailty(SiteNo), data = ETOH_CD_soft)
+cox.summary(cox_model)
 
+```
+
+```{r, CD hard flare ETOH}
 
 #Hard flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_hard)
@@ -1319,8 +1465,11 @@ p1
 
 #univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_CD_hard)
-summary(cox_model)
+cox.summary(cox_model)
 
+#univariate - new levels
+cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo), data = ETOH_CD_hard)
+cox.summary(cox_model)
 
 #controlling for Sex, frailty, age, IMD
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + AgeGroup + IMD + frailty(SiteNo), data = ETOH_CD_hard)
@@ -1328,7 +1477,11 @@ summary(cox_model)
 
 #control for FC additioally
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_hard)
-summary(cox_model)
+cox.summary(cox_model)
+
+#controlling for FC - new levels
+cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_CD_hard)
+cox.summary(cox_model)
 ```
 
 
@@ -1367,7 +1520,11 @@ p1
 
 #univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_UC_soft)
-summary(cox_model)
+cox.summary(cox_model)
+
+#univariate - new levels
+cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo), data = ETOH_UC_soft)
+cox.summary(cox_model)
 
 #controlling for Sex, frailty, age, IMD
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_soft)
@@ -1375,8 +1532,14 @@ summary(cox_model)
 
 #control for FC additioally
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_soft)
-summary(cox_model)
+cox.summary(cox_model)
 
+#control for FC additioally - new levels
+cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_soft)
+cox.summary(cox_model)
+```
+
+```{r, UC/IBDU hard flare and ETOH}
 
 
 #Hard flares
@@ -1398,7 +1561,11 @@ p1
 
 #univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo), data = ETOH_UC_hard)
-summary(cox_model)
+cox.summary(cox_model)
+
+#univariate - new levels
+cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo), data = ETOH_UC_hard)
+cox.summary(cox_model)
 
 #controlling for Sex, frailty, age, IMD
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_hard)
@@ -1406,7 +1573,11 @@ summary(cox_model)
 
 #control for FC additinoally
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_hard)
-summary(cox_model)
+cox.summary(cox_model)
+
+#control for FC additinoally - new levels
+cox_model <- coxph(Surv(time, Cens) ~ weekly_units + Sex + cat + IMD + AgeGroup + frailty(SiteNo), data = ETOH_UC_hard)
+cox.summary(cox_model)
 ```
 
 ## Reproduction and reproducibility {.appendix}
