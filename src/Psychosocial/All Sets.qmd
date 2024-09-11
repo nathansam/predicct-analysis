@@ -21,7 +21,7 @@ library(openxlsx)
 library(tidyr)
 library(ggdist)
 library(rstatix)
-
+library(ggtext)
 suppressPackageStartupMessages(library(table1))
 library(knitr)
 library(pander)
@@ -79,13 +79,13 @@ ETOH <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/ETOH.RDS")
 hads_with_demographics <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_with_demographics.RDS")
 demo_uc <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-uc.RDS")
 demo_cd <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.RDS")
-softflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/softflareplot.RDS")
-hardflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hardflareplot.RDS")
-demo_full <- readRDS(paste0(outdir,"demo-full.RDS"))
-demo_IBD <- readRDS(paste0(outdir,"demo-IBD.RDS"))
+
 # if needed
-#softflareplot <-read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/SoftFlarePlot.xlsx")
-#hardflareplot <- read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/HardFlarePlot.xlsx")
+# demo_full <- readRDS(paste0(outdir,"demo-full.RDS"))
+# demo_IBD <- readRDS(paste0(outdir,"demo-IBD.RDS"))
+# if needed
+softflareplot <-read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/SoftFlarePlot.xlsx")
+hardflareplot <- read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/HardFlarePlot.xlsx")
 ```
 
 ```{r, forest plots - hard flare}
@@ -113,9 +113,63 @@ hardflareplot$Variable <- factor(hardflareplot$Variable, levels = c("HADS-A 8-10
                                                                     "Lack exercise",
                                                                     "Alcohol within recommended units",
                                                                     "Alcohol above recommended units"))
+
 softflareplot$Diagnosis <- factor(softflareplot$Diagnosis, levels = c("UC/IBDU", "CD"))
 hardflareplot$Diagnosis <- factor(hardflareplot$Diagnosis, levels = c("UC/IBDU", "CD"))
+softflareplot <- softflareplot %>%
+  mutate(p_value = as.numeric(as.character(p_value)))
+softflareplot <- softflareplot %>%
+  mutate(color_group = ifelse(p_value < 0.05, "Significant", "Not Significant"))
+hardflareplot <- hardflareplot %>%
+  mutate(color_group = ifelse(p_value < 0.05, "Significant", "Not Significant"))
+color_palette <- c("Significant" = "red", "Not Significant" = "black") 
 
+#customisation
+dodge <- position_dodge(width = 0.5)
+
+#forest plot - clinical flares
+p1 <- ggplot(softflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = color_group)) +
+  geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
+  geom_hline(yintercept = 1, linetype = 2) +  # Adds a reference line at y = 1 (null effect)
+  coord_flip() +  # Flip coordinates for a horizontal forest plot
+  labs(y = "Hazard Ratio (95% CI)", x = "Psychosocial Variables", title = "Clinical Flare - Survival Analysis (Cox Regression)") +
+  theme(plot.title.position = "plot", 
+        plot.caption.position = "plot",
+        plot.title = element_text(size = 10, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
+        plot.subtitle = element_text(size = 8, hjust = 0.5, vjust = -15)) +
+  scale_color_manual(values = color_palette) +
+  scale_shape_manual(values = c("UC/IBDU" = 17, "CD" = 16)) +
+  scale_x_discrete(limits = rev(levels(softflareplot$Variable))) +
+  guides(
+    color = guide_legend(title = "Colour Legend", override.aes = list(shape = 15, linetype = 0)),
+    shape = guide_legend(title = "IBD Diagnosis", override.aes = list(linetype = 0), reverse = TRUE)
+  ) +
+  theme_minimal()
+
+print(p1)
+
+#forest plot - hard flares
+p3 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = color_group)) +
+  geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
+  geom_hline(yintercept = 1, linetype = 2) +  # Adds a reference line at y = 1 (null effect)
+  coord_flip() +  # Flip coordinates for a horizontal forest plot
+  labs(y = "Hazard Ratio (95% CI)", x = "Psychosocial Variables", title = "Hard Flare - Survival Analysis (Cox Regression)") +
+  theme(plot.title.position = "plot", 
+        plot.caption.position = "plot",
+        plot.title = element_text(size = 10, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
+        plot.subtitle = element_text(size = 8, hjust = 0.5, vjust = -15)) +
+  scale_color_manual(values = color_palette) +
+  scale_shape_manual(values = c("UC/IBDU" = 17, "CD" = 16)) +
+  scale_x_discrete(limits = rev(levels(hardflareplot$Variable))) +
+  guides(
+    color = guide_legend(title = "Colour Legend", override.aes = list(shape = 15, linetype = 0)),
+    shape = guide_legend(title = "IBD Diagnosis", override.aes = list(linetype = 0), reverse = TRUE)
+  ) +
+  theme_minimal()
+
+print(p3)
+
+#in case needed later
 study_colors <- c("HADS-A 8-10" = "#D64133", 
                   "HADS-A 11-21" = "#AB3428",
                   "HADS-D  8-10" = "#3B8EA5",
@@ -127,41 +181,6 @@ study_colors <- c("HADS-A 8-10" = "#D64133",
                   "Lack exercise"= "#5E057E",
                   "Alcohol within recommended units" = "#F5EE9E",
                   "Alcohol above recommended units" = "#F8E629")
-#customisation
-dodge <- position_dodge(width = 0.5)
-
-ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = Variable)) +
-  geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
-  geom_hline(yintercept = 1, linetype = 2) +  # Adds a reference line at y = 1 (null effect)
-  coord_flip() +  # Flip coordinates for a horizontal forest plot
-  labs(y = "Hazard Ratio (95% CI)", x = "Psychosocial Variables", title = "Hard Flare - Survival Analysis (Cox Regression)") +
-  theme(plot.title.position = "plot", 
-      plot.caption.position = "plot",
-      plot.title = element_text(size = 10, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
-      plot.subtitle = element_text(size = 8, hjust = 0.5, vjust = -15)) +
-  scale_color_manual(values = study_colors) +
-  scale_shape_manual(values = c("UC/IBDU" = 17, "CD" = 16)) +
-  scale_x_discrete(limits = rev(levels(hardflareplot$Variable))) +
-  guides(color = guide_legend(override.aes = list(shape = 15, linetype = 0)),
-       shape = guide_legend(override.aes = list(linetype = 0), reverse = TRUE)) +
-  theme_minimal()
-
-
-ggplot(softflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = Variable)) +
-  geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
-  geom_hline(yintercept = 1, linetype = 2) +  # Adds a reference line at y = 1 (null effect)
-  coord_flip() +  # Flip coordinates for a horizontal forest plot
-  labs(y = "Hazard Ratio (95% CI)", x = "Psychosocial Variables", title = "Clinical Flare - Survival Analysis (Cox Regression)") +
-  theme(plot.title.position = "plot", 
-      plot.caption.position = "plot",
-      plot.title = element_text(size = 10, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
-      plot.subtitle = element_text(size = 8, hjust = 0.5, vjust = -15)) +
-  scale_color_manual(values = study_colors) +
-  scale_shape_manual(values = c("UC/IBDU" = 17, "CD" = 16)) +
-  scale_x_discrete(limits = rev(levels(hardflareplot$Variable))) +
-  guides(color = guide_legend(override.aes = list(shape = 15, linetype = 0)),
-       shape = guide_legend(override.aes = list(linetype = 0), reverse = TRUE)) +
-  theme_minimal()
 
 ```
 
