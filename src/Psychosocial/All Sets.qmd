@@ -81,13 +81,13 @@ ETOH <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/ETOH.RDS")
 hads_with_demographics <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_with_demographics.RDS")
 demo_uc <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-uc.RDS")
 demo_cd <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.RDS")
-
+softflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/softflare_plot.RDS")
+hardflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hardflare_plot.RDS")
 # if needed
 # demo_full <- readRDS(paste0(outdir,"demo-full.RDS"))
 # demo_IBD <- readRDS(paste0(outdir,"demo-IBD.RDS"))
-# if needed
-softflareplot <-read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/SoftFlarePlot.xlsx")
-hardflareplot <- read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/HardFlarePlot.xlsx")
+
+
 ```
 
 ```{r, forest plots - hard flare}
