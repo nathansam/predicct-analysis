@@ -26,6 +26,8 @@ suppressPackageStartupMessages(library(table1))
 library(knitr)
 library(pander)
 library(kableExtra)
+library(gridExtra)
+library(forestplot)
 
 # Generate flowchart of cohort derivation
 library(DiagrammeR)
@@ -125,18 +127,18 @@ hardflareplot <- hardflareplot %>%
 color_palette <- c("Significant" = "red", "Not Significant" = "black") 
 
 #customisation
-dodge <- position_dodge(width = 0.5)
+dodge <- position_dodge(width = 0.8)
 
 #forest plot - clinical flares
 p1 <- ggplot(softflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = color_group)) +
-  geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
+  geom_pointrange(position = dodge, size = 0.7) +  # For the point estimate and CI range
   geom_hline(yintercept = 1, linetype = 2) +  # Adds a reference line at y = 1 (null effect)
   coord_flip() +  # Flip coordinates for a horizontal forest plot
   labs(y = "Hazard Ratio (95% CI)", x = "Psychosocial Variables", title = "Clinical Flare - Survival Analysis (Cox Regression)") +
   theme(plot.title.position = "plot", 
         plot.caption.position = "plot",
-        plot.title = element_text(size = 10, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
-        plot.subtitle = element_text(size = 8, hjust = 0.5, vjust = -15)) +
+        plot.title = element_text(size = 8, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
+        plot.subtitle = element_text(size = 6, hjust = 0.5, vjust = -15)) +
   scale_color_manual(values = color_palette) +
   scale_shape_manual(values = c("UC/IBDU" = 17, "CD" = 16)) +
   scale_x_discrete(limits = rev(levels(softflareplot$Variable))) +
@@ -146,34 +148,19 @@ p1 <- ggplot(softflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upp
   ) +
   theme_minimal()
 
+
 print(p1)
 
-# Create a table-like annotation
-table_data <- hardflareplot %>%
-  mutate(label = paste0("<b>HR:</b> ", round(HR, 2), "<br><b>95% CI:</b> [", round(Lower95, 2), ", ", round(Upper95, 2), "]<br><b>p-value:</b> ", format(p_value, scientific = TRUE))) %>%
-  select(Variable, label)
-
-# Convert to a data frame suitable for table display
-table_data <- as.data.frame(table_data)
-
-p2 <- ggplot(table_data, aes(x = 1, y = 1)) +
-  geom_blank() +
-  theme_void() +
-  theme(plot.margin = margin(0, 0, 0, 0)) +
-  annotation_custom(
-    grob = tableGrob(table_data, rows = NULL),
-    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
-  )
 #forest plot - hard flares
-p3 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = color_group)) +
-  geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
+p2 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = color_group)) +
+  geom_pointrange(position = dodge, size = 0.7) +  # For the point estimate and CI range
   geom_hline(yintercept = 1, linetype = 2) +  # Adds a reference line at y = 1 (null effect)
   coord_flip() +  # Flip coordinates for a horizontal forest plot
   labs(y = "Hazard Ratio (95% CI)", x = "Psychosocial Variables", title = "Hard Flare - Survival Analysis (Cox Regression)") +
   theme(plot.title.position = "plot", 
         plot.caption.position = "plot",
-        plot.title = element_text(size = 10, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
-        plot.subtitle = element_text(size = 8, hjust = 0.5, vjust = -15)) +
+        plot.title = element_text(size = 8, hjust = 0.5, vjust = -10),  # Adjust the size and position of the title
+        plot.subtitle = element_text(size = 6, hjust = 0.5, vjust = -15)) +
   scale_color_manual(values = color_palette) +
   scale_shape_manual(values = c("UC/IBDU" = 17, "CD" = 16)) +
   scale_x_discrete(limits = rev(levels(hardflareplot$Variable))) +
@@ -183,20 +170,7 @@ p3 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upp
   ) +
   theme_minimal()
 
-print(p3)
-
-#in case needed later
-study_colors <- c("HADS-A 8-10" = "#D64133", 
-                  "HADS-A 11-21" = "#AB3428",
-                  "HADS-D  8-10" = "#3B8EA5",
-                  "HADS-D 11-21" = "#2D728F",
-                  "PSQI >5" = "#F49E4C",
-                  "Somatization 5-9 (mild)" = "#70AE6E",
-                  "Somatization 10-14 (moderate)" = "#87D185",
-                  "Somatization 15-30 (severe)" = "#9FF69C",
-                  "Lack exercise"= "#5E057E",
-                  "Alcohol within recommended units" = "#F5EE9E",
-                  "Alcohol above recommended units" = "#F8E629")
+print(p2)
 
 ```
 
