@@ -148,6 +148,22 @@ p1 <- ggplot(softflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upp
 
 print(p1)
 
+# Create a table-like annotation
+table_data <- hardflareplot %>%
+  mutate(label = paste0("<b>HR:</b> ", round(HR, 2), "<br><b>95% CI:</b> [", round(Lower95, 2), ", ", round(Upper95, 2), "]<br><b>p-value:</b> ", format(p_value, scientific = TRUE))) %>%
+  select(Variable, label)
+
+# Convert to a data frame suitable for table display
+table_data <- as.data.frame(table_data)
+
+p2 <- ggplot(table_data, aes(x = 1, y = 1)) +
+  geom_blank() +
+  theme_void() +
+  theme(plot.margin = margin(0, 0, 0, 0)) +
+  annotation_custom(
+    grob = tableGrob(table_data, rows = NULL),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  )
 #forest plot - hard flares
 p3 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = color_group)) +
   geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
