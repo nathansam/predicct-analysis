@@ -26,6 +26,7 @@ suppressPackageStartupMessages(library(table1))
 library(knitr)
 library(pander)
 library(kableExtra)
+library(gridExtra)
 
 # Generate flowchart of cohort derivation
 library(DiagrammeR)
@@ -36,6 +37,7 @@ library(survival)
 library(survminer)
 library(finalfit)
 
+library(forestplot)
 ```
 
 ```{r access to data}
@@ -82,10 +84,10 @@ demo_cd <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.R
 
 # if needed
 # demo_full <- readRDS(paste0(outdir,"demo-full.RDS"))
-# demo_IBD <- readRDS(paste0(outdir,"demo-IBD.RDS"))
+demo_IBD <- readRDS(paste0(outdir,"demo-IBD.RDS"))
 # if needed
-softflareplot <-read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/SoftFlarePlot.xlsx")
-hardflareplot <- read.xlsx("/Users/chiaracotronei/Desktop/Documents/Research/HardFlarePlot.xlsx")
+softflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/softflare_plot.RDS")
+hardflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hardflare_plot.RDS")
 ```
 
 ```{r, forest plots - hard flare}
@@ -147,23 +149,111 @@ p1 <- ggplot(softflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upp
   theme_minimal()
 
 print(p1)
+```
 
+
+
+
+```{R}
 # Create a table-like annotation
-table_data <- hardflareplot %>%
-  mutate(label = paste0("<b>HR:</b> ", round(HR, 2), "<br><b>95% CI:</b> [", round(Lower95, 2), ", ", round(Upper95, 2), "]<br><b>p-value:</b> ", format(p_value, scientific = TRUE))) %>%
-  select(Variable, label)
+#table_data <- hardflareplot %>%
+#  mutate(label = paste0("<b>HR:</b> ", round(HR, 2), "<br><b>95% CI:</b> [", round(Lower95, 2), ", ", round(Upper95, 2), "]<br><b>p-value:</b> ", format(p_value, scientific = TRUE))) %>%
+#  select(Variable, label)
+
+table_data <- softflareplot %>%
+  select(Variable, HR, Lower95, Upper95, p_value)
 
 # Convert to a data frame suitable for table display
 table_data <- as.data.frame(table_data)
+table_data$CI <- paste0(round(table_data$Lower95, 2), "-", round(table_data$Upper95, 2))
+table_data <- table_data %>%
+  select(-Lower95, -Upper95, Variable)
 
-p2 <- ggplot(table_data, aes(x = 1, y = 1)) +
-  geom_blank() +
-  theme_void() +
-  theme(plot.margin = margin(0, 0, 0, 0)) +
-  annotation_custom(
-    grob = tableGrob(table_data, rows = NULL),
-    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
-  )
+names(table_data)[4] <- "95% CI"
+names(table_data)[3] <- "p-value"
+table_data <- table_data[,c(1,2,4,3)] # Change order so p-value after CI
+table_data$HR <- round(table_data$HR, 2)
+
+p1 + 
+  annotation_custom(grob = tableGrob(table_data,
+                                     rows = NULL,
+                                     theme = ttheme(base_size = 8.5)),
+                    xmin = 8,
+                    xmax = 9,
+                    ymin = 4.5,
+                    ymax = 5
+                    )
+```
+
+
+```{R}
+
+new.df <- data.frame(Variable = character(),
+                     HR = numeric(), 
+                     Lower95 = numeric(),
+                     Upper95 = numeric(),
+                     p_value = numeric(),
+                     color_group = character())
+
+for (var in unique(softflareplot$Variable)) {
+  temp.df <- data.frame(Variable = var, HR = NA, Lower95 = NA, Upper95 = NA, p_value = NA, color_group = NA)
+  temp.df <- rbind(temp.df, cbind(data.frame(Variable = "  CD"),
+                                  subset(softflareplot, Variable == var & Diagnosis == "CD")[, c(2,3,4,6,7)]))
+  temp.df <- rbind(temp.df, cbind(data.frame(Variable = "  UC/IBDU"),
+                                  subset(softflareplot, Variable == var & Diagnosis == "UC/IBDU")[, c(2,3,4,6,7)]))
+  new.df <- rbind(new.df, temp.df)
+}
+
+
+new.df$HR <- round(new.df$HR, 2)
+new.df$p_value <- round(new.df$p_value, 2)
+new.df$CI <-  paste0(round(new.df$Lower95, 2), "-", round(new.df$Upper95, 2))
+
+new.df <- rbind(data.frame(Variable = c("Psychosocial Variables", NA),
+                           HR = c("HR", NA),
+                           Lower95 = c("Lower95", NA),
+                           Upper95 = c("Upper95", NA),
+                           p_value = c("p-value", NA),
+                           color_group = c("color_group", NA),
+                           CI = c("95% CI", NA)), new.df)
+
+
+hmm <- cbind(c("variable", as.character(softflareplot$Variable)), c("IBD type", as.character(softflareplot$Diagnosis)), c("p-value", softflareplot$p_value))
+
+new.df$HR.val <- as.numeric(new.df$HR)
+new.df$Lower95 <- as.numeric(new.df$Lower95) 
+new.df$Upper95 <- as.numeric(new.df$Upper95)
+
+
+cairo_pdf("../plots/softFlareForest.pdf", height = 12, width = 10)
+forestplot(
+           labeltext = cbind(new.df$Variable, new.df$HR, new.df$CI, new.df$p_value),
+           mean = c(new.df$HR.val),
+           lower = c(new.df$Lower95),
+           upper = c(new.df$Upper95),
+           lwd.ci = 2,
+           ci.vertices = TRUE,
+           ci.vertices.height = 0.4,
+           zero = 1,
+           graph.pos=2,
+           hrzl_lines=list("5" = gpar(lwd=60, lineend="butt", columns=seq(1,5), col="#99999922"),
+                           "8" = gpar(lwd=60, lineend="butt", columns=seq(1,5), col="#99999922")),
+           txt_gp = fpTxtGp(label = gpar(cex = 1.25),
+                            ticks = gpar(cex = 1.1),
+                            xlab = gpar(cex = 1.2),
+                            title = gpar(cex = 1.2)),
+           col = fpColors(box = "black", lines = "black", zero = "gray50"),
+           cex = 0.9,
+           lineheight = "auto",
+           boxsize = 0.5,
+           colgap =  unit(6, "mm"),
+           title = "Hazard Ratio")
+dev.off()
+```
+
+
+
+```{R}
 #forest plot - hard flares
 p3 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upper95, shape = Diagnosis, color = color_group)) +
   geom_pointrange(position = dodge, size = 0.8) +  # For the point estimate and CI range
@@ -184,6 +274,72 @@ p3 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upp
   theme_minimal()
 
 print(p3)
+```
+
+```{R}
+new.df <- data.frame(Variable = character(),
+                     HR = numeric(), 
+                     ower95 = numeric(),
+                     Upper95 = numeric(),
+                     p_value = numeric(),
+                     color_group = character())
+
+for (var in unique(hardflareplot$Variable)) {
+  temp.df <- data.frame(Variable = var, HR = NA, Lower95 = NA, Upper95 = NA, p_value = NA, color_group = NA)
+  temp.df <- rbind(temp.df, cbind(data.frame(Variable = "  CD"),
+                                  subset(hardflareplot, Variable == var & Diagnosis == "CD")[, c(2,3,4,6,7)]))
+  temp.df <- rbind(temp.df, cbind(data.frame(Variable = "  UC/IBDU"),
+                                  subset(hardflareplot, Variable == var & Diagnosis == "UC/IBDU")[, c(2,3,4,6,7)]))
+  new.df <- rbind(new.df, temp.df)
+}
+
+
+new.df$HR <- round(new.df$HR, 2)
+new.df$p_value <- round(new.df$p_value, 2)
+new.df$CI <-  paste0(round(new.df$Lower95, 2), "-", round(new.df$Upper95, 2))
+
+new.df <- rbind(data.frame(Variable = c("Psychosocial Variables", NA),
+                           HR = c("HR", NA),
+                           Lower95 = c("Lower95", NA),
+                           Upper95 = c("Upper95", NA),
+                           p_value = c("p-value", NA),
+                           color_group = c("color_group", NA),
+                           CI = c("95% CI", NA)), new.df)
+
+
+hmm <- cbind(c("variable", as.character(hardflareplot$Variable)), c("IBD type", as.character(hardflareplot$Diagnosis)), c("p-value", hardflareplot$p_value))
+
+new.df$HR.val <- as.numeric(new.df$HR)
+new.df$Lower95 <- as.numeric(new.df$Lower95) 
+new.df$Upper95 <- as.numeric(new.df$Upper95)
+
+
+cairo_pdf("../plots/hardFlareForest.pdf", height = 12, width = 10)
+forestplot(
+           labeltext = cbind(new.df$Variable, new.df$HR, new.df$CI, new.df$p_value),
+           mean = c(new.df$HR.val),
+           lower = c(new.df$Lower95),
+           upper = c(new.df$Upper95),
+           lwd.ci = 2,
+           ci.vertices = TRUE,
+           ci.vertices.height = 0.4,
+           zero = 1,
+           graph.pos=2,
+           hrzl_lines=list(
+                          "5" = gpar(lwd=60, lineend="butt", columns=seq(1,5), col="#99999922"),
+                          "8" = gpar(lwd=60, lineend="butt", columns=seq(1,5), col="#99999922")),
+           txt_gp=fpTxtGp(label=gpar(cex=1.25),
+                              ticks=gpar(cex=1.1),
+                              xlab=gpar(cex = 1.2),
+                              title=gpar(cex = 1.2)),
+           col=fpColors(box="black", lines="black", zero = "gray50"),
+           cex = 0.9, lineheight = "auto", boxsize = 0.5, colgap=  unit(6,"mm"),
+           title = "Hazard Ratio")
+dev.off()
+```
+
+
+
 
 #in case needed later
 study_colors <- c("HADS-A 8-10" = "#D64133", 
