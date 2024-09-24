@@ -31,7 +31,7 @@ if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"
   redcap.path <- "data/final/20231030/"
   prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  outdir <- "data/processed/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
@@ -160,11 +160,11 @@ p <- ggsurvplot(fit,
 
 saveRDS(p, paste0(outdir, "meat-cd-soft.RDS"))
 
-cairo_pdf("../plots/cd/soft-flare/Diet/meat.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/meat.png",
+png("plots/cd/soft-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -210,11 +210,11 @@ p <- ggsurvplot(fit,
 
 saveRDS(p, paste0(outdir, "meat-cd-hard.RDS"))
 
-cairo_pdf("../plots/cd/hard-flare/Diet/meat.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/meat.png",
+png("plots/cd/hard-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -269,15 +269,14 @@ p <- ggsurvplot(fit,
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  break.time.by = 200
 )
 saveRDS(p, paste0(outdir, "meat-uc-soft.RDS"))
-cairo_pdf("../plots/uc/soft-flare/Diet/meat.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/meat.png",
+png("plots/uc/soft-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -324,11 +323,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 saveRDS(p, paste0(outdir, "meat-uc-hard.RDS"))
-cairo_pdf("../plots/uc/hard-flare/Diet/meat.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/meat.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/meat.png",
+png("plots/uc/hard-flare/diet/meat.png",
   width = 7,
   height = 7,
   units = "in",
@@ -388,11 +387,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/fibre.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/fibre.png",
+png("plots/cd/soft-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -436,11 +435,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/fibre.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/fibre.png",
+png("plots/cd/hard-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -493,15 +492,14 @@ p <- ggsurvplot(fit,
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/fibre.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/fibre.png",
+png("plots/uc/soft-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -533,6 +531,7 @@ fit <- survfit(Surv(hardflare_time, hardflare) ~ fibre_cat,
 )
 
 
+
 p <- ggsurvplot(fit,
   data = flare.uc.df,
   conf.int = FALSE,
@@ -545,15 +544,14 @@ p <- ggsurvplot(fit,
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/fibre.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/fibre.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/fibre.png",
+png("plots/uc/hard-flare/diet/fibre.png",
   width = 7,
   height = 7,
   units = "in",
@@ -616,11 +614,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/pufa.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/pufa.png",
+png("plots/cd/soft-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -664,11 +662,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/pufa.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/pufa.png",
+png("plots/cd/hard-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -723,15 +721,14 @@ p <- ggsurvplot(fit,
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/pufa.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/pufa.png",
+png("plots/uc/soft-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -774,15 +771,14 @@ p <- ggsurvplot(fit,
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/pufa.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/pufa.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/pufa.png",
+png("plots/uc/hard-flare/diet/pufa.png",
   width = 7,
   height = 7,
   units = "in",
@@ -839,11 +835,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/nova.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/nova.png",
+png("plots/cd/soft-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -887,11 +883,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/nova.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/nova.png",
+png("plots/cd/hard-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -940,15 +936,14 @@ p <- ggsurvplot(fit,
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to soft flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/nova.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/nova.png",
+png("plots/uc/soft-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -991,15 +986,14 @@ p <- ggsurvplot(fit,
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/nova.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/nova.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/nova.png",
+png("plots/uc/hard-flare/diet/nova.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1013,6 +1007,232 @@ p
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + NOVAScore_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+## UPF intake
+
+As an alternative approach to characterising ultra-processed food, we considered
+the percentage of daily energy intake sourced from ultra-processed food and
+drink (Nova 4).
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+quants <- quantile(flare.df$UPF_perc, na.rm = TRUE)
+
+flare.cd.df$UPF_perc_cat <- cut(flare.cd.df$UPF_perc,
+  breaks = c(0, quants[2:5])
+)
+
+fit <- survfit(Surv(softflare_time, softflare) ~ UPF_perc_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "UPF as % of energy",
+  legend.labs = levels(flare.cd.df$UPF_perc_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/cd/soft-flare/diet/UPF.pdf")
+p
+invisible(dev.off())
+
+png("plots/cd/soft-flare/diet/UPF.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + UPF_perc + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ UPF_perc_cat,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "UPF as % of energy",
+  legend.labs = levels(flare.cd.df$UPF_perc_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/cd/hard-flare/diet/UPF.pdf")
+p
+invisible(dev.off())
+
+png("plots/cd/hard-flare/diet/UPF.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + UPF_perc + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Soft flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df$UPF_perc_cat <- cut(flare.uc.df$UPF_perc,
+  breaks = c(0, quants[2:5])
+)
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ UPF_perc_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "UPF as % of energy",
+  legend.labs = levels(flare.uc.df$UPF_perc_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to soft flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/uc/soft-flare/diet/UPF.pdf")
+p
+invisible(dev.off())
+
+png("plots/uc/soft-flare/diet/UPF.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + UPF_perc +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+fit <- survfit(Surv(hardflare_time, hardflare) ~ UPF_perc_cat,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = FALSE,
+  pval = FALSE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "UPF as % of energy",
+  legend.labs = levels(flare.uc.df$UPF_perc_cat),
+  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/uc/hard-flare/diet/UPF.pdf")
+p
+invisible(dev.off())
+
+png("plots/uc/hard-flare/diet/UPF.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+p
+invisible(dev.off())
+
+p
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
