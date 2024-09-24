@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.550">
+<meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
 <meta name="author" content="Chiara Cotronei">
-<meta name="dcterms.date" content="2024-04-23">
+<meta name="dcterms.date" content="2024-09-24">
 <title>PREdiCCt analyses - Inflammatory bowel disease</title>
 <style>
 code{white-space: pre-wrap;}
@@ -173,10 +173,10 @@ window.Quarto = {
 <meta name="citation_title" content="Inflammatory bowel disease">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
 <meta name="citation_author" content="Chiara Cotronei">
-<meta name="citation_publication_date" content="2024-04-23">
-<meta name="citation_cover_date" content="2024-04-23">
+<meta name="citation_publication_date" content="2024-09-24">
+<meta name="citation_cover_date" content="2024-09-24">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-04-23">
+<meta name="citation_online_date" content="2024-09-24">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Location is important: Differentiation between ileal and colonic crohn’s disease;,citation_author=Raja Atreya;,citation_author=Britta Siegmund;,citation_publication_date=2021-03;,citation_cover_date=2021-03;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.1038/s41575-021-00424-6;,citation_issue=8;,citation_doi=10.1038/s41575-021-00424-6;,citation_issn=1759-5053;,citation_volume=18;,citation_journal_title=Nature Reviews Gastroenterology &amp;amp;amp; Hepatology;,citation_publisher=Springer Science; Business Media LLC;">
 <meta name="citation_reference" content="citation_title=Between-assay variability of faecal calprotectin enzyme-linked immunosorbent assay kits;,citation_author=S J Whitehead;,citation_author=J French;,citation_author=M J Brookes;,citation_author=C Ford;,citation_author=R Gama;,citation_publication_date=2012-11;,citation_cover_date=2012-11;,citation_year=2012;,citation_fulltext_html_url=http://dx.doi.org/10.1258/acb.2012.011272;,citation_issue=1;,citation_doi=10.1258/acb.2012.011272;,citation_issn=1758-1001;,citation_volume=50;,citation_journal_title=Annals of Clinical Biochemistry: International Journal of Laboratory Medicine;,citation_publisher=SAGE Publications;">
@@ -208,7 +208,7 @@ window.Quarto = {
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
       <a href="../index.html" class="sidebar-logo-link">
-      <img src="../logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none"></a>
+      <img src="../PREdiCCtlogo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none"></a>
       <div class="sidebar-tools-main">
     <div class="dropdown">
       <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
@@ -434,7 +434,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 23, 2024</p>
+      <p class="date">September 24, 2024</p>
     </div>
   </div>
   
@@ -472,7 +472,7 @@ window.Quarto = {
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
 <span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed/"</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="co"># Run on OS directly</span></span>
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
@@ -615,12 +615,12 @@ Table&nbsp;1: Chi-squared test between IBD type and FC groups.
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span><span class="op">(</span></span>
 <span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#5EB1BF"</span>, <span class="st">"#C24343"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"../plots/Duration-full-cohort.png"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"plots/Duration-full-cohort.png"</span>,</span>
 <span>  <span class="va">p</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">9</span>,</span>
 <span>  height <span class="op">=</span> <span class="fl">6</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"../plots/Duration-full-cohort.pdf"</span>, <span class="va">p</span>, width <span class="op">=</span> <span class="fl">9</span>, height <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"plots/Duration-full-cohort.pdf"</span>, <span class="va">p</span>, width <span class="op">=</span> <span class="fl">9</span>, height <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span></span>
 <span></span>
 <span><span class="va">duration</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -2422,12 +2422,12 @@ Table&nbsp;20: Chi-squared test between between E-cigarettte usage and FC groups
 Session info
 </summary><div class="cell">
 <div class="cell-output-display">
-<p><strong>R version 4.3.3 (2024-02-29)</strong></p>
-<p><strong>Platform:</strong> aarch64-apple-darwin20 (64-bit)</p>
-<p><strong>locale:</strong> en_GB.UTF-8||en_GB.UTF-8||en_GB.UTF-8||C||en_GB.UTF-8||en_GB.UTF-8</p>
+<p><strong>R version 4.4.0 (2024-04-24)</strong></p>
+<p><strong>Platform:</strong> aarch64-unknown-linux-gnu</p>
+<p><strong>locale:</strong> <em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=en_US.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=en_US.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=en_US.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=en_US.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
-<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.5)</em>, <em>knitr(v.1.46)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.2.0)</em>, <em>datefixR(v.1.6.1)</em>, <em>readxl(v.1.4.3)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.0)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
-<p><strong>loaded via a namespace (and not attached):</strong> <em>gtable(v.0.3.4)</em>, <em>xfun(v.0.43)</em>, <em>httr2(v.1.0.1)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>visNetwork(v.2.1.2)</em>, <em>websocket(v.1.4.1)</em>, <em>processx(v.3.8.4)</em>, <em>tzdb(v.0.4.0)</em>, <em>vctrs(v.0.6.5)</em>, <em>tools(v.4.3.3)</em>, <em>ps(v.1.7.6)</em>, <em>generics(v.0.1.3)</em>, <em>curl(v.5.2.1)</em>, <em>fansi(v.1.0.6)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>lifecycle(v.1.0.4)</em>, <em>farver(v.2.1.1)</em>, <em>compiler(v.4.3.3)</em>, <em>textshaping(v.0.3.7)</em>, <em>munsell(v.0.5.1)</em>, <em>chromote(v.0.2.0)</em>, <em>codetools(v.0.2-19)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>yaml(v.2.3.8)</em>, <em>Formula(v.1.2-5)</em>, <em>later(v.1.3.2)</em>, <em>pillar(v.1.9.0)</em>, <em>viridis(v.0.6.5)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rvest(v.1.0.4)</em>, <em>digest(v.0.6.35)</em>, <em>stringi(v.1.8.3)</em>, <em>labeling(v.0.4.3)</em>, <em>fastmap(v.1.1.1)</em>, <em>grid(v.4.3.3)</em>, <em>colorspace(v.2.1-0)</em>, <em>cli(v.3.6.2)</em>, <em>magrittr(v.2.0.3)</em>, <em>utf8(v.1.2.4)</em>, <em>withr(v.3.0.0)</em>, <em>scales(v.1.3.0)</em>, <em>promises(v.1.3.0)</em>, <em>rappdirs(v.0.3.3)</em>, <em>timechange(v.0.3.0)</em>, <em>rmarkdown(v.2.26)</em>, <em>httr(v.1.4.7)</em>, <em>gridExtra(v.2.3)</em>, <em>cellranger(v.1.1.0)</em>, <em>ragg(v.1.3.0)</em>, <em>clisymbols(v.1.2.0)</em>, <em>hms(v.1.1.3)</em>, <em>evaluate(v.0.23)</em>, <em>V8(v.4.4.2)</em>, <em>viridisLite(v.0.4.2)</em>, <em>rlang(v.1.1.3)</em>, <em>Rcpp(v.1.0.12)</em>, <em>glue(v.1.7.0)</em>, <em>xml2(v.1.3.6)</em>, <em>jsonlite(v.1.8.8)</em>, <em>R6(v.2.5.1)</em> and <em>systemfonts(v.1.0.6)</em></p>
+<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.5)</em>, <em>knitr(v.1.47)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.2.0)</em>, <em>datefixR(v.1.6.1)</em>, <em>readxl(v.1.4.3)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong> <em>viridis(v.0.6.5)</em>, <em>utf8(v.1.2.4)</em>, <em>generics(v.0.1.3)</em>, <em>stringi(v.1.8.4)</em>, <em>hms(v.1.1.3)</em>, <em>digest(v.0.6.35)</em>, <em>magrittr(v.2.0.3)</em>, <em>evaluate(v.0.23)</em>, <em>grid(v.4.4.0)</em>, <em>timechange(v.0.3.0)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>fastmap(v.1.2.0)</em>, <em>cellranger(v.1.1.0)</em>, <em>jsonlite(v.1.8.8)</em>, <em>Formula(v.1.2-5)</em>, <em>gridExtra(v.2.3)</em>, <em>fansi(v.1.0.6)</em>, <em>viridisLite(v.0.4.2)</em>, <em>scales(v.1.3.0)</em>, <em>textshaping(v.0.4.0)</em>, <em>codetools(v.0.2-20)</em>, <em>cli(v.3.6.2)</em>, <em>rlang(v.1.1.3)</em>, <em>visNetwork(v.2.1.2)</em>, <em>munsell(v.0.5.1)</em>, <em>withr(v.3.0.0)</em>, <em>yaml(v.2.3.8)</em>, <em>tools(v.4.4.0)</em>, <em>tzdb(v.0.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>curl(v.5.2.1)</em>, <em>vctrs(v.0.6.5)</em>, <em>R6(v.2.5.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>V8(v.4.4.2)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>ragg(v.1.3.2)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>pillar(v.1.9.0)</em>, <em>gtable(v.0.3.5)</em>, <em>glue(v.1.7.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>systemfonts(v.1.1.0)</em>, <em>xfun(v.0.44)</em>, <em>tidyselect(v.1.2.1)</em>, <em>farver(v.2.1.2)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>labeling(v.0.4.3)</em>, <em>rmarkdown(v.2.27)</em> and <em>compiler(v.4.4.0)</em></p>
 </div>
 </div>
 </details><p>Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.</p>
@@ -2717,6 +2717,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -2751,7 +2769,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -3081,7 +3103,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb54-46"><a href="#cb54-46" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
 <span id="cb54-47"><a href="#cb54-47" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
 <span id="cb54-48"><a href="#cb54-48" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span id="cb54-49"><a href="#cb54-49" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span id="cb54-49"><a href="#cb54-49" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed/"</span></span>
 <span id="cb54-50"><a href="#cb54-50" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> { <span class="co"># Run on OS directly</span></span>
 <span id="cb54-51"><a href="#cb54-51" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span id="cb54-52"><a href="#cb54-52" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
@@ -3213,12 +3235,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb54-184"><a href="#cb54-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
 <span id="cb54-185"><a href="#cb54-185" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#5EB1BF"</span>, <span class="st">"#C24343"</span>)</span>
 <span id="cb54-186"><a href="#cb54-186" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb54-187"><a href="#cb54-187" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"../plots/Duration-full-cohort.png"</span>,</span>
+<span id="cb54-187"><a href="#cb54-187" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/Duration-full-cohort.png"</span>,</span>
 <span id="cb54-188"><a href="#cb54-188" aria-hidden="true" tabindex="-1"></a>  p,</span>
 <span id="cb54-189"><a href="#cb54-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">9</span>,</span>
 <span id="cb54-190"><a href="#cb54-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">6</span></span>
 <span id="cb54-191"><a href="#cb54-191" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb54-192"><a href="#cb54-192" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"../plots/Duration-full-cohort.pdf"</span>, p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb54-192"><a href="#cb54-192" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/Duration-full-cohort.pdf"</span>, p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
 <span id="cb54-193"><a href="#cb54-193" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-194"><a href="#cb54-194" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-195"><a href="#cb54-195" aria-hidden="true" tabindex="-1"></a>duration <span class="sc">%&gt;%</span></span>

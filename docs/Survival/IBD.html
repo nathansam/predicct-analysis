@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.550">
+<meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2024-04-10">
+<meta name="dcterms.date" content="2024-09-24">
 <title>PREdiCCt analyses - Inflammatory bowel disease</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Inflammatory bowel disease">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2024-04-10">
-<meta name="citation_cover_date" content="2024-04-10">
+<meta name="citation_publication_date" content="2024-09-24">
+<meta name="citation_cover_date" content="2024-09-24">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-04-10">
+<meta name="citation_online_date" content="2024-09-24">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Inflammatory bowel disease and smoking: A review of epidemiology, pathophysiology, and therapeutic implications;,citation_author=Tanja Birrenbach;,citation_author=Ulrich Böcker;,citation_publication_date=2004-11;,citation_cover_date=2004-11;,citation_year=2004;,citation_fulltext_html_url=http://dx.doi.org/10.1097/00054725-200411000-00019;,citation_issue=6;,citation_doi=10.1097/00054725-200411000-00019;,citation_issn=1078-0998;,citation_volume=10;,citation_journal_title=Inflammatory Bowel Diseases;,citation_publisher=Oxford University Press;">
 <meta name="citation_reference" content="citation_title=The UN decade of nutrition, the NOVA food classification and the trouble with ultra-processing;,citation_author=Carlos Augusto Monteiro;,citation_author=Geoffrey Cannon;,citation_author=Jean-Claude Moubarac;,citation_author=Renata Bertazzi Levy;,citation_author=Maria Laura C Louzada;,citation_author=Patrícia Constante Jaime;,citation_publication_date=2017-03;,citation_cover_date=2017-03;,citation_year=2017;,citation_fulltext_html_url=http://dx.doi.org/10.1017/S1368980017000234;,citation_issue=1;,citation_doi=10.1017/s1368980017000234;,citation_issn=1475-2727;,citation_volume=21;,citation_journal_title=Public Health Nutrition;,citation_publisher=Cambridge University Press;">
@@ -138,7 +138,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
       <a href="../index.html" class="sidebar-logo-link">
-      <img src="../logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none"></a>
+      <img src="../PREdiCCtlogo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none"></a>
       <div class="sidebar-tools-main">
     <div class="dropdown">
       <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
@@ -359,7 +359,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 10, 2024</p>
+      <p class="date">September 24, 2024</p>
     </div>
   </div>
   
@@ -387,15 +387,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
 <span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed/"</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="co"># Run on OS directly</span></span>
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
 <span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"</span></span>
 <span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/processed/"</span></span>
 <span><span class="op">}</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.exists</a></span><span class="op">(</span><span class="st">"plots"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"plots"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">outdir</span>, <span class="st">"demo-full.RDS"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">demo</span><span class="op">$</span><span class="va">FC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">FC</span><span class="op">)</span></span>
@@ -508,11 +506,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/control-8.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/control-8.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -681,11 +679,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/control-8.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/control-8.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -869,11 +867,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/control-8.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/control-8.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1038,11 +1036,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/control-8.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/control-8.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/control-8.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1217,11 +1215,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/control-vas.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/control-vas.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1386,11 +1384,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/control-vas.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/control-vas.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1559,11 +1557,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/control-vas.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/control-vas.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1727,11 +1725,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/control-vas.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/control-vas.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/control-vas.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1916,11 +1914,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to soft flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/surgery.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/surgery.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/surgery.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/surgery.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2081,11 +2079,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/surgery.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/surgery.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/surgery.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/surgery.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2256,11 +2254,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to soft flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/location.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/location.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/location.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/location.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2435,11 +2433,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/location.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/location.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/location.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/location.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2623,11 +2621,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to soft flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/l4.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/l4.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/l4.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/l4.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2788,11 +2786,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/l4.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/l4.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/l4.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/l4.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2962,11 +2960,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to soft flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/behaviour.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/behaviour.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/behaviour.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/behaviour.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -3134,11 +3132,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/behaviour.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/behaviour.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/behaviour.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/behaviour.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -3315,11 +3313,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to soft flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/perinal.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/perinal.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/ibd/perinal.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/ibd/perinal.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -3480,11 +3478,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/perinal.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/perinal.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/ibd/perinal.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/ibd/perinal.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -3666,11 +3664,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/extent.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/extent.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/extent.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/extent.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -3838,11 +3836,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/extent.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/extent.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/extent.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/extent.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -4026,11 +4024,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to soft flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/mayo.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/mayo.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/ibd/mayo.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/ibd/mayo.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -4177,11 +4175,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/mayo.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/mayo.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/ibd/mayo.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/ibd/mayo.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -4340,12 +4338,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 Session info
 </summary><div class="cell">
 <div class="cell-output-display">
-<p><strong>R version 4.3.3 (2024-02-29)</strong></p>
-<p><strong>Platform:</strong> aarch64-apple-darwin20 (64-bit)</p>
-<p><strong>locale:</strong> en_GB.UTF-8||en_GB.UTF-8||en_GB.UTF-8||C||en_GB.UTF-8||en_GB.UTF-8</p>
+<p><strong>R version 4.4.0 (2024-04-24)</strong></p>
+<p><strong>Platform:</strong> aarch64-unknown-linux-gnu</p>
+<p><strong>locale:</strong> <em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=en_US.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=en_US.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=en_US.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=en_US.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
-<p><strong>other attached packages:</strong> <em>gtsummary(v.1.7.2)</em>, <em>DescTools(v.0.99.54)</em>, <em>finalfit(v.1.0.7)</em>, <em>coxme(v.2.2-20)</em>, <em>bdsmatrix(v.1.3-7)</em>, <em>pander(v.0.6.5)</em>, <em>survminer(v.0.4.9)</em>, <em>ggpubr(v.0.6.0)</em>, <em>survival(v.3.5-8)</em>, <em>datefixR(v.1.6.1)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.0)</em>, <em>tidyverse(v.2.0.0)</em> and <em>readxl(v.1.4.3)</em></p>
-<p><strong>loaded via a namespace (and not attached):</strong> <em>gridExtra(v.2.3)</em>, <em>httr2(v.1.0.1)</em>, <em>gld(v.2.6.6)</em>, <em>rlang(v.1.1.3)</em>, <em>magrittr(v.2.0.3)</em>, <em>e1071(v.1.7-14)</em>, <em>compiler(v.4.3.3)</em>, <em>mgcv(v.1.9-1)</em>, <em>vctrs(v.0.6.5)</em>, <em>rvest(v.1.0.4)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>shape(v.1.4.6.1)</em>, <em>fastmap(v.1.1.1)</em>, <em>backports(v.1.4.1)</em>, <em>labeling(v.0.4.3)</em>, <em>KMsurv(v.0.1-5)</em>, <em>utf8(v.1.2.4)</em>, <em>promises(v.1.3.0)</em>, <em>rmarkdown(v.2.26)</em>, <em>markdown(v.1.12)</em>, <em>tzdb(v.0.4.0)</em>, <em>ps(v.1.7.6)</em>, <em>nloptr(v.2.0.3)</em>, <em>xfun(v.0.43)</em>, <em>glmnet(v.4.1-8)</em>, <em>jomo(v.2.7-6)</em>, <em>jsonlite(v.1.8.8)</em>, <em>later(v.1.3.2)</em>, <em>pan(v.1.9)</em>, <em>broom(v.1.0.5)</em>, <em>R6(v.2.5.1)</em>, <em>stringi(v.1.8.3)</em>, <em>car(v.3.1-2)</em>, <em>boot(v.1.3-29)</em>, <em>rpart(v.4.1.23)</em>, <em>cellranger(v.1.1.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>iterators(v.1.0.14)</em>, <em>knitr(v.1.46)</em>, <em>zoo(v.1.8-12)</em>, <em>clisymbols(v.1.2.0)</em>, <em>Matrix(v.1.6-5)</em>, <em>splines(v.4.3.3)</em>, <em>nnet(v.7.3-19)</em>, <em>timechange(v.0.3.0)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rstudioapi(v.0.16.0)</em>, <em>abind(v.1.4-5)</em>, <em>yaml(v.2.3.8)</em>, <em>ggtext(v.0.1.2)</em>, <em>codetools(v.0.2-19)</em>, <em>websocket(v.1.4.1)</em>, <em>processx(v.3.8.4)</em>, <em>lattice(v.0.22-5)</em>, <em>withr(v.3.0.0)</em>, <em>evaluate(v.0.23)</em>, <em>proxy(v.0.4-27)</em>, <em>xml2(v.1.3.6)</em>, <em>survMisc(v.0.5.6)</em>, <em>pillar(v.1.9.0)</em>, <em>carData(v.3.0-5)</em>, <em>mice(v.3.16.0)</em>, <em>foreach(v.1.5.2)</em>, <em>generics(v.0.1.3)</em>, <em>chromote(v.0.2.0)</em>, <em>hms(v.1.1.3)</em>, <em>commonmark(v.1.9.1)</em>, <em>rootSolve(v.1.8.2.4)</em>, <em>munsell(v.0.5.1)</em>, <em>scales(v.1.3.0)</em>, <em>minqa(v.1.2.6)</em>, <em>xtable(v.1.8-4)</em>, <em>class(v.7.3-22)</em>, <em>glue(v.1.7.0)</em>, <em>lmom(v.3.0)</em>, <em>tools(v.4.3.3)</em>, <em>data.table(v.1.15.4)</em>, <em>lme4(v.1.1-35.2)</em>, <em>ggsignif(v.0.6.4)</em>, <em>Exact(v.3.2)</em>, <em>mvtnorm(v.1.2-4)</em>, <em>grid(v.4.3.3)</em>, <em>colorspace(v.2.1-0)</em>, <em>nlme(v.3.1-164)</em>, <em>cli(v.3.6.2)</em>, <em>rappdirs(v.0.3.3)</em>, <em>km.ci(v.0.5-6)</em>, <em>expm(v.0.999-9)</em>, <em>fansi(v.1.0.6)</em>, <em>broom.helpers(v.1.15.0)</em>, <em>gt(v.0.10.1)</em>, <em>gtable(v.0.3.4)</em>, <em>rstatix(v.0.7.2)</em>, <em>digest(v.0.6.35)</em>, <em>farver(v.2.1.1)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>httr(v.1.4.7)</em>, <em>mitml(v.0.4-5)</em>, <em>gridtext(v.0.1.5)</em> and <em>MASS(v.7.3-60.0.1)</em></p>
+<p><strong>other attached packages:</strong> <em>gtsummary(v.1.7.2)</em>, <em>DescTools(v.0.99.54)</em>, <em>finalfit(v.1.0.7)</em>, <em>coxme(v.2.2-20)</em>, <em>bdsmatrix(v.1.3-7)</em>, <em>pander(v.0.6.5)</em>, <em>survminer(v.0.4.9)</em>, <em>ggpubr(v.0.6.0)</em>, <em>survival(v.3.5-8)</em>, <em>datefixR(v.1.6.1)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>readxl(v.1.4.3)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong> <em>gridExtra(v.2.3)</em>, <em>gld(v.2.6.6)</em>, <em>rlang(v.1.1.3)</em>, <em>magrittr(v.2.0.3)</em>, <em>e1071(v.1.7-14)</em>, <em>compiler(v.4.4.0)</em>, <em>mgcv(v.1.9-1)</em>, <em>vctrs(v.0.6.5)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>shape(v.1.4.6.1)</em>, <em>fastmap(v.1.2.0)</em>, <em>backports(v.1.5.0)</em>, <em>labeling(v.0.4.3)</em>, <em>KMsurv(v.0.1-5)</em>, <em>utf8(v.1.2.4)</em>, <em>rmarkdown(v.2.27)</em>, <em>markdown(v.1.12)</em>, <em>tzdb(v.0.4.0)</em>, <em>nloptr(v.2.0.3)</em>, <em>xfun(v.0.44)</em>, <em>glmnet(v.4.1-8)</em>, <em>jomo(v.2.7-6)</em>, <em>jsonlite(v.1.8.8)</em>, <em>pan(v.1.9)</em>, <em>broom(v.1.0.6)</em>, <em>R6(v.2.5.1)</em>, <em>stringi(v.1.8.4)</em>, <em>car(v.3.1-2)</em>, <em>boot(v.1.3-30)</em>, <em>rpart(v.4.1.23)</em>, <em>cellranger(v.1.1.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>iterators(v.1.0.14)</em>, <em>knitr(v.1.47)</em>, <em>zoo(v.1.8-12)</em>, <em>Matrix(v.1.7-0)</em>, <em>splines(v.4.4.0)</em>, <em>nnet(v.7.3-19)</em>, <em>timechange(v.0.3.0)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rstudioapi(v.0.16.0)</em>, <em>abind(v.1.4-5)</em>, <em>yaml(v.2.3.8)</em>, <em>ggtext(v.0.1.2)</em>, <em>codetools(v.0.2-20)</em>, <em>lattice(v.0.22-6)</em>, <em>withr(v.3.0.0)</em>, <em>evaluate(v.0.23)</em>, <em>proxy(v.0.4-27)</em>, <em>xml2(v.1.3.6)</em>, <em>survMisc(v.0.5.6)</em>, <em>pillar(v.1.9.0)</em>, <em>carData(v.3.0-5)</em>, <em>mice(v.3.16.0)</em>, <em>foreach(v.1.5.2)</em>, <em>generics(v.0.1.3)</em>, <em>hms(v.1.1.3)</em>, <em>commonmark(v.1.9.1)</em>, <em>munsell(v.0.5.1)</em>, <em>scales(v.1.3.0)</em>, <em>rootSolve(v.1.8.2.4)</em>, <em>minqa(v.1.2.7)</em>, <em>xtable(v.1.8-4)</em>, <em>class(v.7.3-22)</em>, <em>glue(v.1.7.0)</em>, <em>lmom(v.3.0)</em>, <em>tools(v.4.4.0)</em>, <em>data.table(v.1.15.4)</em>, <em>lme4(v.1.1-35.3)</em>, <em>ggsignif(v.0.6.4)</em>, <em>Exact(v.3.2)</em>, <em>mvtnorm(v.1.2-5)</em>, <em>grid(v.4.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>nlme(v.3.1-164)</em>, <em>cli(v.3.6.2)</em>, <em>km.ci(v.0.5-6)</em>, <em>fansi(v.1.0.6)</em>, <em>expm(v.0.999-9)</em>, <em>broom.helpers(v.1.15.0)</em>, <em>gt(v.0.10.1)</em>, <em>gtable(v.0.3.5)</em>, <em>rstatix(v.0.7.2)</em>, <em>digest(v.0.6.35)</em>, <em>farver(v.2.1.2)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>httr(v.1.4.7)</em>, <em>mitml(v.0.4-5)</em>, <em>gridtext(v.0.1.5)</em> and <em>MASS(v.7.3-60.2)</em></p>
 </div>
 </div>
 </details><p>Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.</p>
@@ -4627,6 +4625,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -4661,7 +4677,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -4978,7 +4998,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-33"><a href="#cb95-33" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
 <span id="cb95-34"><a href="#cb95-34" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
 <span id="cb95-35"><a href="#cb95-35" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span id="cb95-36"><a href="#cb95-36" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span id="cb95-36"><a href="#cb95-36" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed/"</span></span>
 <span id="cb95-37"><a href="#cb95-37" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> { <span class="co"># Run on OS directly</span></span>
 <span id="cb95-38"><a href="#cb95-38" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span id="cb95-39"><a href="#cb95-39" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
@@ -5101,11 +5121,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-158"><a href="#cb95-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb95-159"><a href="#cb95-159" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-160"><a href="#cb95-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-161"><a href="#cb95-161" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/ibd/control-8.pdf"</span>)</span>
+<span id="cb95-161"><a href="#cb95-161" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/ibd/control-8.pdf"</span>)</span>
 <span id="cb95-162"><a href="#cb95-162" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-163"><a href="#cb95-163" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-164"><a href="#cb95-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-165"><a href="#cb95-165" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/ibd/control-8.png"</span>,</span>
+<span id="cb95-165"><a href="#cb95-165" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/ibd/control-8.png"</span>,</span>
 <span id="cb95-166"><a href="#cb95-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-167"><a href="#cb95-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-168"><a href="#cb95-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5150,11 +5170,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-209"><a href="#cb95-209" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb95-210"><a href="#cb95-210" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-211"><a href="#cb95-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-212"><a href="#cb95-212" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/ibd/control-8.pdf"</span>)</span>
+<span id="cb95-212"><a href="#cb95-212" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/ibd/control-8.pdf"</span>)</span>
 <span id="cb95-213"><a href="#cb95-213" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-214"><a href="#cb95-214" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-215"><a href="#cb95-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-216"><a href="#cb95-216" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/ibd/control-8.png"</span>,</span>
+<span id="cb95-216"><a href="#cb95-216" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/ibd/control-8.png"</span>,</span>
 <span id="cb95-217"><a href="#cb95-217" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-218"><a href="#cb95-218" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-219"><a href="#cb95-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5214,11 +5234,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-275"><a href="#cb95-275" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-276"><a href="#cb95-276" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb95-277"><a href="#cb95-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-278"><a href="#cb95-278" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/ibd/control-8.pdf"</span>)</span>
+<span id="cb95-278"><a href="#cb95-278" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/ibd/control-8.pdf"</span>)</span>
 <span id="cb95-279"><a href="#cb95-279" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-280"><a href="#cb95-280" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-281"><a href="#cb95-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-282"><a href="#cb95-282" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/ibd/control-8.png"</span>,</span>
+<span id="cb95-282"><a href="#cb95-282" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/ibd/control-8.png"</span>,</span>
 <span id="cb95-283"><a href="#cb95-283" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-284"><a href="#cb95-284" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-285"><a href="#cb95-285" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5263,11 +5283,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-326"><a href="#cb95-326" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb95-327"><a href="#cb95-327" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-328"><a href="#cb95-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-329"><a href="#cb95-329" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/hard-flare/ibd/control-8.pdf"</span>)</span>
+<span id="cb95-329"><a href="#cb95-329" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/hard-flare/ibd/control-8.pdf"</span>)</span>
 <span id="cb95-330"><a href="#cb95-330" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-331"><a href="#cb95-331" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-332"><a href="#cb95-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-333"><a href="#cb95-333" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/hard-flare/ibd/control-8.png"</span>,</span>
+<span id="cb95-333"><a href="#cb95-333" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/hard-flare/ibd/control-8.png"</span>,</span>
 <span id="cb95-334"><a href="#cb95-334" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-335"><a href="#cb95-335" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-336"><a href="#cb95-336" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5321,11 +5341,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-386"><a href="#cb95-386" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb95-387"><a href="#cb95-387" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-388"><a href="#cb95-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-389"><a href="#cb95-389" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/ibd/control-vas.pdf"</span>)</span>
+<span id="cb95-389"><a href="#cb95-389" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/ibd/control-vas.pdf"</span>)</span>
 <span id="cb95-390"><a href="#cb95-390" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-391"><a href="#cb95-391" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-392"><a href="#cb95-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-393"><a href="#cb95-393" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/ibd/control-vas.png"</span>,</span>
+<span id="cb95-393"><a href="#cb95-393" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/ibd/control-vas.png"</span>,</span>
 <span id="cb95-394"><a href="#cb95-394" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-395"><a href="#cb95-395" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-396"><a href="#cb95-396" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5370,11 +5390,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-437"><a href="#cb95-437" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-438"><a href="#cb95-438" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb95-439"><a href="#cb95-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-440"><a href="#cb95-440" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/ibd/control-vas.pdf"</span>)</span>
+<span id="cb95-440"><a href="#cb95-440" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/ibd/control-vas.pdf"</span>)</span>
 <span id="cb95-441"><a href="#cb95-441" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-442"><a href="#cb95-442" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-443"><a href="#cb95-443" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-444"><a href="#cb95-444" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/ibd/control-vas.png"</span>,</span>
+<span id="cb95-444"><a href="#cb95-444" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/ibd/control-vas.png"</span>,</span>
 <span id="cb95-445"><a href="#cb95-445" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-446"><a href="#cb95-446" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-447"><a href="#cb95-447" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5424,11 +5444,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-493"><a href="#cb95-493" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb95-494"><a href="#cb95-494" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-495"><a href="#cb95-495" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-496"><a href="#cb95-496" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/ibd/control-vas.pdf"</span>)</span>
+<span id="cb95-496"><a href="#cb95-496" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/ibd/control-vas.pdf"</span>)</span>
 <span id="cb95-497"><a href="#cb95-497" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-498"><a href="#cb95-498" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-499"><a href="#cb95-499" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-500"><a href="#cb95-500" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/ibd/control-vas.png"</span>,</span>
+<span id="cb95-500"><a href="#cb95-500" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/ibd/control-vas.png"</span>,</span>
 <span id="cb95-501"><a href="#cb95-501" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-502"><a href="#cb95-502" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-503"><a href="#cb95-503" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5471,11 +5491,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-542"><a href="#cb95-542" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb95-543"><a href="#cb95-543" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-544"><a href="#cb95-544" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-545"><a href="#cb95-545" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/hard-flare/ibd/control-vas.pdf"</span>)</span>
+<span id="cb95-545"><a href="#cb95-545" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/hard-flare/ibd/control-vas.pdf"</span>)</span>
 <span id="cb95-546"><a href="#cb95-546" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-547"><a href="#cb95-547" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-548"><a href="#cb95-548" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-549"><a href="#cb95-549" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/hard-flare/ibd/control-vas.png"</span>,</span>
+<span id="cb95-549"><a href="#cb95-549" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/hard-flare/ibd/control-vas.png"</span>,</span>
 <span id="cb95-550"><a href="#cb95-550" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-551"><a href="#cb95-551" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-552"><a href="#cb95-552" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5538,11 +5558,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-613"><a href="#cb95-613" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
 <span id="cb95-614"><a href="#cb95-614" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-615"><a href="#cb95-615" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-616"><a href="#cb95-616" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/ibd/surgery.pdf"</span>)</span>
+<span id="cb95-616"><a href="#cb95-616" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/ibd/surgery.pdf"</span>)</span>
 <span id="cb95-617"><a href="#cb95-617" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-618"><a href="#cb95-618" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-619"><a href="#cb95-619" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-620"><a href="#cb95-620" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/ibd/surgery.png"</span>,</span>
+<span id="cb95-620"><a href="#cb95-620" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/ibd/surgery.png"</span>,</span>
 <span id="cb95-621"><a href="#cb95-621" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-622"><a href="#cb95-622" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-623"><a href="#cb95-623" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5582,11 +5602,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-659"><a href="#cb95-659" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span></span>
 <span id="cb95-660"><a href="#cb95-660" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-661"><a href="#cb95-661" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-662"><a href="#cb95-662" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/ibd/surgery.pdf"</span>)</span>
+<span id="cb95-662"><a href="#cb95-662" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/ibd/surgery.pdf"</span>)</span>
 <span id="cb95-663"><a href="#cb95-663" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-664"><a href="#cb95-664" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-665"><a href="#cb95-665" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-666"><a href="#cb95-666" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/ibd/surgery.png"</span>,</span>
+<span id="cb95-666"><a href="#cb95-666" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/ibd/surgery.png"</span>,</span>
 <span id="cb95-667"><a href="#cb95-667" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-668"><a href="#cb95-668" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-669"><a href="#cb95-669" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5632,11 +5652,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-711"><a href="#cb95-711" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
 <span id="cb95-712"><a href="#cb95-712" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-713"><a href="#cb95-713" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-714"><a href="#cb95-714" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/ibd/location.pdf"</span>)</span>
+<span id="cb95-714"><a href="#cb95-714" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/ibd/location.pdf"</span>)</span>
 <span id="cb95-715"><a href="#cb95-715" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-716"><a href="#cb95-716" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-717"><a href="#cb95-717" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-718"><a href="#cb95-718" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/ibd/location.png"</span>,</span>
+<span id="cb95-718"><a href="#cb95-718" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/ibd/location.png"</span>,</span>
 <span id="cb95-719"><a href="#cb95-719" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-720"><a href="#cb95-720" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-721"><a href="#cb95-721" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5676,11 +5696,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-757"><a href="#cb95-757" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span></span>
 <span id="cb95-758"><a href="#cb95-758" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-759"><a href="#cb95-759" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-760"><a href="#cb95-760" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/ibd/location.pdf"</span>)</span>
+<span id="cb95-760"><a href="#cb95-760" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/ibd/location.pdf"</span>)</span>
 <span id="cb95-761"><a href="#cb95-761" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-762"><a href="#cb95-762" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-763"><a href="#cb95-763" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-764"><a href="#cb95-764" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/ibd/location.png"</span>,</span>
+<span id="cb95-764"><a href="#cb95-764" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/ibd/location.png"</span>,</span>
 <span id="cb95-765"><a href="#cb95-765" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-766"><a href="#cb95-766" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-767"><a href="#cb95-767" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5725,11 +5745,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-808"><a href="#cb95-808" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
 <span id="cb95-809"><a href="#cb95-809" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-810"><a href="#cb95-810" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-811"><a href="#cb95-811" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/ibd/l4.pdf"</span>)</span>
+<span id="cb95-811"><a href="#cb95-811" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/ibd/l4.pdf"</span>)</span>
 <span id="cb95-812"><a href="#cb95-812" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-813"><a href="#cb95-813" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-814"><a href="#cb95-814" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-815"><a href="#cb95-815" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/ibd/l4.png"</span>,</span>
+<span id="cb95-815"><a href="#cb95-815" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/ibd/l4.png"</span>,</span>
 <span id="cb95-816"><a href="#cb95-816" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-817"><a href="#cb95-817" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-818"><a href="#cb95-818" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5769,11 +5789,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-854"><a href="#cb95-854" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span></span>
 <span id="cb95-855"><a href="#cb95-855" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-856"><a href="#cb95-856" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-857"><a href="#cb95-857" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/ibd/l4.pdf"</span>)</span>
+<span id="cb95-857"><a href="#cb95-857" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/ibd/l4.pdf"</span>)</span>
 <span id="cb95-858"><a href="#cb95-858" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-859"><a href="#cb95-859" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-860"><a href="#cb95-860" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-861"><a href="#cb95-861" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/ibd/l4.png"</span>,</span>
+<span id="cb95-861"><a href="#cb95-861" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/ibd/l4.png"</span>,</span>
 <span id="cb95-862"><a href="#cb95-862" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-863"><a href="#cb95-863" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-864"><a href="#cb95-864" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5819,11 +5839,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-906"><a href="#cb95-906" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
 <span id="cb95-907"><a href="#cb95-907" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-908"><a href="#cb95-908" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-909"><a href="#cb95-909" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/ibd/behaviour.pdf"</span>)</span>
+<span id="cb95-909"><a href="#cb95-909" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/ibd/behaviour.pdf"</span>)</span>
 <span id="cb95-910"><a href="#cb95-910" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-911"><a href="#cb95-911" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-912"><a href="#cb95-912" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-913"><a href="#cb95-913" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/ibd/behaviour.png"</span>,</span>
+<span id="cb95-913"><a href="#cb95-913" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/ibd/behaviour.png"</span>,</span>
 <span id="cb95-914"><a href="#cb95-914" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-915"><a href="#cb95-915" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-916"><a href="#cb95-916" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5862,11 +5882,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-951"><a href="#cb95-951" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span></span>
 <span id="cb95-952"><a href="#cb95-952" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-953"><a href="#cb95-953" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-954"><a href="#cb95-954" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/ibd/behaviour.pdf"</span>)</span>
+<span id="cb95-954"><a href="#cb95-954" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/ibd/behaviour.pdf"</span>)</span>
 <span id="cb95-955"><a href="#cb95-955" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-956"><a href="#cb95-956" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-957"><a href="#cb95-957" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-958"><a href="#cb95-958" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/ibd/behaviour.png"</span>,</span>
+<span id="cb95-958"><a href="#cb95-958" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/ibd/behaviour.png"</span>,</span>
 <span id="cb95-959"><a href="#cb95-959" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-960"><a href="#cb95-960" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-961"><a href="#cb95-961" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5912,11 +5932,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-1003"><a href="#cb95-1003" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
 <span id="cb95-1004"><a href="#cb95-1004" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-1005"><a href="#cb95-1005" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1006"><a href="#cb95-1006" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/ibd/perinal.pdf"</span>)</span>
+<span id="cb95-1006"><a href="#cb95-1006" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/ibd/perinal.pdf"</span>)</span>
 <span id="cb95-1007"><a href="#cb95-1007" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-1008"><a href="#cb95-1008" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-1009"><a href="#cb95-1009" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1010"><a href="#cb95-1010" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/ibd/perinal.png"</span>,</span>
+<span id="cb95-1010"><a href="#cb95-1010" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/ibd/perinal.png"</span>,</span>
 <span id="cb95-1011"><a href="#cb95-1011" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1012"><a href="#cb95-1012" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1013"><a href="#cb95-1013" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -5955,11 +5975,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-1048"><a href="#cb95-1048" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span></span>
 <span id="cb95-1049"><a href="#cb95-1049" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-1050"><a href="#cb95-1050" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1051"><a href="#cb95-1051" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/ibd/perinal.pdf"</span>)</span>
+<span id="cb95-1051"><a href="#cb95-1051" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/ibd/perinal.pdf"</span>)</span>
 <span id="cb95-1052"><a href="#cb95-1052" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-1053"><a href="#cb95-1053" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-1054"><a href="#cb95-1054" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1055"><a href="#cb95-1055" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/ibd/perinal.png"</span>,</span>
+<span id="cb95-1055"><a href="#cb95-1055" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/ibd/perinal.png"</span>,</span>
 <span id="cb95-1056"><a href="#cb95-1056" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1057"><a href="#cb95-1057" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1058"><a href="#cb95-1058" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -6018,11 +6038,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-1115"><a href="#cb95-1115" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-1116"><a href="#cb95-1116" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb95-1117"><a href="#cb95-1117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1118"><a href="#cb95-1118" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/ibd/extent.pdf"</span>)</span>
+<span id="cb95-1118"><a href="#cb95-1118" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/ibd/extent.pdf"</span>)</span>
 <span id="cb95-1119"><a href="#cb95-1119" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-1120"><a href="#cb95-1120" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-1121"><a href="#cb95-1121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1122"><a href="#cb95-1122" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/ibd/extent.png"</span>,</span>
+<span id="cb95-1122"><a href="#cb95-1122" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/ibd/extent.png"</span>,</span>
 <span id="cb95-1123"><a href="#cb95-1123" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1124"><a href="#cb95-1124" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1125"><a href="#cb95-1125" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -6061,11 +6081,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-1160"><a href="#cb95-1160" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span></span>
 <span id="cb95-1161"><a href="#cb95-1161" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-1162"><a href="#cb95-1162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1163"><a href="#cb95-1163" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/hard-flare/ibd/extent.pdf"</span>)</span>
+<span id="cb95-1163"><a href="#cb95-1163" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/hard-flare/ibd/extent.pdf"</span>)</span>
 <span id="cb95-1164"><a href="#cb95-1164" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-1165"><a href="#cb95-1165" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-1166"><a href="#cb95-1166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1167"><a href="#cb95-1167" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/hard-flare/ibd/extent.png"</span>,</span>
+<span id="cb95-1167"><a href="#cb95-1167" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/hard-flare/ibd/extent.png"</span>,</span>
 <span id="cb95-1168"><a href="#cb95-1168" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1169"><a href="#cb95-1169" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1170"><a href="#cb95-1170" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -6117,11 +6137,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-1220"><a href="#cb95-1220" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to soft flare"</span></span>
 <span id="cb95-1221"><a href="#cb95-1221" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-1222"><a href="#cb95-1222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1223"><a href="#cb95-1223" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/ibd/mayo.pdf"</span>)</span>
+<span id="cb95-1223"><a href="#cb95-1223" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/ibd/mayo.pdf"</span>)</span>
 <span id="cb95-1224"><a href="#cb95-1224" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-1225"><a href="#cb95-1225" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-1226"><a href="#cb95-1226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1227"><a href="#cb95-1227" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/ibd/mayo.png"</span>,</span>
+<span id="cb95-1227"><a href="#cb95-1227" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/ibd/mayo.png"</span>,</span>
 <span id="cb95-1228"><a href="#cb95-1228" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1229"><a href="#cb95-1229" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1230"><a href="#cb95-1230" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -6160,11 +6180,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb95-1265"><a href="#cb95-1265" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span></span>
 <span id="cb95-1266"><a href="#cb95-1266" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb95-1267"><a href="#cb95-1267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1268"><a href="#cb95-1268" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/hard-flare/ibd/mayo.pdf"</span>)</span>
+<span id="cb95-1268"><a href="#cb95-1268" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/hard-flare/ibd/mayo.pdf"</span>)</span>
 <span id="cb95-1269"><a href="#cb95-1269" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb95-1270"><a href="#cb95-1270" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb95-1271"><a href="#cb95-1271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb95-1272"><a href="#cb95-1272" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/hard-flare/ibd/mayo.png"</span>,</span>
+<span id="cb95-1272"><a href="#cb95-1272" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/hard-flare/ibd/mayo.png"</span>,</span>
 <span id="cb95-1273"><a href="#cb95-1273" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1274"><a href="#cb95-1274" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb95-1275"><a href="#cb95-1275" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>

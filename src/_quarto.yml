@@ -51,7 +51,7 @@ website:
     site: "@EdinUni_IGC"
   open-graph: true
   sidebar:
-    logo: "logo.png"
+    logo: "PREdiCCtlogo.png"
     style: "floating"
     tools:
       - icon: github

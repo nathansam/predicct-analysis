@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.550">
+<meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2024-04-10">
+<meta name="dcterms.date" content="2024-09-24">
 <title>PREdiCCt analyses - Biochemistry</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Biochemistry">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2024-04-10">
-<meta name="citation_cover_date" content="2024-04-10">
+<meta name="citation_publication_date" content="2024-09-24">
+<meta name="citation_cover_date" content="2024-09-24">
 <meta name="citation_year" content="2024">
-<meta name="citation_online_date" content="2024-04-10">
+<meta name="citation_online_date" content="2024-09-24">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Inflammatory bowel disease and smoking: A review of epidemiology, pathophysiology, and therapeutic implications;,citation_author=Tanja Birrenbach;,citation_author=Ulrich Böcker;,citation_publication_date=2004-11;,citation_cover_date=2004-11;,citation_year=2004;,citation_fulltext_html_url=http://dx.doi.org/10.1097/00054725-200411000-00019;,citation_issue=6;,citation_doi=10.1097/00054725-200411000-00019;,citation_issn=1078-0998;,citation_volume=10;,citation_journal_title=Inflammatory Bowel Diseases;,citation_publisher=Oxford University Press;">
 <meta name="citation_reference" content="citation_title=The UN decade of nutrition, the NOVA food classification and the trouble with ultra-processing;,citation_author=Carlos Augusto Monteiro;,citation_author=Geoffrey Cannon;,citation_author=Jean-Claude Moubarac;,citation_author=Renata Bertazzi Levy;,citation_author=Maria Laura C Louzada;,citation_author=Patrícia Constante Jaime;,citation_publication_date=2017-03;,citation_cover_date=2017-03;,citation_year=2017;,citation_fulltext_html_url=http://dx.doi.org/10.1017/S1368980017000234;,citation_issue=1;,citation_doi=10.1017/s1368980017000234;,citation_issn=1475-2727;,citation_volume=21;,citation_journal_title=Public Health Nutrition;,citation_publisher=Cambridge University Press;">
@@ -138,7 +138,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
       <a href="../index.html" class="sidebar-logo-link">
-      <img src="../logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none"></a>
+      <img src="../PREdiCCtlogo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none"></a>
       <div class="sidebar-tools-main">
     <div class="dropdown">
       <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
@@ -350,7 +350,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 10, 2024</p>
+      <p class="date">September 24, 2024</p>
     </div>
   </div>
   
@@ -378,7 +378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
 <span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed/"</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="co"># Run on OS directly</span></span>
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
@@ -499,11 +499,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/crp.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/crp.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -674,11 +674,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/crp.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/crp.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -861,11 +861,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/crp.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/crp.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1031,11 +1031,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/biochem/crp.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/biochem/crp.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/biochem/crp.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1217,11 +1217,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/haemoglobin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/haemoglobin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1387,11 +1387,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1572,11 +1572,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/haemoglobin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/haemoglobin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1742,11 +1742,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/haemoglobin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -1928,11 +1928,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/wcc.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/wcc.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2098,11 +2098,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/wcc.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/wcc.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2283,11 +2283,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/wcc.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/wcc.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2453,11 +2453,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/biochem/wcc.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/biochem/wcc.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/biochem/wcc.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2639,11 +2639,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/soft-flare/biochem/albumin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/soft-flare/biochem/albumin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2809,11 +2809,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/cd/hard-flare/biochem/albumin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/cd/hard-flare/biochem/albumin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -2994,11 +2994,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">200</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/soft-flare/biochem/albumin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/soft-flare/biochem/albumin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -3164,11 +3164,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  break.time.by <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/cairo.html">cairo_pdf</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/biochem/albumin.pdf"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html">dev.off</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"../plots/uc/hard-flare/biochem/albumin.png"</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/grDevices/png.html">png</a></span><span class="op">(</span><span class="st">"plots/uc/hard-flare/biochem/albumin.png"</span>,</span>
 <span>    width <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    height <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>    units <span class="op">=</span> <span class="st">"in"</span>,</span>
@@ -3321,12 +3321,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 Session info
 </summary><div class="cell">
 <div class="cell-output-display">
-<p><strong>R version 4.3.3 (2024-02-29)</strong></p>
-<p><strong>Platform:</strong> aarch64-apple-darwin20 (64-bit)</p>
-<p><strong>locale:</strong> en_GB.UTF-8||en_GB.UTF-8||en_GB.UTF-8||C||en_GB.UTF-8||en_GB.UTF-8</p>
+<p><strong>R version 4.4.0 (2024-04-24)</strong></p>
+<p><strong>Platform:</strong> aarch64-unknown-linux-gnu</p>
+<p><strong>locale:</strong> <em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=en_US.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=en_US.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=en_US.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=en_US.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
-<p><strong>other attached packages:</strong> <em>gtsummary(v.1.7.2)</em>, <em>DescTools(v.0.99.54)</em>, <em>finalfit(v.1.0.7)</em>, <em>coxme(v.2.2-20)</em>, <em>bdsmatrix(v.1.3-7)</em>, <em>pander(v.0.6.5)</em>, <em>survminer(v.0.4.9)</em>, <em>ggpubr(v.0.6.0)</em>, <em>survival(v.3.5-8)</em>, <em>datefixR(v.1.6.1)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.0)</em>, <em>tidyverse(v.2.0.0)</em> and <em>readxl(v.1.4.3)</em></p>
-<p><strong>loaded via a namespace (and not attached):</strong> <em>gridExtra(v.2.3)</em>, <em>httr2(v.1.0.1)</em>, <em>gld(v.2.6.6)</em>, <em>rlang(v.1.1.3)</em>, <em>magrittr(v.2.0.3)</em>, <em>e1071(v.1.7-14)</em>, <em>compiler(v.4.3.3)</em>, <em>mgcv(v.1.9-1)</em>, <em>vctrs(v.0.6.5)</em>, <em>rvest(v.1.0.4)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>shape(v.1.4.6.1)</em>, <em>fastmap(v.1.1.1)</em>, <em>backports(v.1.4.1)</em>, <em>labeling(v.0.4.3)</em>, <em>KMsurv(v.0.1-5)</em>, <em>utf8(v.1.2.4)</em>, <em>promises(v.1.3.0)</em>, <em>rmarkdown(v.2.26)</em>, <em>markdown(v.1.12)</em>, <em>tzdb(v.0.4.0)</em>, <em>ps(v.1.7.6)</em>, <em>nloptr(v.2.0.3)</em>, <em>xfun(v.0.43)</em>, <em>glmnet(v.4.1-8)</em>, <em>jomo(v.2.7-6)</em>, <em>jsonlite(v.1.8.8)</em>, <em>later(v.1.3.2)</em>, <em>pan(v.1.9)</em>, <em>broom(v.1.0.5)</em>, <em>R6(v.2.5.1)</em>, <em>stringi(v.1.8.3)</em>, <em>car(v.3.1-2)</em>, <em>boot(v.1.3-29)</em>, <em>rpart(v.4.1.23)</em>, <em>cellranger(v.1.1.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>iterators(v.1.0.14)</em>, <em>knitr(v.1.46)</em>, <em>zoo(v.1.8-12)</em>, <em>clisymbols(v.1.2.0)</em>, <em>Matrix(v.1.6-5)</em>, <em>splines(v.4.3.3)</em>, <em>nnet(v.7.3-19)</em>, <em>timechange(v.0.3.0)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rstudioapi(v.0.16.0)</em>, <em>abind(v.1.4-5)</em>, <em>yaml(v.2.3.8)</em>, <em>ggtext(v.0.1.2)</em>, <em>codetools(v.0.2-19)</em>, <em>websocket(v.1.4.1)</em>, <em>processx(v.3.8.4)</em>, <em>lattice(v.0.22-5)</em>, <em>withr(v.3.0.0)</em>, <em>evaluate(v.0.23)</em>, <em>proxy(v.0.4-27)</em>, <em>xml2(v.1.3.6)</em>, <em>survMisc(v.0.5.6)</em>, <em>pillar(v.1.9.0)</em>, <em>carData(v.3.0-5)</em>, <em>mice(v.3.16.0)</em>, <em>foreach(v.1.5.2)</em>, <em>generics(v.0.1.3)</em>, <em>chromote(v.0.2.0)</em>, <em>hms(v.1.1.3)</em>, <em>commonmark(v.1.9.1)</em>, <em>rootSolve(v.1.8.2.4)</em>, <em>munsell(v.0.5.1)</em>, <em>scales(v.1.3.0)</em>, <em>minqa(v.1.2.6)</em>, <em>xtable(v.1.8-4)</em>, <em>class(v.7.3-22)</em>, <em>glue(v.1.7.0)</em>, <em>lmom(v.3.0)</em>, <em>tools(v.4.3.3)</em>, <em>data.table(v.1.15.4)</em>, <em>lme4(v.1.1-35.2)</em>, <em>ggsignif(v.0.6.4)</em>, <em>Exact(v.3.2)</em>, <em>mvtnorm(v.1.2-4)</em>, <em>grid(v.4.3.3)</em>, <em>colorspace(v.2.1-0)</em>, <em>nlme(v.3.1-164)</em>, <em>cli(v.3.6.2)</em>, <em>rappdirs(v.0.3.3)</em>, <em>km.ci(v.0.5-6)</em>, <em>expm(v.0.999-9)</em>, <em>fansi(v.1.0.6)</em>, <em>broom.helpers(v.1.15.0)</em>, <em>gt(v.0.10.1)</em>, <em>gtable(v.0.3.4)</em>, <em>rstatix(v.0.7.2)</em>, <em>digest(v.0.6.35)</em>, <em>farver(v.2.1.1)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>httr(v.1.4.7)</em>, <em>mitml(v.0.4-5)</em>, <em>gridtext(v.0.1.5)</em> and <em>MASS(v.7.3-60.0.1)</em></p>
+<p><strong>other attached packages:</strong> <em>gtsummary(v.1.7.2)</em>, <em>DescTools(v.0.99.54)</em>, <em>finalfit(v.1.0.7)</em>, <em>coxme(v.2.2-20)</em>, <em>bdsmatrix(v.1.3-7)</em>, <em>pander(v.0.6.5)</em>, <em>survminer(v.0.4.9)</em>, <em>ggpubr(v.0.6.0)</em>, <em>survival(v.3.5-8)</em>, <em>datefixR(v.1.6.1)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>readxl(v.1.4.3)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong> <em>gridExtra(v.2.3)</em>, <em>gld(v.2.6.6)</em>, <em>rlang(v.1.1.3)</em>, <em>magrittr(v.2.0.3)</em>, <em>e1071(v.1.7-14)</em>, <em>compiler(v.4.4.0)</em>, <em>mgcv(v.1.9-1)</em>, <em>vctrs(v.0.6.5)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>shape(v.1.4.6.1)</em>, <em>fastmap(v.1.2.0)</em>, <em>backports(v.1.5.0)</em>, <em>labeling(v.0.4.3)</em>, <em>KMsurv(v.0.1-5)</em>, <em>utf8(v.1.2.4)</em>, <em>rmarkdown(v.2.27)</em>, <em>markdown(v.1.12)</em>, <em>tzdb(v.0.4.0)</em>, <em>nloptr(v.2.0.3)</em>, <em>xfun(v.0.44)</em>, <em>glmnet(v.4.1-8)</em>, <em>jomo(v.2.7-6)</em>, <em>jsonlite(v.1.8.8)</em>, <em>pan(v.1.9)</em>, <em>broom(v.1.0.6)</em>, <em>R6(v.2.5.1)</em>, <em>stringi(v.1.8.4)</em>, <em>car(v.3.1-2)</em>, <em>boot(v.1.3-30)</em>, <em>rpart(v.4.1.23)</em>, <em>cellranger(v.1.1.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>iterators(v.1.0.14)</em>, <em>knitr(v.1.47)</em>, <em>zoo(v.1.8-12)</em>, <em>Matrix(v.1.7-0)</em>, <em>splines(v.4.4.0)</em>, <em>nnet(v.7.3-19)</em>, <em>timechange(v.0.3.0)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rstudioapi(v.0.16.0)</em>, <em>abind(v.1.4-5)</em>, <em>yaml(v.2.3.8)</em>, <em>ggtext(v.0.1.2)</em>, <em>codetools(v.0.2-20)</em>, <em>lattice(v.0.22-6)</em>, <em>withr(v.3.0.0)</em>, <em>evaluate(v.0.23)</em>, <em>proxy(v.0.4-27)</em>, <em>xml2(v.1.3.6)</em>, <em>survMisc(v.0.5.6)</em>, <em>pillar(v.1.9.0)</em>, <em>carData(v.3.0-5)</em>, <em>mice(v.3.16.0)</em>, <em>foreach(v.1.5.2)</em>, <em>generics(v.0.1.3)</em>, <em>hms(v.1.1.3)</em>, <em>commonmark(v.1.9.1)</em>, <em>munsell(v.0.5.1)</em>, <em>scales(v.1.3.0)</em>, <em>rootSolve(v.1.8.2.4)</em>, <em>minqa(v.1.2.7)</em>, <em>xtable(v.1.8-4)</em>, <em>class(v.7.3-22)</em>, <em>glue(v.1.7.0)</em>, <em>lmom(v.3.0)</em>, <em>tools(v.4.4.0)</em>, <em>data.table(v.1.15.4)</em>, <em>lme4(v.1.1-35.3)</em>, <em>ggsignif(v.0.6.4)</em>, <em>Exact(v.3.2)</em>, <em>mvtnorm(v.1.2-5)</em>, <em>grid(v.4.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>nlme(v.3.1-164)</em>, <em>cli(v.3.6.2)</em>, <em>km.ci(v.0.5-6)</em>, <em>fansi(v.1.0.6)</em>, <em>expm(v.0.999-9)</em>, <em>broom.helpers(v.1.15.0)</em>, <em>gt(v.0.10.1)</em>, <em>gtable(v.0.3.5)</em>, <em>rstatix(v.0.7.2)</em>, <em>digest(v.0.6.35)</em>, <em>farver(v.2.1.2)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>httr(v.1.4.7)</em>, <em>mitml(v.0.4-5)</em>, <em>gridtext(v.0.1.5)</em> and <em>MASS(v.7.3-60.2)</em></p>
 </div>
 </div>
 </details><p>Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.</p>
@@ -3614,6 +3614,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -3648,7 +3666,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -3965,7 +3987,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-33"><a href="#cb68-33" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
 <span id="cb68-34"><a href="#cb68-34" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
 <span id="cb68-35"><a href="#cb68-35" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span id="cb68-36"><a href="#cb68-36" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span id="cb68-36"><a href="#cb68-36" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed/"</span></span>
 <span id="cb68-37"><a href="#cb68-37" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> { <span class="co"># Run on OS directly</span></span>
 <span id="cb68-38"><a href="#cb68-38" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span id="cb68-39"><a href="#cb68-39" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
@@ -4090,11 +4112,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-160"><a href="#cb68-160" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-161"><a href="#cb68-161" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-162"><a href="#cb68-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-163"><a href="#cb68-163" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/biochem/crp.pdf"</span>)</span>
+<span id="cb68-163"><a href="#cb68-163" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/biochem/crp.pdf"</span>)</span>
 <span id="cb68-164"><a href="#cb68-164" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-165"><a href="#cb68-165" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-166"><a href="#cb68-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-167"><a href="#cb68-167" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/biochem/crp.png"</span>,</span>
+<span id="cb68-167"><a href="#cb68-167" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/biochem/crp.png"</span>,</span>
 <span id="cb68-168"><a href="#cb68-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-169"><a href="#cb68-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-170"><a href="#cb68-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4141,11 +4163,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-213"><a href="#cb68-213" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-214"><a href="#cb68-214" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-215"><a href="#cb68-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-216"><a href="#cb68-216" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/biochem/crp.pdf"</span>)</span>
+<span id="cb68-216"><a href="#cb68-216" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/biochem/crp.pdf"</span>)</span>
 <span id="cb68-217"><a href="#cb68-217" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-218"><a href="#cb68-218" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-219"><a href="#cb68-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-220"><a href="#cb68-220" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/biochem/crp.png"</span>,</span>
+<span id="cb68-220"><a href="#cb68-220" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/biochem/crp.png"</span>,</span>
 <span id="cb68-221"><a href="#cb68-221" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-222"><a href="#cb68-222" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-223"><a href="#cb68-223" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4205,11 +4227,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-279"><a href="#cb68-279" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-280"><a href="#cb68-280" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-281"><a href="#cb68-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-282"><a href="#cb68-282" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/biochem/crp.pdf"</span>)</span>
+<span id="cb68-282"><a href="#cb68-282" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/biochem/crp.pdf"</span>)</span>
 <span id="cb68-283"><a href="#cb68-283" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-284"><a href="#cb68-284" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-285"><a href="#cb68-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-286"><a href="#cb68-286" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/biochem/crp.png"</span>,</span>
+<span id="cb68-286"><a href="#cb68-286" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/biochem/crp.png"</span>,</span>
 <span id="cb68-287"><a href="#cb68-287" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-288"><a href="#cb68-288" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-289"><a href="#cb68-289" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4255,11 +4277,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-331"><a href="#cb68-331" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb68-332"><a href="#cb68-332" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-333"><a href="#cb68-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-334"><a href="#cb68-334" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/hard-flare/biochem/crp.pdf"</span>)</span>
+<span id="cb68-334"><a href="#cb68-334" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/hard-flare/biochem/crp.pdf"</span>)</span>
 <span id="cb68-335"><a href="#cb68-335" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-336"><a href="#cb68-336" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-337"><a href="#cb68-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-338"><a href="#cb68-338" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/hard-flare/biochem/crp.png"</span>,</span>
+<span id="cb68-338"><a href="#cb68-338" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/hard-flare/biochem/crp.png"</span>,</span>
 <span id="cb68-339"><a href="#cb68-339" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-340"><a href="#cb68-340" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-341"><a href="#cb68-341" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4319,11 +4341,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-397"><a href="#cb68-397" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-398"><a href="#cb68-398" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-399"><a href="#cb68-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-400"><a href="#cb68-400" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/biochem/haemoglobin.pdf"</span>)</span>
+<span id="cb68-400"><a href="#cb68-400" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/biochem/haemoglobin.pdf"</span>)</span>
 <span id="cb68-401"><a href="#cb68-401" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-402"><a href="#cb68-402" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-403"><a href="#cb68-403" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-404"><a href="#cb68-404" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/biochem/haemoglobin.png"</span>,</span>
+<span id="cb68-404"><a href="#cb68-404" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/biochem/haemoglobin.png"</span>,</span>
 <span id="cb68-405"><a href="#cb68-405" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-406"><a href="#cb68-406" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-407"><a href="#cb68-407" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4369,11 +4391,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-449"><a href="#cb68-449" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb68-450"><a href="#cb68-450" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-451"><a href="#cb68-451" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-452"><a href="#cb68-452" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.pdf"</span>)</span>
+<span id="cb68-452"><a href="#cb68-452" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/biochem/haemoglobin.pdf"</span>)</span>
 <span id="cb68-453"><a href="#cb68-453" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-454"><a href="#cb68-454" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-455"><a href="#cb68-455" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-456"><a href="#cb68-456" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
+<span id="cb68-456"><a href="#cb68-456" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
 <span id="cb68-457"><a href="#cb68-457" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-458"><a href="#cb68-458" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-459"><a href="#cb68-459" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4430,11 +4452,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-512"><a href="#cb68-512" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-513"><a href="#cb68-513" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-514"><a href="#cb68-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-515"><a href="#cb68-515" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/biochem/haemoglobin.pdf"</span>)</span>
+<span id="cb68-515"><a href="#cb68-515" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/biochem/haemoglobin.pdf"</span>)</span>
 <span id="cb68-516"><a href="#cb68-516" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-517"><a href="#cb68-517" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-518"><a href="#cb68-518" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-519"><a href="#cb68-519" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/biochem/haemoglobin.png"</span>,</span>
+<span id="cb68-519"><a href="#cb68-519" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/biochem/haemoglobin.png"</span>,</span>
 <span id="cb68-520"><a href="#cb68-520" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-521"><a href="#cb68-521" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-522"><a href="#cb68-522" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4479,11 +4501,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-563"><a href="#cb68-563" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb68-564"><a href="#cb68-564" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-565"><a href="#cb68-565" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-566"><a href="#cb68-566" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.pdf"</span>)</span>
+<span id="cb68-566"><a href="#cb68-566" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/biochem/haemoglobin.pdf"</span>)</span>
 <span id="cb68-567"><a href="#cb68-567" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-568"><a href="#cb68-568" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-569"><a href="#cb68-569" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-570"><a href="#cb68-570" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
+<span id="cb68-570"><a href="#cb68-570" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/biochem/haemoglobin.png"</span>,</span>
 <span id="cb68-571"><a href="#cb68-571" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-572"><a href="#cb68-572" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-573"><a href="#cb68-573" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4543,11 +4565,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-629"><a href="#cb68-629" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-630"><a href="#cb68-630" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-631"><a href="#cb68-631" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-632"><a href="#cb68-632" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/biochem/wcc.pdf"</span>)</span>
+<span id="cb68-632"><a href="#cb68-632" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/biochem/wcc.pdf"</span>)</span>
 <span id="cb68-633"><a href="#cb68-633" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-634"><a href="#cb68-634" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-635"><a href="#cb68-635" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-636"><a href="#cb68-636" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/biochem/wcc.png"</span>,</span>
+<span id="cb68-636"><a href="#cb68-636" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/biochem/wcc.png"</span>,</span>
 <span id="cb68-637"><a href="#cb68-637" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-638"><a href="#cb68-638" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-639"><a href="#cb68-639" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4592,11 +4614,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-680"><a href="#cb68-680" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb68-681"><a href="#cb68-681" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-682"><a href="#cb68-682" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-683"><a href="#cb68-683" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/biochem/wcc.pdf"</span>)</span>
+<span id="cb68-683"><a href="#cb68-683" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/biochem/wcc.pdf"</span>)</span>
 <span id="cb68-684"><a href="#cb68-684" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-685"><a href="#cb68-685" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-686"><a href="#cb68-686" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-687"><a href="#cb68-687" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/biochem/wcc.png"</span>,</span>
+<span id="cb68-687"><a href="#cb68-687" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/biochem/wcc.png"</span>,</span>
 <span id="cb68-688"><a href="#cb68-688" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-689"><a href="#cb68-689" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-690"><a href="#cb68-690" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4653,11 +4675,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-743"><a href="#cb68-743" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-744"><a href="#cb68-744" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-745"><a href="#cb68-745" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-746"><a href="#cb68-746" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/biochem/wcc.pdf"</span>)</span>
+<span id="cb68-746"><a href="#cb68-746" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/biochem/wcc.pdf"</span>)</span>
 <span id="cb68-747"><a href="#cb68-747" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-748"><a href="#cb68-748" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-749"><a href="#cb68-749" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-750"><a href="#cb68-750" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/biochem/wcc.png"</span>,</span>
+<span id="cb68-750"><a href="#cb68-750" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/biochem/wcc.png"</span>,</span>
 <span id="cb68-751"><a href="#cb68-751" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-752"><a href="#cb68-752" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-753"><a href="#cb68-753" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4702,11 +4724,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-794"><a href="#cb68-794" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb68-795"><a href="#cb68-795" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-796"><a href="#cb68-796" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-797"><a href="#cb68-797" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/hard-flare/biochem/wcc.pdf"</span>)</span>
+<span id="cb68-797"><a href="#cb68-797" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/hard-flare/biochem/wcc.pdf"</span>)</span>
 <span id="cb68-798"><a href="#cb68-798" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-799"><a href="#cb68-799" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-800"><a href="#cb68-800" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-801"><a href="#cb68-801" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/hard-flare/biochem/wcc.png"</span>,</span>
+<span id="cb68-801"><a href="#cb68-801" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/hard-flare/biochem/wcc.png"</span>,</span>
 <span id="cb68-802"><a href="#cb68-802" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-803"><a href="#cb68-803" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-804"><a href="#cb68-804" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4766,11 +4788,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-860"><a href="#cb68-860" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-861"><a href="#cb68-861" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-862"><a href="#cb68-862" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-863"><a href="#cb68-863" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/soft-flare/biochem/albumin.pdf"</span>)</span>
+<span id="cb68-863"><a href="#cb68-863" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/soft-flare/biochem/albumin.pdf"</span>)</span>
 <span id="cb68-864"><a href="#cb68-864" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-865"><a href="#cb68-865" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-866"><a href="#cb68-866" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-867"><a href="#cb68-867" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/soft-flare/biochem/albumin.png"</span>,</span>
+<span id="cb68-867"><a href="#cb68-867" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/soft-flare/biochem/albumin.png"</span>,</span>
 <span id="cb68-868"><a href="#cb68-868" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-869"><a href="#cb68-869" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-870"><a href="#cb68-870" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4816,11 +4838,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-912"><a href="#cb68-912" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb68-913"><a href="#cb68-913" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-914"><a href="#cb68-914" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-915"><a href="#cb68-915" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/cd/hard-flare/biochem/albumin.pdf"</span>)</span>
+<span id="cb68-915"><a href="#cb68-915" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/cd/hard-flare/biochem/albumin.pdf"</span>)</span>
 <span id="cb68-916"><a href="#cb68-916" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-917"><a href="#cb68-917" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-918"><a href="#cb68-918" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-919"><a href="#cb68-919" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/cd/hard-flare/biochem/albumin.png"</span>,</span>
+<span id="cb68-919"><a href="#cb68-919" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/cd/hard-flare/biochem/albumin.png"</span>,</span>
 <span id="cb68-920"><a href="#cb68-920" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-921"><a href="#cb68-921" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-922"><a href="#cb68-922" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4878,11 +4900,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-976"><a href="#cb68-976" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">200</span></span>
 <span id="cb68-977"><a href="#cb68-977" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-978"><a href="#cb68-978" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-979"><a href="#cb68-979" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/soft-flare/biochem/albumin.pdf"</span>)</span>
+<span id="cb68-979"><a href="#cb68-979" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/soft-flare/biochem/albumin.pdf"</span>)</span>
 <span id="cb68-980"><a href="#cb68-980" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-981"><a href="#cb68-981" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-982"><a href="#cb68-982" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-983"><a href="#cb68-983" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/soft-flare/biochem/albumin.png"</span>,</span>
+<span id="cb68-983"><a href="#cb68-983" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/soft-flare/biochem/albumin.png"</span>,</span>
 <span id="cb68-984"><a href="#cb68-984" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-985"><a href="#cb68-985" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-986"><a href="#cb68-986" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
@@ -4928,11 +4950,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb68-1028"><a href="#cb68-1028" aria-hidden="true" tabindex="-1"></a>  <span class="at">break.time.by =</span> <span class="dv">500</span></span>
 <span id="cb68-1029"><a href="#cb68-1029" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-1030"><a href="#cb68-1030" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-1031"><a href="#cb68-1031" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"../plots/uc/hard-flare/biochem/albumin.pdf"</span>)</span>
+<span id="cb68-1031"><a href="#cb68-1031" aria-hidden="true" tabindex="-1"></a><span class="fu">cairo_pdf</span>(<span class="st">"plots/uc/hard-flare/biochem/albumin.pdf"</span>)</span>
 <span id="cb68-1032"><a href="#cb68-1032" aria-hidden="true" tabindex="-1"></a>p</span>
 <span id="cb68-1033"><a href="#cb68-1033" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">dev.off</span>())</span>
 <span id="cb68-1034"><a href="#cb68-1034" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-1035"><a href="#cb68-1035" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"../plots/uc/hard-flare/biochem/albumin.png"</span>,</span>
+<span id="cb68-1035"><a href="#cb68-1035" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="st">"plots/uc/hard-flare/biochem/albumin.png"</span>,</span>
 <span id="cb68-1036"><a href="#cb68-1036" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">7</span>,</span>
 <span id="cb68-1037"><a href="#cb68-1037" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb68-1038"><a href="#cb68-1038" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"in"</span>,</span>
