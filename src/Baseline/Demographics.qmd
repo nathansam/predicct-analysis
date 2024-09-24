@@ -178,12 +178,12 @@ p <- demo %>%
   theme_minimal() +
   ylab("Frequency")
 
-ggsave("../plots/BMI-full-cohort.png",
+ggsave("plots/BMI-full-cohort.png",
   p,
   width = 9,
   height = 6
 )
-ggsave("../plots/BMI-full-cohort.pdf", p, width = 9, height = 6)
+ggsave("plots/BMI-full-cohort.pdf", p, width = 9, height = 6)
 
 
 demo %>%
@@ -294,10 +294,9 @@ constituent nation.
 #| fig-cap: "Distribution of IMD."
 #| warning: false
 
-IMD <- read_xlsx(paste0(
-  "/Volumes/igmm/cvallejo-predicct/predicct/",
-  "final/20231030/IMD.xlsx"
-))
+IMD <- read_xlsx(paste0(redcap.path, "/IMD.xlsx"))
+
+
 IMD <- as.data.frame(IMD)
 names(IMD)[2] <- "IMD"
 demo <- merge(demo, IMD, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)

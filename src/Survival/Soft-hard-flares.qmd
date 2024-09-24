@@ -31,12 +31,15 @@ if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"
   redcap.path <- "data/final/20231030/"
   prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  outdir <- "data/processed/"
+  followup.dir <- "data/final/20240308/Followup/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  followup.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/final/",
+                         "20240308/Followup/")
 }
 
 
@@ -98,9 +101,7 @@ diseases, and soft and hard flares are compared directly.
 ```{R}
 #| warning: false
 flares <- read_xlsx(
-  paste0(
-    "/Volumes/igmm/cvallejo-predicct/predicct/",
-    "final/20240308/Followup/all-flares.xlsx"
+  paste0(followup.dir, "all-flares.xlsx"
   ),
   na = ".",
   sheet = 1
@@ -258,7 +259,7 @@ p <- ggsurvplot(fit,
                 xlim = c(0, 2200)
 ) 
 
-cairo_pdf("../plots/flare-comparison.pdf", width = 7, height = 7)
+cairo_pdf("plots/flare-comparison.pdf", width = 7, height = 7)
 p
 invisible(dev.off())
 saveRDS(p, paste0(outdir, "flare-comparison.RDS"))
@@ -280,6 +281,21 @@ fit %>%
   )
 ```
 
+
+```{R}
+#| include: false
+count <- 0
+for (id in unique(flare.comb$ParticipantNo)) {
+  temp <- subset(flare.comb,ParticipantNo == id)
+  if (nrow(temp) == 2) {
+    if (all(temp$Cens == 1)) {
+      if (temp[1, "time"] == temp[2, "time"]) {
+        count <- count + 1 
+      }
+    }
+  }
+}
+```
 
 ```{R}
 saveRDS(flare.df, paste0(outdir, "flares-overview.RDS"))

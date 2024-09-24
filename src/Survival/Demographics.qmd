@@ -31,7 +31,7 @@ if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"
   redcap.path <- "data/final/20231030/"
   prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  outdir <- "data/processed/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
@@ -119,7 +119,7 @@ flare.uc.df <- readRDS(paste0(outdir, "flares-controlled-uc.RDS"))
 This page describes associations between demographic data and time-to-flare. 
 
 The page describing demographic variables in a descriptive manner can be found
-[here](../Baseline/Demographics.qmd).
+[here](Baseline/Demographics.qmd).
 
 ## Age
 
@@ -158,11 +158,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/demographics/age.pdf")
+cairo_pdf("plots/cd/soft-flare/demographics/age.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/demographics/age.png",
+png("plots/cd/soft-flare/demographics/age.png",
   width = 7,
   height = 7,
   units = "in",
@@ -208,11 +208,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/demographics/age.pdf")
+cairo_pdf("plots/cd/hard-flare/demographics/age.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/demographics/age.png",
+png("plots/cd/hard-flare/demographics/age.png",
   width = 7,
   height = 7,
   units = "in",
@@ -270,11 +270,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/demographics/age.pdf")
+cairo_pdf("plots/uc/soft-flare/demographics/age.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/demographics/age.png",
+png("plots/uc/soft-flare/demographics/age.png",
   width = 7,
   height = 7,
   units = "in",
@@ -320,11 +320,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/demographics/age.pdf")
+cairo_pdf("plots/uc/hard-flare/demographics/age.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/demographics/age.png",
+png("plots/uc/hard-flare/demographics/age.png",
   width = 7,
   height = 7,
   units = "in",
@@ -379,11 +379,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/demographics/sex.pdf")
+cairo_pdf("plots/cd/soft-flare/demographics/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/demographics/sex.png",
+png("plots/cd/soft-flare/demographics/sex.png",
   width = 7,
   height = 7,
   units = "in",
@@ -429,11 +429,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/demographics/sex.pdf")
+cairo_pdf("plots/cd/hard-flare/demographics/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/demographics/sex.png",
+png("plots/cd/hard-flare/demographics/sex.png",
   width = 7,
   height = 7,
   units = "in",
@@ -484,11 +484,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/demographics/sex.pdf")
+cairo_pdf("plots/uc/soft-flare/demographics/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/demographics/sex.png",
+png("plots/uc/soft-flare/demographics/sex.png",
   width = 7,
   height = 7,
   units = "in",
@@ -534,11 +534,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/demographics/sex.pdf")
+cairo_pdf("plots/uc/hard-flare/demographics/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/demographics/sex.png",
+png("plots/uc/hard-flare/demographics/sex.png",
   width = 7,
   height = 7,
   units = "in",
@@ -592,11 +592,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/demographics/bmi.pdf")
+cairo_pdf("plots/cd/soft-flare/demographics/bmi.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/demographics/bmi.png",
+png("plots/cd/soft-flare/demographics/bmi.png",
   width = 7,
   height = 7,
   units = "in",
@@ -641,11 +641,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/demographics/bmi.pdf")
+cairo_pdf("plots/cd/hard-flare/demographics/bmi.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/demographics/bmi.png",
+png("plots/cd/hard-flare/demographics/bmi.png",
   width = 7,
   height = 7,
   units = "in",
@@ -695,11 +695,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/demographics/bmi.pdf")
+cairo_pdf("plots/uc/soft-flare/demographics/bmi.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/demographics/bmi.png",
+png("plots/uc/soft-flare/demographics/bmi.png",
   width = 7,
   height = 7,
   units = "in",
@@ -744,11 +744,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/demographics/bmi.pdf")
+cairo_pdf("plots/uc/hard-flare/demographics/bmi.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/demographics/bmi.png",
+png("plots/uc/hard-flare/demographics/bmi.png",
   width = 7,
   height = 7,
   units = "in",

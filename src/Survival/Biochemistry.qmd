@@ -31,7 +31,7 @@ if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"
   redcap.path <- "data/final/20231030/"
   prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  outdir <- "data/processed/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
@@ -156,11 +156,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/biochem/crp.pdf")
+cairo_pdf("plots/cd/soft-flare/biochem/crp.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/biochem/crp.png",
+png("plots/cd/soft-flare/biochem/crp.png",
     width = 7,
     height = 7,
     units = "in",
@@ -207,11 +207,11 @@ p <- ggsurvplot(fit,
 )
 
 
-cairo_pdf("../plots/cd/hard-flare/biochem/crp.pdf")
+cairo_pdf("plots/cd/hard-flare/biochem/crp.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/biochem/crp.png",
+png("plots/cd/hard-flare/biochem/crp.png",
     width = 7,
     height = 7,
     units = "in",
@@ -271,11 +271,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/biochem/crp.pdf")
+cairo_pdf("plots/uc/soft-flare/biochem/crp.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/biochem/crp.png",
+png("plots/uc/soft-flare/biochem/crp.png",
     width = 7,
     height = 7,
     units = "in",
@@ -321,11 +321,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/biochem/crp.pdf")
+cairo_pdf("plots/uc/hard-flare/biochem/crp.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/biochem/crp.png",
+png("plots/uc/hard-flare/biochem/crp.png",
     width = 7,
     height = 7,
     units = "in",
@@ -385,11 +385,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/biochem/haemoglobin.pdf")
+cairo_pdf("plots/cd/soft-flare/biochem/haemoglobin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/biochem/haemoglobin.png",
+png("plots/cd/soft-flare/biochem/haemoglobin.png",
     width = 7,
     height = 7,
     units = "in",
@@ -435,11 +435,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/biochem/haemoglobin.pdf")
+cairo_pdf("plots/cd/hard-flare/biochem/haemoglobin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/biochem/haemoglobin.png",
+png("plots/cd/hard-flare/biochem/haemoglobin.png",
     width = 7,
     height = 7,
     units = "in",
@@ -496,11 +496,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/biochem/haemoglobin.pdf")
+cairo_pdf("plots/uc/soft-flare/biochem/haemoglobin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/biochem/haemoglobin.png",
+png("plots/uc/soft-flare/biochem/haemoglobin.png",
     width = 7,
     height = 7,
     units = "in",
@@ -545,11 +545,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/biochem/haemoglobin.pdf")
+cairo_pdf("plots/cd/hard-flare/biochem/haemoglobin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/biochem/haemoglobin.png",
+png("plots/cd/hard-flare/biochem/haemoglobin.png",
     width = 7,
     height = 7,
     units = "in",
@@ -609,11 +609,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/biochem/wcc.pdf")
+cairo_pdf("plots/cd/soft-flare/biochem/wcc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/biochem/wcc.png",
+png("plots/cd/soft-flare/biochem/wcc.png",
     width = 7,
     height = 7,
     units = "in",
@@ -658,11 +658,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/biochem/wcc.pdf")
+cairo_pdf("plots/cd/hard-flare/biochem/wcc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/biochem/wcc.png",
+png("plots/cd/hard-flare/biochem/wcc.png",
     width = 7,
     height = 7,
     units = "in",
@@ -719,11 +719,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/biochem/wcc.pdf")
+cairo_pdf("plots/uc/soft-flare/biochem/wcc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/biochem/wcc.png",
+png("plots/uc/soft-flare/biochem/wcc.png",
     width = 7,
     height = 7,
     units = "in",
@@ -768,11 +768,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/biochem/wcc.pdf")
+cairo_pdf("plots/uc/hard-flare/biochem/wcc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/biochem/wcc.png",
+png("plots/uc/hard-flare/biochem/wcc.png",
     width = 7,
     height = 7,
     units = "in",
@@ -832,11 +832,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/biochem/albumin.pdf")
+cairo_pdf("plots/cd/soft-flare/biochem/albumin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/biochem/albumin.png",
+png("plots/cd/soft-flare/biochem/albumin.png",
     width = 7,
     height = 7,
     units = "in",
@@ -882,11 +882,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/biochem/albumin.pdf")
+cairo_pdf("plots/cd/hard-flare/biochem/albumin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/biochem/albumin.png",
+png("plots/cd/hard-flare/biochem/albumin.png",
     width = 7,
     height = 7,
     units = "in",
@@ -944,11 +944,11 @@ p <- ggsurvplot(fit,
   break.time.by = 200
 )
 
-cairo_pdf("../plots/uc/soft-flare/biochem/albumin.pdf")
+cairo_pdf("plots/uc/soft-flare/biochem/albumin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/biochem/albumin.png",
+png("plots/uc/soft-flare/biochem/albumin.png",
     width = 7,
     height = 7,
     units = "in",
@@ -994,11 +994,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/uc/hard-flare/biochem/albumin.pdf")
+cairo_pdf("plots/uc/hard-flare/biochem/albumin.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/biochem/albumin.png",
+png("plots/uc/hard-flare/biochem/albumin.png",
     width = 7,
     height = 7,
     units = "in",

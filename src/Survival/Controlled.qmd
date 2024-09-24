@@ -31,7 +31,7 @@ if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"
   redcap.path <- "data/final/20231030/"
   prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  outdir <- "data/processed/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
@@ -151,11 +151,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/cd/soft-flare/controlled/sex.pdf")
+cairo_pdf("plots/cd/soft-flare/controlled/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/controlled/sex.png",
+png("plots/cd/soft-flare/controlled/sex.png",
     width = 7,
     height = 7,
     units = "in",
@@ -185,11 +185,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/cd/hard-flare/controlled/sex.pdf")
+cairo_pdf("plots/cd/hard-flare/controlled/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/controlled/sex.png",
+png("plots/cd/hard-flare/controlled/sex.png",
     width = 7,
     height = 7,
     units = "in",
@@ -225,11 +225,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/uc/soft-flare/controlled/sex.pdf")
+cairo_pdf("plots/uc/soft-flare/controlled/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/controlled/sex.png",
+png("plots/uc/soft-flare/controlled/sex.png",
     width = 7,
     height = 7,
     units = "in",
@@ -259,11 +259,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/uc/hard-flare/controlled/sex.pdf")
+cairo_pdf("plots/uc/hard-flare/controlled/sex.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/controlled/sex.png",
+png("plots/uc/hard-flare/controlled/sex.png",
     width = 7,
     height = 7,
     units = "in",
@@ -301,11 +301,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/cd/soft-flare/controlled/smoke.pdf")
+cairo_pdf("plots/cd/soft-flare/controlled/smoke.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/controlled/smoke.png",
+png("plots/cd/soft-flare/controlled/smoke.png",
     width = 7,
     height = 7,
     units = "in",
@@ -335,11 +335,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/cd/hard-flare/controlled/smoke.pdf")
+cairo_pdf("plots/cd/hard-flare/controlled/smoke.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/controlled/smoke.png",
+png("plots/cd/hard-flare/controlled/smoke.png",
     width = 7,
     height = 7,
     units = "in",
@@ -375,11 +375,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/uc/soft-flare/controlled/smoke.pdf")
+cairo_pdf("plots/uc/soft-flare/controlled/smoke.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/controlled/smoke.png",
+png("plots/uc/soft-flare/controlled/smoke.png",
     width = 7,
     height = 7,
     units = "in",
@@ -409,11 +409,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/uc/hard-flare/controlled/smoke.pdf")
+cairo_pdf("plots/uc/hard-flare/controlled/smoke.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/controlled/smoke.png",
+png("plots/uc/hard-flare/controlled/smoke.png",
     width = 7,
     height = 7,
     units = "in",
@@ -451,11 +451,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/cd/soft-flare/controlled/imd.pdf")
+cairo_pdf("plots/cd/soft-flare/controlled/imd.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/controlled/imd.png",
+png("plots/cd/soft-flare/controlled/imd.png",
     width = 7,
     height = 7,
     units = "in",
@@ -484,11 +484,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/cd/hard-flare/controlled/imd.pdf")
+cairo_pdf("plots/cd/hard-flare/controlled/imd.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/controlled/imd.png",
+png("plots/cd/hard-flare/controlled/imd.png",
     width = 7,
     height = 7,
     units = "in",
@@ -523,11 +523,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/uc/soft-flare/controlled/imd.pdf")
+cairo_pdf("plots/uc/soft-flare/controlled/imd.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/controlled/imd.png",
+png("plots/uc/soft-flare/controlled/imd.png",
     width = 7,
     height = 7,
     units = "in",
@@ -556,11 +556,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/uc/hard-flare/controlled/imd.pdf")
+cairo_pdf("plots/uc/hard-flare/controlled/imd.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/controlled/imd.png",
+png("plots/uc/hard-flare/controlled/imd.png",
     width = 7,
     height = 7,
     units = "in",
@@ -597,11 +597,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/cd/soft-flare/controlled/fc.pdf")
+cairo_pdf("plots/cd/soft-flare/controlled/fc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/controlled/fc.png",
+png("plots/cd/soft-flare/controlled/fc.png",
     width = 7,
     height = 7,
     units = "in",
@@ -632,11 +632,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/cd/hard-flare/controlled/fc.pdf")
+cairo_pdf("plots/cd/hard-flare/controlled/fc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/controlled/fc.png",
+png("plots/cd/hard-flare/controlled/fc.png",
     width = 7,
     height = 7,
     units = "in",
@@ -673,11 +673,11 @@ p <- ggsurvplot(fit,
   title = "Time to soft flare"
 )
 
-cairo_pdf("../plots/uc/soft-flare/controlled/fc.pdf")
+cairo_pdf("plots/uc/soft-flare/controlled/fc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/controlled/fc.png",
+png("plots/uc/soft-flare/controlled/fc.png",
     width = 7,
     height = 7,
     units = "in",
@@ -707,11 +707,11 @@ p <- ggsurvplot(fit,
   title = "Time to hard flare"
 )
 
-cairo_pdf("../plots/uc/hard-flare/controlled/fc.pdf")
+cairo_pdf("plots/uc/hard-flare/controlled/fc.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/controlled/fc.png",
+png("plots/uc/hard-flare/controlled/fc.png",
     width = 7,
     height = 7,
     units = "in",
