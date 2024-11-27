@@ -25,7 +25,6 @@ library(finalfit)
 library(DescTools)
 library(gtsummary)
 
-
 # paths to PREdiCCt data
 if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"
@@ -95,6 +94,28 @@ cox.summary <- function(fit) {
 This page explores soft and hard flares. Survival curves are compared across
 diseases, and soft and hard flares are compared directly. 
 
+## Response rates
+
+As soft flares are largely derived from patient completed questionnaires, it is
+worthwhile to first consider how questionnaires were completed for each month. 
+
+As should be expected, there is a small degree of attrition of responses over
+time (@fig-responses). However,  there is a large increase at the end of
+followup (M24) as additional communications were sent which encouraged the
+completion of the final questionnaire. 
+
+```{R}
+#| label: fig-responses
+#| fig-cap: "Number of responses for each month of followup"
+monthly <- read_xlsx(paste0(data.path, "Followup/monthlyQ.xlsx"))
+monthly %>%
+  mutate(Q_month = paste0("M", Q_month)) %>%
+  ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
+  geom_bar(fill = "#3F88C5", color = "#426B93" ) +
+  theme_minimal() +
+  ylab ("Responses") +
+  xlab("Month")
+```
 
 ## Primary outcome: First soft flare
 
