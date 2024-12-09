@@ -41,6 +41,25 @@ Please see the Session Information sections at the bottom of each report to see
 the R packages used for that particular analysis and the respective package
 versions. 
 
+## Acknowledgements
+
+This work uses data provided by participants and the NHS. We are grateful to
+the study participants and their IBD care teams for their support.
+
+The PREdiCCt study was funded by
+[Cure Crohn's Colitis](https://www.curecrohnscolitis.org/), 
+[Crohns & Colitis In Childhood](https://www.3cs.org.uk/), the
+[Chief Scientist Office](https://www.cso.scot.nhs.uk/), and
+[UKRI](https://www.ukri.org/).
+
+<div style = "text-align: center;">
+<a href = "https://www.curecrohnscolitis.org/"><img src = "images/C3_Logo_Stacked_Dark.png" alt = "Logo for Cure Crohn's Colitis. An abstract yellow, blue, and orange design." height = 60px> </a>
+<a href = "https://www.3cs.org.uk/"><img src = "images/Childhood.jpg" alt = "Logo for Crohn's & Colitis In Childhood, a pink and white butterfly." height = 60px></a>
+<a href = "https://www.cso.scot.nhs.uk/"><img src = "images/CSO-Accord.jpg" alt = "Logo for the Chief Scientist Office, a heart beat symbol in shades of blue." height = 60px></a>
+<a href = "https://www.ukri.org/"><img src = "images/UKRI.png" alt = "Logo for UK Research and innovation (UKRI), white text on a blue background." height = 60px></a>
+</div>
+
+
 ## {.appendix}
 
 This website has been generated using the [Quarto](https://quarto.org)

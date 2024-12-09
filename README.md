@@ -100,11 +100,6 @@ cd docs
 python3 -m http.server
 ```
 
-## Acknowledgements
-
-This work uses data provided by participants and the NHS. We are grateful to
-the study participants and their IBD care teams for their support.
-
 ## Licensing
 
 <a href = "https://github.com/nathansam/predicct-analysis/blob/main/LICENSE"> <img src = "https://img.shields.io/badge/License-GPLv3-blue.svg" align = left></a>
@@ -118,3 +113,22 @@ The code is licensed under [GPL-3](LICENSE) whilst the text in the reports is li
 
 [cc-by]: http://creativecommons.org/licenses/by/4.0/
 [cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
+
+## Acknowledgements
+
+This work uses data provided by participants and the NHS. We are grateful to
+the study participants and their IBD care teams for their support.
+
+The PREdiCCt study was funded by
+[Cure Crohn's Colitis](https://www.curecrohnscolitis.org/), 
+[Crohns & Colitis In Childhood](https://www.3cs.org.uk/), the
+[Chief Scientist Office](https://www.cso.scot.nhs.uk/), and
+[UKRI](https://www.ukri.org/).
+
+<div style = "text-align: center;">
+<a href = "https://www.curecrohnscolitis.org/"><img src = "src/images/C3_Logo_Stacked_Dark.png" alt = "Logo for Cure Crohn's Colitis. An abstract yellow, blue, and orange design." height = 80px> </a>
+<a href = "https://www.3cs.org.uk/"><img src = "src/images/Childhood.jpg" alt = "Logo for Crohn's & Colitis In Childhood, a pink and white butterfly." height = 80px></a>
+<a href = "https://www.cso.scot.nhs.uk/"><img src = "src/images/CSO-Accord.jpg" alt = "Logo for the Chief Scientist Office, a heart beat symbol in shades of blue." height = 80px></a>
+<a href = "https://www.ukri.org/"><img src = "src/images/UKRI.png" alt = "Logo for UK Research and innovation (UKRI), white text on a blue background." height = 80px></a>
+</div>
+
