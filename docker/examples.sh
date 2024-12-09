@@ -7,7 +7,7 @@ docker container run -it \
   --mount type=bind,source="$(pwd)/docs",target="/analysis/docs" \
   ghcr.io/nathansam/predicct
 
-docker container run  \
+docker container run  --rm \
   --mount type=bind,source="/Volumes/igmm/cvallejo-predicct/predicct/",target="/analysis/data" \
   --mount type=bind,source="$(pwd)/docs",target="/analysis/docs" \
   --mount type=bind,source="$(pwd)/src",target="/analysis/src" \
