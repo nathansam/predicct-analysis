@@ -119,7 +119,7 @@ flare.uc.df <- readRDS(paste0(outdir, "flares-controlled-uc.RDS"))
 This page describes associations between demographic data and time-to-flare. 
 
 The page describing demographic variables in a descriptive manner can be found
-[here](Baseline/Demographics.qmd).
+[here](../Baseline/Demographics.qmd).
 
 ## Age
 
