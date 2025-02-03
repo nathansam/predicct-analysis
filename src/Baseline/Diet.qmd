@@ -66,6 +66,19 @@ demo <- merge(demo,
 )
 ```
 
+```{R}
+#library(writexl)
+#FFQ <- merge(FFQ,
+#  demo[, c("ParticipantNo", "FC", "Sex", "diagnosis2")],
+#  by = "ParticipantNo",
+#  all.x = TRUE,
+#  all.y = FALSE
+#)
+
+#FFQ <- subset(FFQ, !is.na(FC))
+#write_xlsx(FFQ, paste0("/Volumes/igmm/cvallejo-predicct/predicct/processed/", "FFQ-FC.xlsx"))
+```
+
 PREdiCCt has collected data on diet via food frequency questionnaires (FFQs) and
 food diaries. This dietary data has been analysed by staff at the
 [University of Aberdeen](https://www.abdn.ac.uk/), primarily by

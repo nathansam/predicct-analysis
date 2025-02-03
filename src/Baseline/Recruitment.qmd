@@ -87,15 +87,18 @@ sites %>%
 ### Recruitment over time
 
 ```{R}
-demo <-demo %>%  mutate(entry_date = as.Date(entry_date))
+demo <- demo %>%  mutate(entry_date = as.Date(entry_date))
 ```
 
-Recruitment to PREdiCCt began in November 2016 and ended in March 2020 as a
-results of the COVID pandemic. 
+Recruitment to PREdiCCt began in November 2016. As participants were
+recruited when they attended IBD clinic appointments and the COVID-19
+pandemic substantially decreased the number of in-person clinic appointments, 
+recruitment was ceased in March 2020. 
 
 ```{R}
 #| label: fig-recruitment
-#| fig-cap: "Cumulative recrutiment to the PREdiCCt study over time. "
+#| fig-cap: "Cumulative recrutiment to the PREdiCCt study over time."
+#| message: false
 
 demo_cumulative <- demo %>%
   arrange(entry_date) %>%
@@ -103,15 +106,22 @@ demo_cumulative <- demo %>%
 
 p <- demo_cumulative %>%
   ggplot(aes(x = entry_date, y = cumulative_count)) +
-  geom_smooth(color= rgb(34, 122, 145, maxColorValue = 255)) +
+  geom_smooth(color = rgb(34, 122, 145, maxColorValue = 255),
+              method = "gam") +
   theme_minimal() +
   xlab("Year") +
   ylab("Study recruitment") +
   xlim(as.Date("2016-11-01"), as.Date("2020-04-01")) +
   scale_y_continuous(breaks = seq(0, 3000, by = 500), limits = c(0, 3000)) +
-  theme(text = element_text(color = "#1C285A"))
+  theme(text = element_text(color = "#1C285A"),
+        axis.text = element_text(face = "bold", color = "#1C285A"))
 
 #ggsave("src/plots/baseline/cumulative-recruitment.png",
+#       p,
+#       width = 9 * 0.8,
+#       height = 6 * 0.8)
+
+#ggsave("src/plots/baseline/cumulative-recruitment.pdf",
 #       p,
 #       width = 9 * 0.8,
 #       height = 6 * 0.8)
