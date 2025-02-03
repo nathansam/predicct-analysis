@@ -84,6 +84,40 @@ sites %>%
   scale_color_manual(values = colorspace::darken(plt.cols, 0.2))
 ```
 
+### Recruitment over time
+
+```{R}
+demo <-demo %>%  mutate(entry_date = as.Date(entry_date))
+```
+
+Recruitment to PREdiCCt began in November 2016 and ended in March 2020 as a
+results of the COVID pandemic. 
+
+```{R}
+#| label: fig-recruitment
+#| fig-cap: "Cumulative recrutiment to the PREdiCCt study over time. "
+
+demo_cumulative <- demo %>%
+  arrange(entry_date) %>%
+  mutate(cumulative_count = row_number())
+
+p <- demo_cumulative %>%
+  ggplot(aes(x = entry_date, y = cumulative_count)) +
+  geom_smooth(color= rgb(34, 122, 145, maxColorValue = 255)) +
+  theme_minimal() +
+  xlab("Year") +
+  ylab("Study recruitment") +
+  xlim(as.Date("2016-11-01"), as.Date("2020-04-01")) +
+  scale_y_continuous(breaks = seq(0, 3000, by = 500), limits = c(0, 3000)) +
+  theme(text = element_text(color = "#1C285A"))
+
+#ggsave("src/plots/baseline/cumulative-recruitment.png",
+#       p,
+#       width = 9 * 0.8,
+#       height = 6 * 0.8)
+p
+```
+
 ### Month of recruitment
 
 There is potential for seasonality to confound interpretations of our results,
