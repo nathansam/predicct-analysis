@@ -132,7 +132,7 @@ Of the variables considered here, only sex is associated with disease flare.
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 6
@@ -148,7 +148,7 @@ p <- ggsurvplot(fit,
   legend.labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/controlled/sex.pdf")
@@ -206,7 +206,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 6
@@ -222,7 +222,7 @@ p <- ggsurvplot(fit,
   legend.labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/sex.pdf")
@@ -282,7 +282,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 6
@@ -298,7 +298,7 @@ p <- ggsurvplot(fit,
   legend.labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/controlled/smoke.pdf")
@@ -356,7 +356,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 6
@@ -372,7 +372,7 @@ p <- ggsurvplot(fit,
   legend.labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/smoke.pdf")
@@ -433,7 +433,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 7
@@ -448,7 +448,7 @@ p <- ggsurvplot(fit,
   legend.title = "IMD",
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/controlled/imd.pdf")
@@ -505,7 +505,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 7
@@ -520,7 +520,7 @@ p <- ggsurvplot(fit,
   legend.title = "IMD",
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/imd.pdf")
@@ -579,7 +579,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 6
@@ -594,7 +594,7 @@ p <- ggsurvplot(fit,
   legend.title = "Faecal calprotectin",
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/controlled/fc.pdf")
@@ -655,7 +655,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| fig-height: 6
@@ -670,7 +670,7 @@ p <- ggsurvplot(fit,
   legend.title = "Faecal calprotectin",
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/fc.pdf")
@@ -732,7 +732,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare 
+#### Clinical flare 
 
 ```{R}
 #| output: "asis"
@@ -765,7 +765,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare 
+#### Clinical flare 
 
 ```{R}
 #| output: "asis"

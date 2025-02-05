@@ -122,7 +122,7 @@ flare.uc.df <- readRDS(paste0(outdir, "flares-demographics-uc.RDS"))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -150,7 +150,7 @@ p <- ggsurvplot(fit,
   legend.title = "IBD Control-8",
   palette = c("#1A8FE3", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -232,7 +232,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -262,7 +262,7 @@ p <- ggsurvplot(fit,
   legend.title = "IBD Control-8",
   palette = c("#1A8FE3", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -348,7 +348,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -370,7 +370,7 @@ p <- ggsurvplot(fit,
   legend.title = "IBD Control VAS",
   palette = c("#1A8FE3", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -452,7 +452,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -473,7 +473,7 @@ p <- ggsurvplot(fit,
   legend.title = "IBD Control VAS",
   palette = c("#1A8FE3", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -571,7 +571,7 @@ flare.cd.df <- merge(flare.cd.df,
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -588,7 +588,7 @@ p <- ggsurvplot(fit,
   legend.title = "Previous surgery",
   palette = c("#3DDC97", "#DD7373"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/ibd/surgery.pdf")
@@ -665,7 +665,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -682,7 +682,7 @@ p <- ggsurvplot(fit,
   legend.title = "Montreal location",
   palette = c("#3B3561", "#5BC0EB", "#FFD166", "#E4572E"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/ibd/location.pdf")
@@ -758,7 +758,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -775,7 +775,7 @@ p <- ggsurvplot(fit,
   legend.title = "Montreal L4 presence",
   palette = c("#3DDC97", "#DD7373"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/ibd/l4.pdf")
@@ -852,7 +852,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -869,7 +869,7 @@ p <- ggsurvplot(fit,
   legend.title = "Montreal behaviour",
   palette = c("#3DDC97", "#FFD166", "#DD7373"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/ibd/behaviour.pdf")
@@ -945,7 +945,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -962,7 +962,7 @@ p <- ggsurvplot(fit,
   legend.title = "Perianal disease",
   palette = c("#3DDC97", "#DD7373"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/cd/soft-flare/ibd/perinal.pdf")
@@ -1050,7 +1050,7 @@ flare.uc.df <- merge(flare.uc.df,
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -1067,7 +1067,7 @@ p <- ggsurvplot(fit,
   legend.title = "Montreal extent",
   palette = c("#3DDC97", "orange", "#DD7373"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 
@@ -1150,7 +1150,7 @@ flare.uc.df$Mayo_cat <- cut(flare.uc.df$Mayo,
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -1167,7 +1167,7 @@ p <- ggsurvplot(fit,
   legend.title = "Mayo score",
   palette = c("#3DDC97", "orange", "#DD7373"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/uc/soft-flare/ibd/mayo.pdf")

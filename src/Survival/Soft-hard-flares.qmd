@@ -41,7 +41,6 @@ if (file.exists("/docker")) { # If running in docker
                          "20240308/Followup/")
 }
 
-
 demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
@@ -96,7 +95,7 @@ diseases, and soft and hard flares are compared directly.
 
 ## Response rates
 
-As soft flares are largely derived from patient completed questionnaires, it is
+As clinical are largely derived from patient completed questionnaires, it is
 worthwhile to first consider how questionnaires were completed for each month. 
 
 As should be expected, there is a small degree of attrition of responses over
@@ -117,7 +116,7 @@ monthly %>%
   xlab("Month")
 ```
 
-## Primary outcome: First soft flare
+## Primary outcome: First clinical flare
 
 ```{R}
 #| warning: false
@@ -132,13 +131,13 @@ flares <- read_xlsx(
 flare.df <- merge(demo, flares, by = "ParticipantNo")
 ```
 
-For soft flares, a soft flare is primarily defined by a subject reporting their
+For clinical flares, a clinical flare is primarily defined by a subject reporting their
 disease as uncontrolled. The time of the flare is given by the date the subject
 reported their symptoms worsening. 
 
 If a date for when the symptoms worsened is given, but the subject did not
 answer if their disease was uncontrolled, it is assumed their disease is not
-controlled (in other words, it is assumed a soft flare occurred).
+controlled (in other words, it is assumed a clinical flare occurred).
 
 If a subject reported their disease as being uncontrolled, but did not give a
 date for the worsening of their symptoms, then the earliest date given for
@@ -147,29 +146,29 @@ their IBD care team, or surgery in the questionnaire response was used. If none
 of these dates were provided then the date of the questionnaire response was
 used instead. 
 
-If a hard flare occurs prior to a soft flare then the soft flare is assumed to
+If a hard flare occurs prior to a clinical flare then the clinical flare is assumed to
 occur on the same date as the hard flare.
 
-A complete description of the steps taken to calculate soft flares is outlined
+A complete description of the steps taken to calculate clinical flares is outlined
 in the below drop-down section. 
 
 <details>
-<summary> Steps for calculating soft flares </summary>
+<summary> Steps for calculating clinical flares </summary>
 
 1. If date of flare is before date of entry to study, then delete flare date and
    recode diseasecontrolled as 1.
 2. If flare date is after the questionnaire date (I.E in the future), reset
    flare date to questionnaire date.
 3. If questionnaire completed after date of withdrawal, remove.
-4. If date of flare is >2 years after entry, censor soft flare at 2 years.
+4. If date of flare is >2 years after entry, censor clinical flare at 2 years.
 5. Time is earliest of flare time or end of follow up, from entry date.
 6. All data censored at 2 years.
 7. Including the hard flares (hard flare data are much more straightforward,
    flare=`diseaseflareyn` and flare date=`firstflarestartdate` from EOS data)
-    * If both datasets say no flare, soft flare is no and follow up time from
+    * If both datasets say no flare, clinical flare is no and follow up time from
       hard flare <= 2 years, softflare time is longest of questionnaire and hard
       flare times
-    * If both datasets say no flare, soft flare is no and follow up time from
+    * If both datasets say no flare, clinical flare is no and follow up time from
       hard flare > 2 years, softflare time is 2 years
     * If no flare in questionnaires, but hard flare reported before 2 years of
       follow up, take hard flare data
@@ -178,7 +177,7 @@ in the below drop-down section.
     * If flare in questionnaire and no hard flare, softflare from questionnaire
       data
     * If flare in questionnaire and also hard flare, take the earliest time
-    * If questionnaire data is missing and no hard flare, soft flare is no and
+    * If questionnaire data is missing and no hard flare, clinical flare is no and
       time is earliest of hard flare follow up and 2 years
     * If questionnaire data is missing and hard flare reported within 2 years,
       softflare taken from hard flare data
@@ -193,7 +192,7 @@ All times are taken from the earliest reported flare.
 
 ```{R}
 #| label: fig-km-soft
-#| fig-cap: "Kaplan-Meier curves for soft flares stratified by IBD type."
+#| fig-cap: "Kaplan-Meier curves for clinical flares stratified by IBD type."
 #| fig-height: 6.5
 
 fit <- flare.df %>%
@@ -210,7 +209,7 @@ p <- ggsurvplot(fit,
   legend.labs = c("Crohn's disease", "UC/IBDU"),
   palette = c("#00A6ED", "#F6511D"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare"
+  title = "Time to clinical flare"
 )
 p
 ```
@@ -238,7 +237,7 @@ p <- ggsurvplot(fit,
 print(p)
 ```
 
-## Comparison of hard and soft flares 
+## Comparison of hard and clinical flares 
 
 ```{R}
 #| fig-height: 6.5
@@ -248,17 +247,19 @@ flare.comb <- rbind(
   data.frame(ParticipantNo = flares$ParticipantNo,
            Cens = flares$hardflare,
            time = flares$hardflare_time,
-           type = "hard flare"),
+           type = "Hard flare"),
   data.frame(ParticipantNo = flares$ParticipantNo,
              Cens = flares$softflare,
              time = flares$softflare_time,
-             type = "soft flare")
+             type = "Clinical flare")
   )
 
 flare.comb <- flare.comb %>%
   drop_na(Cens, time)
 
-flare.comb$type <- as.factor(flare.comb$type)
+
+flare.comb$type <- factor(flare.comb$type,
+                          levels = c("Hard flare","Clinical flare"))
 
 
 fit <- survfit(Surv(time, Cens) ~ type, data = flare.comb)
@@ -274,6 +275,7 @@ p <- ggsurvplot(fit,
                 palette = c("#4a938e", "#e493a3"),
                 xlab = "Time from study recrutiment (days)",
                 legend.title = "Flare type",
+                legend.labs = c("Hard flare", "Clinical flare"),
                 tables.y.text = FALSE,
                 tables.col = "strata",
                 break.time.by = 300,

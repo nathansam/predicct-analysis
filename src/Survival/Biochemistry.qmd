@@ -122,7 +122,7 @@ flare.uc.df <- readRDS(paste0(outdir, "flares-IBD-uc.RDS"))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -152,7 +152,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$CReactiveProtein_cat),
   palette = c("#1A8FE3", "#FED766", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -237,7 +237,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -267,7 +267,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$CReactiveProtein_cat),
   palette = c("#1A8FE3", "#FED766", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -353,7 +353,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -381,7 +381,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$Haemoglobin_cat),
   palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -464,7 +464,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -492,7 +492,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$Haemoglobin_cat),
   palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -577,7 +577,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -605,7 +605,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$WCC_cat),
   palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -687,7 +687,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -715,7 +715,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$WCC_cat),
   palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -800,7 +800,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -828,7 +828,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$Albumin_cat),
   palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -912,7 +912,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -940,7 +940,7 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$Albumin_cat),
   palette = c("#1A8FE3", "#FED766", "orange", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 

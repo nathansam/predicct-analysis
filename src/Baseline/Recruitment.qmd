@@ -163,7 +163,6 @@ with analysed food frequency questionnaires (FFQs) was obtained.
 ```{R}
 #| class-output: output
 
-
 fcal <- read_xlsx(paste0(data.path, "Baseline2022/calprotectin.xlsx"))
 fcal$Result <- as.numeric(plyr::mapvalues(fcal$Result, from = "<20", to = 20))
 

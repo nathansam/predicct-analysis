@@ -127,7 +127,7 @@ The page describing demographic variables in a descriptive manner can be found
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -154,7 +154,7 @@ p <- ggsurvplot(fit,
   legend.title = "Age",
   palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766", "green"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -238,7 +238,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -266,7 +266,7 @@ p <- ggsurvplot(fit,
   legend.title = "Age",
   palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766", "green"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -354,7 +354,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -375,7 +375,7 @@ p <- ggsurvplot(fit,
   legend.title = "Sex",
   palette = c("#1A8FE3", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -459,7 +459,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -480,7 +480,7 @@ p <- ggsurvplot(fit,
   legend.title = "Sex",
   palette = c("#1A8FE3", "#E76D83"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -567,7 +567,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -588,7 +588,7 @@ p <- ggsurvplot(fit,
   legend.title = "BMI",
   palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
@@ -671,7 +671,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -691,7 +691,7 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to clinical flare",
   break.time.by = 200
 )
 
