@@ -652,6 +652,17 @@
     ]
   },
   {
+    "objectID": "Baseline/Biochemistry.html#faecal-calprotectin",
+    "href": "Baseline/Biochemistry.html#faecal-calprotectin",
+    "title": "Biochemistry data",
+    "section": "Faecal calprotectin",
+    "text": "Faecal calprotectin\nAs a reminder, only subjects with a faecal calprotectin are included in this analysis, and therefore NA values are not reported for faecal calprotectin. Faecal calproectin has been grouped into FC&lt;50, 50 ≤ FC ≤ 250, and FC &gt; 250.\n\nCodedemo %&gt;%\n  drop_na(cat) %&gt;%\n  ggplot(aes(x = cat, color = cat, fill = cat)) +\n  geom_bar() +\n  labs(x = \"FC category\", y = \"Frequency\") +\n  theme_minimal() +\n  theme(legend.position = \"none\") +\n  scale_fill_manual(values = c(\"#408585\", \"#F59954\", \"#E4384E\")) +\n  scale_color_manual(values = c(\"#244644\", \"#A35805\", \"#9A1027\"))",
+    "crumbs": [
+      "Baseline Analyses",
+      "Biochemistry data"
+    ]
+  },
+  {
     "objectID": "Baseline/Biochemistry.html#c-reactive-protein",
     "href": "Baseline/Biochemistry.html#c-reactive-protein",
     "title": "Biochemistry data",

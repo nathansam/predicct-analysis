@@ -249,7 +249,7 @@ if (chi_squared_result$p.value < alpha) {
 
 phq_percent <- phq_clean %>%
   group_by(somatisation, diagnosis2) %>%
-  summarise(Percentage = n() / nrow(phq_clean) * 100) %>%
+  dplyr::summarise(Percentage = n() / nrow(phq_clean) * 100) %>%
   ungroup()
 
 # Plot the bar graph (total counts)
@@ -677,15 +677,17 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation,
 cox.summary(fit.me)
 summary(cox_model)
 
-p1 <- ggsurvplot(fit,
+soma.cd <- ggsurvplot(fit,
            data = CD_phq_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
            palette = c("#0B1D51", "#1C77C3", "#39A9DB", "#A0ECD0"),
            xlab = "Time from study recrutiment (days)",
-           title = "Crohn's - Time to soft flare - Somatisation (PHQ15)"
+           title = "Crohn's - Time to soft flare - Somatisation (PHQ15)",
+           legend.title = "Somatisation",
+           legend.labs = c("None", "Mild", "Moderate", "Severe")
            )
-p1
+soma.cd
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo), data = CD_phq_soft)
 cox.summary(cox_model)
@@ -770,15 +772,17 @@ fit.me <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation,
 cox.summary(fit.me)
 summary(cox_model)
 
-p1 <- ggsurvplot(fit,
+soma.uc <- ggsurvplot(fit,
            data = UC_phq_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
            palette = c("#0B1D51", "#1C77C3", "#39A9DB", "#A0ECD0"),
            xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare - Somatisation (PHQ15)"
+           title = "UC/IBDU - Time to soft flare - Somatisation (PHQ15)",
+           legend.title = "Somatisation",
+           legend.labs = c("None", "Mild", "Moderate", "Severe")
            )
-p1
+soma.uc
 
 cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ somatisation + frailty(SiteNo), data = UC_phq_soft)
 cox.summary(cox_model)

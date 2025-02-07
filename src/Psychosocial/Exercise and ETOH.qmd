@@ -876,16 +876,17 @@ fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_hard)
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_hard)
 print(test_result)
 
-p1 <- ggsurvplot(fit,
+p.uc.ex.hard <- ggsurvplot(fit,
            data = ex_UC_hard,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "Meeting recommended exercise levels",
+           legend.title = "Met WHO recommended exercise levels",
+           legend.labs = c("No", "Yes"),
            palette = c("#BB0A21", "#F39237"),
            xlab = "Time from study recrutiment (days)",
            title = "UC/IBDU - Time to hard flare - GPAQ"
            )
-p1
+p.uc.ex.hard
 
 #exercise
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_hard)

@@ -1104,15 +1104,17 @@ pander(test_result)
 #| fig-cap: "Time to soft flare by presence of Sleep Disturbance (CD patients)"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance,
                data = psqi_CD_soft)
-p1 <- ggsurvplot(fit,
+p.cd.sleep.clin <- ggsurvplot(fit,
            data = psqi_CD_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
-           title = "Time to soft flare"
+           title = "Time to soft flare",
+           legend.title = "Sleep distubance",
+           legend.labs = c("PSQI ≤ 5", "PSQI > 5")
            )
-p1
+p.cd.sleep.clin
 ```
 
 ```{R}

@@ -79,7 +79,7 @@ hardflare_hads <- hads_for_analysis %>%
   inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time),
     by = "ParticipantNo"
   ) %>%
-  rename(DiseaseFlareYN = hardflare, time = hardflare_time)
+  mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
 # 3508 here
 softflare_hads <- hads_for_analysis %>%
   inner_join(
@@ -87,7 +87,7 @@ softflare_hads <- hads_for_analysis %>%
       select(ParticipantNo, softflare, softflare_time),
     by = join_by(ParticipantNo)
   ) %>%
-  rename(DiseaseFlareYN = softflare, time = softflare_time)
+  mutate(DiseaseFlareYN = softflare, time = softflare_time)
 # 3620 here
 
 # create hard flare data sets for both UC/IBDU and CD
@@ -524,7 +524,6 @@ invisible(cox.summary(cox_model))
 
 #### UC/IBDU anxiety scores and soft flares
 
-
 *	Controlling for site only, significant association with severe anxiety and
   risk of flare (p-value = 0.0024, 95% CI 1.17 - 2.14)
 *	Controlling for site, sex, IMD and age group significant association
@@ -545,7 +544,7 @@ test_result %>%
 ```
 
 ```{R}
-p1 <- ggsurvplot(fit,
+p.uc.anx <- ggsurvplot(fit,
   data = soft_uc_anx,
   conf.int = TRUE,
   ggtheme = theme_minimal(),
@@ -555,7 +554,8 @@ p1 <- ggsurvplot(fit,
   xlab = "Time from study recruitment (days)",
   title = "UC/IBDU - Time to soft flare"
 )
-p1
+
+p.uc.anx
 ```
 
 ```{R}
@@ -800,7 +800,7 @@ test_result %>%
 ```
 
 ```{R}
-p2 <- ggsurvplot(fit,
+p.uc.dep.hard <- ggsurvplot(fit,
   data = flare_uc_dep,
   conf.int = TRUE,
   ggtheme = theme_minimal(),
@@ -810,7 +810,7 @@ p2 <- ggsurvplot(fit,
   xlab = "Time from study recruitment (days)",
   title = "UC/IBDU - Time to hard flare"
 )
-p2
+p.uc.dep.hard 
 ```
 
 ```{R}
@@ -877,7 +877,7 @@ test_result %>%
 ```
 
 ```{R}
-p1 <- ggsurvplot(fit,
+p.cd.anx <- ggsurvplot(fit,
   data = soft_cd_anx,
   conf.int = TRUE,
   ggtheme = theme_minimal(),
@@ -887,7 +887,7 @@ p1 <- ggsurvplot(fit,
   xlab = "Time from study recruitment (days)",
   title = "CD - Time to soft flare"
 )
-p1
+p.cd.anx
 ```
 
 ```{R}

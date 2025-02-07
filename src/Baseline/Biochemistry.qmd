@@ -72,10 +72,31 @@ labs <- labs[, c(
 demo <- merge(demo, labs, by = "ParticipantNo", all.x = TRUE, all.y = FALSE)
 ```
 
+
+
 Participants' IBD care teams reported biochemistry results via REDCap. Whilst
 data from many types of blood tests were collected, only the most relevant tests
 are presented here. Where possible, reference levels have been denoted on plots
 via vertical lines. 
+
+## Faecal calprotectin
+
+As a reminder, only subjects with a faecal calprotectin are included in this 
+analysis, and therefore NA values are not reported for faecal calprotectin.
+Faecal calproectin has been grouped into FC<50, 50 ≤ FC ≤ 250, and FC > 250.
+
+```{R}
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = cat, color = cat, fill = cat)) +
+  geom_bar() +
+  labs(x = "FC category", y = "Frequency") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c("#408585", "#F59954", "#E4384E")) +
+  scale_color_manual(values = c("#244644", "#A35805", "#9A1027"))
+```
+
 
 ## C-reactive protein
 
