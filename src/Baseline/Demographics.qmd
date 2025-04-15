@@ -1,5 +1,5 @@
 ---
-title: "Cohort demographics"
+title: "Demographic data"
 author:
   - name: "Nathan Constantine-Cooke"
     corresponding: true

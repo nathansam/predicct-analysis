@@ -805,7 +805,7 @@ findings are reported for UC.
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
@@ -915,7 +915,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Soft flare
+#### Clinical flare
 
 ```{R}
 #| results: "hold"
