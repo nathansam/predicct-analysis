@@ -66,6 +66,8 @@ labs <- labs[, c(
   "HaemoglobinUnit",
   "WCC",
   "WCCUnit",
+  "Platelets",
+  "PlateletsUnit",
   "Albumin",
   "AlbuminUnit"
 )]
@@ -280,6 +282,47 @@ WCC is reported to be associated with FC.
 #| label: tbl-wcc-fc
 #| tbl-cap: "ANOVA between WCC and FC groups."
 pander(summary(aov(WCC ~ cat, data = demo)))
+```
+
+## Platelets
+
+```{R}
+perc <- (1 - demo %>%
+  drop_na(cat) %>%
+  select(Platelets) %>%
+  is.na() %>%
+  sum() /
+  demo %>%
+    drop_na(cat) %>%
+    nrow()) * 100
+```
+
+
+The majority of subjects (`r round(perc, 2)`%) have a platelets test result
+recorded.
+
+Whilst some extreme values are observed, most fall within the reference range. 
+
+```{R}
+#| label: fig-Platelets-dist
+#| fig-cap: "Distrbution of Platelets for the FC cohort. Vertical lines indicate the reference range."
+#| warning: false
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Platelets)) +
+  geom_histogram(bins = 100, fill = "#84E6F8", color = "#018897") +
+  theme_minimal() +
+  xlab("Platelets (×10^9/L") +
+  ylab("Frequency") + 
+  geom_vline(xintercept = c(150, 450), color = "#7b1907", alpha = 0.8)
+```
+
+Platelets is reported to be significantly associated with FC.
+
+```{R}
+#| label: tbl-platelets-fc
+#| tbl-cap: "ANOVA between platelets and FC groups."
+pander(summary(aov(Platelets ~ cat, data = demo)))
 ```
 
 ## Albumin

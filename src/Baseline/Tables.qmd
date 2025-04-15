@@ -215,6 +215,13 @@ pander(summary(aov(Haemoglobin ~ cohort, data = comp)))
 pander(summary(aov(WCC ~ cohort, data = comp)))
 ```
 
+#### Platelets
+
+```{R}
+pander(summary(aov(Platelets ~ cohort, data = comp)))
+```
+
+
 #### Albumin 
 
 There is a significant difference in albumin across the cohorts. However, this
@@ -260,6 +267,7 @@ demo %>%
     CReactiveProtein +
     Haemoglobin +
     WCC +
+    Platelets +
     Albumin +
     Meat_sum +
     fibre +
@@ -292,6 +300,7 @@ demo %>%
     CReactiveProtein +
     Haemoglobin +
     WCC +
+    Platelets +  
     Albumin +
     Meat_sum +
     fibre +
