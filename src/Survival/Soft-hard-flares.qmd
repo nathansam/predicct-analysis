@@ -293,11 +293,53 @@ p
 
 ```{R}
 #| label: tbl-comb-comp
-#| fig-cap: "Survival rates after two years of follow-up."
+#| tbl-cap: "Survival rates after two years of follow-up."
 
 fit %>%
   tbl_survfit(
     times = 365*2,
+    label = "Flare type",
+    statistic = "{estimate} ({conf.low}, {conf.high})",
+    label_header = "**2-year survival (95% CI)**"
+  )
+```
+
+
+```{R}
+#| label: tbl-comb-comp-cd
+#| tbl-cap: "Survival rates after two years of follow-up for Crohn's disease only."
+
+flare.comb.cd <-  flare.comb %>%
+  merge(demo[, c("ParticipantNo", "diagnosis2")], by = "ParticipantNo") %>%
+  filter(diagnosis2 == "CD") %>%
+  select(-diagnosis2)
+
+fit.cd <- survfit(Surv(time, Cens) ~ type, data = flare.comb.cd)
+
+fit.cd %>%
+  tbl_survfit(
+    times = 365 * 2,
+    label = "Flare type",
+    statistic = "{estimate} ({conf.low}, {conf.high})",
+    label_header = "**2-year survival (95% CI)**"
+  )
+```
+
+
+```{R}
+#| label: tbl-comb-comp-uc
+#| tbl-cap: "Survival rates after two years of follow-up for ulcerative colitis/IBDU only."
+
+flare.comb.uc<-  flare.comb %>%
+  merge(demo[, c("ParticipantNo", "diagnosis2")], by = "ParticipantNo") %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  select(-diagnosis2)
+
+fit.uc <- survfit(Surv(time, Cens) ~ type, data = flare.comb.uc)
+
+fit.uc %>%
+  tbl_survfit(
+    times = 365 * 2,
     label = "Flare type",
     statistic = "{estimate} ({conf.low}, {conf.high})",
     label_header = "**2-year survival (95% CI)**"
