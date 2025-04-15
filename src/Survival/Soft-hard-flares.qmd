@@ -221,6 +221,62 @@ reported by subjects themselves.
 
 ```{R}
 #| fig-height: 6.5
+#| label: fig-km-hard-cutoff
+#| fig-cap: "Kaplan-Meier curves of hard flares stratified by IBD type across the first two years."
+
+flare.df.cutoff <- flare.df %>%
+  mutate(hardflare = if_else(hardflare_time > 730.5, 0, hardflare),
+         hardflare_time = if_else(hardflare_time > 730.5, 730.5, hardflare_time))
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ diagnosis2,
+               data = flare.df.cutoff)
+p <- ggsurvplot(fit,
+  data = flare.df.cutoff,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  palette = c("#00A6ED", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  legend.title = "Flare type",
+  break.time.by = 200
+)
+print(p)
+```
+
+
+```{R}
+#| fig-height: 6.5
+#| label: tbl-hard-full
+#| tbl-cap: "Hard flare survival rates across the full follow-up."
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~1 , data = flare.df)
+p <- ggsurvplot(fit,
+  data = flare.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  palette = c("#00A6ED", "#F6511D"),
+  xlab = "Time from study recrutiment (days)",
+  break.time.by = 400
+)
+
+fit %>%
+  tbl_survfit(
+    times = max(flare.df$hardflare_time, na.rm = TRUE),
+    statistic = "{estimate} ({conf.low}, {conf.high})",
+    label_header = "**Survival across full follow-up (95% CI)**"
+  )
+```
+
+
+```{R}
+#| fig-height: 6.5
+#| label: fig-km-hard-diag
+#| fig-cap: "Kaplan-Meier curves of hard flares stratified by IBD type across the full follow-up."
 fit <- survfit(Surv(hardflare_time, hardflare) ~ diagnosis2, data = flare.df)
 p <- ggsurvplot(fit,
   data = flare.df,
@@ -235,6 +291,17 @@ p <- ggsurvplot(fit,
   break.time.by = 400
 )
 print(p)
+```
+
+
+```{R}
+fit %>%
+  tbl_survfit(
+    times = max(flare.df$hardflare_time, na.rm = TRUE),
+    label = "IBD type",
+    statistic = "{estimate} ({conf.low}, {conf.high})",
+    label_header = "**Survival across full follow-up (95% CI)**"
+  )
 ```
 
 ## Comparison of hard and clinical flares 
