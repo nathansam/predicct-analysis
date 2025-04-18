@@ -751,8 +751,8 @@ surgery <- distinct(surgery, ParticipantNo, .keep_all = TRUE)
 demo.cd <- subset(demo, diagnosis2 == "CD")
 demo.cd <- merge(demo.cd, surgery, all.x = TRUE, all.y = FALSE)
 demo.cd$Surgery <- factor(demo.cd$Surgery,
-  levels = c(1, 2),
-  labels = c("Yes", "No")
+  levels = c(2, 1),
+  labels = c("No", "Yes")
 )
 ```
 
@@ -977,8 +977,8 @@ Approximately a third of CD subjects are reported to have perianal disease.
 #| label: fig-peri
 #| fig-cap: "Perianal disease for CD subjects in the FC cohort."
 demo.cd$Perianal <- factor(demo.cd$Perianal,
-  levels = c(1, 2),
-  labels = c("Yes", "No")
+  levels = c(2, 1),
+  labels = c("No", "Yes")
 )
 
 demo.cd %>%
