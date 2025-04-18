@@ -24,6 +24,7 @@ library(coxme)
 library(finalfit)
 library(DescTools)
 library(gtsummary)
+library(patchwork)
 
 # paths to PREdiCCt data
 if (file.exists("/docker")) { # If running in docker
@@ -105,15 +106,59 @@ completion of the final questionnaire.
 
 ```{R}
 #| label: fig-responses
-#| fig-cap: "Number of responses for each month of followup"
+#| fig-cap: "Number of responses for each month of follow-up for (A) the whole cohort, (B) the FC cohort, and (C) the FFQ cohort."
+#| fig-width: 7
+#| fig-height: 15
 monthly <- read_xlsx(paste0(data.path, "Followup/monthlyQ.xlsx"))
-monthly %>%
+p1 <- monthly %>%
   mutate(Q_month = paste0("M", Q_month)) %>%
   ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
-  geom_bar(fill = "#3F88C5", color = "#426B93" ) +
+  geom_bar(fill = "#F17300", color = "#904200") +
   theme_minimal() +
-  ylab ("Responses") +
-  xlab("Month")
+  ylab ("Monthly questionnaire responses") +
+  xlab("") +
+  scale_x_discrete(breaks = paste0("M", seq(1, 24, by = 2)),
+                     labels = paste0("M", seq(1, 24, by = 2))) +
+  ylim(0, 1200)
+
+
+
+monthly.fc <-  monthly %>%
+  filter(ParticipantNo %in% subset(demo, !is.na(cat))$ParticipantNo)
+
+p2 <- monthly.fc %>%
+  mutate(Q_month = paste0("M", Q_month)) %>%
+  ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
+  geom_bar(fill = "#A8201A", color = "#6F0802") +
+  theme_minimal() +
+  ylab ("Monthly questionnaire responses") +
+  xlab("") +
+  scale_x_discrete(breaks = paste0("M", seq(1, 24, by = 2)),
+                     labels = paste0("M", seq(1, 24, by = 2))) +
+  ylim(0, 1200)
+
+monthly.ffq <-  monthly %>%
+  filter(ParticipantNo %in% subset(demo, (!is.na(cat)) & (!is.na(fibre)))$ParticipantNo)
+
+p3 <- monthly.ffq %>%
+  mutate(Q_month = paste0("M", Q_month)) %>%
+  ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
+  geom_bar(fill = "#0F8B8D", color = "#005354") +
+  theme_minimal() +
+  ylab ("Monthly questionnaire responses") +
+  xlab("Month of follow-up") +
+  scale_x_discrete(breaks = paste0("M", seq(1, 24, by = 2)),
+                     labels = paste0("M", seq(1, 24, by = 2))) +
+  ylim(0, 1200)
+
+p <- p1/p2/p3 +
+  plot_annotation(tag_levels = "A")  & 
+  theme(plot.tag = element_text(face = "bold", size = 18))
+
+
+ggsave("plots/response-rate.pdf", p, width = 7, height = 15)
+ggsave("plots/response-rate.png", p, width = 7, height = 15)
+p
 ```
 
 ## Primary outcome: First clinical flare
