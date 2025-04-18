@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker image build -t ghcr.io/nathansam/predicct .
+docker image build -t ghcr.io/nathansam/predicct:1.0.1 .
 
 docker container run -it --rm \
   --mount type=bind,source="/Volumes/igmm/cvallejo-predicct/predicct/",target="/analysis/data" \
