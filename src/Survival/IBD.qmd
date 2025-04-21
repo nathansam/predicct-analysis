@@ -1375,10 +1375,10 @@ saveRDS(flare.df, paste0(outdir, "flares-IBD.RDS"))
 saveRDS(flare.cd.df, paste0(outdir, "flares-IBD-cd.RDS"))
 saveRDS(flare.uc.df, paste0(outdir, "flares-IBD-uc.RDS"))
 
-saveRDS(cd.clin.forest, paste0(outdir, "cd-clin-demographics.RDS"))
-saveRDS(cd.hard.forest, paste0(outdir, "cd-hard-demographics.RDS"))
-saveRDS(uc.clin.forest, paste0(outdir, "uc-clin-demographics.RDS"))
-saveRDS(uc.hard.forest, paste0(outdir, "uc-hard-demographics.RDS"))
+saveRDS(cd.clin.forest, paste0(outdir, "cd-clin-IBD.RDS"))
+saveRDS(cd.hard.forest, paste0(outdir, "cd-hard-IBD.RDS"))
+saveRDS(uc.clin.forest, paste0(outdir, "uc-clin-IBD.RDS"))
+saveRDS(uc.hard.forest, paste0(outdir, "uc-hard-IBD.RDS"))
 ```
 
 ## Reproduction and reproducibility {.appendix}
