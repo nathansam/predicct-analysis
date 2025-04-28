@@ -111,9 +111,31 @@ Diagnostics: \\newline
   return()
 }
 
+GetHR <- function(fit, var) {
+  # Get point estimate with 95% CI
+
+  HR.dat <- summary(fit)$conf.int %>%
+    as.data.frame() %>%
+    filter(rownames(summary(fit)$conf.int) %in% var) %>%
+    select(`exp(coef)`, `lower .95`, `upper .95`)
+  # Ensure variables are in the same order as var
+  HR.dat <- HR.dat[var, ]
+  # Add p-value
+  HR.dat$p <- summary(fit)$coefficients[var, "p"]
+  names(HR.dat) <- c("HR", "Lower95", "Upper95", "p")
+  HR.dat
+}
+
+
 flare.df <- readRDS(paste0(outdir, "flares-IBD.RDS"))
 flare.cd.df <- readRDS(paste0(outdir, "flares-IBD-cd.RDS"))
 flare.uc.df <- readRDS(paste0(outdir, "flares-IBD-uc.RDS"))
+
+cd.clin.forest <- readRDS(paste0(outdir, "cd-clin-IBD.RDS"))
+cd.hard.forest <- readRDS(paste0(outdir, "cd-hard-IBD.RDS"))
+uc.clin.forest <- readRDS(paste0(outdir, "uc-clin-IBD.RDS"))
+uc.hard.forest <- readRDS(paste0(outdir, "uc-hard-IBD.RDS"))
+
 ```
 
 ## C-reactive protein
@@ -177,6 +199,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.clin.forest <- rbind(
+  cd.clin.forest,
+  GetHR(fit.me, "CReactiveProtein")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -228,6 +256,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.hard.forest <- rbind(
+  cd.hard.forest,
+  GetHR(fit.me, "CReactiveProtein")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -292,6 +326,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.clin.forest <- rbind(
+  uc.clin.forest,
+  GetHR(fit.me, "CReactiveProtein")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -342,6 +382,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.hard.forest <- rbind(
+  uc.hard.forest,
+  GetHR(fit.me, "CReactiveProtein")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -406,6 +452,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.clin.forest <- rbind(
+  cd.clin.forest,
+  GetHR(fit.me, "Haemoglobin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -455,6 +507,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.hard.forest <- rbind(
+  cd.hard.forest,
+  GetHR(fit.me, "Haemoglobin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -516,6 +574,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.clin.forest <- rbind(
+  uc.clin.forest,
+  GetHR(fit.me, "Haemoglobin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -566,6 +630,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.hard.forest <- rbind(
+  uc.hard.forest,
+  GetHR(fit.me, "Haemoglobin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -629,6 +699,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.clin.forest <- rbind(
+  cd.clin.forest,
+  GetHR(fit.me, "WCC")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -678,6 +754,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.hard.forest <- rbind(
+  cd.hard.forest,
+  GetHR(fit.me, "WCC")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -739,6 +821,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.clin.forest <- rbind(
+  uc.clin.forest,
+  GetHR(fit.me, "WCC")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -789,6 +877,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.hard.forest <- rbind(
+  uc.hard.forest,
+  GetHR(fit.me, "WCC")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -857,6 +951,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.clin.forest <- rbind(
+  cd.clin.forest,
+  GetHR(fit.me, "Platelets")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -906,6 +1006,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.hard.forest <- rbind(
+  cd.hard.forest,
+  GetHR(fit.me, "Platelets")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -967,6 +1073,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.clin.forest <- rbind(
+  uc.clin.forest,
+  GetHR(fit.me, "Platelets")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -1016,6 +1128,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.hard.forest <- rbind(
+  uc.hard.forest,
+  GetHR(fit.me, "Platelets")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -1080,6 +1198,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.clin.forest <- rbind(
+  cd.clin.forest,
+  GetHR(fit.me, "Albumin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -1123,13 +1247,18 @@ invisible(dev.off())
 
 p
 
-
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.hard.forest <- rbind(
+  cd.hard.forest,
+  GetHR(fit.me, "Albumin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -1192,6 +1321,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.clin.forest <- rbind(
+  uc.clin.forest,
+  GetHR(fit.me, "Albumin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -1235,14 +1370,18 @@ invisible(dev.off())
 
 p
 
-
-
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + Albumin + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.hard.forest <- rbind(
+  uc.hard.forest,
+  GetHR(fit.me, "Albumin")
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -1268,6 +1407,11 @@ Licensed by
 saveRDS(flare.df, paste0(outdir, "flares-biochem.RDS"))
 saveRDS(flare.cd.df, paste0(outdir, "flares-biochem-cd.RDS"))
 saveRDS(flare.uc.df, paste0(outdir, "flares-biochem-uc.RDS"))
+
+saveRDS(cd.clin.forest, paste0(outdir, "cd-clin-biochem.RDS"))
+saveRDS(cd.hard.forest, paste0(outdir, "cd-hard-biochem.RDS"))
+saveRDS(uc.clin.forest, paste0(outdir, "uc-clin-biochem.RDS"))
+saveRDS(uc.hard.forest, paste0(outdir, "uc-hard-biochem.RDS"))
 ```
 
 

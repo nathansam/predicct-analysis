@@ -118,7 +118,8 @@ GetHR <- function(fit, var) {
     as.data.frame() %>%
     filter(rownames(summary(fit)$conf.int) %in% var) %>%
     select(`exp(coef)`, `lower .95`, `upper .95`)
-
+  # Ensure variables are in the same order as var
+  HR.dat <- HR.dat[var, ]
   # Add p-value
   HR.dat$p <- summary(fit)$coefficients[var, "p"]
   names(HR.dat) <- c("HR", "Lower95", "Upper95", "p")
@@ -588,6 +589,8 @@ fit.me <- coxph(
 )
 invisible(cox.summary(fit.me))
 ```
+
+:::
 
 ## Variables only relevant to Crohn's disease
 

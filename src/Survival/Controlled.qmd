@@ -57,21 +57,21 @@ cox.summary <- function(fit) {
       digits = 4
     ) %>%
     print()
-  
-  cat("\\newline
-  
-Diagnostics: \\newline
-  
-")
-  
-  cat('\\newline
-  
-::: {.panel-tabset} 
 
-      ')
-  
+  cat("\\newline
+
+Diagnostics: \\newline
+
+")
+
+  cat("\\newline
+
+::: {.panel-tabset}
+
+      ")
+
   cat("
-  
+
 ###### Proportional hazards assumption test \\newline
 
   ")
@@ -86,29 +86,44 @@ Diagnostics: \\newline
       digits = 4
     ) %>%
     print()
-  
+
   cat("\\newline
 
 ###### DF betas \\newline
 
   ")
-  
+
   print(ggcoxdiagnostics(fit, type = "dfbeta"))
-  
-  cat("\\newline 
-  
-###### Martingale residuals \\newline
-      
-      ")
-  
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-  
+
   cat("\\newline
-  
+
+###### Martingale residuals \\newline
+
+      ")
+
+  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+
+  cat("\\newline
+
 :::
 
       ")
   return()
+}
+
+GetHR <- function(fit, var) {
+  # Get point estimate with 95% CI
+
+  HR.dat <- summary(fit)$conf.int %>%
+    as.data.frame() %>%
+    filter(rownames(summary(fit)$conf.int) %in% var) %>%
+    select(`exp(coef)`, `lower .95`, `upper .95`)
+  # Ensure variables are in the same order as var
+  HR.dat <- HR.dat[var, ]
+  # Add p-value
+  HR.dat$p <- summary(fit)$coefficients[var, "p"]
+  names(HR.dat) <- c("HR", "Lower95", "Upper95", "p")
+  HR.dat
 }
 
 flare.df <- readRDS(paste0(outdir, "flares-overview.RDS"))
@@ -156,10 +171,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/soft-flare/controlled/sex.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -190,10 +206,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/sex.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -230,10 +247,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/sex.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -264,10 +282,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/sex.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -306,10 +325,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/soft-flare/controlled/smoke.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -340,10 +360,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/smoke.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -380,10 +401,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/smoke.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -414,10 +436,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/smoke.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -456,10 +479,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/soft-flare/controlled/imd.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -489,10 +513,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/imd.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -528,10 +553,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/imd.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -561,10 +587,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/imd.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -602,10 +629,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/soft-flare/controlled/fc.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -637,10 +665,11 @@ p
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/fc.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -678,10 +707,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/fc.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 saveRDS(p, paste0(outdir, "fc-uc-soft.RDS"))
@@ -712,10 +742,11 @@ p
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/fc.png",
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300)
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
 p
 invisible(dev.off())
 
@@ -736,6 +767,24 @@ p
 
 ```{R}
 #| output: "asis"
+
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Smoke + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df,
+  model = TRUE
+)
+
+cd.clin.forest <- GetHR(
+  fit.me,
+  c("SmokePrevious", "SmokeNever")
+)
+
+
+
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + frailty(SiteNo),
@@ -743,6 +792,22 @@ fit.me <- coxph(
   data = flare.cd.df,
   model = TRUE
 )
+
+cd.clin.forest <- rbind(
+  cd.clin.forest,
+  GetHR(
+    fit.me,
+    c(
+      "SexFemale",
+      paste0("IMD", seq(2, 5)),
+      "catFC 50-250",
+      "catFC > 250"
+    )
+  )
+)
+
+
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -750,12 +815,40 @@ invisible(cox.summary(fit.me))
 
 ```{R}
 #| output: "asis"
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Smoke + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+cd.hard.forest <- GetHR(
+  fit.me,
+  c("SmokePrevious", "SmokeNever")
+)
+
+
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+cd.hard.forest <- rbind(
+  cd.hard.forest,
+  GetHR(
+    fit.me,
+    c(
+      "SexFemale",
+      paste0("IMD", seq(2, 5)),
+      "catFC > 250"
+    )
+  )
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -769,12 +862,39 @@ invisible(cox.summary(fit.me))
 
 ```{R}
 #| output: "asis"
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Smoke + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+uc.clin.forest <- GetHR(
+  fit.me,
+  c("SmokePrevious", "SmokeNever")
+)
+
+
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.clin.forest <- rbind(
+  uc.clin.forest,
+  GetHR(
+    fit.me,
+    c(
+      "SexFemale",
+      paste0("IMD", seq(2, 5)),
+      "catFC > 250"
+    )
+  )
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -782,12 +902,41 @@ invisible(cox.summary(fit.me))
 
 ```{R}
 #| output: "asis"
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Smoke + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+uc.hard.forest <- GetHR(
+  fit.me,
+  c("SmokePrevious", "SmokeNever")
+)
+
+
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+uc.hard.forest <- rbind(
+  uc.hard.forest,
+  GetHR(
+    fit.me,
+    c(
+      "SexFemale",
+      paste0("IMD", seq(2, 5)),
+      "catFC 50-250",
+      "catFC > 250"
+    )
+  )
+)
+
 invisible(cox.summary(fit.me))
 ```
 
@@ -797,6 +946,11 @@ invisible(cox.summary(fit.me))
 saveRDS(flare.df, paste0(outdir, "flares-contolled.RDS"))
 saveRDS(flare.cd.df, paste0(outdir, "flares-controlled-cd.RDS"))
 saveRDS(flare.uc.df, paste0(outdir, "flares-controlled-uc.RDS"))
+
+saveRDS(cd.clin.forest, paste0(outdir, "cd-clin-controlled.RDS"))
+saveRDS(cd.hard.forest, paste0(outdir, "cd-hard-controlled.RDS"))
+saveRDS(uc.clin.forest, paste0(outdir, "uc-clin-controlled.RDS"))
+saveRDS(uc.hard.forest, paste0(outdir, "uc-hard-controlled.RDS"))
 ```
 
 ## Reproduction and reproducibility {.appendix}
