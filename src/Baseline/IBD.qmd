@@ -207,8 +207,9 @@ Whilst a  low p-value was observed, disease duration was not significantly
 different between FC groups.
 
 ```{R}
-#| label: tbl-duration-fc
-#| tbl-cap: "ANOVA between IBD disease duration and FC groups."
+#| label: tbl-duration-fc-cd
+#| tbl-cap: "ANOVA between IBD disease duration and FC groups in Crohn's disease."
+
 demo <- merge(demo, duration[, c("ParticipantNo", "duration")],
   by = "ParticipantNo",
   all.x = TRUE,
@@ -216,7 +217,24 @@ demo <- merge(demo, duration[, c("ParticipantNo", "duration")],
 )
 
 names(demo)[18] <- "IBD Duration"
-pander(summary(aov(`IBD Duration` ~ cat, data = demo)))
+
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = `IBD Duration` ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-duration-fc-uc
+#| tbl-cap: "ANOVA between IBD disease duration and FC groups in UC/IBDU."
+
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = `IBD Duration` ~ cat,) %>%
+  summary() %>%
+  pander()
 ```
 
 ## IBD Control
@@ -341,16 +359,47 @@ IBD-Control-8 scores and VAS were both found to be significantly associated with
 FC.
 
 ```{R}
-#| label: tbl-control-8-fc
-#| tbl-cap: "ANOVA between control-8 and FC groups."
-pander(summary(aov(as.numeric(control_8) ~ cat, data = demo)))
+#| label: tbl-control-8-cd
+#| tbl-cap: "ANOVA between control-8 and FC groups in Crohn's disease."
+
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = as.numeric(control_8) ~ cat) %>%
+  summary() %>%
+  pander()
 ```
 
+```{R}
+#| label: tbl-control-8-uc
+#| tbl-cap: "ANOVA between control-8 and FC groups in UC/IBDU."
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = as.numeric(control_8) ~ cat) %>%
+  summary() %>%
+  pander()
+```
 
 ```{R}
-#| label: tbl-control-vas-fc
-#| tbl-cap: "ANOVA between control VAS and FC groups."
-pander(summary(aov(OverallControl ~ cat, data = demo)))
+#| label: tbl-control-vas-cd
+#| tbl-cap: "ANOVA between control VAS and FC groups in Crohn's disease."
+
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = OverallControl ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-control-vas-uc
+#| tbl-cap: "ANOVA between control VAS and FC groups in UC/IBDU."
+
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = OverallControl ~ cat) %>%
+  summary() %>%
+  pander()
 ```
 
 Instead to treating VAS as a continuous value, going forward, VAS will be
