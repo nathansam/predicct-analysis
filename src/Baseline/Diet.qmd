@@ -57,26 +57,40 @@ FFQ <- read_xlsx(paste0(
   "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
 ))
 
+FFQ$meat_overall <- rowSums(FFQ[, paste0("meat7", letters[1:12], "_grams")])
+
+FFQ$fish_overall <- rowSums(FFQ[, paste0("fish8", letters[1:13], "_grams")])
+
 FFQ$ParticipantNo <- FFQ$participantno
 demo <- merge(demo,
-  FFQ[, c("ParticipantNo", "Meat_sum", "fibre", "PUFA_percEng", "NOVAScore_cat", "dqi_tot")],
+  FFQ[, c(
+    "ParticipantNo",
+    "Meat_sum",
+    "meat_overall",
+    "fish_overall",
+    "fibre",
+    "PUFA_percEng",
+    "NOVAScore_cat",
+    "dqi_tot"
+  )],
   by = "ParticipantNo",
   all.x = TRUE,
   all.y = FALSE
 )
 ```
 
+
 ```{R}
-#library(writexl)
-#FFQ <- merge(FFQ,
+# library(writexl)
+# FFQ <- merge(FFQ,
 #  demo[, c("ParticipantNo", "FC", "Sex", "diagnosis2")],
 #  by = "ParticipantNo",
 #  all.x = TRUE,
 #  all.y = FALSE
-#)
+# )
 
-#FFQ <- subset(FFQ, !is.na(FC))
-#write_xlsx(FFQ, paste0("/Volumes/igmm/cvallejo-predicct/predicct/processed/", "FFQ-FC.xlsx"))
+# FFQ <- subset(FFQ, !is.na(FC))
+# write_xlsx(FFQ, paste0("/Volumes/igmm/cvallejo-predicct/predicct/processed/", "FFQ-FC.xlsx"))
 ```
 
 PREdiCCt has collected data on diet via food frequency questionnaires (FFQs) and
@@ -157,6 +171,118 @@ demo %>%
   pander()
 ```
 
+## Overall meat intake
+
+```{R}
+#| label: fig-meat-overall-dist
+#| fig-cap: "Distribution of overall meat intake."
+#| warning: false
+demo %>%
+  drop_na(meat_overall) %>%
+  ggplot(aes(x = meat_overall, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Meat intake (g)",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
+```
+
+No association was observed between meat intake and FC in CD. However, a
+significant association was observed between meat intake and FC in UC/IBDU
+[@tbl-meat-overall-uc].
+
+```{R}
+#| label: tbl-meat-overall-cd
+#| tbl-cap: "ANOVA between meat intake and FC groups in Crohn's disease."
+
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = meat_overall ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+
+
+```{R}
+#| label: tbl-meat-overall-uc
+#| tbl-cap: "ANOVA between meat intake and FC groups in UC/IBDU."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = meat_overall ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+## Overall fish intake
+
+```{R}
+#| label: fig-fish-overall-dist
+#| fig-cap: "Distribution of overall fish intake."
+#| warning: false
+demo %>%
+  drop_na(fish_overall) %>%
+  ggplot(aes(x = fish_overall, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 25) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Fish intake (g)",
+    y = "Frequency",
+    color = "IBD type",
+    fill = "IBD type"
+  ) +
+  scale_fill_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#CDEDF6", "#FF6B6B")
+  ) +
+  scale_color_manual(
+    labels = c("UC/IBDU", "Crohn's"),
+    values = c("#5EB1BF", "#C24343")
+  ) +
+  facet_grid(rows = vars(diagnosis2))
+```
+
+No association was observed between meat intake and FC in CD. However, a
+significant association was observed between meat intake and FC in UC/IBDU
+[@tbl-meat-overall-uc].
+
+```{R}
+#| label: tbl-fish-overall-cd
+#| tbl-cap: "ANOVA between fish intake and FC groups in Crohn's disease."
+
+demo %>%
+  filter(diagnosis2 == "CD") %>%
+  aov(formula = fish_overall ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+
+
+```{R}
+#| label: tbl-fish-overall-uc
+#| tbl-cap: "ANOVA between fish intake and FC groups in UC/IBDU."
+demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  aov(formula = fish_overall ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
 ## Dietary fibre
 
 Fibre has frequently investigated as a potential factor in IBD pathogenesis,
@@ -168,7 +294,8 @@ patients [@ananthakrishnan_2013].
 
 A US study of 1,130 CD subjects found CD patients who reported that they did not
 avoid high-fibre foods were approximately 40\% less likely to have a disease
-flare in a 6-month period than those who avoided high-fibre foods [@brotherton_2016].
+flare in a 6-month period than those who avoided high-fibre foods
+[@brotherton_2016].
 
 There is less evidence of a relationship between UC and dietary fibre.  
 
