@@ -151,7 +151,7 @@ The page describing demographic variables in a descriptive manner can be found
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -238,7 +238,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/demographics/age.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/demographics/age.png",
@@ -247,10 +247,10 @@ png("plots/cd/hard-flare/demographics/age.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -271,7 +271,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Clinical flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -304,7 +304,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/demographics/age.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/demographics/age.png",
@@ -313,10 +313,10 @@ png("plots/uc/soft-flare/demographics/age.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 
 fit.me <- coxph(
@@ -358,7 +358,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/demographics/age.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/demographics/age.png",
@@ -367,10 +367,10 @@ png("plots/uc/hard-flare/demographics/age.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 
 fit.me <- coxph(
@@ -394,7 +394,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -420,7 +420,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/demographics/bmi.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/demographics/bmi.png",
@@ -429,10 +429,10 @@ png("plots/cd/soft-flare/demographics/bmi.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 
 fit.me <- coxph(
@@ -476,7 +476,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/demographics/bmi.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/demographics/bmi.png",
@@ -485,10 +485,10 @@ png("plots/cd/hard-flare/demographics/bmi.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -511,7 +511,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -536,7 +536,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/demographics/bmi.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/demographics/bmi.png",
@@ -545,10 +545,10 @@ png("plots/uc/soft-flare/demographics/bmi.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 
 fit.me <- coxph(
@@ -589,7 +589,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/demographics/bmi.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/demographics/bmi.png",
@@ -598,10 +598,10 @@ png("plots/uc/hard-flare/demographics/bmi.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 
 fit.me <- coxph(

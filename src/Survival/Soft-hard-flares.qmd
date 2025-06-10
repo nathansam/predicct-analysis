@@ -38,8 +38,10 @@ if (file.exists("/docker")) { # If running in docker
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-  followup.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/final/",
-                         "20240308/Followup/")
+  followup.dir <- paste0(
+    "/Volumes/igmm/cvallejo-predicct/predicct/final/",
+    "20240308/Followup/"
+  )
 }
 
 demo <- readRDS(paste0(outdir, "demo-full.RDS"))
@@ -61,11 +63,11 @@ cox.summary <- function(fit) {
     ) %>%
     print()
   cat("\ ")
-  
+
   cat("Diagnostics:\ ")
-  
+
   cat('::: {.panel-tabset group="diagnostics"}\ ')
-  
+
   cat("###### Proportional hazards assumption test \ ")
   cox.zph(fit)$table %>%
     knitr::kable(
@@ -78,21 +80,22 @@ cox.summary <- function(fit) {
       digits = 4
     ) %>%
     print()
-  
+
   cat("###### DF betas \ ")
-  
+
   print(ggcoxdiagnostics(fit, type = "dfbeta"))
-  
+
   cat("###### Martignale residuals \n")
   print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-  
+
   cat(":::")
   return()
 }
 ```
 
-This page explores soft and hard flares. Survival curves are compared across
-diseases, and soft and hard flares are compared directly. 
+This page explores patient-reported and hard flares. Survival curves are
+compared across diseases, and patient-reported and hard flares are compared
+directly. 
 
 ## Response rates
 
@@ -115,15 +118,17 @@ p1 <- monthly %>%
   ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
   geom_bar(fill = "#F17300", color = "#904200") +
   theme_minimal() +
-  ylab ("Monthly questionnaire responses") +
+  ylab("Monthly questionnaire responses") +
   xlab("") +
-  scale_x_discrete(breaks = paste0("M", seq(1, 24, by = 2)),
-                     labels = paste0("M", seq(1, 24, by = 2))) +
+  scale_x_discrete(
+    breaks = paste0("M", seq(1, 24, by = 2)),
+    labels = paste0("M", seq(1, 24, by = 2))
+  ) +
   ylim(0, 1200)
 
 
 
-monthly.fc <-  monthly %>%
+monthly.fc <- monthly %>%
   filter(ParticipantNo %in% subset(demo, !is.na(cat))$ParticipantNo)
 
 p2 <- monthly.fc %>%
@@ -131,13 +136,15 @@ p2 <- monthly.fc %>%
   ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
   geom_bar(fill = "#A8201A", color = "#6F0802") +
   theme_minimal() +
-  ylab ("Monthly questionnaire responses") +
+  ylab("Monthly questionnaire responses") +
   xlab("") +
-  scale_x_discrete(breaks = paste0("M", seq(1, 24, by = 2)),
-                     labels = paste0("M", seq(1, 24, by = 2))) +
+  scale_x_discrete(
+    breaks = paste0("M", seq(1, 24, by = 2)),
+    labels = paste0("M", seq(1, 24, by = 2))
+  ) +
   ylim(0, 1200)
 
-monthly.ffq <-  monthly %>%
+monthly.ffq <- monthly %>%
   filter(ParticipantNo %in% subset(demo, (!is.na(cat)) & (!is.na(fibre)))$ParticipantNo)
 
 p3 <- monthly.ffq %>%
@@ -145,14 +152,16 @@ p3 <- monthly.ffq %>%
   ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
   geom_bar(fill = "#0F8B8D", color = "#005354") +
   theme_minimal() +
-  ylab ("Monthly questionnaire responses") +
+  ylab("Monthly questionnaire responses") +
   xlab("Month of follow-up") +
-  scale_x_discrete(breaks = paste0("M", seq(1, 24, by = 2)),
-                     labels = paste0("M", seq(1, 24, by = 2))) +
+  scale_x_discrete(
+    breaks = paste0("M", seq(1, 24, by = 2)),
+    labels = paste0("M", seq(1, 24, by = 2))
+  ) +
   ylim(0, 1200)
 
-p <- p1/p2/p3 +
-  plot_annotation(tag_levels = "A")  & 
+p <- p1 / p2 / p3 +
+  plot_annotation(tag_levels = "A") &
   theme(plot.tag = element_text(face = "bold", size = 18))
 
 
@@ -161,13 +170,12 @@ ggsave("plots/response-rate.png", p, width = 7, height = 15)
 p
 ```
 
-## Primary outcome: First clinical flare
+## Primary outcome: First patient-reported flare
 
 ```{R}
 #| warning: false
 flares <- read_xlsx(
-  paste0(followup.dir, "all-flares.xlsx"
-  ),
+  paste0(followup.dir, "all-flares.xlsx"),
   na = ".",
   sheet = 1
 ) %>%
@@ -176,13 +184,13 @@ flares <- read_xlsx(
 flare.df <- merge(demo, flares, by = "ParticipantNo")
 ```
 
-For clinical flares, a clinical flare is primarily defined by a subject reporting their
-disease as uncontrolled. The time of the flare is given by the date the subject
-reported their symptoms worsening. 
+For patient-reported flares, a  flare is primarily defined by a subject
+reporting their disease as uncontrolled. The time of the flare is given by the
+date the subject reported their symptoms worsening. 
 
 If a date for when the symptoms worsened is given, but the subject did not
 answer if their disease was uncontrolled, it is assumed their disease is not
-controlled (in other words, it is assumed a clinical flare occurred).
+controlled (in other words, it is assumed a patient-reported flare occurred).
 
 If a subject reported their disease as being uncontrolled, but did not give a
 date for the worsening of their symptoms, then the earliest date given for
@@ -191,45 +199,46 @@ their IBD care team, or surgery in the questionnaire response was used. If none
 of these dates were provided then the date of the questionnaire response was
 used instead. 
 
-If a hard flare occurs prior to a clinical flare then the clinical flare is assumed to
-occur on the same date as the hard flare.
+If a hard flare occurs prior to a patient-reported flare then the
+patient-reported flare is assumed to occur on the same date as the hard flare.
 
-A complete description of the steps taken to calculate clinical flares is outlined
-in the below drop-down section. 
+A complete description of the steps taken to calculate patient-reported flares
+is outlined in the below drop-down section. 
 
 <details>
-<summary> Steps for calculating clinical flares </summary>
+<summary> Steps for calculating patient-reported flares </summary>
 
 1. If date of flare is before date of entry to study, then delete flare date and
    recode diseasecontrolled as 1.
 2. If flare date is after the questionnaire date (I.E in the future), reset
    flare date to questionnaire date.
 3. If questionnaire completed after date of withdrawal, remove.
-4. If date of flare is >2 years after entry, censor clinical flare at 2 years.
+4. If date of flare is >2 years after entry, censor patient-reported flare at 2
+   years.
 5. Time is earliest of flare time or end of follow up, from entry date.
 6. All data censored at 2 years.
 7. Including the hard flares (hard flare data are much more straightforward,
    flare=`diseaseflareyn` and flare date=`firstflarestartdate` from EOS data)
-    * If both datasets say no flare, clinical flare is no and follow up time from
-      hard flare <= 2 years, softflare time is longest of questionnaire and hard
-      flare times
-    * If both datasets say no flare, clinical flare is no and follow up time from
-      hard flare > 2 years, softflare time is 2 years
+    * If both datasets say no flare, patient-reported flare is no and follow up time from
+      hard flare <= 2 years, patient-reported flare time is longest of
+      questionnaire and hard flare times
+    * If both datasets say no flare, patient-reported flare is no and follow up
+      time from hard flare > 2 years, patient-reported time is 2 years
     * If no flare in questionnaires, but hard flare reported before 2 years of
       follow up, take hard flare data
     * If no flare in questionnaires, but hard flare reported after 2 years,
-      softflare is no and softflare time =2 years
-    * If flare in questionnaire and no hard flare, softflare from questionnaire
-      data
+      patient-reported flare is no and patient-reported flare time is 2 years
+    * If flare in questionnaire and no hard flare, patient-reported flare from
+      questionnaire data
     * If flare in questionnaire and also hard flare, take the earliest time
-    * If questionnaire data is missing and no hard flare, clinical flare is no and
-      time is earliest of hard flare follow up and 2 years
+    * If questionnaire data is missing and no hard flare, patient-reported flare
+      is no and time is earliest of hard flare follow up and 2 years
     * If questionnaire data is missing and hard flare reported within 2 years,
-      softflare taken from hard flare data
+      patient-reported flare data are taken from hard flare data
     * If questionnaire data is missing and hard flare reported after 2 years
-      then softflare is no and time is 2 years
+      then patient-reported flare is no and time is 2 years
     * Otherwise if questionnaire data is not missing and hardflare is, then
-      softflare taken from questionnaire data
+      patient-reported flare is taken from questionnaire data
 
 All times are taken from the earliest reported flare.
 
@@ -237,7 +246,7 @@ All times are taken from the earliest reported flare.
 
 ```{R}
 #| label: fig-km-soft
-#| fig-cap: "Kaplan-Meier curves for clinical flares stratified by IBD type."
+#| fig-cap: "Kaplan-Meier curves for patient-reported flares stratified by IBD type."
 #| fig-height: 6.5
 
 fit <- flare.df %>%
@@ -250,13 +259,15 @@ p <- ggsurvplot(fit,
   pval.method = TRUE,
   ggtheme = theme_minimal(),
   risk.table = TRUE,
-  legend.title = "IBD Type",
+  legend.title = "IBD type",
   legend.labs = c("Crohn's disease", "UC/IBDU"),
-  palette = c("#00A6ED", "#F6511D"),
+  tables.y.text = FALSE,
+  palette = c("#4F6D7A", "#02C3BD"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  tables.col = "strata"
 )
-p
+saveRDS(p, paste0(outdir, "flare-soft.RDS"))
+print(p, newpage = FALSE)
 ```
 
 ## Secondary outcome: first hard flare
@@ -270,11 +281,14 @@ reported by subjects themselves.
 #| fig-cap: "Kaplan-Meier curves of hard flares stratified by IBD type across the first two years."
 
 flare.df.cutoff <- flare.df %>%
-  mutate(hardflare = if_else(hardflare_time > 730.5, 0, hardflare),
-         hardflare_time = if_else(hardflare_time > 730.5, 730.5, hardflare_time))
+  mutate(
+    hardflare = if_else(hardflare_time > 730.5, 0, hardflare),
+    hardflare_time = if_else(hardflare_time > 730.5, 730.5, hardflare_time)
+  )
 
 fit <- survfit(Surv(hardflare_time, hardflare) ~ diagnosis2,
-               data = flare.df.cutoff)
+  data = flare.df.cutoff
+)
 p <- ggsurvplot(fit,
   data = flare.df.cutoff,
   conf.int = TRUE,
@@ -282,12 +296,15 @@ p <- ggsurvplot(fit,
   pval.method = TRUE,
   ggtheme = theme_minimal(),
   risk.table = TRUE,
-  palette = c("#00A6ED", "#F6511D"),
+  legend.title = "IBD type",
+  legend.labs = c("Crohn's disease", "UC/IBDU"),
+  tables.y.text = FALSE,
+  palette = c("#4F6D7A", "#02C3BD"),
   xlab = "Time from study recrutiment (days)",
-  legend.title = "Flare type",
-  break.time.by = 200
+  break.time.by = 200,
+  tables.col = "strata"
 )
-print(p)
+print(p, newpage = FALSE)
 ```
 
 
@@ -296,7 +313,7 @@ print(p)
 #| label: tbl-hard-full
 #| tbl-cap: "Hard flare survival rates across the full follow-up."
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~1 , data = flare.df)
+fit <- survfit(Surv(hardflare_time, hardflare) ~ 1, data = flare.df)
 p <- ggsurvplot(fit,
   data = flare.df,
   conf.int = TRUE,
@@ -304,7 +321,7 @@ p <- ggsurvplot(fit,
   pval.method = TRUE,
   ggtheme = theme_minimal(),
   risk.table = TRUE,
-  palette = c("#00A6ED", "#F6511D"),
+  palette = c("#4F6D7A", "#02C3BD"),
   xlab = "Time from study recrutiment (days)",
   break.time.by = 400
 )
@@ -330,12 +347,15 @@ p <- ggsurvplot(fit,
   pval.method = TRUE,
   ggtheme = theme_minimal(),
   risk.table = TRUE,
-  palette = c("#00A6ED", "#F6511D"),
+  palette = c("#4F6D7A", "#02C3BD"),
   xlab = "Time from study recrutiment (days)",
-  legend.title = "Flare type",
-  break.time.by = 400
+  legend.title = "IBD type",
+  legend.labs = c("Crohn's disease", "UC/IBDU"),
+  break.time.by = 400,
+  tables.y.text = FALSE
 )
-print(p)
+saveRDS(p, paste0(outdir, "flare-hard.RDS"))
+print(p, newpage = FALSE)
 ```
 
 
@@ -349,57 +369,61 @@ fit %>%
   )
 ```
 
-## Comparison of hard and clinical flares 
+## Comparison of hard and patient-reported flares 
 
 ```{R}
 #| fig-height: 6.5
 #| label: fig-comb-comp
-#| fig-cap: "Survival curves for soft and hard flares."
+#| fig-cap: "Survival curves for patient-reported and hard flares."
 flare.comb <- rbind(
-  data.frame(ParticipantNo = flares$ParticipantNo,
-           Cens = flares$hardflare,
-           time = flares$hardflare_time,
-           type = "Hard flare"),
-  data.frame(ParticipantNo = flares$ParticipantNo,
-             Cens = flares$softflare,
-             time = flares$softflare_time,
-             type = "Clinical flare")
+  data.frame(
+    ParticipantNo = flares$ParticipantNo,
+    Cens = flares$hardflare,
+    time = flares$hardflare_time,
+    type = "Hard flare"
+  ),
+  data.frame(
+    ParticipantNo = flares$ParticipantNo,
+    Cens = flares$softflare,
+    time = flares$softflare_time,
+    type = "Patient-reported flare"
   )
+)
 
 flare.comb <- flare.comb %>%
   drop_na(Cens, time)
 
 
 flare.comb$type <- factor(flare.comb$type,
-                          levels = c("Hard flare","Clinical flare"))
+  levels = c("Hard flare", "Patient-reported flare")
+)
 
 
 fit <- survfit(Surv(time, Cens) ~ type, data = flare.comb)
 
 
 p <- ggsurvplot(fit,
-                data = flare.comb,
-                conf.int = TRUE,
-                pval = FALSE,
-                pval.method = FALSE,
-                ggtheme = theme_minimal(),
-                risk.table = TRUE,
-                palette = c("#4a938e", "#e493a3"),
-                xlab = "Time from study recrutiment (days)",
-                legend.title = "Flare type",
-                legend.labs = c("Hard flare", "Clinical flare"),
-                tables.y.text = FALSE,
-                tables.col = "strata",
-                break.time.by = 300,
-                xlim = c(0, 2200)
-) 
+  data = flare.comb,
+  conf.int = TRUE,
+  pval = FALSE,
+  pval.method = FALSE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  palette = c("#DD6E42", "#EE1B65"),
+  xlab = "Time from study recrutiment (days)",
+  legend.title = "Flare type",
+  legend.labs = c("Hard flare", "Patient-reported flare"),
+  tables.y.text = FALSE,
+  tables.col = "strata",
+  break.time.by = 300,
+  xlim = c(0, 2200)
+)
 
 cairo_pdf("plots/flare-comparison.pdf", width = 7, height = 7)
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 saveRDS(p, paste0(outdir, "flare-comparison.RDS"))
-
-p
+print(p, newpage = FALSE)
 ```
 
 
@@ -409,7 +433,7 @@ p
 
 fit %>%
   tbl_survfit(
-    times = 365*2,
+    times = 365 * 2,
     label = "Flare type",
     statistic = "{estimate} ({conf.low}, {conf.high})",
     label_header = "**2-year survival (95% CI)**"
@@ -421,7 +445,7 @@ fit %>%
 #| label: tbl-comb-comp-cd
 #| tbl-cap: "Survival rates after two years of follow-up for Crohn's disease only."
 
-flare.comb.cd <-  flare.comb %>%
+flare.comb.cd <- flare.comb %>%
   merge(demo[, c("ParticipantNo", "diagnosis2")], by = "ParticipantNo") %>%
   filter(diagnosis2 == "CD") %>%
   select(-diagnosis2)
@@ -442,7 +466,7 @@ fit.cd %>%
 #| label: tbl-comb-comp-uc
 #| tbl-cap: "Survival rates after two years of follow-up for ulcerative colitis/IBDU only."
 
-flare.comb.uc<-  flare.comb %>%
+flare.comb.uc <- flare.comb %>%
   merge(demo[, c("ParticipantNo", "diagnosis2")], by = "ParticipantNo") %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   select(-diagnosis2)
@@ -463,11 +487,11 @@ fit.uc %>%
 #| include: false
 count <- 0
 for (id in unique(flare.comb$ParticipantNo)) {
-  temp <- subset(flare.comb,ParticipantNo == id)
+  temp <- subset(flare.comb, ParticipantNo == id)
   if (nrow(temp) == 2) {
     if (all(temp$Cens == 1)) {
       if (temp[1, "time"] == temp[2, "time"]) {
-        count <- count + 1 
+        count <- count + 1
       }
     }
   }

@@ -126,7 +126,7 @@ present, it is difficult to explore this in more detail (e.g. by meat type).
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -161,7 +161,7 @@ p <- ggsurvplot(fit,
 saveRDS(p, paste0(outdir, "meat-cd-soft.RDS"))
 
 cairo_pdf("plots/cd/soft-flare/diet/meat.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/diet/meat.png",
@@ -170,10 +170,10 @@ png("plots/cd/soft-flare/diet/meat.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -211,7 +211,7 @@ p <- ggsurvplot(fit,
 saveRDS(p, paste0(outdir, "meat-cd-hard.RDS"))
 
 cairo_pdf("plots/cd/hard-flare/diet/meat.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/diet/meat.png",
@@ -220,10 +220,10 @@ png("plots/cd/hard-flare/diet/meat.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -240,7 +240,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -273,7 +273,7 @@ p <- ggsurvplot(fit,
 )
 saveRDS(p, paste0(outdir, "meat-uc-soft.RDS"))
 cairo_pdf("plots/uc/soft-flare/diet/meat.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/diet/meat.png",
@@ -282,10 +282,10 @@ png("plots/uc/soft-flare/diet/meat.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -323,7 +323,7 @@ p <- ggsurvplot(fit,
 )
 saveRDS(p, paste0(outdir, "meat-uc-hard.RDS"))
 cairo_pdf("plots/uc/hard-flare/diet/meat.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/diet/meat.png",
@@ -332,10 +332,10 @@ png("plots/uc/hard-flare/diet/meat.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -354,7 +354,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -387,7 +387,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/diet/meat_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/diet/meat_overall.png",
@@ -396,10 +396,10 @@ png("plots/cd/soft-flare/diet/meat_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -435,7 +435,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/diet/meat_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/diet/meat_overall.png",
@@ -444,10 +444,10 @@ png("plots/cd/hard-flare/diet/meat_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -464,7 +464,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -495,7 +495,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/diet/meat_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/diet/meat_overall.png",
@@ -504,10 +504,10 @@ png("plots/uc/soft-flare/diet/meat_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -544,7 +544,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/diet/meat_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/diet/meat_overall.png",
@@ -553,10 +553,10 @@ png("plots/uc/hard-flare/diet/meat_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -575,7 +575,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -608,7 +608,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/diet/fish_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/diet/fish_overall.png",
@@ -617,10 +617,10 @@ png("plots/cd/soft-flare/diet/fish_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -656,7 +656,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/diet/fish_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/diet/fish_overall.png",
@@ -665,10 +665,10 @@ png("plots/cd/hard-flare/diet/fish_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -685,7 +685,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -716,7 +716,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/diet/fish_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/diet/fish_overall.png",
@@ -725,10 +725,10 @@ png("plots/uc/soft-flare/diet/fish_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -765,7 +765,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/diet/fish_overall.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/diet/fish_overall.png",
@@ -774,10 +774,10 @@ png("plots/uc/hard-flare/diet/fish_overall.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -797,7 +797,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -830,7 +830,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/diet/fibre.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/diet/fibre.png",
@@ -839,10 +839,10 @@ png("plots/cd/soft-flare/diet/fibre.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -878,7 +878,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/diet/fibre.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/diet/fibre.png",
@@ -887,10 +887,10 @@ png("plots/cd/hard-flare/diet/fibre.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -907,7 +907,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -938,7 +938,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/diet/fibre.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/diet/fibre.png",
@@ -947,10 +947,10 @@ png("plots/uc/soft-flare/diet/fibre.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -987,7 +987,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/diet/fibre.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/diet/fibre.png",
@@ -996,10 +996,10 @@ png("plots/uc/hard-flare/diet/fibre.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -1022,7 +1022,7 @@ now, these data will be used.
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1054,7 +1054,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/diet/pufa.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/diet/pufa.png",
@@ -1063,10 +1063,10 @@ png("plots/cd/soft-flare/diet/pufa.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -1102,7 +1102,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/diet/pufa.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/diet/pufa.png",
@@ -1111,10 +1111,10 @@ png("plots/cd/hard-flare/diet/pufa.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -1131,7 +1131,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1164,7 +1164,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/diet/pufa.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/diet/pufa.png",
@@ -1173,10 +1173,10 @@ png("plots/uc/soft-flare/diet/pufa.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -1214,7 +1214,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/diet/pufa.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/diet/pufa.png",
@@ -1223,10 +1223,10 @@ png("plots/uc/hard-flare/diet/pufa.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -1250,7 +1250,7 @@ scores [@Monteiro_2017].
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1275,7 +1275,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/diet/nova.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/diet/nova.png",
@@ -1284,10 +1284,10 @@ png("plots/cd/soft-flare/diet/nova.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -1323,7 +1323,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/diet/nova.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/diet/nova.png",
@@ -1332,10 +1332,10 @@ png("plots/cd/hard-flare/diet/nova.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -1352,7 +1352,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1379,7 +1379,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/diet/nova.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/diet/nova.png",
@@ -1388,10 +1388,10 @@ png("plots/uc/soft-flare/diet/nova.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -1428,7 +1428,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/diet/nova.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/diet/nova.png",
@@ -1437,10 +1437,10 @@ png("plots/uc/hard-flare/diet/nova.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -1463,7 +1463,7 @@ drink (Nova 4).
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1495,7 +1495,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/diet/UPF.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/diet/UPF.png",
@@ -1504,10 +1504,10 @@ png("plots/cd/soft-flare/diet/UPF.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -1543,7 +1543,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/diet/UPF.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/diet/UPF.png",
@@ -1552,10 +1552,10 @@ png("plots/cd/hard-flare/diet/UPF.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -1572,7 +1572,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1604,7 +1604,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/diet/UPF.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/diet/UPF.png",
@@ -1613,10 +1613,10 @@ png("plots/uc/soft-flare/diet/UPF.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -1654,7 +1654,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/diet/UPF.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/diet/UPF.png",
@@ -1663,10 +1663,10 @@ png("plots/uc/hard-flare/diet/UPF.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~

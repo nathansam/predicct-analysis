@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2025-05-12">
+<meta name="dcterms.date" content="2025-06-10">
 
 <title>PREdiCCt analyses - Introduction</title>
 <style>
@@ -119,10 +119,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Introduction">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2025-05-12">
-<meta name="citation_cover_date" content="2025-05-12">
+<meta name="citation_publication_date" content="2025-06-10">
+<meta name="citation_cover_date" content="2025-06-10">
 <meta name="citation_year" content="2025">
-<meta name="citation_online_date" content="2025-05-12">
+<meta name="citation_online_date" content="2025-06-10">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Inflammatory bowel disease and smoking: A review of epidemiology, pathophysiology, and therapeutic implications;,citation_author=Tanja Birrenbach;,citation_author=Ulrich Böcker;,citation_publication_date=2004-11;,citation_cover_date=2004-11;,citation_year=2004;,citation_fulltext_html_url=http://dx.doi.org/10.1097/00054725-200411000-00019;,citation_issue=6;,citation_doi=10.1097/00054725-200411000-00019;,citation_issn=1078-0998;,citation_volume=10;,citation_journal_title=Inflammatory Bowel Diseases;,citation_publisher=Oxford University Press;">
 <meta name="citation_reference" content="citation_title=The UN decade of nutrition, the NOVA food classification and the trouble with ultra-processing;,citation_author=Carlos Augusto Monteiro;,citation_author=Geoffrey Cannon;,citation_author=Jean-Claude Moubarac;,citation_author=Renata Bertazzi Levy;,citation_author=Maria Laura C Louzada;,citation_author=Patrícia Constante Jaime;,citation_publication_date=2017-03;,citation_cover_date=2017-03;,citation_year=2017;,citation_fulltext_html_url=http://dx.doi.org/10.1017/S1368980017000234;,citation_issue=1;,citation_doi=10.1017/s1368980017000234;,citation_issn=1475-2727;,citation_volume=21;,citation_journal_title=Public Health Nutrition;,citation_publisher=Cambridge University Press;">
@@ -336,7 +336,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 12, 2025</p>
+      <p class="date">June 10, 2025</p>
     </div>
   </div>
   
@@ -349,11 +349,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>This report explores associations between time to flare and the variables recorded at baseline. Time to flare is modelled using Cox models with the variable of interest and controlled variables (sex, and deprivation) included as fixed effects. A gamma frailty term is employed for hospital sites (which may capture inter-hospital differences).</p>
-<p>The primary study endpoint is soft flare which is defined as a participant reporting their disease as being uncontrolled when they completed a monthly study questionnaire.</p>
-<p>For soft flares, only the first two years of follow-up are considered as this was the time interval in which questionnaires were sent to participants.</p>
+<p>The primary study endpoint is patient-reported flare which is defined as a participant reporting their disease as being uncontrolled when they completed a monthly study questionnaire.</p>
+<p>For patient-reported flaress, only the first two years of follow-up are considered as this was the time interval in which questionnaires were sent to participants.</p>
 <p>The secondary study endpoint is hard flare, which required elevated CRP and/or CRP and for the subject to change medication. Data for this endpoint was collected via end-of-study phenotyping.</p>
 <p>For hard flares, the full study follow-up period has been used, from study recruitment to the time the end of study phenotyping was completed.</p>
-<p>Soft and hard flares have been identified by Dr Linda Williams, the PREdiCCt trial statistician. The same flare definitions have been used across all teams working on PREdiCCt.</p>
+<p>Patient-reported and hard flares have been identified by Dr Linda Williams, the PREdiCCt trial statistician. The same flare definitions have been used across all teams working on PREdiCCt. The full steps for defining patient-reported flares are included below.</p>
+<details>
+<summary>
+Steps for calculating patient-reported flares
+</summary>
+<ol type="1">
+<li>If date of flare is before date of entry to study, then delete flare date and recode diseasecontrolled as 1.</li>
+<li>If flare date is after the questionnaire date (I.E in the future), reset flare date to questionnaire date.</li>
+<li>If questionnaire completed after date of withdrawal, remove.</li>
+<li>If date of flare is &gt;2 years after entry, censor patient-reported flare at 2 years.</li>
+<li>Time is earliest of flare time or end of follow up, from entry date.</li>
+<li>All data censored at 2 years.</li>
+<li>Including the hard flares (hard flare data are much more straightforward, flare=<code>diseaseflareyn</code> and flare date=<code>firstflarestartdate</code> from EOS data)
+<ul>
+<li>If both datasets say no flare, patient-reported flare is no and follow up time from hard flare &lt;= 2 years, patient-reported flare time is longest of questionnaire and hard flare times</li>
+<li>If both datasets say no flare, patient-reported flare is no and follow up time from hard flare &gt; 2 years, patient-reported time is 2 years</li>
+<li>If no flare in questionnaires, but hard flare reported before 2 years of follow up, take hard flare data</li>
+<li>If no flare in questionnaires, but hard flare reported after 2 years, patient-reported flare is no and patient-reported flare time is 2 years</li>
+<li>If flare in questionnaire and no hard flare, patient-reported flare from questionnaire data</li>
+<li>If flare in questionnaire and also hard flare, take the earliest time</li>
+<li>If questionnaire data is missing and no hard flare, patient-reported flare is no and time is earliest of hard flare follow up and 2 years</li>
+<li>If questionnaire data is missing and hard flare reported within 2 years, patient-reported flare data are taken from hard flare data</li>
+<li>If questionnaire data is missing and hard flare reported after 2 years then patient-reported flare is no and time is 2 years</li>
+<li>Otherwise if questionnaire data is not missing and hardflare is, then patient-reported flare is taken from questionnaire data</li>
+</ul></li>
+</ol>
+<p>All times are taken from the earliest reported flare.</p>
+</details>
 
 
 <!-- -->
@@ -995,23 +1022,64 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>frailty term is employed for hospital sites (which may capture inter-hospital</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>differences).</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>The primary study endpoint is soft flare which is defined as a participant</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>reporting their disease as being uncontrolled when they completed a monthly</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>study questionnaire. </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>The primary study endpoint is patient-reported flare which is defined as a</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>participant reporting their disease as being uncontrolled when they completed a</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>monthly study questionnaire. </span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>For soft flares, only the first two years of follow-up are considered as this</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>was the time interval in which questionnaires were sent to participants. </span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>The secondary study endpoint is hard flare, which required elevated CRP and/or</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>CRP and for the subject to change medication. Data for this endpoint was</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>collected via end-of-study phenotyping. </span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>For hard flares, the full study follow-up period has been used, from study</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>recruitment to the time the end of study phenotyping was completed. </span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Soft and hard flares have been identified by Dr Linda Williams, the PREdiCCt</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>trial statistician. The same flare definitions have been used across all teams</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>working on PREdiCCt. </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>For patient-reported flaress, only the first two years of follow-up are</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>considered as this was the time interval in which questionnaires were sent to</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>participants. </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>The secondary study endpoint is hard flare, which required elevated CRP and/or</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>CRP and for the subject to change medication. Data for this endpoint was</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>collected via end-of-study phenotyping. </span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>For hard flares, the full study follow-up period has been used, from study</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>recruitment to the time the end of study phenotyping was completed. </span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>Patient-reported and hard flares have been identified by Dr Linda Williams, the</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>PREdiCCt trial statistician. The same flare definitions have been used across</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>all teams working on PREdiCCt. The full steps for defining patient-reported</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>flares are included below. </span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>&lt;details&gt;</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>&lt;summary&gt; Steps for calculating patient-reported flares &lt;/summary&gt;</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>If date of flare is before date of entry to study, then delete flare date and</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>   recode diseasecontrolled as 1.</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>If flare date is after the questionnaire date (I.E in the future), reset</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>   flare date to questionnaire date.</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>If questionnaire completed after date of withdrawal, remove.</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>If date of flare is &gt;2 years after entry, censor patient-reported flare at 2</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>   years.</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Time is earliest of flare time or end of follow up, from entry date.</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>All data censored at 2 years.</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Including the hard flares (hard flare data are much more straightforward,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>   flare=<span class="in">`diseaseflareyn`</span> and flare date=<span class="in">`firstflarestartdate`</span> from EOS data)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If both datasets say no flare, patient-reported flare is no and follow up</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>      time from hard flare &lt;= 2 years, patient-reported flare time is longest of</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>      questionnaire and hard flare times</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If both datasets say no flare, patient-reported flare is no and follow up</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>      time from hard flare &gt; 2 years, patient-reported time is 2 years</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If no flare in questionnaires, but hard flare reported before 2 years of</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>      follow up, take hard flare data</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If no flare in questionnaires, but hard flare reported after 2 years,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>      patient-reported flare is no and patient-reported flare time is 2 years</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If flare in questionnaire and no hard flare, patient-reported flare from</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>      questionnaire data</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If flare in questionnaire and also hard flare, take the earliest time</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and no hard flare, patient-reported flare</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>      is no and time is earliest of hard flare follow up and 2 years</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and hard flare reported within 2 years,</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>      patient-reported flare data are taken from hard flare data</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>If questionnaire data is missing and hard flare reported after 2 years</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>      then patient-reported flare is no and time is 2 years</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="ss">    * </span>Otherwise if questionnaire data is not missing and hardflare is, then</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>      patient-reported flare is taken from questionnaire data</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>All times are taken from the earliest reported flare.</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

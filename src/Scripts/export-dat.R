@@ -1,6 +1,16 @@
 library(dplyr)
 library(writexl)
 
+
+if (file.exists("/docker")) { # If running in docker
+  outdir <- "data/processed/"
+} else { # Run on OS directly
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+}
+
+flare.cd.df <- readRDS(paste0(outdir, "flares-biochem-cd.RDS"))
+flare.uc.df <- readRDS(paste0(outdir, "flares-biochem-uc.RDS"))
+
 flare.cd.df.sub <- flare.cd.df %>%
   select(ParticipantNo,
          SiteNo,
@@ -28,7 +38,6 @@ flare.cd.df.sub <- flare.cd.df %>%
          hardflare,
          hardflare_time)
 
-
 flare.uc.df.sub <- flare.uc.df %>%
   select(ParticipantNo,
          SiteNo,
@@ -55,9 +64,9 @@ flare.uc.df.sub <- flare.uc.df %>%
          hardflare,
          hardflare_time)
 
-temp <- plyr::rbind.fill(flare.cd.df.sub, flare.uc.df.sub)
-temp[, c(22:25, 26, 27, 28)] <- temp[, c(26, 27, 28, 22:25)]
-colnames(temp)[c(22:25, 26, 27, 28)] <- colnames(temp)[c(26, 27, 28, 22:25)]
+combined[, c(22:25, 26, 27, 28)] <- combined[, c(26, 27, 28, 22:25)]
+combined <- plyr::rbind.fill(flare.cd.df.sub, flare.uc.df.sub)
+colnames(combined)[c(22:25, 26, 27, 28)] <- colnames(combined)[c(26, 27, 28, 22:25)]
 
 write_xlsx(temp, "export-phenotype.xlsx")
 

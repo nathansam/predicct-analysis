@@ -17,12 +17,13 @@ and deprivation) included as fixed effects. A gamma
 frailty term is employed for hospital sites (which may capture inter-hospital
 differences).
 
-The primary study endpoint is soft flare which is defined as a participant
-reporting their disease as being uncontrolled when they completed a monthly
-study questionnaire. 
+The primary study endpoint is patient-reported flare which is defined as a
+participant reporting their disease as being uncontrolled when they completed a
+monthly study questionnaire. 
 
-For soft flares, only the first two years of follow-up are considered as this
-was the time interval in which questionnaires were sent to participants. 
+For patient-reported flaress, only the first two years of follow-up are
+considered as this was the time interval in which questionnaires were sent to
+participants. 
 
 The secondary study endpoint is hard flare, which required elevated CRP and/or
 CRP and for the subject to change medication. Data for this endpoint was
@@ -31,6 +32,46 @@ collected via end-of-study phenotyping.
 For hard flares, the full study follow-up period has been used, from study
 recruitment to the time the end of study phenotyping was completed. 
 
-Soft and hard flares have been identified by Dr Linda Williams, the PREdiCCt
-trial statistician. The same flare definitions have been used across all teams
-working on PREdiCCt. 
+Patient-reported and hard flares have been identified by Dr Linda Williams, the
+PREdiCCt trial statistician. The same flare definitions have been used across
+all teams working on PREdiCCt. The full steps for defining patient-reported
+flares are included below. 
+
+<details>
+<summary> Steps for calculating patient-reported flares </summary>
+
+1. If date of flare is before date of entry to study, then delete flare date and
+   recode diseasecontrolled as 1.
+2. If flare date is after the questionnaire date (I.E in the future), reset
+   flare date to questionnaire date.
+3. If questionnaire completed after date of withdrawal, remove.
+4. If date of flare is >2 years after entry, censor patient-reported flare at 2
+   years.
+5. Time is earliest of flare time or end of follow up, from entry date.
+6. All data censored at 2 years.
+7. Including the hard flares (hard flare data are much more straightforward,
+   flare=`diseaseflareyn` and flare date=`firstflarestartdate` from EOS data)
+    * If both datasets say no flare, patient-reported flare is no and follow up
+      time from hard flare <= 2 years, patient-reported flare time is longest of
+      questionnaire and hard flare times
+    * If both datasets say no flare, patient-reported flare is no and follow up
+      time from hard flare > 2 years, patient-reported time is 2 years
+    * If no flare in questionnaires, but hard flare reported before 2 years of
+      follow up, take hard flare data
+    * If no flare in questionnaires, but hard flare reported after 2 years,
+      patient-reported flare is no and patient-reported flare time is 2 years
+    * If flare in questionnaire and no hard flare, patient-reported flare from
+      questionnaire data
+    * If flare in questionnaire and also hard flare, take the earliest time
+    * If questionnaire data is missing and no hard flare, patient-reported flare
+      is no and time is earliest of hard flare follow up and 2 years
+    * If questionnaire data is missing and hard flare reported within 2 years,
+      patient-reported flare data are taken from hard flare data
+    * If questionnaire data is missing and hard flare reported after 2 years
+      then patient-reported flare is no and time is 2 years
+    * Otherwise if questionnaire data is not missing and hardflare is, then
+      patient-reported flare is taken from questionnaire data
+
+All times are taken from the earliest reported flare.
+
+</details>

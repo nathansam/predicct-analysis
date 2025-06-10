@@ -147,7 +147,7 @@ Of the variables considered here, only sex is associated with disease flare.
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 6
@@ -202,7 +202,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/controlled/sex.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/sex.png",
@@ -211,10 +211,10 @@ png("plots/cd/hard-flare/controlled/sex.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -223,7 +223,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 6
@@ -243,7 +243,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/sex.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/sex.png",
@@ -252,10 +252,10 @@ png("plots/uc/soft-flare/controlled/sex.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 #### Hard flare
@@ -278,7 +278,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/controlled/sex.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/sex.png",
@@ -287,7 +287,7 @@ png("plots/uc/hard-flare/controlled/sex.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 p
@@ -301,7 +301,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 6
@@ -321,7 +321,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/controlled/smoke.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/controlled/smoke.png",
@@ -330,10 +330,10 @@ png("plots/cd/soft-flare/controlled/smoke.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 #### Hard flare
@@ -356,7 +356,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/controlled/smoke.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/smoke.png",
@@ -365,10 +365,10 @@ png("plots/cd/hard-flare/controlled/smoke.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -377,7 +377,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 6
@@ -397,7 +397,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/smoke.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/smoke.png",
@@ -406,10 +406,10 @@ png("plots/uc/soft-flare/controlled/smoke.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 #### Hard flare
@@ -432,7 +432,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/controlled/smoke.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/smoke.png",
@@ -441,10 +441,10 @@ png("plots/uc/hard-flare/controlled/smoke.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -456,7 +456,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 7
@@ -475,7 +475,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/soft-flare/controlled/imd.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/controlled/imd.png",
@@ -484,10 +484,10 @@ png("plots/cd/soft-flare/controlled/imd.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 #### Hard flare
@@ -509,7 +509,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/cd/hard-flare/controlled/imd.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/imd.png",
@@ -518,10 +518,9 @@ png("plots/cd/hard-flare/controlled/imd.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
 ```
 
 :::
@@ -530,7 +529,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 7
@@ -549,7 +548,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/imd.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/imd.png",
@@ -558,10 +557,10 @@ png("plots/uc/soft-flare/controlled/imd.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 #### Hard flare
@@ -583,7 +582,7 @@ p <- ggsurvplot(fit,
 )
 
 cairo_pdf("plots/uc/hard-flare/controlled/imd.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/imd.png",
@@ -592,10 +591,10 @@ png("plots/uc/hard-flare/controlled/imd.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -606,7 +605,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 6
@@ -621,11 +620,12 @@ p <- ggsurvplot(fit,
   legend.title = "Faecal calprotectin",
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  title = "Time to clinical flare",
+  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250")
 )
 
 cairo_pdf("plots/cd/soft-flare/controlled/fc.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/soft-flare/controlled/fc.png",
@@ -634,12 +634,12 @@ png("plots/cd/soft-flare/controlled/fc.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 saveRDS(p, paste0(outdir, "fc-cd-soft.RDS"))
 
-p
+print(p, newpage = FALSE)
 ```
 
 #### Hard flare
@@ -657,11 +657,12 @@ p <- ggsurvplot(fit,
   legend.title = "Faecal calprotectin",
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  title = "Time to hard flare",
+  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250")
 )
 
 cairo_pdf("plots/cd/hard-flare/controlled/fc.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/cd/hard-flare/controlled/fc.png",
@@ -670,12 +671,12 @@ png("plots/cd/hard-flare/controlled/fc.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 saveRDS(p, paste0(outdir, "fc-cd-hard.RDS"))
 
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -684,7 +685,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| fig-height: 6
@@ -697,13 +698,14 @@ p <- ggsurvplot(fit,
   ggtheme = theme_minimal(),
   risk.table = TRUE,
   legend.title = "Faecal calprotectin",
+  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to clinical flare"
 )
 
 cairo_pdf("plots/uc/soft-flare/controlled/fc.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/soft-flare/controlled/fc.png",
@@ -712,11 +714,11 @@ png("plots/uc/soft-flare/controlled/fc.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 saveRDS(p, paste0(outdir, "fc-uc-soft.RDS"))
 
-p
+print(p, newpage = FALSE)
 ```
 
 #### Hard flare
@@ -733,12 +735,13 @@ p <- ggsurvplot(fit,
   risk.table = TRUE,
   legend.title = "Faecal calprotectin",
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
+  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250"),
   xlab = "Time from study recrutiment (days)",
   title = "Time to hard flare"
 )
 
 cairo_pdf("plots/uc/hard-flare/controlled/fc.pdf")
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 png("plots/uc/hard-flare/controlled/fc.png",
@@ -747,12 +750,12 @@ png("plots/uc/hard-flare/controlled/fc.png",
   units = "in",
   res = 300
 )
-p
+print(p, newpage = FALSE)
 invisible(dev.off())
 
 saveRDS(p, paste0(outdir, "fc-uc-hard.RDS"))
 
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -763,7 +766,7 @@ p
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare 
+#### Patient-reported flare 
 
 ```{R}
 #| output: "asis"
@@ -858,7 +861,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare 
+#### Patient-reported flare 
 
 ```{R}
 #| output: "asis"
