@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2025-06-10">
+<meta name="dcterms.date" content="2025-06-21">
 <title>PREdiCCt analyses - Overall tables</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Overall tables">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2025-06-10">
-<meta name="citation_cover_date" content="2025-06-10">
+<meta name="citation_publication_date" content="2025-06-21">
+<meta name="citation_cover_date" content="2025-06-21">
 <meta name="citation_year" content="2025">
-<meta name="citation_online_date" content="2025-06-10">
+<meta name="citation_online_date" content="2025-06-21">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Location is important: Differentiation between ileal and colonic crohn’s disease;,citation_author=Raja Atreya;,citation_author=Britta Siegmund;,citation_publication_date=2021-03;,citation_cover_date=2021-03;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.1038/s41575-021-00424-6;,citation_issue=8;,citation_doi=10.1038/s41575-021-00424-6;,citation_issn=1759-5053;,citation_volume=18;,citation_journal_title=Nature Reviews Gastroenterology &amp;amp;amp; Hepatology;,citation_publisher=Springer Science; Business Media LLC;">
 <meta name="citation_reference" content="citation_title=Between-assay variability of faecal calprotectin enzyme-linked immunosorbent assay kits;,citation_author=S J Whitehead;,citation_author=J French;,citation_author=M J Brookes;,citation_author=C Ford;,citation_author=R Gama;,citation_publication_date=2012-11;,citation_cover_date=2012-11;,citation_year=2012;,citation_fulltext_html_url=http://dx.doi.org/10.1258/acb.2012.011272;,citation_issue=1;,citation_doi=10.1258/acb.2012.011272;,citation_issn=1758-1001;,citation_volume=50;,citation_journal_title=Annals of Clinical Biochemistry: International Journal of Laboratory Medicine;,citation_publisher=SAGE Publications;">
@@ -396,7 +396,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 10, 2025</p>
+      <p class="date">June 21, 2025</p>
     </div>
   </div>
   
@@ -409,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">##############</span></span>
+<span><span class="co">############## </span></span>
 <span><span class="co">## Packages ##</span></span>
 <span><span class="co">##############</span></span>
 <span></span>
@@ -492,7 +492,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    <span class="va">BMIcat</span> <span class="op">+</span></span>
 <span>    <span class="va">diagnosis</span> <span class="op">+</span></span>
 <span>    <span class="va">`IBD Duration`</span> <span class="op">+</span></span>
-<span>    <span class="va">IMD</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">IMD</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="va">control_8</span> <span class="op">+</span></span>
 <span>    <span class="va">vas_control</span> <span class="op">+</span></span>
 <span>    <span class="va">FC</span> <span class="op">+</span></span>
@@ -659,40 +659,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td class="lastrow">53 (4.9%)</td>
 </tr>
 <tr class="odd">
-<td class="rowlabel firstrow">IMD</td>
+<td class="rowlabel firstrow">as.numeric(IMD)</td>
 <td class="firstrow"></td>
 <td class="firstrow"></td>
 <td class="firstrow"></td>
 </tr>
 <tr class="even">
-<td class="rowlabel">1</td>
-<td>221 (8.4%)</td>
-<td>172 (8.0%)</td>
-<td>80 (7.3%)</td>
-</tr>
-<tr class="odd">
-<td class="rowlabel">2</td>
-<td>449 (17.1%)</td>
-<td>372 (17.4%)</td>
-<td>158 (14.5%)</td>
-</tr>
-<tr class="even">
-<td class="rowlabel">3</td>
-<td>531 (20.2%)</td>
-<td>421 (19.6%)</td>
-<td>210 (19.2%)</td>
-</tr>
-<tr class="odd">
-<td class="rowlabel">4</td>
-<td>586 (22.3%)</td>
-<td>488 (22.8%)</td>
-<td>249 (22.8%)</td>
-</tr>
-<tr class="even">
-<td class="rowlabel">5</td>
-<td>812 (30.9%)</td>
-<td>669 (31.2%)</td>
-<td>385 (35.3%)</td>
+<td class="rowlabel">Median (IQR)</td>
+<td>4.00 (2.00 - 5.00)</td>
+<td>4.00 (2.00 - 5.00)</td>
+<td>4.00 (3.00 - 5.00)</td>
 </tr>
 <tr class="odd">
 <td class="rowlabel lastrow">Missing</td>
@@ -1551,7 +1527,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>    <span class="va">BMIcat</span> <span class="op">+</span></span>
 <span>    <span class="va">diagnosis</span> <span class="op">+</span></span>
 <span>    <span class="va">`IBD Duration`</span> <span class="op">+</span></span>
-<span>    <span class="va">IMD</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">IMD</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="va">control_8</span> <span class="op">+</span></span>
 <span>    <span class="va">vas_control</span> <span class="op">+</span></span>
 <span>    <span class="va">FC</span> <span class="op">+</span></span>
@@ -1745,46 +1721,18 @@ Table&nbsp;1: Baseline data by FC.
 <td class="lastrow">120 (5.6%)</td>
 </tr>
 <tr class="odd">
-<td class="rowlabel firstrow">IMD</td>
+<td class="rowlabel firstrow">as.numeric(IMD)</td>
 <td class="firstrow"></td>
 <td class="firstrow"></td>
 <td class="firstrow"></td>
 <td class="firstrow"></td>
 </tr>
 <tr class="even">
-<td class="rowlabel">1</td>
-<td>71 (6.6%)</td>
-<td>60 (8.8%)</td>
-<td>41 (10.7%)</td>
-<td>172 (8.0%)</td>
-</tr>
-<tr class="odd">
-<td class="rowlabel">2</td>
-<td>183 (17.0%)</td>
-<td>120 (17.6%)</td>
-<td>69 (18.0%)</td>
-<td>372 (17.4%)</td>
-</tr>
-<tr class="even">
-<td class="rowlabel">3</td>
-<td>222 (20.6%)</td>
-<td>132 (19.3%)</td>
-<td>67 (17.4%)</td>
-<td>421 (19.6%)</td>
-</tr>
-<tr class="odd">
-<td class="rowlabel">4</td>
-<td>245 (22.7%)</td>
-<td>155 (22.7%)</td>
-<td>88 (22.9%)</td>
-<td>488 (22.8%)</td>
-</tr>
-<tr class="even">
-<td class="rowlabel">5</td>
-<td>341 (31.7%)</td>
-<td>212 (31.0%)</td>
-<td>116 (30.2%)</td>
-<td>669 (31.2%)</td>
+<td class="rowlabel">Median (IQR)</td>
+<td>4.00 (3.00 - 5.00)</td>
+<td>4.00 (2.00 - 5.00)</td>
+<td>4.00 (2.00 - 5.00)</td>
+<td>4.00 (2.00 - 5.00)</td>
 </tr>
 <tr class="odd">
 <td class="rowlabel lastrow">Missing</td>
@@ -2114,7 +2062,7 @@ Table&nbsp;1: Baseline data by FC.
 <span>    <span class="va">BMIcat</span> <span class="op">+</span></span>
 <span>    <span class="va">diagnosis</span> <span class="op">+</span></span>
 <span>    <span class="va">`IBD Duration`</span> <span class="op">+</span></span>
-<span>    <span class="va">IMD</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">IMD</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="va">control_8</span> <span class="op">+</span></span>
 <span>    <span class="va">vas_control</span> <span class="op">+</span></span>
 <span>    <span class="va">FC</span> <span class="op">+</span></span>
@@ -2285,40 +2233,16 @@ Table&nbsp;2: Baseline data by IBD type.
 <td class="lastrow">120 (5.6%)</td>
 </tr>
 <tr class="odd">
-<td class="rowlabel firstrow">IMD</td>
+<td class="rowlabel firstrow">as.numeric(IMD)</td>
 <td class="firstrow"></td>
 <td class="firstrow"></td>
 <td class="firstrow"></td>
 </tr>
 <tr class="even">
-<td class="rowlabel">1</td>
-<td>85 (7.6%)</td>
-<td>87 (8.5%)</td>
-<td>172 (8.0%)</td>
-</tr>
-<tr class="odd">
-<td class="rowlabel">2</td>
-<td>211 (18.9%)</td>
-<td>161 (15.7%)</td>
-<td>372 (17.4%)</td>
-</tr>
-<tr class="even">
-<td class="rowlabel">3</td>
-<td>211 (18.9%)</td>
-<td>210 (20.5%)</td>
-<td>421 (19.6%)</td>
-</tr>
-<tr class="odd">
-<td class="rowlabel">4</td>
-<td>248 (22.2%)</td>
-<td>240 (23.4%)</td>
-<td>488 (22.8%)</td>
-</tr>
-<tr class="even">
-<td class="rowlabel">5</td>
-<td>352 (31.5%)</td>
-<td>317 (30.9%)</td>
-<td>669 (31.2%)</td>
+<td class="rowlabel">Median (IQR)</td>
+<td>4.00 (2.00 - 5.00)</td>
+<td>4.00 (3.00 - 5.00)</td>
+<td>4.00 (2.00 - 5.00)</td>
 </tr>
 <tr class="odd">
 <td class="rowlabel lastrow">Missing</td>
@@ -4005,10 +3929,10 @@ Session info
 <div class="cell-output-display">
 <p><strong>R version 4.4.3 (2025-02-28)</strong></p>
 <p><strong>Platform:</strong> aarch64-apple-darwin20</p>
-<p><strong>locale:</strong> en_GB.UTF-8||en_GB.UTF-8||en_GB.UTF-8||C||en_GB.UTF-8||en_GB.UTF-8</p>
+<p><strong>locale:</strong> en_US.UTF-8||en_US.UTF-8||en_US.UTF-8||C||en_US.UTF-8||en_US.UTF-8</p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
-<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.6)</em>, <em>knitr(v.1.50)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.3.0)</em>, <em>datefixR(v.1.7.0)</em>, <em>readxl(v.1.4.5)</em>, <em>lubridate(v.1.9.4)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.4)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.2)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
-<p><strong>loaded via a namespace (and not attached):</strong> <em>generics(v.0.1.3)</em>, <em>stringi(v.1.8.7)</em>, <em>hms(v.1.1.3)</em>, <em>digest(v.0.6.37)</em>, <em>magrittr(v.2.0.3)</em>, <em>evaluate(v.1.0.3)</em>, <em>grid(v.4.4.3)</em>, <em>timechange(v.0.3.0)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>fastmap(v.1.2.0)</em>, <em>cellranger(v.1.1.0)</em>, <em>jsonlite(v.2.0.0)</em>, <em>Formula(v.1.2-5)</em>, <em>scales(v.1.4.0)</em>, <em>cli(v.3.6.5)</em>, <em>rlang(v.1.1.6)</em>, <em>visNetwork(v.2.1.2)</em>, <em>withr(v.3.0.2)</em>, <em>yaml(v.2.3.10)</em>, <em>tools(v.4.4.3)</em>, <em>parallel(v.4.4.3)</em>, <em>tzdb(v.0.5.0)</em>, <em>curl(v.6.2.2)</em>, <em>vctrs(v.0.6.5)</em>, <em>R6(v.2.6.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>V8(v.6.0.3)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>pillar(v.1.10.2)</em>, <em>gtable(v.0.3.6)</em>, <em>glue(v.1.8.0)</em>, <em>Rcpp(v.1.0.14)</em>, <em>xfun(v.0.52)</em>, <em>tidyselect(v.1.2.1)</em>, <em>farver(v.2.1.2)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>rmarkdown(v.2.29)</em> and <em>compiler(v.4.4.3)</em></p>
+<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.5)</em>, <em>knitr(v.1.47)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.2.0)</em>, <em>datefixR(v.1.6.1)</em>, <em>readxl(v.1.4.3)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong> <em>utf8(v.1.2.4)</em>, <em>generics(v.0.1.3)</em>, <em>stringi(v.1.8.4)</em>, <em>hms(v.1.1.3)</em>, <em>digest(v.0.6.35)</em>, <em>magrittr(v.2.0.3)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>evaluate(v.0.23)</em>, <em>grid(v.4.4.3)</em>, <em>timechange(v.0.3.0)</em>, <em>fastmap(v.1.2.0)</em>, <em>cellranger(v.1.1.0)</em>, <em>jsonlite(v.1.8.8)</em>, <em>Formula(v.1.2-5)</em>, <em>fansi(v.1.0.6)</em>, <em>scales(v.1.3.0)</em>, <em>codetools(v.0.2-20)</em>, <em>cli(v.3.6.2)</em>, <em>rlang(v.1.1.3)</em>, <em>visNetwork(v.2.1.2)</em>, <em>munsell(v.0.5.1)</em>, <em>withr(v.3.0.0)</em>, <em>yaml(v.2.3.8)</em>, <em>tools(v.4.4.3)</em>, <em>parallel(v.4.4.3)</em>, <em>tzdb(v.0.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>curl(v.5.2.1)</em>, <em>vctrs(v.0.6.5)</em>, <em>R6(v.2.5.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>V8(v.4.4.2)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>pillar(v.1.9.0)</em>, <em>gtable(v.0.3.5)</em>, <em>glue(v.1.7.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>xfun(v.0.44)</em>, <em>tidyselect(v.1.2.1)</em>, <em>rstudioapi(v.0.16.0)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>rmarkdown(v.2.27)</em> and <em>compiler(v.4.4.3)</em></p>
 </div>
 </div>
 </details><p>Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.</p>
@@ -4647,7 +4571,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
 <span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="do">##############</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="do">############## </span></span>
 <span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Packages ##</span></span>
 <span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="do">##############</span></span>
 <span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a></span>
@@ -4739,7 +4663,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb40-111"><a href="#cb40-111" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
 <span id="cb40-112"><a href="#cb40-112" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
 <span id="cb40-113"><a href="#cb40-113" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
-<span id="cb40-114"><a href="#cb40-114" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb40-114"><a href="#cb40-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.numeric</span>(IMD) <span class="sc">+</span></span>
 <span id="cb40-115"><a href="#cb40-115" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
 <span id="cb40-116"><a href="#cb40-116" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
 <span id="cb40-117"><a href="#cb40-117" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
@@ -4892,7 +4816,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb40-298"><a href="#cb40-298" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
 <span id="cb40-299"><a href="#cb40-299" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
 <span id="cb40-300"><a href="#cb40-300" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
-<span id="cb40-301"><a href="#cb40-301" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb40-301"><a href="#cb40-301" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.numeric</span>(IMD) <span class="sc">+</span></span>
 <span id="cb40-302"><a href="#cb40-302" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
 <span id="cb40-303"><a href="#cb40-303" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
 <span id="cb40-304"><a href="#cb40-304" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>
@@ -4925,7 +4849,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb40-333"><a href="#cb40-333" aria-hidden="true" tabindex="-1"></a>    BMIcat <span class="sc">+</span></span>
 <span id="cb40-334"><a href="#cb40-334" aria-hidden="true" tabindex="-1"></a>    diagnosis <span class="sc">+</span></span>
 <span id="cb40-335"><a href="#cb40-335" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
-<span id="cb40-336"><a href="#cb40-336" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb40-336"><a href="#cb40-336" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.numeric</span>(IMD) <span class="sc">+</span></span>
 <span id="cb40-337"><a href="#cb40-337" aria-hidden="true" tabindex="-1"></a>    control_8 <span class="sc">+</span></span>
 <span id="cb40-338"><a href="#cb40-338" aria-hidden="true" tabindex="-1"></a>    vas_control <span class="sc">+</span></span>
 <span id="cb40-339"><a href="#cb40-339" aria-hidden="true" tabindex="-1"></a>    FC <span class="sc">+</span></span>

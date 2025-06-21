@@ -438,6 +438,16 @@ fit %>%
     statistic = "{estimate} ({conf.low}, {conf.high})",
     label_header = "**2-year survival (95% CI)**"
   )
+
+fit %>%
+  tbl_survfit(
+    times = 365.25 * 4,
+    label = "Flare type",
+    statistic = "{estimate} ({conf.low}, {conf.high})",
+    label_header = "**5-year survival (95% CI)**"
+  )
+
+
 ```
 
 
