@@ -674,6 +674,24 @@ comparison <- merge(comparison,
   all.y = FALSE
 )
 
+comparison$variable <- factor(comparison$variable,
+  levels = c(
+    "CHO_percEng",
+    "Fat_percEng",
+    "Prot_percEng",
+    "SatFat_percEng",
+    "PUFA_percEng",
+    "UPF_perc"
+  ),
+  labels = c(
+    "Carbohydrate",
+    "Fat",
+    "Protein",
+    "Saturated fat",
+    "Polyunsaturated fatty acids",
+    "Ultra-processed foods"
+  ))
+
 p <- ggplot(
   comparison,
   aes(color = variable, fill = variable, y = value, x = Sex)
@@ -700,14 +718,6 @@ p <- ggplot(
       "#E71D36",
       "#FF9F1C",
       "#80BF56"
-    ),
-    labels = c(
-      "Carbohydrate",
-      "Fat",
-      "Protein",
-      "Saturated fat",
-      "Polyunsaturated fatty acids",
-      "Ultra-processed foods"
     )
   ) +
   scale_color_manual(
@@ -718,25 +728,15 @@ p <- ggplot(
       "#9F1C29",
       "#B06B01",
       "#568238"
-    ),
-    labels = c(
-      "Carbohydrate",
-      "Fat",
-      "Protein",
-      "Saturated fat",
-      "Polyunsaturated fatty acids",
-      "Ultra-processed food"
     )
   ) +
   labs(
     y = "% of total energy intake",
     color = "",
     fill = ""
-  ) +
-  guides(
+  ) + guides(
     colour = guide_legend(nrow = 1),
-    fill = guide_legend(nrow = 1)
-  )
+    fill = guide_legend(nrow = 1))
 
 ggsave("plots/baseline/diet.png", p, width = 12 * 0.8, height = 7 * 0.8)
 ggsave("plots/baseline/diet.pdf", p, width = 12 * 0.8, height = 7 * 0.8)
