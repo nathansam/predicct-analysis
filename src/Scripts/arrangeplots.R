@@ -25,8 +25,8 @@ p2 <- readRDS(paste0(outdir, "flare-soft.RDS"))
 p3 <- readRDS(paste0(outdir, "flare-hard.RDS"))
 
 lay <- rbind(
-  c(1, 2),
-  c(1, 3)
+  c(1, 1),
+  c(2, 3)
 )
 
 p <- list(p1, p2, p3)
@@ -44,14 +44,14 @@ survs <- do.call(
 )
 
 cairo_pdf("plots/arranged/Figure2.pdf",
-          width = 16.5 * 3 / 4,
-          height = 13 * 3 / 4)
+          width = 16.5 * 5 / 8,
+          height = 18.5 * 5 / 8)
 survs
 dev.off()
 
 png("plots/arranged/Figure2.png",
-    width = 16.5 * 2 / 3,
-    height = 13 * 2 / 3,
+    width = 16.5 * 5 / 8,
+    height = 18.5 * 5 / 8,
     units = "in",
     res = 300
 )
