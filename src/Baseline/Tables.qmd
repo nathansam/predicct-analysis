@@ -15,7 +15,7 @@ bibliography: Baseline.bib
 ```{R}
 set.seed(123)
 
-##############
+############## 
 ## Packages ##
 ##############
 
@@ -107,7 +107,7 @@ table1(
     BMIcat +
     diagnosis +
     `IBD Duration` +
-    IMD +
+    as.numeric(IMD) +
     control_8 +
     vas_control +
     FC +
@@ -260,7 +260,7 @@ demo %>%
     BMIcat +
     diagnosis +
     `IBD Duration` +
-    IMD +
+    as.numeric(IMD) +
     control_8 +
     vas_control +
     FC +
@@ -293,7 +293,7 @@ demo %>%
     BMIcat +
     diagnosis +
     `IBD Duration` +
-    IMD +
+    as.numeric(IMD) +
     control_8 +
     vas_control +
     FC +
