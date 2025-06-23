@@ -1240,7 +1240,7 @@ Table&nbsp;10: ANOVA between polyunsaturated fatty acids and FC groups in UC/IBD
 </div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="Diet_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<figure class="figure"><p><img src="Diet_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1654,6 +1654,24 @@ Table&nbsp;14: ANOVA between Nova 4 food as a percentage of energy intake and FC
 <span>  all.y <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">comparison</span><span class="op">$</span><span class="va">variable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">$</span><span class="va">variable</span>,</span>
+<span>  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"CHO_percEng"</span>,</span>
+<span>    <span class="st">"Fat_percEng"</span>,</span>
+<span>    <span class="st">"Prot_percEng"</span>,</span>
+<span>    <span class="st">"SatFat_percEng"</span>,</span>
+<span>    <span class="st">"PUFA_percEng"</span>,</span>
+<span>    <span class="st">"UPF_perc"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Carbohydrate"</span>,</span>
+<span>    <span class="st">"Fat"</span>,</span>
+<span>    <span class="st">"Protein"</span>,</span>
+<span>    <span class="st">"Saturated fat"</span>,</span>
+<span>    <span class="st">"Polyunsaturated fatty acids"</span>,</span>
+<span>    <span class="st">"Ultra-processed foods"</span></span>
+<span>  <span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span></span>
 <span>  <span class="va">comparison</span>,</span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">variable</span>, fill <span class="op">=</span> <span class="va">variable</span>, y <span class="op">=</span> <span class="va">value</span>, x <span class="op">=</span> <span class="va">Sex</span><span class="op">)</span></span>
@@ -1680,14 +1698,6 @@ Table&nbsp;14: ANOVA between Nova 4 food as a percentage of energy intake and FC
 <span>      <span class="st">"#E71D36"</span>,</span>
 <span>      <span class="st">"#FF9F1C"</span>,</span>
 <span>      <span class="st">"#80BF56"</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>      <span class="st">"Carbohydrate"</span>,</span>
-<span>      <span class="st">"Fat"</span>,</span>
-<span>      <span class="st">"Protein"</span>,</span>
-<span>      <span class="st">"Saturated fat"</span>,</span>
-<span>      <span class="st">"Polyunsaturated fatty acids"</span>,</span>
-<span>      <span class="st">"Ultra-processed foods"</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span><span class="op">(</span></span>
@@ -1698,25 +1708,15 @@ Table&nbsp;14: ANOVA between Nova 4 food as a percentage of energy intake and FC
 <span>      <span class="st">"#9F1C29"</span>,</span>
 <span>      <span class="st">"#B06B01"</span>,</span>
 <span>      <span class="st">"#568238"</span></span>
-<span>    <span class="op">)</span>,</span>
-<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>      <span class="st">"Carbohydrate"</span>,</span>
-<span>      <span class="st">"Fat"</span>,</span>
-<span>      <span class="st">"Protein"</span>,</span>
-<span>      <span class="st">"Saturated fat"</span>,</span>
-<span>      <span class="st">"Polyunsaturated fatty acids"</span>,</span>
-<span>      <span class="st">"Ultra-processed food"</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
 <span>    y <span class="op">=</span> <span class="st">"% of total energy intake"</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">""</span>,</span>
 <span>    fill <span class="op">=</span> <span class="st">""</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span></span>
 <span>    colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
-<span>    fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>    fill <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"plots/baseline/diet.png"</span>, <span class="va">p</span>, width <span class="op">=</span> <span class="fl">12</span> <span class="op">*</span> <span class="fl">0.8</span>, height <span class="op">=</span> <span class="fl">7</span> <span class="op">*</span> <span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"plots/baseline/diet.pdf"</span>, <span class="va">p</span>, width <span class="op">=</span> <span class="fl">12</span> <span class="op">*</span> <span class="fl">0.8</span>, height <span class="op">=</span> <span class="fl">7</span> <span class="op">*</span> <span class="fl">0.8</span><span class="op">)</span></span>
@@ -1737,12 +1737,12 @@ Figure&nbsp;8: Dietary distribution of the FFQ subcohort expressed as percentage
 Session info
 </summary><div class="cell">
 <div class="cell-output-display">
-<p><strong>R version 4.4.3 (2025-02-28)</strong></p>
-<p><strong>Platform:</strong> aarch64-apple-darwin20</p>
-<p><strong>locale:</strong> en_GB.UTF-8||en_GB.UTF-8||en_GB.UTF-8||C||en_GB.UTF-8||en_GB.UTF-8</p>
+<p><strong>R version 4.4.0 (2024-04-24)</strong></p>
+<p><strong>Platform:</strong> aarch64-unknown-linux-gnu</p>
+<p><strong>locale:</strong> <em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=en_US.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=en_US.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=en_US.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=en_US.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
-<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.6)</em>, <em>knitr(v.1.50)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.3.0)</em>, <em>datefixR(v.1.7.0)</em>, <em>readxl(v.1.4.5)</em>, <em>lubridate(v.1.9.4)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.4)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.2)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
-<p><strong>loaded via a namespace (and not attached):</strong> <em>generics(v.0.1.3)</em>, <em>stringi(v.1.8.7)</em>, <em>hms(v.1.1.3)</em>, <em>digest(v.0.6.37)</em>, <em>magrittr(v.2.0.3)</em>, <em>evaluate(v.1.0.3)</em>, <em>grid(v.4.4.3)</em>, <em>timechange(v.0.3.0)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>fastmap(v.1.2.0)</em>, <em>cellranger(v.1.1.0)</em>, <em>jsonlite(v.2.0.0)</em>, <em>Formula(v.1.2-5)</em>, <em>scales(v.1.4.0)</em>, <em>textshaping(v.1.0.0)</em>, <em>cli(v.3.6.5)</em>, <em>rlang(v.1.1.6)</em>, <em>visNetwork(v.2.1.2)</em>, <em>withr(v.3.0.2)</em>, <em>yaml(v.2.3.10)</em>, <em>tools(v.4.4.3)</em>, <em>parallel(v.4.4.3)</em>, <em>reshape2(v.1.4.4)</em>, <em>tzdb(v.0.5.0)</em>, <em>curl(v.6.2.2)</em>, <em>vctrs(v.0.6.5)</em>, <em>R6(v.2.6.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>V8(v.6.0.3)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>ragg(v.1.4.0)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>pillar(v.1.10.2)</em>, <em>gtable(v.0.3.6)</em>, <em>glue(v.1.8.0)</em>, <em>Rcpp(v.1.0.14)</em>, <em>systemfonts(v.1.2.2)</em>, <em>xfun(v.0.52)</em>, <em>tidyselect(v.1.2.1)</em>, <em>farver(v.2.1.2)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>labeling(v.0.4.3)</em>, <em>rmarkdown(v.2.29)</em> and <em>compiler(v.4.4.3)</em></p>
+<p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.5)</em>, <em>knitr(v.1.47)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.2.0)</em>, <em>datefixR(v.1.6.1)</em>, <em>readxl(v.1.4.3)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong> <em>utf8(v.1.2.4)</em>, <em>generics(v.0.1.3)</em>, <em>stringi(v.1.8.4)</em>, <em>hms(v.1.1.3)</em>, <em>digest(v.0.6.35)</em>, <em>magrittr(v.2.0.3)</em>, <em>evaluate(v.0.23)</em>, <em>grid(v.4.4.0)</em>, <em>timechange(v.0.3.0)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>fastmap(v.1.2.0)</em>, <em>cellranger(v.1.1.0)</em>, <em>jsonlite(v.1.8.8)</em>, <em>Formula(v.1.2-5)</em>, <em>fansi(v.1.0.6)</em>, <em>scales(v.1.3.0)</em>, <em>textshaping(v.0.4.0)</em>, <em>codetools(v.0.2-20)</em>, <em>cli(v.3.6.2)</em>, <em>rlang(v.1.1.3)</em>, <em>visNetwork(v.2.1.2)</em>, <em>munsell(v.0.5.1)</em>, <em>withr(v.3.0.0)</em>, <em>yaml(v.2.3.8)</em>, <em>tools(v.4.4.0)</em>, <em>reshape2(v.1.4.4)</em>, <em>tzdb(v.0.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>curl(v.5.2.1)</em>, <em>vctrs(v.0.6.5)</em>, <em>R6(v.2.5.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>V8(v.4.4.2)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>ragg(v.1.3.2)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>pillar(v.1.9.0)</em>, <em>gtable(v.0.3.5)</em>, <em>glue(v.1.7.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>systemfonts(v.1.1.0)</em>, <em>xfun(v.0.44)</em>, <em>tidyselect(v.1.2.1)</em>, <em>farver(v.2.1.2)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>labeling(v.0.4.3)</em>, <em>rmarkdown(v.2.27)</em> and <em>compiler(v.4.4.0)</em></p>
 </div>
 </div>
 </details><p>Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.</p>
@@ -3057,69 +3057,69 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb32-732"><a href="#cb32-732" aria-hidden="true" tabindex="-1"></a>  <span class="at">all.y =</span> <span class="cn">FALSE</span></span>
 <span id="cb32-733"><a href="#cb32-733" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb32-734"><a href="#cb32-734" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-735"><a href="#cb32-735" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
-<span id="cb32-736"><a href="#cb32-736" aria-hidden="true" tabindex="-1"></a>  comparison,</span>
-<span id="cb32-737"><a href="#cb32-737" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">color =</span> variable, <span class="at">fill =</span> variable, <span class="at">y =</span> value, <span class="at">x =</span> Sex)</span>
-<span id="cb32-738"><a href="#cb32-738" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb32-739"><a href="#cb32-739" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
-<span id="cb32-740"><a href="#cb32-740" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span>diagnosis2,</span>
-<span id="cb32-741"><a href="#cb32-741" aria-hidden="true" tabindex="-1"></a>    <span class="at">scales =</span> <span class="st">"free_x"</span>,</span>
-<span id="cb32-742"><a href="#cb32-742" aria-hidden="true" tabindex="-1"></a>    <span class="at">space =</span> <span class="st">"free_x"</span>,</span>
-<span id="cb32-743"><a href="#cb32-743" aria-hidden="true" tabindex="-1"></a>    <span class="at">switch =</span> <span class="st">"x"</span></span>
-<span id="cb32-744"><a href="#cb32-744" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb32-745"><a href="#cb32-745" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb32-746"><a href="#cb32-746" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb32-747"><a href="#cb32-747" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.placement =</span> <span class="st">"outside"</span>,</span>
-<span id="cb32-748"><a href="#cb32-748" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>),</span>
-<span id="cb32-749"><a href="#cb32-749" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.clip =</span> <span class="st">"on"</span>,</span>
-<span id="cb32-750"><a href="#cb32-750" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb32-751"><a href="#cb32-751" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span></span>
-<span id="cb32-752"><a href="#cb32-752" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb32-753"><a href="#cb32-753" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb32-754"><a href="#cb32-754" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(</span>
-<span id="cb32-755"><a href="#cb32-755" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#4F359B"</span>,</span>
-<span id="cb32-756"><a href="#cb32-756" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#FFED49"</span>,</span>
-<span id="cb32-757"><a href="#cb32-757" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#2EC4B6"</span>,</span>
-<span id="cb32-758"><a href="#cb32-758" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#E71D36"</span>,</span>
-<span id="cb32-759"><a href="#cb32-759" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#FF9F1C"</span>,</span>
-<span id="cb32-760"><a href="#cb32-760" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#80BF56"</span></span>
-<span id="cb32-761"><a href="#cb32-761" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb32-762"><a href="#cb32-762" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(</span>
-<span id="cb32-763"><a href="#cb32-763" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Carbohydrate"</span>,</span>
-<span id="cb32-764"><a href="#cb32-764" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Fat"</span>,</span>
-<span id="cb32-765"><a href="#cb32-765" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Protein"</span>,</span>
-<span id="cb32-766"><a href="#cb32-766" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Saturated fat"</span>,</span>
-<span id="cb32-767"><a href="#cb32-767" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Polyunsaturated fatty acids"</span>,</span>
-<span id="cb32-768"><a href="#cb32-768" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Ultra-processed foods"</span></span>
-<span id="cb32-769"><a href="#cb32-769" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-735"><a href="#cb32-735" aria-hidden="true" tabindex="-1"></a>comparison<span class="sc">$</span>variable <span class="ot">&lt;-</span> <span class="fu">factor</span>(comparison<span class="sc">$</span>variable,</span>
+<span id="cb32-736"><a href="#cb32-736" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb32-737"><a href="#cb32-737" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CHO_percEng"</span>,</span>
+<span id="cb32-738"><a href="#cb32-738" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Fat_percEng"</span>,</span>
+<span id="cb32-739"><a href="#cb32-739" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Prot_percEng"</span>,</span>
+<span id="cb32-740"><a href="#cb32-740" aria-hidden="true" tabindex="-1"></a>    <span class="st">"SatFat_percEng"</span>,</span>
+<span id="cb32-741"><a href="#cb32-741" aria-hidden="true" tabindex="-1"></a>    <span class="st">"PUFA_percEng"</span>,</span>
+<span id="cb32-742"><a href="#cb32-742" aria-hidden="true" tabindex="-1"></a>    <span class="st">"UPF_perc"</span></span>
+<span id="cb32-743"><a href="#cb32-743" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb32-744"><a href="#cb32-744" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(</span>
+<span id="cb32-745"><a href="#cb32-745" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Carbohydrate"</span>,</span>
+<span id="cb32-746"><a href="#cb32-746" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Fat"</span>,</span>
+<span id="cb32-747"><a href="#cb32-747" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Protein"</span>,</span>
+<span id="cb32-748"><a href="#cb32-748" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Saturated fat"</span>,</span>
+<span id="cb32-749"><a href="#cb32-749" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Polyunsaturated fatty acids"</span>,</span>
+<span id="cb32-750"><a href="#cb32-750" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Ultra-processed foods"</span></span>
+<span id="cb32-751"><a href="#cb32-751" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb32-752"><a href="#cb32-752" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-753"><a href="#cb32-753" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb32-754"><a href="#cb32-754" aria-hidden="true" tabindex="-1"></a>  comparison,</span>
+<span id="cb32-755"><a href="#cb32-755" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">color =</span> variable, <span class="at">fill =</span> variable, <span class="at">y =</span> value, <span class="at">x =</span> Sex)</span>
+<span id="cb32-756"><a href="#cb32-756" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb32-757"><a href="#cb32-757" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb32-758"><a href="#cb32-758" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span>diagnosis2,</span>
+<span id="cb32-759"><a href="#cb32-759" aria-hidden="true" tabindex="-1"></a>    <span class="at">scales =</span> <span class="st">"free_x"</span>,</span>
+<span id="cb32-760"><a href="#cb32-760" aria-hidden="true" tabindex="-1"></a>    <span class="at">space =</span> <span class="st">"free_x"</span>,</span>
+<span id="cb32-761"><a href="#cb32-761" aria-hidden="true" tabindex="-1"></a>    <span class="at">switch =</span> <span class="st">"x"</span></span>
+<span id="cb32-762"><a href="#cb32-762" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb32-763"><a href="#cb32-763" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb32-764"><a href="#cb32-764" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb32-765"><a href="#cb32-765" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.placement =</span> <span class="st">"outside"</span>,</span>
+<span id="cb32-766"><a href="#cb32-766" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>),</span>
+<span id="cb32-767"><a href="#cb32-767" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.clip =</span> <span class="st">"on"</span>,</span>
+<span id="cb32-768"><a href="#cb32-768" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb32-769"><a href="#cb32-769" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span></span>
 <span id="cb32-770"><a href="#cb32-770" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb32-771"><a href="#cb32-771" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb32-771"><a href="#cb32-771" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
 <span id="cb32-772"><a href="#cb32-772" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(</span>
-<span id="cb32-773"><a href="#cb32-773" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#392376"</span>,</span>
-<span id="cb32-774"><a href="#cb32-774" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#ADA009"</span>,</span>
-<span id="cb32-775"><a href="#cb32-775" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#00877C"</span>,</span>
-<span id="cb32-776"><a href="#cb32-776" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#9F1C29"</span>,</span>
-<span id="cb32-777"><a href="#cb32-777" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#B06B01"</span>,</span>
-<span id="cb32-778"><a href="#cb32-778" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#568238"</span></span>
-<span id="cb32-779"><a href="#cb32-779" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb32-780"><a href="#cb32-780" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(</span>
-<span id="cb32-781"><a href="#cb32-781" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Carbohydrate"</span>,</span>
-<span id="cb32-782"><a href="#cb32-782" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Fat"</span>,</span>
-<span id="cb32-783"><a href="#cb32-783" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Protein"</span>,</span>
-<span id="cb32-784"><a href="#cb32-784" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Saturated fat"</span>,</span>
-<span id="cb32-785"><a href="#cb32-785" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Polyunsaturated fatty acids"</span>,</span>
-<span id="cb32-786"><a href="#cb32-786" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Ultra-processed food"</span></span>
-<span id="cb32-787"><a href="#cb32-787" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb32-788"><a href="#cb32-788" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb32-789"><a href="#cb32-789" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb32-790"><a href="#cb32-790" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"% of total energy intake"</span>,</span>
-<span id="cb32-791"><a href="#cb32-791" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">""</span>,</span>
-<span id="cb32-792"><a href="#cb32-792" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">""</span></span>
-<span id="cb32-793"><a href="#cb32-793" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb32-794"><a href="#cb32-794" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(</span>
-<span id="cb32-795"><a href="#cb32-795" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>),</span>
-<span id="cb32-796"><a href="#cb32-796" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>)</span>
-<span id="cb32-797"><a href="#cb32-797" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-773"><a href="#cb32-773" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#4F359B"</span>,</span>
+<span id="cb32-774"><a href="#cb32-774" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#FFED49"</span>,</span>
+<span id="cb32-775"><a href="#cb32-775" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#2EC4B6"</span>,</span>
+<span id="cb32-776"><a href="#cb32-776" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#E71D36"</span>,</span>
+<span id="cb32-777"><a href="#cb32-777" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#FF9F1C"</span>,</span>
+<span id="cb32-778"><a href="#cb32-778" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#80BF56"</span></span>
+<span id="cb32-779"><a href="#cb32-779" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-780"><a href="#cb32-780" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb32-781"><a href="#cb32-781" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb32-782"><a href="#cb32-782" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb32-783"><a href="#cb32-783" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#392376"</span>,</span>
+<span id="cb32-784"><a href="#cb32-784" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#ADA009"</span>,</span>
+<span id="cb32-785"><a href="#cb32-785" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#00877C"</span>,</span>
+<span id="cb32-786"><a href="#cb32-786" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#9F1C29"</span>,</span>
+<span id="cb32-787"><a href="#cb32-787" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#B06B01"</span>,</span>
+<span id="cb32-788"><a href="#cb32-788" aria-hidden="true" tabindex="-1"></a>      <span class="st">"#568238"</span></span>
+<span id="cb32-789"><a href="#cb32-789" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-790"><a href="#cb32-790" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb32-791"><a href="#cb32-791" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb32-792"><a href="#cb32-792" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"% of total energy intake"</span>,</span>
+<span id="cb32-793"><a href="#cb32-793" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">""</span>,</span>
+<span id="cb32-794"><a href="#cb32-794" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">""</span></span>
+<span id="cb32-795"><a href="#cb32-795" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">guides</span>(</span>
+<span id="cb32-796"><a href="#cb32-796" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>),</span>
+<span id="cb32-797"><a href="#cb32-797" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">1</span>))</span>
 <span id="cb32-798"><a href="#cb32-798" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-799"><a href="#cb32-799" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/baseline/diet.png"</span>, p, <span class="at">width =</span> <span class="dv">12</span> <span class="sc">*</span> <span class="fl">0.8</span>, <span class="at">height =</span> <span class="dv">7</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
 <span id="cb32-800"><a href="#cb32-800" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/baseline/diet.pdf"</span>, p, <span class="at">width =</span> <span class="dv">12</span> <span class="sc">*</span> <span class="fl">0.8</span>, <span class="at">height =</span> <span class="dv">7</span> <span class="sc">*</span> <span class="fl">0.8</span>)</span>
