@@ -1116,6 +1116,12 @@ demo.cd %>%
 ```
 
 
+```{R}
+#| label: tbl-pro2-cd
+#| tbl-cap: "ANOVA between between PRO2 and FC groups in Crohn's disease."
+pander(summary(aov(PRO2 ~ cat, data = demo.cd)))
+```
+
 ### Smoking
 
 ```{R}
@@ -1346,6 +1352,11 @@ demo.uc %>%
   theme(legend.position = "none")
 ```
 
+```{R}
+#| label: tbl-pro2-uc
+#| tbl-cap: "ANOVA between between PRO2 and FC groups in ulcerative colitis/IBDU."
+pander(summary(aov(PRO2 ~ cat, data = demo.uc)))
+```
 
 ### Smoking
 
