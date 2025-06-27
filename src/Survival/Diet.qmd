@@ -683,7 +683,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + fish_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -743,7 +743,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + fish_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -792,7 +792,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + fish_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -858,7 +858,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -906,7 +906,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -967,7 +967,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1016,7 +1016,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1132,7 +1132,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1195,7 +1195,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + PUFA_percEng + dqi_tot +
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1245,7 +1245,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1306,7 +1306,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + NOVAScore_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1354,7 +1354,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + NOVAScore_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1410,7 +1410,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + NOVAScore_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1459,7 +1459,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + NOVAScore_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1526,7 +1526,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + UPF_perc + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1574,7 +1574,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + UPF_perc + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1635,7 +1635,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + UPF_perc +
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1685,7 +1685,7 @@ print(p, newpage = FALSE)
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + UPF_perc + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1703,7 +1703,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1732,15 +1732,17 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$breadIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/breadIntake.pdf")
+
+
+cairo_pdf("plots/cd/soft-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/breadIntake.png",
+png("plots/cd/soft-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1753,7 +1755,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1784,11 +1786,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/breadIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/breadIntake.png",
+png("plots/cd/hard-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1801,7 +1803,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1814,7 +1816,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1841,16 +1843,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$breadIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/breadIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/breadIntake.png",
+png("plots/uc/soft-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1863,7 +1865,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + breadIntake +
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1897,11 +1899,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/breadIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/breadIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/breadIntake.png",
+png("plots/uc/hard-flare/diet/breadIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1914,7 +1916,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1929,7 +1931,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -1958,15 +1960,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$sweetIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/sweetIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/sweetIntake.png",
+png("plots/cd/soft-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -1979,7 +1981,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2010,11 +2012,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/sweetIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/sweetIntake.png",
+png("plots/cd/hard-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2027,7 +2029,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2040,7 +2042,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2067,16 +2069,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$sweetIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/sweetIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/sweetIntake.png",
+png("plots/uc/soft-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2089,7 +2091,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + sweetIntake +
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2123,11 +2125,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/sweetIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/sweetIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/sweetIntake.png",
+png("plots/uc/hard-flare/diet/sweetIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2140,7 +2142,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2155,7 +2157,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2184,15 +2186,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$drinkIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/drinkIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/drinkIntake.png",
+png("plots/cd/soft-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2205,7 +2207,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2236,11 +2238,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/drinkIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/drinkIntake.png",
+png("plots/cd/hard-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2253,7 +2255,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2266,7 +2268,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2293,16 +2295,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$drinkIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/drinkIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/drinkIntake.png",
+png("plots/uc/soft-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2315,7 +2317,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + drinkIntake +
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2349,11 +2351,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/drinkIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/drinkIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/drinkIntake.png",
+png("plots/uc/hard-flare/diet/drinkIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2366,7 +2368,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2381,7 +2383,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2410,15 +2412,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$processedMeatIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/processedMeatIntake.png",
+png("plots/cd/soft-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2431,7 +2433,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2462,11 +2464,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/processedMeatIntake.png",
+png("plots/cd/hard-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2479,7 +2481,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2492,7 +2494,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2519,16 +2521,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$processedMeatIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/processedMeatIntake.png",
+png("plots/uc/soft-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2541,7 +2543,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedMeatIntake +
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2575,11 +2577,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/processedMeatIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/processedMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/processedMeatIntake.png",
+png("plots/uc/hard-flare/diet/processedMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2592,7 +2594,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2607,7 +2609,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2636,15 +2638,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$processedPlantIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/processedPlantIntake.png",
+png("plots/cd/soft-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2657,7 +2659,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2688,11 +2690,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/processedPlantIntake.png",
+png("plots/cd/hard-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2705,7 +2707,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2718,7 +2720,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2745,16 +2747,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$processedPlantIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/processedPlantIntake.png",
+png("plots/uc/soft-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2767,7 +2769,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + processedPlantIntake +
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2801,11 +2803,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/processedPlantIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/processedPlantIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/processedPlantIntake.png",
+png("plots/uc/hard-flare/diet/processedPlantIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2818,7 +2820,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2835,7 +2837,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2864,15 +2866,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$fruitIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/fruitIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/fruitIntake.png",
+png("plots/cd/soft-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2885,7 +2887,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2916,11 +2918,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/fruitIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/fruitIntake.png",
+png("plots/cd/hard-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2933,7 +2935,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2946,7 +2948,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -2973,16 +2975,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$fruitIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/fruitIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/fruitIntake.png",
+png("plots/uc/soft-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -2995,7 +2997,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + fruitIntake +
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -3029,11 +3031,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/fruitIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/fruitIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/fruitIntake.png",
+png("plots/uc/hard-flare/diet/fruitIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3046,7 +3048,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + fruitIntake + dqi_tot + BMI + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -3061,7 +3063,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3090,15 +3092,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$vegIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/vegIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/vegIntake.png",
+png("plots/cd/soft-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3111,7 +3113,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3142,11 +3144,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/vegIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/vegIntake.png",
+png("plots/cd/hard-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3159,7 +3161,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3172,7 +3174,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3199,16 +3201,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$vegIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/vegIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/vegIntake.png",
+png("plots/uc/soft-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3221,7 +3223,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + vegIntake +
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -3255,11 +3257,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/vegIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/vegIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/vegIntake.png",
+png("plots/uc/hard-flare/diet/vegIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3272,7 +3274,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -3288,7 +3290,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3317,15 +3319,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$redMeatIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/redMeatIntake.png",
+png("plots/cd/soft-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3338,7 +3340,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3369,11 +3371,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/redMeatIntake.png",
+png("plots/cd/hard-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3386,7 +3388,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3399,7 +3401,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3426,16 +3428,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$redMeatIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/redMeatIntake.png",
+png("plots/uc/soft-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3448,7 +3450,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + redMeatIntake +
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -3482,11 +3484,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/redMeatIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/redMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/redMeatIntake.png",
+png("plots/uc/hard-flare/diet/redMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3499,7 +3501,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -3514,7 +3516,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3543,15 +3545,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$whiteMeatIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/whiteMeatIntake.png",
+png("plots/cd/soft-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3564,7 +3566,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + whiteMeatIntake + dqi_tot + BMI + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3595,11 +3597,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/whiteMeatIntake.png",
+png("plots/cd/hard-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3612,7 +3614,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3625,7 +3627,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3652,16 +3654,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$whiteMeatIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/whiteMeatIntake.png",
+png("plots/uc/soft-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3674,7 +3676,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteMeatIntake +
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -3708,11 +3710,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/whiteMeatIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/whiteMeatIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/whiteMeatIntake.png",
+png("plots/uc/hard-flare/diet/whiteMeatIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3725,7 +3727,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -3740,7 +3742,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3769,15 +3771,15 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.cd.df$whiteFishIntake_cat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200
 )
 
-cairo_pdf("../plots/cd/soft-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("plots/cd/soft-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/soft-flare/Diet/whiteFishIntake.png",
+png("plots/cd/soft-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3790,7 +3792,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3821,11 +3823,11 @@ p <- ggsurvplot(fit,
   break.time.by = 500
 )
 
-cairo_pdf("../plots/cd/hard-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("plots/cd/hard-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/cd/hard-flare/Diet/whiteFishIntake.png",
+png("plots/cd/hard-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3838,7 +3840,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -3851,7 +3853,7 @@ invisible(cox.summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-##### Soft flare
+##### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -3878,16 +3880,16 @@ p <- ggsurvplot(fit,
   legend.labs = levels(flare.uc.df$whiteFishIntakecat),
   palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
   xlab = "Time from study recrutiment (days)",
-  title = "Time to soft flare",
+  title = "Time to patient-reported flare",
   break.time.by = 200,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/soft-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("plots/uc/soft-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/soft-flare/Diet/whiteFishIntake.png",
+png("plots/uc/soft-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3900,7 +3902,7 @@ p
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteFishIntake +
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -3934,11 +3936,11 @@ p <- ggsurvplot(fit,
   xlim = c(0, 750)
 )
 
-cairo_pdf("../plots/uc/hard-flare/Diet/whiteFishIntake.pdf")
+cairo_pdf("plots/uc/hard-flare/diet/whiteFishIntake.pdf")
 p
 invisible(dev.off())
 
-png("../plots/uc/hard-flare/Diet/whiteFishIntake.png",
+png("plots/uc/hard-flare/diet/whiteFishIntake.png",
   width = 7,
   height = 7,
   units = "in",
@@ -3951,7 +3953,7 @@ p
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )

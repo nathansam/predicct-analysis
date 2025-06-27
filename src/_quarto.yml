@@ -18,8 +18,9 @@ project:
     - "Survival/IBD.qmd"
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
-    - "Psychosocial/PHQ.qmd"
-  post-render: arrangeplots.R
+  post-render:
+    - "Scripts/arrangeplots.R"
+    - "Scripts/forest.R"
   output-dir: "../docs"
   resources:
     - "robots.txt"
