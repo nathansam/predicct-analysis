@@ -319,7 +319,8 @@ demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
 demo.cd %>%
   drop_na(cat) %>%
   table1(
-    x = ~ Location +
+    x = ~ `IBD Duration` + 
+      Location +
       L4 +
       HBI +
       PRO2 +
@@ -440,7 +441,7 @@ demo.uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
 demo.uc %>%
   drop_na(cat) %>%
   table1(
-    x = ~ Extent + Mayo + PRO2 + Smoke + ECigs | cat,
+    x = ~ `IBD Duration` + Extent + Mayo + PRO2 + Smoke + ECigs | cat,
     render.continuous = my.render.cont
   )
 ```

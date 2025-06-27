@@ -207,8 +207,10 @@ Whilst a  low p-value was observed, disease duration was not significantly
 different between FC groups.
 
 ```{R}
-#| label: tbl-duration-fc-cd
-#| tbl-cap: "ANOVA between IBD disease duration and FC groups in Crohn's disease."
+#| label: tbl-duration-fc
+#| tbl-cap: "ANOVA between IBD disease duration and FC groups"
+
+
 
 demo <- merge(demo, duration[, c("ParticipantNo", "duration")],
   by = "ParticipantNo",
@@ -217,6 +219,18 @@ demo <- merge(demo, duration[, c("ParticipantNo", "duration")],
 )
 
 names(demo)[18] <- "IBD Duration"
+
+demo %>%
+  aov(formula = `IBD Duration` ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+
+```{R}
+#| label: tbl-duration-fc-cd
+#| tbl-cap: "ANOVA between IBD disease duration and FC groups in Crohn's disease."
+
 
 demo %>%
   filter(diagnosis2 == "CD") %>%
