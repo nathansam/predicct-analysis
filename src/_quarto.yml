@@ -3,7 +3,7 @@ project:
   type: website
   pre-render: Scripts/makeplotdir.R
   render:
-    - "index.qmd"
+    - "Index.qmd"
     - "Baseline/Introduction.qmd"
     - "Baseline/Recruitment.qmd"
     - "Baseline/Demographics.qmd"
