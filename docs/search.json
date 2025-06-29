@@ -603,6 +603,48 @@
     ]
   },
   {
+    "objectID": "Index.html",
+    "href": "Index.html",
+    "title": "About",
+    "section": "",
+    "text": "To-do\nThis work uses data provided by patients and collected by the NHS as part of their care and support. We are grateful to participants and their IBD care teams for their support."
+  },
+  {
+    "objectID": "Index.html#introduction",
+    "href": "Index.html#introduction",
+    "title": "About",
+    "section": "",
+    "text": "To-do\nThis work uses data provided by patients and collected by the NHS as part of their care and support. We are grateful to participants and their IBD care teams for their support."
+  },
+  {
+    "objectID": "Index.html#using-this-website",
+    "href": "Index.html#using-this-website",
+    "title": "About",
+    "section": "Using this website",
+    "text": "Using this website\nThe code button at the top of each page can be used to show all code blocks instead of clicking on the code buttons for each individual block of code. Moving the mouse pointer over any citations in a report will produce a pop up box with reference details. Clicking on the citation will link to the bibliography at the bottom of the page."
+  },
+  {
+    "objectID": "Index.html#software-versions",
+    "href": "Index.html#software-versions",
+    "title": "About",
+    "section": "Software versions",
+    "text": "Software versions\nAll analyses have been generated using R version 4.4.0. Please see the Session Information sections at the bottom of each report to see the R packages used for that particular analysis and the respective package versions."
+  },
+  {
+    "objectID": "Index.html#acknowledgements",
+    "href": "Index.html#acknowledgements",
+    "title": "About",
+    "section": "Acknowledgements",
+    "text": "Acknowledgements\nThis work uses data provided by participants and the NHS. We are grateful to the study participants and their IBD care teams for their support.\nThe PREdiCCt study was funded by Cure Crohn’s Colitis, Crohns & Colitis In Childhood, the Chief Scientist Office, and UKRI."
+  },
+  {
+    "objectID": "Index.html#section",
+    "href": "Index.html#section",
+    "title": "About",
+    "section": "",
+    "text": "This website has been generated using the Quarto scientific publishing system built on pandoc."
+  },
+  {
     "objectID": "Baseline/Introduction.html",
     "href": "Baseline/Introduction.html",
     "title": "Introduction",
