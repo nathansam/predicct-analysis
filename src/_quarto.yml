@@ -18,6 +18,7 @@ project:
     - "Survival/IBD.qmd"
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
+    - "documents.qmd"
   post-render:
     - "Scripts/arrangeplots.R"
     - "Scripts/forest.R"
@@ -25,6 +26,7 @@ project:
   resources:
     - "robots.txt"
     - ".nojekyll"
+    - "pdf/*"
 
 execute:
       freeze: auto
@@ -83,6 +85,7 @@ website:
           - "Survival/IBD.qmd"
           - "Survival/Biochemistry.qmd"
           - "Survival/Diet.qmd"
+      - "documents.qmd"
   page-footer:
     background: "#dff1f3"
     foreground: "#000000"

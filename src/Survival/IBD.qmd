@@ -25,7 +25,6 @@ library(finalfit)
 library(DescTools)
 library(gtsummary)
 
-
 # paths to PREdiCCt data
 if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"

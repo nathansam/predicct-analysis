@@ -1,0 +1,61 @@
+---
+title: "Study documents"
+date: ""
+date-format: ""
+title-block-banner: false
+embed-resources: false
+author:
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
+  - name: "PREdiCCt Trial Steering Committee"
+  - name: "PREdiCCt Analytical Committee"
+---
+
+## Introduction
+
+This page provides key study documents, the study protocol and statistical
+analysis plans (SAPs), for the PREdiCCt study. This files can either be
+viewed in the web browser (on computers) or downloaded as PDFs (on both
+computers and mobile devices).
+
+All documents were initially devised prior to the start of the study, with
+amendments made during recruitment. 
+
+## Study protocol
+
+The study protocol is a detailed plan outlining how research will be conducted,
+providing  study objectives, design, methodology, and overall organisation. 
+
+{{< pdf pdf/PREdiCCt-protocol-v3.pdf width=100% height=1080 >}}
+
+## Statistical analysis plans (SAPs)
+
+A SAP  outlines the statistical methods which will be used in a study. For
+PREdiCCt, two SAPs were written: one covering baseline analyses and another
+covering longitudinal analyses. 
+
+Where possible, we have tried to closely follow the SAPs. However, due to
+unexpected developments, the actual analyses performed sometimes differed.
+
+### Baseline analyses
+
+The baseline analysis is largely concerned with descriptive analyses of the
+cohort and exploring associations between baseline characteristics and
+faecal calprotectin at recruitment. The
+[baseline section](Baseline/Introduction.qmd) of this website is governed by
+this SAP. 
+
+{{< pdf pdf/Baseline-SAP-v223.pdf width=100% height=1080 >}}
+
+### Longitudinal analyses
+
+The longitudinal analysis consists of survival analyses modelling the time
+to patient-reported or hard flare. The 
+[time to flare section](Survival/Introduction.qmd) of this website is governed
+by this SAP.
+
+{{< pdf pdf/Longitudinal-SAP-v1.0.pdf width=100% height=1080 >}}
