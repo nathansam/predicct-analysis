@@ -18,7 +18,7 @@ author:
 ## Introduction
 
 This page provides key study documents, the study protocol and statistical
-analysis plans (SAPs), for the PREdiCCt study. This files can either be
+analysis plans (SAPs), for the PREdiCCt study. These files can either be
 viewed in the web browser (on computers) or downloaded as PDFs (on both
 computers and mobile devices).
 
