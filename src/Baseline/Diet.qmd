@@ -1131,13 +1131,13 @@ demo %>%
 ```
 
 ```{R}
-#| label: fig-upfperc-FC-dist-uc
+#| label: fig-UPF_perc-FC-dist-uc
 #| fig-cap: "Distribution of Nova 4 food as a percentage of energy intake by FC in UC."
 p <- demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
-  drop_na(cat, upfperc) %>%
+  drop_na(cat, UPF_perc) %>%
   mutate(cat = fct_rev(cat)) %>%
-  ggplot(aes(x = upfperc, fill = cat, color = cat)) +
+  ggplot(aes(x = UPF_perc, fill = cat, color = cat)) +
   geom_density() +
   facet_grid(rows = vars(cat)) +
   labs(x = "Nova 4 food as a percentage of energy intake",
@@ -1146,8 +1146,6 @@ p <- demo %>%
        color = "FC group")
 cat_theme(p)
 ```
-
-
 
 ## Alcohol use
 
