@@ -87,6 +87,18 @@ demo <- merge(demo,
   all.x = TRUE,
   all.y = FALSE
 )
+
+cat_theme <- function(gg) {
+  p <- gg +
+    scale_fill_manual(values = c("#DA4167", "#F4D35E", "#083D77")) +
+    scale_color_manual(values = colorspace::darken(c("#DA4167",
+                                                     "#F4D35E",
+                                                     "#083D77"),
+                                                   0.2)
+                     ) +
+  theme_minimal()
+  p
+}
 ```
 
 
@@ -235,6 +247,23 @@ demo %>%
   aov(formula = meat_overall ~ cat) %>%
   summary() %>%
   pander()
+```
+
+```{R}
+#| label: fig-meat_overall-FC-dist-uc
+#| fig-cap: "Distribution of meat intake by FC in UC."
+p <- demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  drop_na(cat, meat_overall) %>%
+  mutate(cat = fct_rev(cat)) %>%
+  ggplot(aes(x = meat_overall, fill = cat, color = cat)) +
+  geom_density() +
+  facet_grid(rows = vars(cat)) +
+  labs(x = "Meat intake",
+       y = "Density",
+       fill = "FC group",
+       color = "FC group")
+cat_theme(p)
 ```
 
 ## Overall fish intake
@@ -422,6 +451,23 @@ demo %>%
   pander()
 ```
 
+```{R}
+#| label: fig-PUFA_percEng-FC-dist-uc
+#| fig-cap: "Distribution ofpolyunsaturated fatty acid intake by FC in UC."
+p <- demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  drop_na(cat, PUFA_percEng) %>%
+  mutate(cat = fct_rev(cat)) %>%
+  ggplot(aes(x = PUFA_percEng, fill = cat, color = cat)) +
+  geom_density() +
+  facet_grid(rows = vars(cat)) +
+  labs(x = "PUFA intake",
+       y = "Density",
+       fill = "FC group",
+       color = "FC group")
+cat_theme(p)
+```
+
 ## Diet qualiy index
 
 ```{R}
@@ -466,6 +512,23 @@ demo %>%
   aov(formula = dqi_tot ~ cat) %>%
   summary() %>%
   pander()
+```
+
+```{R}
+#| label: fig-dqi_tot-FC-dist-uc
+#| fig-cap: "Distribution of diet quality index by FC in UC."
+p <- demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  drop_na(cat, dqi_tot) %>%
+  mutate(cat = fct_rev(cat)) %>%
+  ggplot(aes(x = dqi_tot, fill = cat, color = cat)) +
+  geom_density() +
+  facet_grid(rows = vars(cat)) +
+  labs(x = "Diet quality index",
+       y = "Density",
+       fill = "FC group",
+       color = "FC group")
+cat_theme(p)
 ```
 
 ## Nova intake score
@@ -1065,6 +1128,23 @@ demo %>%
   aov(formula = UPF_perc ~ cat) %>%
   summary() %>%
   pander()
+```
+
+```{R}
+#| label: fig-upfperc-FC-dist-uc
+#| fig-cap: "Distribution of Nova 4 food as a percentage of energy intake by FC in UC."
+p <- demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  drop_na(cat, upfperc) %>%
+  mutate(cat = fct_rev(cat)) %>%
+  ggplot(aes(x = upfperc, fill = cat, color = cat)) +
+  geom_density() +
+  facet_grid(rows = vars(cat)) +
+  labs(x = "Nova 4 food as a percentage of energy intake",
+       y = "Density",
+       fill = "FC group",
+       color = "FC group")
+cat_theme(p)
 ```
 
 

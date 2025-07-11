@@ -55,6 +55,18 @@ if (file.exists("/docker")) { # If running in docker
 demo <- readRDS(paste0(outdir, "demo-demographics.RDS"))
 demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
 demo.uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
+
+cat_theme <- function(gg) {
+  p <- gg +
+    scale_fill_manual(values = c("#DA4167", "#F4D35E", "#083D77")) +
+    scale_color_manual(values = colorspace::darken(c("#DA4167",
+                                                     "#F4D35E",
+                                                     "#083D77"),
+                                                   0.2)
+                     ) +
+  theme_minimal()
+  p
+}
 ```
 
 This page explores data which describes subjects' IBD, primarily consisting of 
@@ -109,6 +121,27 @@ IBD type is significantly associated with FC at recruitment.
 #| tbl-cap: "Chi-squared test between IBD type and FC groups."
 pander(chisq.test(demo$diagnosis2, demo$cat))
 ```
+
+From @fig-IBD-FC-dist, we can see subjects with UC/IBDU are more likely to have
+FC < 50, whiilst CD subjects are more likely to have FC 50-250. Roughtly the
+same proportion of subjects with CD and UC/IBDU have FC > 250.
+
+```{R}
+#| label: fig-IBD-FC-dist
+#| fig-cap: "Distribution of FC category by IBD subtype."
+p <- demo %>%
+  drop_na(cat) %>%
+  mutate(cat = fct_rev(cat)) %>%
+  ggplot(aes(x = diagnosis2, fill = cat, color = cat)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels = scales::percent) + 
+  labs(x = "IBD subtype",
+       y = "Proportion",
+       fill = "FC group",
+       color = "FC group")
+cat_theme(p)
+```
+
 
 ##  Disease duration
 
@@ -251,6 +284,25 @@ demo %>%
   pander()
 ```
 
+
+
+```{R}
+#| label: fig-duration-FC-dist-uc
+#| fig-cap: "Distribution of disease duration by FC in UC."
+p <- demo %>%
+  filter(diagnosis2 == "UC/IBDU") %>%
+  drop_na(cat) %>%
+  mutate(cat = fct_rev(cat)) %>%
+  ggplot(aes(x = `IBD Duration`, fill = cat, color = cat)) +
+  geom_density() +
+  facet_grid(rows = vars(cat)) +
+  labs(x = "Disease duration (years)",
+       y = "Density",
+       fill = "FC group",
+       color = "FC group")
+cat_theme(p)
+```
+
 ## IBD Control
 
 ```{R}
@@ -372,6 +424,18 @@ p1 / p2 + plot_annotation(tag_levels = "A")
 IBD-Control-8 scores and VAS were both found to be significantly associated with
 FC.
 
+
+```{R}
+#| label: tbl-control-8
+#| tbl-cap: "ANOVA between control-8 and FC groups across the FC cohort."
+
+demo %>%
+  aov(formula = as.numeric(control_8) ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+
 ```{R}
 #| label: tbl-control-8-cd
 #| tbl-cap: "ANOVA between control-8 and FC groups in Crohn's disease."
@@ -390,6 +454,16 @@ demo %>%
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
   aov(formula = as.numeric(control_8) ~ cat) %>%
+  summary() %>%
+  pander()
+```
+
+```{R}
+#| label: tbl-control-vas
+#| tbl-cap: "ANOVA between control VAS and FC groups across the FC cohort."
+
+demo %>%
+  aov(formula = OverallControl ~ cat) %>%
   summary() %>%
   pander()
 ```
@@ -728,8 +802,7 @@ patients with more active disease being more likely to be prescribed a biologic.
 pander(chisq.test(demo$Biologic, demo$cat))
 ```
 
-
-## Variables only relevant to Crohn's disease subjects
+## Smoking
 
 ```{R}
 smoking <- read_xlsx(paste0(data.path, "Baseline2022/lifestyle.xlsx")) %>%
@@ -783,12 +856,82 @@ demo <- merge(demo,
 )
 ```
 
+Some words go here.
+
+```{R}
+#| label: fig-smoke
+#| fig-cap: "Smoking status for subjects in the FC cohort."
+demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = Smoke, fill = Smoke, color = Smoke)) +
+  geom_bar() +
+  xlab("Smoking status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "Smoking status"),
+    color = guide_legend(title = "Smoking status")
+  )
+```
+
+Smoking status is not associated with FC at recruitment across the entire FC cohort.
+
+```{R}
+#| label: tbl-smoke
+#| tbl-cap: "Chi-squared test between between smoking status and FC groups."
+pander(chisq.test(demo$Smoke, demo$cat))
+```
+
+## E-cigarette use
+
+The vast majority of participants do not report using some form of e-cigarettes.
+It should be noted that as recruitment ended March 2020, these day may not
+reflect more modern trends. 
+
+```{R}
+#| label: fig-esmoke
+#| fig-cap: "E-cigarette usage for subjects in the FC cohort."
+demo.cd %>%
+  drop_na(cat) %>%
+  ggplot(aes(x = ECigs, fill = ECigs, color = ECigs)) +
+  geom_bar() +
+  xlab("E-cigarette status") +
+  ylab("Frequency") +
+  theme_minimal() +
+  scale_fill_manual(
+    values = c("#4E0250", "#517664", "#1C448E"),
+    na.value = "#032B43"
+  ) +
+  scale_color_manual(
+    values = c("#3D003F", "#385245", "#033070"),
+    na.value = "#032B43"
+  ) +
+  guides(
+    fill = guide_legend(title = "E-cigarette status"),
+    color = guide_legend(title = "E-cigarette status")
+  )
+```
+
+```{R}
+#| label: tbl-esmoke
+#| tbl-cap: "Chi-squared test between between E-cigarettte usage and FC groups."
+pander(chisq.test(demo.cd$ECigs, demo.cd$cat))
+```
+
+
+## Variables only relevant to Crohn's disease subjects
+
 This section looks at data only applicable to subjects with CD. The following 
 variables are considered: surgery, Montreal location, Montreal behaviour,
 Harvey-Bradshaw index, and smoking. 
-
-Smoking for CD and UC is considered separately as smoking is often reported to
-worsen outcomes in CD but may be protective in UC. 
 
 ### Surgery
 
