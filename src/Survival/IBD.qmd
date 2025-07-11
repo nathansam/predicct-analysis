@@ -591,6 +591,244 @@ invisible(cox.summary(fit.me))
 
 :::
 
+## Biologic use
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.cd.df <- flare.cd.df %>%
+  mutate(Biologic = plyr::mapvalues(Biologic,
+                                    from = c("Current",
+                                             "Previously",
+                                             "Never prescribed"),
+                                    to = c("Prescribed",
+                                           "Not prescribed",
+                                           "Not prescribed")))
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Biologic,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Biologic",
+  palette = c("#1A8FE3", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to clinical flare",
+  break.time.by = 200
+)
+
+cairo_pdf("plots/cd/soft-flare/ibd/biologic.pdf")
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png("plots/cd/soft-flare/ibd/biologic.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+print(p, newpage = FALSE)
+
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Biologic + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Biologic,
+  data = flare.cd.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Biologic",
+  palette = c("#1A8FE3", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/cd/hard-flare/ibd/biologic.pdf")
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png("plots/cd/hard-flare/ibd/biologic.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+print(p, newpage = FALSE)
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Biologic + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox.summary(fit.me))
+```
+
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+flare.uc.df <- flare.uc.df %>%
+  mutate(Biologic = plyr::mapvalues(Biologic,
+                                    from = c("Current",
+                                             "Previously",
+                                             "Never prescribed"),
+                                    to = c("Prescribed",
+                                           "Not prescribed",
+                                           "Not prescribed")))
+
+
+
+fit <- survfit(Surv(softflare_time, softflare) ~ Biologic,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Biologic",
+  palette = c("#1A8FE3", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to clinical flare",
+  break.time.by = 200
+)
+
+
+cairo_pdf("plots/uc/soft-flare/ibd/biologic.pdf")
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png("plots/uc/soft-flare/ibd/biologic.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+print(p, newpage = FALSE)
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + Biologic + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox.summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit <- survfit(Surv(hardflare_time, hardflare) ~ Biologic,
+  data = flare.uc.df
+)
+
+p <- ggsurvplot(fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Biologic",
+  palette = c("#1A8FE3", "#E76D83"),
+  xlab = "Time from study recrutiment (days)",
+  title = "Time to hard flare",
+  break.time.by = 500
+)
+
+cairo_pdf("plots/uc/hard-flare/ibd/biologic.pdf")
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png("plots/uc/hard-flare/ibd/biologic.png",
+  width = 7,
+  height = 7,
+  units = "in",
+  res = 300
+)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+print(p, newpage = FALSE)
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + Biologic + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox.summary(fit.me))
+```
+
+:::
+
 ## Variables only relevant to Crohn's disease
 
 ```{R}
