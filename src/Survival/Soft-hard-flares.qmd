@@ -431,6 +431,15 @@ print(p, newpage = FALSE)
 #| label: tbl-comb-comp
 #| tbl-cap: "Survival rates after two years of follow-up."
 
+
+fit %>%
+  tbl_survfit(
+    times = 365 * 1,
+    label = "Flare type",
+    statistic = "{estimate} ({conf.low}, {conf.high})",
+    label_header = "**1-year survival (95% CI)**"
+  )
+
 fit %>%
   tbl_survfit(
     times = 365 * 2,
@@ -441,13 +450,19 @@ fit %>%
 
 fit %>%
   tbl_survfit(
+    times = 365 * 3,
+    label = "Flare type",
+    statistic = "{estimate} ({conf.low}, {conf.high})",
+    label_header = "**3-year survival (95% CI)**"
+  )
+
+fit %>%
+  tbl_survfit(
     times = 365.25 * 4,
     label = "Flare type",
     statistic = "{estimate} ({conf.low}, {conf.high})",
-    label_header = "**5-year survival (95% CI)**"
+    label_header = "**4-year survival (95% CI)**"
   )
-
-
 ```
 
 
