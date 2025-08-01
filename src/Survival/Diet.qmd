@@ -23,106 +23,18 @@ bibliography: Survival.bib
 
 ```{R}
 #| message: false
-library(readxl)
-library(tidyverse)
-library(datefixR)
-library(survival)
-library(survminer)
-library(pander)
-library(coxme)
-library(finalfit)
-library(DescTools)
-library(gtsummary)
+source("Survival/utils.R")
 
+# Setup analysis environment
+analysis_setup <- setup_analysis()
+paths <- analysis_setup$paths
+demo <- analysis_setup$demo
 
-# paths to PREdiCCt data
-if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed/"
-} else { # Run on OS directly
-  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-}
-
-demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
-cox.summary <- function(fit) {
-  cat("Cox model summary:")
-  fit %>%
-    finalfit::fit2df(condense = FALSE) %>%
-    knitr::kable(
-      col.names = c(
-        "Variable",
-        "HR",
-        "Lower 95%",
-        "Upper 95%",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
-
-  cat("\\newline
-
-Diagnostics: \\newline
-
-")
-
-  cat("\\newline
-
-::: {.panel-tabset}
-
-      ")
-
-  cat("
-
-###### Proportional hazards assumption test \\newline
-
-  ")
-  cox.zph(fit)$table %>%
-    knitr::kable(
-      col.names = c(
-        "",
-        "Chi-squared statistic",
-        "DF",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
-
-  cat("\\newline
-
-###### DF betas \\newline
-
-  ")
-
-  print(ggcoxdiagnostics(fit, type = "dfbeta"))
-
-  cat("\\newline
-
-###### Martingale residuals \\newline
-
-      ")
-
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-
-  cat("\\newline
-
-:::
-
-      ")
-  return()
-}
-
-flare.df <- readRDS(paste0(outdir, "flares-biochem.RDS"))
-flare.cd.df <- readRDS(paste0(outdir, "flares-biochem-cd.RDS"))
-flare.uc.df <- readRDS(paste0(outdir, "flares-biochem-uc.RDS"))
+flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
+flare.cd.df <- readRDS(paste0(paths$outdir, "flares-biochem-cd.RDS"))
+flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
 ```
 
 ## Total meat protein
@@ -142,56 +54,34 @@ present, it is difficult to explore this in more detail (e.g. by meat type).
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize meat protein by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "Meat_sum", reference_data = flare.df)
 
-quants <- quantile(flare.df$Meat_sum, na.rm = TRUE)
-
-flare.cd.df$Meat_sum_cat <- cut(flare.cd.df$Meat_sum,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ Meat_sum_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat protein quantiles",
-  legend.labs = levels(flare.cd.df$Meat_sum_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "Meat_sum",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Meat protein quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/meat",
+  break_time_by = 200
 )
 
-saveRDS(p, paste0(outdir, "meat-cd-soft.RDS"))
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-cd-soft.RDS"))
 
-cairo_pdf("plots/cd/soft-flare/diet/meat.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/diet/meat.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -201,47 +91,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Meat_sum_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat protein quantiles",
-  legend.labs = levels(flare.cd.df$Meat_sum_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "Meat_sum",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Meat protein quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/meat",
+  break_time_by = 500
 )
 
-saveRDS(p, paste0(outdir, "meat-cd-hard.RDS"))
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-cd-hard.RDS"))
 
-cairo_pdf("plots/cd/hard-flare/diet/meat.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/diet/meat.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -257,54 +131,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$Meat_sum_cat <- cut(flare.uc.df$Meat_sum,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize meat protein by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "Meat_sum", reference_data = flare.df)
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ Meat_sum_cat,
-  data = flare.uc.df
-)
-
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat protein quantiles",
-  legend.labs = levels(flare.uc.df$Meat_sum_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "Meat_sum",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Meat protein quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/meat",
+  break_time_by = 200
 )
-saveRDS(p, paste0(outdir, "meat-uc-soft.RDS"))
-cairo_pdf("plots/uc/soft-flare/diet/meat.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
 
-png("plots/uc/soft-flare/diet/meat.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-uc-soft.RDS"))
 
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -313,48 +167,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Meat_sum_cat,
-  data = flare.uc.df
-)
 
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat protein quantiles",
-  legend.labs = levels(flare.uc.df$Meat_sum_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "Meat_sum",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Meat protein quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/meat",
+  break_time_by = 500
 )
-saveRDS(p, paste0(outdir, "meat-uc-hard.RDS"))
-cairo_pdf("plots/uc/hard-flare/diet/meat.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
 
-png("plots/uc/hard-flare/diet/meat.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-uc-hard.RDS"))
 
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -372,53 +210,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize overall meat intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "meat_overall", reference_data = flare.df)
 
-quants <- quantile(flare.df$meat_overall, na.rm = TRUE)
-
-flare.cd.df$meat_overall_cat <- cut(flare.cd.df$meat_overall,
-  breaks = c(0, quants[2:5])
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ meat_overall_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat intake quantiles",
-  legend.labs = levels(flare.cd.df$meat_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "meat_overall",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Meat intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/meat_overall",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/meat_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/meat_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -428,45 +247,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ meat_overall_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat intake quantiles",
-  legend.labs = levels(flare.cd.df$meat_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "meat_overall",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Meat intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/meat_overall",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/meat_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/meat_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -482,51 +287,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$meat_overall_cat <- cut(flare.uc.df$meat_overall,
-  breaks = c(0, quants[2:5])
-)
+# Categorize overall meat intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "meat_overall", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ meat_overall_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat intake quantiles",
-  legend.labs = levels(flare.uc.df$meat_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "meat_overall",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Meat intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/meat_overall",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/meat_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/meat_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -535,47 +323,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ meat_overall_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Meat intake quantiles",
-  legend.labs = levels(flare.uc.df$meat_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "meat_overall",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Meat intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/meat_overall",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/meat_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/meat_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -593,53 +366,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize overall fish intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fish_overall", reference_data = flare.df)
 
-quants <- quantile(flare.df$fish_overall, na.rm = TRUE)
-
-flare.cd.df$fish_overall_cat <- cut(flare.cd.df$fish_overall,
-  breaks = c(0, quants[2:5])
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ fish_overall_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fish intake quantiles",
-  legend.labs = levels(flare.cd.df$fish_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "fish_overall",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fish intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/fish_overall",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/fish_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/fish_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + fish_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -649,45 +403,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ fish_overall_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fish intake quantiles",
-  legend.labs = levels(flare.cd.df$fish_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "fish_overall",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fish intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/fish_overall",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/fish_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/fish_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -703,51 +443,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$fish_overall_cat <- cut(flare.uc.df$fish_overall,
-  breaks = c(0, quants[2:5])
-)
+# Categorize overall fish intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fish_overall", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ fish_overall_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fish intake quantiles",
-  legend.labs = levels(flare.uc.df$fish_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "fish_overall",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fish intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/fish_overall",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/fish_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/fish_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -756,47 +479,31 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ fish_overall_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fish intake quantiles",
-  legend.labs = levels(flare.uc.df$fish_overall_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "fish_overall",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fish intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/fish_overall",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/fish_overall.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/fish_overall.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -816,53 +523,34 @@ invisible(cox.summary(fit.me))
 #| fig-height: 6
 
 
-quants <- quantile(flare.df$fibre, na.rm = TRUE)
+# Categorize dietary fibre by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fibre", reference_data = flare.df)
 
-flare.cd.df$fibre_cat <- cut(flare.cd.df$fibre,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ fibre_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fibre quantiles",
-  legend.labs = levels(flare.cd.df$fibre_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "fibre",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fibre quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/fibre",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/fibre.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/fibre.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -872,45 +560,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ fibre_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fibre quantiles",
-  legend.labs = levels(flare.cd.df$fibre_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "fibre",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fibre quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/fibre",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/fibre.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/fibre.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -926,52 +600,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$fibre_cat <- cut(flare.uc.df$fibre,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize fibre by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fibre", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ fibre_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fibre quantiles",
-  legend.labs = levels(flare.uc.df$fibre_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "fibre",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fibre quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/fibre",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/fibre.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/fibre.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -980,47 +636,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ fibre_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fibre quantiles",
-  legend.labs = levels(flare.uc.df$fibre_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "fibre",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fibre quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/fibre",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/fibre.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/fibre.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1042,53 +683,34 @@ now, these data will be used.
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize PUFA by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "PUFA_percEng", reference_data = flare.df)
 
-quants <- quantile(flare.df$PUFA_percEng, na.rm = TRUE)
-
-flare.cd.df$PUFA_cat <- cut(flare.cd.df$PUFA_percEng,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-fit <- survfit(Surv(softflare_time, softflare) ~ PUFA_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "PUFA intake (by g) quantiles",
-  legend.labs = levels(flare.cd.df$PUFA_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "PUFA_percEng",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "PUFA intake (by g) quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/pufa",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/pufa.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/pufa.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1098,45 +720,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ PUFA_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "PUFA intake (by g) quantiles",
-  legend.labs = levels(flare.cd.df$PUFA_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "PUFA_percEng",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "PUFA intake (by g) quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/pufa",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/pufa.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/pufa.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1152,47 +760,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$PUFA_cat <- cut(flare.uc.df$PUFA_percEng,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize PUFA by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "PUFA_percEng", reference_data = flare.df)
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ PUFA_cat,
-  data = flare.uc.df
-)
-
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "PUFA intake (by g) quantiles",
-  legend.labs = levels(flare.uc.df$fibre_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "PUFA_percEng",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "PUFA intake (by g) quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/pufa",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/pufa.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/pufa.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng +
@@ -1200,7 +785,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1209,47 +797,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ PUFA_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "PUFA intake (by g) quantiles",
-  legend.labs = levels(flare.uc.df$PUFA_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "PUFA_percEng",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "PUFA intake (by g) quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/pufa",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/pufa.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/pufa.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1272,45 +845,31 @@ scores [@Monteiro_2017].
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(softflare_time, softflare) ~ NOVAScore_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Nova score",
-  legend.labs = levels(flare.cd.df$NOVAScore_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "NOVAScore",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Nova score",
+  plot_base_path = "plots/cd/soft-flare/diet/nova",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/nova.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "nova-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/nova.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1320,45 +879,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ NOVAScore_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Nova Score",
-  legend.labs = levels(flare.cd.df$NOVAScore_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "NOVAScore",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Nova Score",
+  plot_base_path = "plots/cd/hard-flare/diet/nova",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/nova.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "nova-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/nova.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1373,48 +918,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-#|
-fit <- survfit(Surv(softflare_time, softflare) ~ NOVAScore_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Nova score",
-  legend.labs = levels(flare.uc.df$NOVAScore_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "NOVAScore",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Nova score",
+  plot_base_path = "plots/uc/soft-flare/diet/nova",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/nova.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "nova-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/nova.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1423,47 +952,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ NOVAScore_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Nova score",
-  legend.labs = levels(flare.uc.df$NOVAScore_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "NOVAScore",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Nova score",
+  plot_base_path = "plots/uc/hard-flare/diet/nova",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/nova.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "nova-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/nova.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1485,52 +999,34 @@ drink (Nova 4).
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize UPF percentage by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "UPF_perc", reference_data = flare.df)
 
-quants <- quantile(flare.df$UPF_perc, na.rm = TRUE)
-
-flare.cd.df$UPF_perc_cat <- cut(flare.cd.df$UPF_perc,
-  breaks = c(0, quants[2:5])
-)
-
-fit <- survfit(Surv(softflare_time, softflare) ~ UPF_perc_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "UPF as % of energy",
-  legend.labs = levels(flare.cd.df$UPF_perc_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "UPF_perc",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "UPF as % of energy",
+  plot_base_path = "plots/cd/soft-flare/diet/UPF",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/UPF.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/UPF.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1540,45 +1036,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ UPF_perc_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "UPF as % of energy",
-  legend.labs = levels(flare.cd.df$UPF_perc_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "UPF_perc",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "UPF as % of energy",
+  plot_base_path = "plots/cd/hard-flare/diet/UPF",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/UPF.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/UPF.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1594,45 +1076,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$UPF_perc_cat <- cut(flare.uc.df$UPF_perc,
-  breaks = c(0, quants[2:5])
-)
+# Categorize UPF percentage by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "UPF_perc", reference_data = flare.df)
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ UPF_perc_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "UPF as % of energy",
-  legend.labs = levels(flare.uc.df$UPF_perc_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "UPF_perc",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "UPF as % of energy",
+  plot_base_path = "plots/uc/soft-flare/diet/UPF",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/UPF.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/UPF.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + UPF_perc +
@@ -1640,7 +1101,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1649,47 +1113,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ UPF_perc_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "UPF as % of energy",
-  legend.labs = levels(flare.uc.df$UPF_perc_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "UPF_perc",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "UPF as % of energy",
+  plot_base_path = "plots/uc/hard-flare/diet/UPF",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/UPF.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/UPF.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1710,56 +1159,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize bread intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "breadIntake", reference_data = flare.df)
 
-quants <- quantile(flare.df$breadIntake, na.rm = TRUE)
-
-flare.cd.df$breadIntake_cat <- cut(flare.cd.df$breadIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ breadIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Bread/cereal intake quantiles",
-  legend.labs = levels(flare.cd.df$breadIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "breadIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Bread/cereal intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/breadIntake",
+  break_time_by = 200
 )
 
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-cd-soft.RDS"))
 
-
-cairo_pdf("plots/cd/soft-flare/diet/breadIntake.pdf")
-p
-invisible(dev.off())
-
-png("plots/cd/soft-flare/diet/breadIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -1769,45 +1196,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ breadIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Bread/cereal intake quantiles",
-  legend.labs = levels(flare.cd.df$breadIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "breadIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Bread/cereal intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/breadIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/breadIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/breadIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1823,46 +1236,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$breadIntake_cat <- cut(flare.uc.df$breadIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize bread intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "breadIntake", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ breadIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Bread/cereal intake quantiles",
-  legend.labs = levels(flare.uc.df$breadIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "breadIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Bread/cereal intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/breadIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/breadIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/breadIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + breadIntake +
@@ -1870,7 +1261,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -1879,48 +1273,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ breadIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Bread/cereal intake quantiles",
-  legend.labs = levels(flare.uc.df$breadIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "breadIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Bread/cereal intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/breadIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/breadIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/breadIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1938,54 +1316,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize sweet intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "sweetIntake", reference_data = flare.df)
 
-quants <- quantile(flare.df$sweetIntake, na.rm = TRUE)
-
-flare.cd.df$sweetIntake_cat <- cut(flare.cd.df$sweetIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ sweetIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sweet/dessert/snack intake quantiles",
-  legend.labs = levels(flare.cd.df$sweetIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "sweetIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Sweet/dessert/snack intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/sweetIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/sweetIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/sweetIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -1995,45 +1353,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ sweetIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sweet/dessert/snack intake quantiles",
-  legend.labs = levels(flare.cd.df$sweetIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "sweetIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Sweet/dessert/snack intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/sweetIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/sweetIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/sweetIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2049,46 +1393,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$sweetIntake_cat <- cut(flare.uc.df$sweetIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize sweet intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "sweetIntake", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ sweetIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sweet/dessert/snack intake quantiles",
-  legend.labs = levels(flare.uc.df$sweetIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "sweetIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Sweet/dessert/snack intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/sweetIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/sweetIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/sweetIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + sweetIntake +
@@ -2096,7 +1418,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2105,48 +1430,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ sweetIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sweet/dessert/snack intake quantiles",
-  legend.labs = levels(flare.uc.df$sweetIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "sweetIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Sweet/dessert/snack intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/sweetIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/sweetIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/sweetIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2164,54 +1473,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize drink intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "drinkIntake", reference_data = flare.df)
 
-quants <- quantile(flare.df$drinkIntake, na.rm = TRUE)
-
-flare.cd.df$drinkIntake_cat <- cut(flare.cd.df$drinkIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ drinkIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
-  legend.labs = levels(flare.cd.df$drinkIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "drinkIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Artificially and sugar-sweetened drink intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/drinkIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/drinkIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/drinkIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2221,45 +1510,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ drinkIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
-  legend.labs = levels(flare.cd.df$drinkIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "drinkIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Artificially and sugar-sweetened drink intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/drinkIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/drinkIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/drinkIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2275,46 +1550,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$drinkIntake_cat <- cut(flare.uc.df$drinkIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize drink intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "drinkIntake", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ drinkIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
-  legend.labs = levels(flare.uc.df$drinkIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "drinkIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Artificially and sugar-sweetened drink intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/drinkIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/drinkIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/drinkIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + drinkIntake +
@@ -2322,7 +1575,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2331,48 +1587,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ drinkIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Artificially and sugar-sweetened drink intake quantiles",
-  legend.labs = levels(flare.uc.df$drinkIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "drinkIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Artificially and sugar-sweetened drink intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/drinkIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/drinkIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/drinkIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2390,54 +1630,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize processed meat intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "processedMeatIntake", reference_data = flare.df)
 
-quants <- quantile(flare.df$processedMeatIntake, na.rm = TRUE)
-
-flare.cd.df$processedMeatIntake_cat <- cut(flare.cd.df$processedMeatIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ processedMeatIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed meat intake quantiles",
-  legend.labs = levels(flare.cd.df$processedMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "processedMeatIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Processed meat intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/processedMeatIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/processedMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/processedMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2447,45 +1667,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ processedMeatIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed meat intake quantiles",
-  legend.labs = levels(flare.cd.df$processedMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "processedMeatIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Processed meat intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/processedMeatIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/processedMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/processedMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2501,46 +1707,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$processedMeatIntake_cat <- cut(flare.uc.df$processedMeatIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize processed meat intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "processedMeatIntake", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ processedMeatIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed meat intake quantiles",
-  legend.labs = levels(flare.uc.df$processedMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "processedMeatIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Processed meat intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/processedMeatIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/processedMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/processedMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake +
@@ -2548,7 +1732,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2557,48 +1744,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ processedMeatIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed meat intake quantiles",
-  legend.labs = levels(flare.uc.df$processedMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "processedMeatIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Processed meat intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/processedMeatIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/processedMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/processedMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2616,54 +1787,38 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-
+# Categorize processed plant intake by quantiles (with unique breaks for zeros)
 quants <- quantile(flare.df$processedPlantIntake, na.rm = TRUE)
-
 flare.cd.df$processedPlantIntake_cat <- cut(flare.cd.df$processedPlantIntake,
   breaks = unique(c(0, quants[2:5])), # minimum to median all 0. 
   include.lowest = TRUE
 )
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ processedPlantIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed plant-based alternative intake quantiles",
-  legend.labs = levels(flare.cd.df$processedPlantIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "processedPlantIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Processed plant-based alternative intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/processedPlantIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/processedPlantIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/processedPlantIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2673,45 +1828,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ processedPlantIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed plant-based alternative intake quantiles",
-  legend.labs = levels(flare.cd.df$processedPlantIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "processedPlantIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Processed plant-based alternative intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/processedPlantIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/processedPlantIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/processedPlantIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2727,46 +1868,28 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize processed plant intake by quantiles (with unique breaks for zeros)
+quants <- quantile(flare.df$processedPlantIntake, na.rm = TRUE)
 flare.uc.df$processedPlantIntake_cat <- cut(flare.uc.df$processedPlantIntake,
-  breaks = unique(c(0, quants[2:5])),
+  breaks = unique(c(0, quants[2:5])), # minimum to median all 0. 
   include.lowest = TRUE
 )
 
-fit <- survfit(Surv(softflare_time, softflare) ~ processedPlantIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed plant-based alternative intake quantiles",
-  legend.labs = levels(flare.uc.df$processedPlantIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "processedPlantIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Processed plant-based alternative intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/processedPlantIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/processedPlantIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/processedPlantIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake +
@@ -2774,7 +1897,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2783,48 +1909,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ processedPlantIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Processed plant-based alternative intake quantiles",
-  legend.labs = levels(flare.uc.df$processedPlantIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "processedPlantIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Processed plant-based alternative intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/processedPlantIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/processedPlantIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/processedPlantIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2844,54 +1954,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize fruit intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fruitIntake", reference_data = flare.df)
 
-quants <- quantile(flare.df$fruitIntake, na.rm = TRUE)
-
-flare.cd.df$fruitIntake_cat <- cut(flare.cd.df$fruitIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ fruitIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fruit intake quantiles",
-  legend.labs = levels(flare.cd.df$fruitIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "fruitIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fruit intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/fruitIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/fruitIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/fruitIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fruitIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -2901,45 +1991,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ fruitIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fruit intake quantiles",
-  legend.labs = levels(flare.cd.df$fruitIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "fruitIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fruit intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/fruitIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/fruitIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/fruitIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fruitIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -2955,46 +2031,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$fruitIntake_cat <- cut(flare.uc.df$fruitIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize fruit intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fruitIntake", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ fruitIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fruit intake quantiles",
-  legend.labs = levels(flare.uc.df$fruitIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "fruitIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fruit intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/fruitIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/fruitIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/fruitIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + fruitIntake +
@@ -3002,7 +2056,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3011,48 +2068,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ fruitIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Fruit intake quantiles",
-  legend.labs = levels(flare.uc.df$fruitIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "fruitIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fruit intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/fruitIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/fruitIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/fruitIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + fruitIntake + dqi_tot + BMI + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3070,54 +2111,34 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize vegetable intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "vegIntake", reference_data = flare.df)
 
-quants <- quantile(flare.df$vegIntake, na.rm = TRUE)
-
-flare.cd.df$vegIntake_cat <- cut(flare.cd.df$vegIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ vegIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Vegetable/legume intake quantiles",
-  legend.labs = levels(flare.cd.df$vegIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "vegIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Vegetable/legume intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/vegIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/vegIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/vegIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3127,45 +2148,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ vegIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Vegetable/legume intake quantiles",
-  legend.labs = levels(flare.cd.df$vegIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "vegIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Vegetable/legume intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/vegIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/vegIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/vegIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3181,46 +2188,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$vegIntake_cat <- cut(flare.uc.df$vegIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize vegetable intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "vegIntake", reference_data = flare.df)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ vegIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Vegetable/legume intake quantiles",
-  legend.labs = levels(flare.uc.df$vegIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "vegIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Vegetable/legume intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/vegIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/vegIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/vegIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + vegIntake +
@@ -3228,7 +2213,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3237,48 +2225,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ vegIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Vegetable/legume intake quantiles",
-  legend.labs = levels(flare.uc.df$vegIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "vegIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Vegetable/legume intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/vegIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/vegIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/vegIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3297,54 +2269,38 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-
+# Categorize red meat intake by quantiles (with unique breaks)
 quants <- quantile(flare.df$redMeatIntake, na.rm = TRUE)
-
 flare.cd.df$redMeatIntake_cat <- cut(flare.cd.df$redMeatIntake,
   breaks = unique(c(0, quants[2:5])),
   include.lowest = TRUE
 )
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ redMeatIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Red meat intake quantiles",
-  legend.labs = levels(flare.cd.df$redMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "redMeatIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Red meat intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/redMeatIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/redMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/redMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3354,45 +2310,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ redMeatIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Red meat intake quantiles",
-  legend.labs = levels(flare.cd.df$redMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "redMeatIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Red meat intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/redMeatIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/redMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/redMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3408,46 +2350,28 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize red meat intake by quantiles (with unique breaks)
+quants <- quantile(flare.df$redMeatIntake, na.rm = TRUE)
 flare.uc.df$redMeatIntake_cat <- cut(flare.uc.df$redMeatIntake,
   breaks = unique(c(0, quants[2:5])),
   include.lowest = TRUE
 )
 
-fit <- survfit(Surv(softflare_time, softflare) ~ redMeatIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Red meat intake quantiles",
-  legend.labs = levels(flare.uc.df$redMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "redMeatIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Red meat intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/redMeatIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/redMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/redMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + redMeatIntake +
@@ -3455,7 +2379,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3464,48 +2391,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ redMeatIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Red meat intake quantiles",
-  legend.labs = levels(flare.uc.df$redMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "redMeatIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Red meat intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/redMeatIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/redMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/redMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3523,54 +2434,38 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-
+# Categorize white meat intake by quantiles (with unique breaks)
 quants <- quantile(flare.df$whiteMeatIntake, na.rm = TRUE)
-
 flare.cd.df$whiteMeatIntake_cat <- cut(flare.cd.df$whiteMeatIntake,
   breaks = c(0, quants[2:5]),
   include.lowest = TRUE
 )
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ whiteMeatIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White meat intake quantiles",
-  legend.labs = levels(flare.cd.df$whiteMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "whiteMeatIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "White meat intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/whiteMeatIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/whiteMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/whiteMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + whiteMeatIntake + dqi_tot + BMI + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3580,45 +2475,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteMeatIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White meat intake quantiles",
-  legend.labs = levels(flare.cd.df$whiteMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "whiteMeatIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "White meat intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/whiteMeatIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/whiteMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/whiteMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3634,46 +2515,28 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize white meat intake by quantiles (with unique breaks)
+quants <- quantile(flare.df$whiteMeatIntake, na.rm = TRUE)
 flare.uc.df$whiteMeatIntake_cat <- cut(flare.uc.df$whiteMeatIntake,
   breaks = c(0, quants[2:5]),
   include.lowest = TRUE
 )
 
-fit <- survfit(Surv(softflare_time, softflare) ~ whiteMeatIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White meat intake quantiles",
-  legend.labs = levels(flare.uc.df$whiteMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "whiteMeatIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "White meat intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/whiteMeatIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/whiteMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/whiteMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake +
@@ -3681,7 +2544,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3690,48 +2556,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteMeatIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White meat intake quantiles",
-  legend.labs = levels(flare.uc.df$whiteMeatIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "whiteMeatIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "White meat intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/whiteMeatIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/whiteMeatIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/whiteMeatIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3749,54 +2599,38 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-
+# Categorize white fish intake by quantiles (with unique breaks)
 quants <- quantile(flare.df$whiteFishIntake, na.rm = TRUE)
-
 flare.cd.df$whiteFishIntake_cat <- cut(flare.cd.df$whiteFishIntake,
   breaks = c(0, quants[2:5]),
   include.lowest = TRUE
 )
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ whiteFishIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White fish intake quantiles",
-  legend.labs = levels(flare.cd.df$whiteFishIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200
+  var_name = "whiteFishIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "White fish intake quantiles",
+  plot_base_path = "plots/cd/soft-flare/diet/whiteFishIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/cd/soft-flare/diet/whiteFishIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-soft.RDS"))
 
-png("plots/cd/soft-flare/diet/whiteFishIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3806,45 +2640,31 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteFishIntake_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White fish intake quantiles",
-  legend.labs = levels(flare.cd.df$whiteFishIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "whiteFishIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "White fish intake quantiles",
+  plot_base_path = "plots/cd/hard-flare/diet/whiteFishIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/cd/hard-flare/diet/whiteFishIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-hard.RDS"))
 
-png("plots/cd/hard-flare/diet/whiteFishIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -3860,46 +2680,28 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Categorize white fish intake by quantiles (with unique breaks)
+quants <- quantile(flare.df$whiteFishIntake, na.rm = TRUE)
 flare.uc.df$whiteFishIntake_cat <- cut(flare.uc.df$whiteFishIntake,
   breaks = c(0, quants[2:5]),
   include.lowest = TRUE
 )
 
-fit <- survfit(Surv(softflare_time, softflare) ~ whiteFishIntake_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White fish intake quantiles",
-  legend.labs = levels(flare.uc.df$whiteFishIntakecat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to patient-reported flare",
-  break.time.by = 200,
-  xlim = c(0, 750)
+  var_name = "whiteFishIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "White fish intake quantiles",
+  plot_base_path = "plots/uc/soft-flare/diet/whiteFishIntake",
+  break_time_by = 200
 )
 
-cairo_pdf("plots/uc/soft-flare/diet/whiteFishIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-soft.RDS"))
 
-png("plots/uc/soft-flare/diet/whiteFishIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake +
@@ -3907,7 +2709,10 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 ##### Hard flare
@@ -3916,48 +2721,32 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ whiteFishIntake_cat,
-  data = flare.uc.df
-)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = FALSE,
-  pval = FALSE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "White fish intake quantiles",
-  legend.labs = levels(flare.uc.df$whiteFishIntake_cat),
-  palette = c("#2274A5", "#F0B67F", "#440381", "#FE5F55"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500,
-  xlim = c(0, 750)
+  var_name = "whiteFishIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "White fish intake quantiles",
+  plot_base_path = "plots/uc/hard-flare/diet/whiteFishIntake",
+  break_time_by = 500
 )
 
-cairo_pdf("plots/uc/hard-flare/diet/whiteFishIntake.pdf")
-p
-invisible(dev.off())
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-hard.RDS"))
 
-png("plots/uc/hard-flare/diet/whiteFishIntake.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
-
+# Run Cox model for continuous variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::

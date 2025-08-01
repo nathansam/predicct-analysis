@@ -14,92 +14,16 @@ bibliography: Survival.bib
 
 ```{R}
 #| message: false
-library(readxl)
-library(tidyverse)
-library(datefixR)
-library(survival)
-library(survminer)
-library(pander)
-library(coxme)
-library(finalfit)
-library(DescTools)
-library(gtsummary)
 library(patchwork)
+source("Survival/utils.R")
 
-# paths to PREdiCCt data
-if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed/"
-  followup.dir <- "data/final/20240308/Followup/"
-} else { # Run on OS directly
-  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-  followup.dir <- paste0(
-    "/Volumes/igmm/cvallejo-predicct/predicct/final/",
-    "20240308/Followup/"
-  )
-}
+# Setup analysis environment
+analysis_setup <- setup_analysis()
+paths <- analysis_setup$paths
+demo <- analysis_setup$demo
 
-demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
-
-cox.summary <- function(fit) {
-  cat("Cox model summary:")
-  fit %>%
-    finalfit::fit2df(condense = FALSE) %>%
-    knitr::kable(
-      col.names = c(
-        "Variable",
-        "HR",
-        "Lower 95%",
-        "Upper 95%",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
-  cat("\ ")
-
-  cat("Diagnostics:\ ")
-
-  cat('::: {.panel-tabset group="diagnostics"}\ ')
-
-  cat("###### Proportional hazards assumption test \ ")
-  cox.zph(fit)$table %>%
-    knitr::kable(
-      col.names = c(
-        "",
-        "Chi-squared statistic",
-        "DF",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
-
-  cat("###### DF betas \ ")
-
-  print(ggcoxdiagnostics(fit, type = "dfbeta"))
-
-  cat("###### Martignale residuals \n")
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-
-  cat(":::")
-  return()
-}
 ```
-
-This page explores patient-reported and hard flares. Survival curves are
-compared across diseases, and patient-reported and hard flares are compared
-directly. 
-
-## Response rates
-
-As clinical are largely derived from patient completed questionnaires, it is
 worthwhile to first consider how questionnaires were completed for each month. 
 
 As should be expected, there is a small degree of attrition of responses over
@@ -112,58 +36,40 @@ completion of the final questionnaire.
 #| fig-cap: "Number of responses for each month of follow-up for (A) the whole cohort, (B) the FC cohort, and (C) the FFQ cohort."
 #| fig-width: 7
 #| fig-height: 15
-monthly <- read_xlsx(paste0(data.path, "Followup/monthlyQ.xlsx"))
-p1 <- monthly %>%
-  mutate(Q_month = paste0("M", Q_month)) %>%
-  ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
-  geom_bar(fill = "#F17300", color = "#904200") +
-  theme_minimal() +
-  ylab("Monthly questionnaire responses") +
-  xlab("") +
-  scale_x_discrete(
-    breaks = paste0("M", seq(1, 24, by = 2)),
-    labels = paste0("M", seq(1, 24, by = 2))
-  ) +
-  ylim(0, 1200)
+monthly <- read_xlsx(paste0(paths$data.path, "Followup/monthlyQ.xlsx"))
 
-
+# Create plots using utility function
+p1 <- create_monthly_response_plot(
+  monthly, 
+  fill_color = "#F17300", 
+  border_color = "#904200", 
+  y_label = "Monthly questionnaire responses"
+)
 
 monthly.fc <- monthly %>%
   filter(ParticipantNo %in% subset(demo, !is.na(cat))$ParticipantNo)
 
-p2 <- monthly.fc %>%
-  mutate(Q_month = paste0("M", Q_month)) %>%
-  ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
-  geom_bar(fill = "#A8201A", color = "#6F0802") +
-  theme_minimal() +
-  ylab("Monthly questionnaire responses") +
-  xlab("") +
-  scale_x_discrete(
-    breaks = paste0("M", seq(1, 24, by = 2)),
-    labels = paste0("M", seq(1, 24, by = 2))
-  ) +
-  ylim(0, 1200)
+p2 <- create_monthly_response_plot(
+  monthly.fc, 
+  fill_color = "#A8201A", 
+  border_color = "#6F0802", 
+  y_label = "Monthly questionnaire responses"
+)
 
 monthly.ffq <- monthly %>%
   filter(ParticipantNo %in% subset(demo, (!is.na(cat)) & (!is.na(fibre)))$ParticipantNo)
 
-p3 <- monthly.ffq %>%
-  mutate(Q_month = paste0("M", Q_month)) %>%
-  ggplot(aes(x = factor(Q_month, levels = paste0("M", seq(1, 24))))) +
-  geom_bar(fill = "#0F8B8D", color = "#005354") +
-  theme_minimal() +
-  ylab("Monthly questionnaire responses") +
-  xlab("Month of follow-up") +
-  scale_x_discrete(
-    breaks = paste0("M", seq(1, 24, by = 2)),
-    labels = paste0("M", seq(1, 24, by = 2))
-  ) +
-  ylim(0, 1200)
+p3 <- create_monthly_response_plot(
+  monthly.ffq, 
+  fill_color = "#0F8B8D", 
+  border_color = "#005354", 
+  y_label = "Monthly questionnaire responses",
+  x_label = "Month of follow-up"
+)
 
 p <- p1 / p2 / p3 +
   plot_annotation(tag_levels = "A") &
   theme(plot.tag = element_text(face = "bold", size = 18))
-
 
 ggsave("plots/response-rate.pdf", p, width = 7, height = 15)
 ggsave("plots/response-rate.png", p, width = 7, height = 15)
@@ -175,7 +81,7 @@ p
 ```{R}
 #| warning: false
 flares <- read_xlsx(
-  paste0(followup.dir, "all-flares.xlsx"),
+  paste0(paths$all.flare.path, "all-flares.xlsx"),
   na = ".",
   sheet = 1
 ) %>%
@@ -249,24 +155,16 @@ All times are taken from the earliest reported flare.
 #| fig-cap: "Kaplan-Meier curves for patient-reported flares stratified by IBD type."
 #| fig-height: 6.5
 
-fit <- flare.df %>%
-  drop_na(cat) %>%
-  survfit(Surv(softflare_time, softflare) ~ diagnosis2, data = .)
-p <- ggsurvplot(fit,
-  data = flare.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD type",
-  legend.labs = c("Crohn's disease", "UC/IBDU"),
-  tables.y.text = FALSE,
+flare_data <- flare.df %>% drop_na(cat)
+p <- create_km_flare_plot(
+  data = flare_data,
+  formula = Surv(softflare_time, softflare) ~ diagnosis2,
+  legend_title = "IBD type",
+  legend_labs = c("Crohn's disease", "UC/IBDU"),
   palette = c("#4F6D7A", "#02C3BD"),
-  xlab = "Time from study recrutiment (days)",
-  tables.col = "strata"
+  xlab = "Time from study recruitment (days)",
+  save_path = paste0(paths$outdir, "flare-soft")
 )
-saveRDS(p, paste0(outdir, "flare-soft.RDS"))
 print(p, newpage = FALSE)
 ```
 
@@ -286,23 +184,14 @@ flare.df.cutoff <- flare.df %>%
     hardflare_time = if_else(hardflare_time > 730.5, 730.5, hardflare_time)
   )
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ diagnosis2,
-  data = flare.df.cutoff
-)
-p <- ggsurvplot(fit,
+p <- create_km_flare_plot(
   data = flare.df.cutoff,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD type",
-  legend.labs = c("Crohn's disease", "UC/IBDU"),
-  tables.y.text = FALSE,
+  formula = Surv(hardflare_time, hardflare) ~ diagnosis2,
+  legend_title = "IBD type",
+  legend_labs = c("Crohn's disease", "UC/IBDU"),
   palette = c("#4F6D7A", "#02C3BD"),
-  xlab = "Time from study recrutiment (days)",
-  break.time.by = 200,
-  tables.col = "strata"
+  xlab = "Time from study recruitment (days)",
+  break_time_by = 200
 )
 print(p, newpage = FALSE)
 ```
@@ -339,22 +228,16 @@ fit %>%
 #| fig-height: 6.5
 #| label: fig-km-hard-diag
 #| fig-cap: "Kaplan-Meier curves of hard flares stratified by IBD type across the full follow-up."
-fit <- survfit(Surv(hardflare_time, hardflare) ~ diagnosis2, data = flare.df)
-p <- ggsurvplot(fit,
+p <- create_km_flare_plot(
   data = flare.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
+  formula = Surv(hardflare_time, hardflare) ~ diagnosis2,
+  legend_title = "IBD type",
+  legend_labs = c("Crohn's disease", "UC/IBDU"),
   palette = c("#4F6D7A", "#02C3BD"),
-  xlab = "Time from study recrutiment (days)",
-  legend.title = "IBD type",
-  legend.labs = c("Crohn's disease", "UC/IBDU"),
-  break.time.by = 400,
-  tables.y.text = FALSE
+  xlab = "Time from study recruitment (days)",
+  break_time_by = 400,
+  save_path = paste0(paths$outdir, "flare-hard")
 )
-saveRDS(p, paste0(outdir, "flare-hard.RDS"))
 print(p, newpage = FALSE)
 ```
 
@@ -399,30 +282,24 @@ flare.comb$type <- factor(flare.comb$type,
 )
 
 
-fit <- survfit(Surv(time, Cens) ~ type, data = flare.comb)
-
-
-p <- ggsurvplot(fit,
+p <- create_km_flare_plot(
   data = flare.comb,
-  conf.int = TRUE,
-  pval = FALSE,
-  pval.method = FALSE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
+  formula = Surv(time, Cens) ~ type,
+  legend_title = "Flare type",
+  legend_labs = c("Hard flare", "Patient-reported flare"),
   palette = c("#DD6E42", "#EE1B65"),
-  xlab = "Time from study recrutiment (days)",
-  legend.title = "Flare type",
-  legend.labs = c("Hard flare", "Patient-reported flare"),
-  tables.y.text = FALSE,
-  tables.col = "strata",
-  break.time.by = 300,
-  xlim = c(0, 2200)
+  xlab = "Time from study recruitment (days)",
+  break_time_by = 300,
+  show_pval = FALSE,
+  xlim = c(0, 2200),
+  save_path = paste0(paths$outdir, "flare-comparison")
 )
 
+# Additional save for plots directory
 cairo_pdf("plots/flare-comparison.pdf", width = 7, height = 7)
 print(p, newpage = FALSE)
 invisible(dev.off())
-saveRDS(p, paste0(outdir, "flare-comparison.RDS"))
+
 print(p, newpage = FALSE)
 ```
 
@@ -524,7 +401,7 @@ for (id in unique(flare.comb$ParticipantNo)) {
 ```
 
 ```{R}
-saveRDS(flare.df, paste0(outdir, "flares-overview.RDS"))
+saveRDS(flare.df, paste0(paths$outdir, "flares-overview.RDS"))
 ```
 
 ## Reproduction and reproducibility {.appendix}

@@ -14,126 +14,23 @@ bibliography: Survival.bib
 
 ```{R}
 #| message: false
-library(readxl)
-library(tidyverse)
-library(datefixR)
-library(survival)
-library(survminer)
-library(pander)
-library(coxme)
-library(finalfit)
-library(DescTools)
-library(gtsummary)
+source("Survival/utils.R")
 
-# paths to PREdiCCt data
-if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed/"
-} else { # Run on OS directly
-  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-}
+# Setup analysis environment
+analysis_setup <- setup_analysis()
+paths <- analysis_setup$paths
+demo <- analysis_setup$demo
 
-demo <- readRDS(paste0(outdir, "demo-full.RDS"))
 demo$FC <- log(demo$FC)
 
-cox.summary <- function(fit) {
-  cat("Cox model summary:")
-  fit %>%
-    finalfit::fit2df(condense = FALSE) %>%
-    knitr::kable(
-      col.names = c(
-        "Variable",
-        "HR",
-        "Lower 95%",
-        "Upper 95%",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
+flare.df <- readRDS(paste0(paths$outdir, "flares-demographics.RDS"))
+flare.cd.df <- readRDS(paste0(paths$outdir, "flares-demographics-cd.RDS"))
+flare.uc.df <- readRDS(paste0(paths$outdir, "flares-demographics-uc.RDS"))
 
-  cat("\\newline
-
-Diagnostics: \\newline
-
-")
-
-  cat("\\newline
-
-::: {.panel-tabset}
-
-      ")
-
-  cat("
-
-###### Proportional hazards assumption test \\newline
-
-  ")
-  cox.zph(fit)$table %>%
-    knitr::kable(
-      col.names = c(
-        "",
-        "Chi-squared statistic",
-        "DF",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
-
-  cat("\\newline
-
-###### DF betas \\newline
-
-  ")
-
-  print(ggcoxdiagnostics(fit, type = "dfbeta"))
-
-  cat("\\newline
-
-###### Martingale residuals \\newline
-
-      ")
-
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-
-  cat("\\newline
-
-:::
-
-      ")
-  return()
-}
-
-GetHR <- function(fit, var) {
-  # Get point estimate with 95% CI
-
-  HR.dat <- summary(fit)$conf.int %>%
-    as.data.frame() %>%
-    filter(rownames(summary(fit)$conf.int) %in% var) %>%
-    select(`exp(coef)`, `lower .95`, `upper .95`)
-  # Ensure variables are in the same order as var
-  HR.dat <- HR.dat[var, ]
-  # Add p-value
-  HR.dat$p <- summary(fit)$coefficients[var, "p"]
-  names(HR.dat) <- c("HR", "Lower95", "Upper95", "p")
-  HR.dat
-}
-
-
-flare.df <- readRDS(paste0(outdir, "flares-demographics.RDS"))
-flare.cd.df <- readRDS(paste0(outdir, "flares-demographics-cd.RDS"))
-flare.uc.df <- readRDS(paste0(outdir, "flares-demographics-uc.RDS"))
-
-cd.clin.forest <- readRDS(paste0(outdir, "cd-clin-demographics.RDS"))
-cd.hard.forest <- readRDS(paste0(outdir, "cd-hard-demographics.RDS"))
-uc.clin.forest <- readRDS(paste0(outdir, "uc-clin-demographics.RDS"))
-uc.hard.forest <- readRDS(paste0(outdir, "uc-hard-demographics.RDS"))
+cd.clin.forest <- readRDS(paste0(paths$outdir, "cd-clin-demographics.RDS"))
+cd.hard.forest <- readRDS(paste0(paths$outdir, "cd-hard-demographics.RDS"))
+uc.clin.forest <- readRDS(paste0(paths$outdir, "uc-clin-demographics.RDS"))
+uc.hard.forest <- readRDS(paste0(paths$outdir, "uc-hard-demographics.RDS"))
 ```
 
 ## IBD Control-8
@@ -149,48 +46,24 @@ uc.hard.forest <- readRDS(paste0(outdir, "uc-hard-demographics.RDS"))
 #| output: "asis"
 #| fig-height: 6
 
-flare.cd.df$control_cat <-
-  cut(flare.cd.df$control_8,
-    c(0, 13, 16),
-    labels = c("0-12", "13-16"),
-    include.lowest = TRUE,
-    right = FALSE
-  )
+# Categorize IBD Control-8
+flare.cd.df <- categorize_variable(flare.cd.df, "control_8",
+                                  breaks = c(0, 13, 16),
+                                  labels = c("0-12", "13-16"))
 
-fit <- survfit(Surv(softflare_time, softflare) ~ control_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control-8",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "control_8",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "IBD Control-8",
+  plot_base_path = "plots/cd/soft-flare/ibd/control-8",
+  break_time_by = 200,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/control-8.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/control-8.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
-
+# Extract hazard ratio for continuous control_8 variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + control_8 + frailty(SiteNo),
@@ -198,9 +71,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-cd.clin.forest <- rbind(cd.clin.forest, GetHR(fit.me, "control_8"))
+cd.clin.forest <- rbind(cd.clin.forest, get_HR(fit.me, "control_8"))
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -210,39 +85,19 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ control_cat,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control-8",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "control_8",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "IBD Control-8",
+  plot_base_path = "plots/cd/hard-flare/ibd/control-8",
+  break_time_by = 500,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/cd/hard-flare/ibd/control-8.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/control-8.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Extract hazard ratio for continuous control_8 variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + control_8 + frailty(SiteNo),
@@ -250,9 +105,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-cd.hard.forest <- rbind(cd.hard.forest, GetHR(fit.me, "control_8"))
+cd.hard.forest <- rbind(cd.hard.forest, get_HR(fit.me, "control_8"))
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -268,50 +125,24 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-flare.uc.df$control_cat <-
-  cut(flare.uc.df$control_8,
-    c(0, 13, 16),
-    labels = c("0-12", "13-16"),
-    include.lowest = TRUE,
-    right = FALSE
-  )
+# Categorize IBD Control-8
+flare.uc.df <- categorize_variable(flare.uc.df, "control_8",
+                                  breaks = c(0, 13, 16),
+                                  labels = c("0-12", "13-16"))
 
-
-
-fit <- survfit(Surv(softflare_time, softflare) ~ control_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control-8",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "control_8",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "IBD Control-8",
+  plot_base_path = "plots/uc/soft-flare/ibd/control-8",
+  break_time_by = 200,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-
-cairo_pdf("plots/uc/soft-flare/ibd/control-8.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/ibd/control-8.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Extract hazard ratio for continuous control_8 variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + control_8 + frailty(SiteNo),
@@ -319,9 +150,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-uc.clin.forest <- rbind(uc.clin.forest, GetHR(fit.me, "control_8"))
+uc.clin.forest <- rbind(uc.clin.forest, get_HR(fit.me, "control_8"))
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -331,40 +164,19 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ control_cat,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control-8",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "control_8",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "IBD Control-8",
+  plot_base_path = "plots/uc/hard-flare/ibd/control-8",
+  break_time_by = 500,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/uc/hard-flare/ibd/control-8.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/ibd/control-8.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
-
+# Extract hazard ratio for continuous control_8 variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + control_8 + frailty(SiteNo),
@@ -372,8 +184,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-uc.hard.forest <- rbind(uc.hard.forest, GetHR(fit.me, "control_8"))
-invisible(cox.summary(fit.me))
+uc.hard.forest <- rbind(uc.hard.forest, get_HR(fit.me, "control_8"))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -391,40 +206,22 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Handle VAS control (already categorized as character)
+flare.cd.df$vas_control_cat <- factor(flare.cd.df$vas_control)
 
-fit <- survfit(Surv(softflare_time, softflare) ~ vas_control,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control VAS",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "vas_control",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "IBD Control VAS",
+  plot_base_path = "plots/cd/soft-flare/ibd/control-vas",
+  break_time_by = 200,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/control-vas.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/control-vas.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
-
+# Extract hazard ratio for vas_control variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + vas_control + frailty(SiteNo),
@@ -432,7 +229,9 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -442,47 +241,29 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ vas_control,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control VAS",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "vas_control",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "IBD Control VAS",
+  plot_base_path = "plots/cd/hard-flare/ibd/control-vas",
+  break_time_by = 500,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-
-cairo_pdf("plots/cd/hard-flare/ibd/control-vas.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/control-vas.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Extract hazard ratio for continuous vas_control variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + vas_control + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -498,45 +279,32 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(softflare_time, softflare) ~ vas_control,
-  data = flare.uc.df
-)
+# Handle VAS control (already categorized as character)
+flare.uc.df$vas_control_cat <- factor(flare.uc.df$vas_control)
 
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control VAS",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "vas_control",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "IBD Control VAS",
+  plot_base_path = "plots/uc/soft-flare/ibd/control-vas",
+  break_time_by = 200,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/uc/soft-flare/ibd/control-vas.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/ibd/control-vas.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
+# Extract hazard ratio for vas_control variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + vas_control + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -546,47 +314,29 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ vas_control,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IBD Control VAS",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 200
+  var_name = "vas_control",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "IBD Control VAS",
+  plot_base_path = "plots/uc/hard-flare/ibd/control-vas",
+  break_time_by = 200,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/uc/hard-flare/ibd/control-vas.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/ibd/control-vas.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
-
+# Extract hazard ratio for vas_control variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + vas_control + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -604,6 +354,7 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Transform biologic variable and create categorized version
 flare.cd.df <- flare.cd.df %>%
   mutate(Biologic = plyr::mapvalues(Biologic,
                                     from = c("Current",
@@ -613,41 +364,22 @@ flare.cd.df <- flare.cd.df %>%
                                            "Not prescribed",
                                            "Not prescribed")))
 
+# Create categorized version for survival analysis
+flare.cd.df$Biologic_cat <- flare.cd.df$Biologic
 
-fit <- survfit(Surv(softflare_time, softflare) ~ Biologic,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Biologic",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "Biologic",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Biologic",
+  plot_base_path = "plots/cd/soft-flare/ibd/biologic",
+  break_time_by = 200,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/biologic.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/biologic.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + Biologic + frailty(SiteNo),
@@ -655,7 +387,9 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -665,39 +399,19 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Biologic,
-  data = flare.cd.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Biologic",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "Biologic",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Biologic",
+  plot_base_path = "plots/cd/hard-flare/ibd/biologic",
+  break_time_by = 500,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/cd/hard-flare/ibd/biologic.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/biologic.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + Biologic + frailty(SiteNo),
@@ -705,7 +419,9 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -721,6 +437,7 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
+# Transform biologic variable and create categorized version
 flare.uc.df <- flare.uc.df %>%
   mutate(Biologic = plyr::mapvalues(Biologic,
                                     from = c("Current",
@@ -730,42 +447,22 @@ flare.uc.df <- flare.uc.df %>%
                                            "Not prescribed",
                                            "Not prescribed")))
 
+# Create categorized version for survival analysis
+flare.uc.df$Biologic_cat <- flare.uc.df$Biologic
 
-
-fit <- survfit(Surv(softflare_time, softflare) ~ Biologic,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Biologic",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare",
-  break.time.by = 200
+  var_name = "Biologic",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Biologic",
+  plot_base_path = "plots/uc/soft-flare/ibd/biologic",
+  break_time_by = 200,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-
-cairo_pdf("plots/uc/soft-flare/ibd/biologic.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/ibd/biologic.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + Biologic + frailty(SiteNo),
@@ -773,7 +470,9 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -783,40 +482,19 @@ invisible(cox.summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Biologic,
-  data = flare.uc.df
-)
-
-p <- ggsurvplot(fit,
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Biologic",
-  palette = c("#1A8FE3", "#E76D83"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare",
-  break.time.by = 500
+  var_name = "Biologic",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Biologic",
+  plot_base_path = "plots/uc/hard-flare/ibd/biologic",
+  break_time_by = 500,
+  palette = c("#1A8FE3", "#E76D83")
 )
 
-cairo_pdf("plots/uc/hard-flare/ibd/biologic.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/ibd/biologic.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + IMD + cat + Biologic + frailty(SiteNo),
@@ -824,7 +502,9 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -832,7 +512,7 @@ invisible(cox.summary(fit.me))
 ## Variables only relevant to Crohn's disease
 
 ```{R}
-demo.cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
+demo.cd <- readRDS(paste0(paths$outdir, "demo-cd.RDS"))
 demo.cd <- demo.cd[, c(
   "ParticipantNo",
   "Surgery",
@@ -849,6 +529,13 @@ flare.cd.df <- merge(flare.cd.df,
   all.x = TRUE,
   all.y = FALSE
 )
+
+# Create categorized versions for survival analysis
+flare.cd.df$Surgery_cat <- flare.cd.df$Surgery
+flare.cd.df$Location_cat <- flare.cd.df$Location
+flare.cd.df$L4_cat <- flare.cd.df$L4
+flare.cd.df$Behaviour_cat <- flare.cd.df$Behaviour
+flare.cd.df$Perianal_cat <- flare.cd.df$Perianal
 ```
 
 ### Surgery
@@ -861,34 +548,20 @@ flare.cd.df <- merge(flare.cd.df,
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Surgery, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Previous surgery",
-  palette = c("#3DDC97", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  var_name = "Surgery",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Previous surgery",
+  plot_base_path = "plots/cd/soft-flare/ibd/surgery",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#DD7373")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/surgery.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/surgery.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + Surgery +
@@ -896,9 +569,11 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-cd.clin.forest <- rbind(cd.clin.forest, GetHR(fit.me, "SurgeryYes"))
+cd.clin.forest <- rbind(cd.clin.forest, get_HR(fit.me, "SurgeryYes"))
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -907,35 +582,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Surgery, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Previous surgery",
-  palette = c("#3DDC97", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  var_name = "Surgery",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Previous surgery",
+  plot_base_path = "plots/cd/hard-flare/ibd/surgery",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#DD7373")
 )
 
-cairo_pdf("plots/cd/hard-flare/ibd/surgery.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/surgery.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + Surgery +
@@ -943,8 +603,11 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-cd.hard.forest <- rbind(cd.hard.forest, GetHR(fit.me, "SurgeryYes"))
-invisible(cox.summary(fit.me))
+cd.hard.forest <- rbind(cd.hard.forest, get_HR(fit.me, "SurgeryYes"))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -959,34 +622,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Location, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal location",
-  palette = c("#3B3561", "#5BC0EB", "#FFD166", "#E4572E"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  var_name = "Location",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Montreal location",
+  plot_base_path = "plots/cd/soft-flare/ibd/location",
+  break_time_by = 200,
+  palette = c("#3B3561", "#5BC0EB", "#FFD166", "#E4572E")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/location.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/location.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + Location +
@@ -997,9 +646,12 @@ fit.me <- coxph(
 
 cd.clin.forest <- rbind(
   cd.clin.forest,
-  GetHR(fit.me, c("LocationL2", "LocationL3"))
+  get_HR(fit.me, c("LocationL2", "LocationL3"))
 )
-invisible(cox.summary(fit.me))
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1008,34 +660,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Location, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal location",
-  palette = c("#3B3561", "#5BC0EB", "#FFD166", "#E4572E"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  var_name = "Location",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Montreal location",
+  plot_base_path = "plots/cd/hard-flare/ibd/location",
+  break_time_by = 200,
+  palette = c("#3B3561", "#5BC0EB", "#FFD166", "#E4572E")
 )
 
-cairo_pdf("plots/cd/hard-flare/ibd/location.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/location.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + Location +
@@ -1046,10 +684,12 @@ fit.me <- coxph(
 
 cd.hard.forest <- rbind(
   cd.hard.forest,
-  GetHR(fit.me, c("LocationL2", "LocationL3"))
+  get_HR(fit.me, c("LocationL2", "LocationL3"))
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1064,35 +704,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ L4, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal L4 presence",
-  palette = c("#3DDC97", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  var_name = "L4",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Montreal L4 presence",
+  plot_base_path = "plots/cd/soft-flare/ibd/l4",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#DD7373")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/l4.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/l4.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + L4 +
@@ -1102,10 +727,12 @@ fit.me <- coxph(
 )
 cd.clin.forest <- rbind(
   cd.clin.forest,
-  GetHR(fit.me, "L4Present")
+  get_HR(fit.me, "L4Present")
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1114,35 +741,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ L4, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal L4 presence",
-  palette = c("#3DDC97", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  var_name = "L4",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Montreal L4 presence",
+  plot_base_path = "plots/cd/hard-flare/ibd/l4",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#DD7373")
 )
 
-cairo_pdf("plots/cd/hard-flare/ibd/l4.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/l4.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + L4 +
@@ -1153,10 +765,12 @@ fit.me <- coxph(
 
 cd.hard.forest <- rbind(
   cd.hard.forest,
-  GetHR(fit.me, "L4Present")
+  get_HR(fit.me, "L4Present")
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1171,34 +785,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Behaviour, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal behaviour",
-  palette = c("#3DDC97", "#FFD166", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  var_name = "Behaviour",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Montreal behaviour",
+  plot_base_path = "plots/cd/soft-flare/ibd/behaviour",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#FFD166", "#DD7373")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/behaviour.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/behaviour.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + Behaviour +
@@ -1209,10 +809,12 @@ fit.me <- coxph(
 
 cd.clin.forest <- rbind(
   cd.clin.forest,
-  GetHR(fit.me, c("BehaviourB2", "BehaviourB3"))
+  get_HR(fit.me, c("BehaviourB2", "BehaviourB3"))
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1221,35 +823,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Behaviour, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal behaviour",
-  palette = c("#3DDC97", "#FFD166", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  var_name = "Behaviour",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Montreal behaviour",
+  plot_base_path = "plots/cd/hard-flare/ibd/behaviour",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#FFD166", "#DD7373")
 )
 
-cairo_pdf("plots/cd/hard-flare/ibd/behaviour.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/behaviour.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + Behaviour +
@@ -1260,10 +847,12 @@ fit.me <- coxph(
 
 cd.hard.forest <- rbind(
   cd.hard.forest,
-  GetHR(fit.me, c("BehaviourB2", "BehaviourB3"))
+  get_HR(fit.me, c("BehaviourB2", "BehaviourB3"))
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1278,34 +867,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Perianal, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Perianal disease",
-  palette = c("#3DDC97", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  var_name = "Perianal",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Perianal disease",
+  plot_base_path = "plots/cd/soft-flare/ibd/perinal",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#DD7373")
 )
 
-cairo_pdf("plots/cd/soft-flare/ibd/perinal.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/ibd/perinal.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + Perianal +
@@ -1316,10 +891,12 @@ fit.me <- coxph(
 
 cd.clin.forest <- rbind(
   cd.clin.forest,
-  GetHR(fit.me, "PerianalYes")
+  get_HR(fit.me, "PerianalYes")
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1328,34 +905,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Perianal, data = flare.cd.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Perianal disease",
-  palette = c("#3DDC97", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  var_name = "Perianal",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Perianal disease",
+  plot_base_path = "plots/cd/hard-flare/ibd/perinal",
+  break_time_by = 200,
+  palette = c("#3DDC97", "#DD7373")
 )
 
-cairo_pdf("plots/cd/hard-flare/ibd/perinal.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/ibd/perinal.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + Perianal +
@@ -1366,10 +929,12 @@ fit.me <- coxph(
 
 cd.hard.forest <- rbind(
   cd.hard.forest,
-  GetHR(fit.me, "PerianalYes")
+  get_HR(fit.me, "PerianalYes")
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1378,7 +943,7 @@ invisible(cox.summary(fit.me))
 ## Variables only relevant to UC/IBDU
 
 ```{R}
-demo.uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
+demo.uc <- readRDS(paste0(paths$outdir, "demo-uc.RDS"))
 demo.uc <- demo.uc[, c("ParticipantNo", "Extent", "Mayo")]
 flare.uc.df <- merge(flare.uc.df,
   demo.uc,
@@ -1386,6 +951,9 @@ flare.uc.df <- merge(flare.uc.df,
   all.x = TRUE,
   all.y = FALSE
 )
+
+# Create categorized version for survival analysis
+flare.uc.df$Extent_cat <- flare.uc.df$Extent
 ```
 
 ### Montreal extent
@@ -1398,35 +966,20 @@ flare.uc.df <- merge(flare.uc.df,
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Extent, data = flare.uc.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal extent",
-  palette = c("#3DDC97", "orange", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  var_name = "Extent",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Montreal extent",
+  plot_base_path = "plots/uc/soft-flare/ibd/extent",
+  break_time_by = 200,
+  palette = c("#3DDC97", "orange", "#DD7373")
 )
 
-
-cairo_pdf("plots/uc/soft-flare/ibd/extent.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/ibd/extent.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + IMD + Extent +
@@ -1437,10 +990,12 @@ fit.me <- coxph(
 
 uc.clin.forest <- rbind(
   uc.clin.forest,
-  GetHR(fit.me, c("ExtentE2", "ExtentE3"))
+  get_HR(fit.me, c("ExtentE2", "ExtentE3"))
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1449,34 +1004,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Extent, data = flare.uc.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Montreal extent",
-  palette = c("#3DDC97", "orange", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  var_name = "Extent",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Montreal extent",
+  plot_base_path = "plots/uc/hard-flare/ibd/extent",
+  break_time_by = 200,
+  palette = c("#3DDC97", "orange", "#DD7373")
 )
 
-cairo_pdf("plots/uc/hard-flare/ibd/extent.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/ibd/extent.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + Extent +
@@ -1487,10 +1028,12 @@ fit.me <- coxph(
 
 uc.hard.forest <- rbind(
   uc.hard.forest,
-  GetHR(fit.me, c("ExtentE2", "ExtentE3"))
+  get_HR(fit.me, c("ExtentE2", "ExtentE3"))
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -1513,34 +1056,20 @@ flare.uc.df$Mayo_cat <- cut(flare.uc.df$Mayo,
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Mayo_cat, data = flare.uc.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Mayo score",
-  palette = c("#3DDC97", "orange", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  var_name = "Mayo",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Mayo score",
+  plot_base_path = "plots/uc/soft-flare/ibd/mayo",
+  break_time_by = 200,
+  palette = c("#3DDC97", "orange", "#DD7373")
 )
 
-cairo_pdf("plots/uc/soft-flare/ibd/mayo.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/ibd/mayo.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model using continuous Mayo variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + cat + Mayo + Extent +
@@ -1549,13 +1078,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-
 uc.clin.forest <- rbind(
   uc.clin.forest,
-  GetHR(fit.me, "Mayo")
+  get_HR(fit.me, "Mayo")
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -1564,34 +1094,20 @@ invisible(cox.summary(fit.me))
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Mayo_cat, data = flare.uc.df)
-p <- ggsurvplot(fit,
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Mayo score",
-  palette = c("#3DDC97", "orange", "#DD7373"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  var_name = "Mayo",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Mayo score",
+  plot_base_path = "plots/uc/hard-flare/ibd/mayo",
+  break_time_by = 200,
+  palette = c("#3DDC97", "orange", "#DD7373")
 )
 
-cairo_pdf("plots/uc/hard-flare/ibd/mayo.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/ibd/mayo.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-print(p, newpage = FALSE)
-
+# Cox model using continuous Mayo variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex + cat + IMD + Mayo +
@@ -1602,23 +1118,25 @@ fit.me <- coxph(
 
 uc.hard.forest <- rbind(
   uc.hard.forest,
-  GetHR(fit.me, "Mayo")
+  get_HR(fit.me, "Mayo")
 )
 
-invisible(cox.summary(fit.me))
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
 ```
 
 :::
 
 ```{R}
-saveRDS(flare.df, paste0(outdir, "flares-IBD.RDS"))
-saveRDS(flare.cd.df, paste0(outdir, "flares-IBD-cd.RDS"))
-saveRDS(flare.uc.df, paste0(outdir, "flares-IBD-uc.RDS"))
+saveRDS(flare.df, paste0(paths$outdir, "flares-IBD.RDS"))
+saveRDS(flare.cd.df, paste0(paths$outdir, "flares-IBD-cd.RDS"))
+saveRDS(flare.uc.df, paste0(paths$outdir, "flares-IBD-uc.RDS"))
 
-saveRDS(cd.clin.forest, paste0(outdir, "cd-clin-IBD.RDS"))
-saveRDS(cd.hard.forest, paste0(outdir, "cd-hard-IBD.RDS"))
-saveRDS(uc.clin.forest, paste0(outdir, "uc-clin-IBD.RDS"))
-saveRDS(uc.hard.forest, paste0(outdir, "uc-hard-IBD.RDS"))
+saveRDS(cd.clin.forest, paste0(paths$outdir, "cd-clin-IBD.RDS"))
+saveRDS(cd.hard.forest, paste0(paths$outdir, "cd-hard-IBD.RDS"))
+saveRDS(uc.clin.forest, paste0(paths$outdir, "uc-clin-IBD.RDS"))
+saveRDS(uc.hard.forest, paste0(paths$outdir, "uc-hard-IBD.RDS"))
 ```
 
 ## Reproduction and reproducibility {.appendix}

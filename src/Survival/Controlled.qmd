@@ -14,119 +14,14 @@ bibliography: Survival.bib
 
 ```{R}
 #| message: false
-library(readxl)
-library(tidyverse)
-library(datefixR)
-library(survival)
-library(survminer)
-library(pander)
-library(coxme)
-library(finalfit)
-library(DescTools)
-library(gtsummary)
+source("Survival/utils.R")
 
+# Setup analysis environment
+analysis_setup <- setup_analysis()
+paths <- analysis_setup$paths
+demo <- analysis_setup$demo
 
-# paths to PREdiCCt data
-if (file.exists("/docker")) { # If running in docker
-  data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed/"
-} else { # Run on OS directly
-  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-}
-
-demo <- readRDS(paste0(outdir, "demo-full.RDS"))
-demo$FC <- log(demo$FC)
-
-cox.summary <- function(fit) {
-  cat("Cox model summary:")
-  fit %>%
-    finalfit::fit2df(condense = FALSE) %>%
-    knitr::kable(
-      col.names = c(
-        "Variable",
-        "HR",
-        "Lower 95%",
-        "Upper 95%",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
-
-  cat("\\newline
-
-Diagnostics: \\newline
-
-")
-
-  cat("\\newline
-
-::: {.panel-tabset}
-
-      ")
-
-  cat("
-
-###### Proportional hazards assumption test \\newline
-
-  ")
-  cox.zph(fit)$table %>%
-    knitr::kable(
-      col.names = c(
-        "",
-        "Chi-squared statistic",
-        "DF",
-        "P-value"
-      ),
-      digits = 4
-    ) %>%
-    print()
-
-  cat("\\newline
-
-###### DF betas \\newline
-
-  ")
-
-  print(ggcoxdiagnostics(fit, type = "dfbeta"))
-
-  cat("\\newline
-
-###### Martingale residuals \\newline
-
-      ")
-
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-
-  cat("\\newline
-
-:::
-
-      ")
-  return()
-}
-
-GetHR <- function(fit, var) {
-  # Get point estimate with 95% CI
-
-  HR.dat <- summary(fit)$conf.int %>%
-    as.data.frame() %>%
-    filter(rownames(summary(fit)$conf.int) %in% var) %>%
-    select(`exp(coef)`, `lower .95`, `upper .95`)
-  # Ensure variables are in the same order as var
-  HR.dat <- HR.dat[var, ]
-  # Add p-value
-  HR.dat$p <- summary(fit)$coefficients[var, "p"]
-  names(HR.dat) <- c("HR", "Lower95", "Upper95", "p")
-  HR.dat
-}
-
-flare.df <- readRDS(paste0(outdir, "flares-overview.RDS"))
+flare.df <- readRDS(paste0(paths$outdir, "flares-overview.RDS"))
 flare.cd.df <- subset(flare.df, diagnosis2 == "CD")
 flare.uc.df <- subset(flare.df, diagnosis2 == "UC/IBDU")
 ```
@@ -151,70 +46,34 @@ Of the variables considered here, only sex is associated with disease flare.
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Sex, data = flare.cd.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sex",
-  legend.labs = c("Male", "Female"),
+  formula = Surv(softflare_time, softflare) ~ Sex,
+  legend_title = "Sex",
+  legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to clinical flare",
+  break_time_by = 200,
+  plot_path = "plots/cd/soft-flare/controlled/sex"
 )
-
-cairo_pdf("plots/cd/soft-flare/controlled/sex.pdf")
-p
-invisible(dev.off())
-
-png("plots/cd/soft-flare/controlled/sex.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-p
-invisible(dev.off())
-
-p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Sex, data = flare.cd.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sex",
-  legend.labs = c("Male", "Female"),
+  formula = Surv(hardflare_time, hardflare) ~ Sex,
+  legend_title = "Sex",
+  legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to hard flare",
+  break_time_by = 500,
+  plot_path = "plots/cd/hard-flare/controlled/sex"
 )
-
-cairo_pdf("plots/cd/hard-flare/controlled/sex.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/controlled/sex.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 :::
@@ -227,70 +86,34 @@ print(p, newpage = FALSE)
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Sex, data = flare.uc.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sex",
-  legend.labs = c("Male", "Female"),
+  formula = Surv(softflare_time, softflare) ~ Sex,
+  legend_title = "Sex",
+  legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to clinical flare",
+  break_time_by = 200,
+  plot_path = "plots/uc/soft-flare/controlled/sex"
 )
-
-cairo_pdf("plots/uc/soft-flare/controlled/sex.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/controlled/sex.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Sex, data = flare.uc.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Sex",
-  legend.labs = c("Male", "Female"),
+  formula = Surv(hardflare_time, hardflare) ~ Sex,
+  legend_title = "Sex",
+  legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to hard flare",
+  break_time_by = 500,
+  plot_path = "plots/uc/hard-flare/controlled/sex"
 )
-
-cairo_pdf("plots/uc/hard-flare/controlled/sex.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/controlled/sex.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-p
 ```
 
 :::
@@ -305,70 +128,34 @@ p
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Smoke, data = flare.cd.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Smoking status",
-  legend.labs = c("Current", "Previous", "Never"),
+  formula = Surv(softflare_time, softflare) ~ Smoke,
+  legend_title = "Smoking status",
+  legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to clinical flare",
+  break_time_by = 200,
+  plot_path = "plots/cd/soft-flare/controlled/smoke"
 )
-
-cairo_pdf("plots/cd/soft-flare/controlled/smoke.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/controlled/smoke.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Smoke, data = flare.cd.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Smoking status",
-  legend.labs = c("Current", "Previous", "Never"),
+  formula = Surv(hardflare_time, hardflare) ~ Smoke,
+  legend_title = "Smoking status",
+  legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to hard flare",
+  break_time_by = 500,
+  plot_path = "plots/cd/hard-flare/controlled/smoke"
 )
-
-cairo_pdf("plots/cd/hard-flare/controlled/smoke.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/controlled/smoke.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 :::
@@ -381,70 +168,33 @@ print(p, newpage = FALSE)
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ Smoke, data = flare.uc.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Smoking status",
-  legend.labs = c("Current", "Previous", "Never"),
+  formula = Surv(softflare_time, softflare) ~ Smoke,
+  legend_title = "Smoking status",
+  legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to clinical flare",
+  break_time_by = 200,
+  plot_path = "plots/uc/soft-flare/controlled/smoke"
 )
-
-cairo_pdf("plots/uc/soft-flare/controlled/smoke.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/controlled/smoke.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
-```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ Smoke, data = flare.uc.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Smoking status",
-  legend.labs = c("Current", "Previous", "Never"),
+  formula = Surv(hardflare_time, hardflare) ~ Smoke,
+  legend_title = "Smoking status",
+  legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to hard flare",
+  break_time_by = 500,
+  plot_path = "plots/uc/hard-flare/controlled/smoke"
 )
-
-cairo_pdf("plots/uc/hard-flare/controlled/smoke.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/controlled/smoke.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 :::
@@ -460,66 +210,34 @@ print(p, newpage = FALSE)
 
 ```{R}
 #| fig-height: 7
-fit <- survfit(Surv(softflare_time, softflare) ~ IMD, data = flare.cd.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IMD",
+  formula = Surv(softflare_time, softflare) ~ IMD,
+  legend_title = "IMD",
+  legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to clinical flare",
+  break_time_by = 200,
+  plot_path = "plots/cd/soft-flare/controlled/imd"
 )
-
-cairo_pdf("plots/cd/soft-flare/controlled/imd.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/controlled/imd.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 7
-fit <- survfit(Surv(hardflare_time, hardflare) ~ IMD, data = flare.cd.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IMD",
+  formula = Surv(hardflare_time, hardflare) ~ IMD,
+  legend_title = "IMD",
+  legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to hard flare",
+  break_time_by = 500,
+  plot_path = "plots/cd/hard-flare/controlled/imd"
 )
-
-cairo_pdf("plots/cd/hard-flare/controlled/imd.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/controlled/imd.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
 
 ```
 
@@ -533,68 +251,34 @@ invisible(dev.off())
 
 ```{R}
 #| fig-height: 7
-fit <- survfit(Surv(softflare_time, softflare) ~ IMD, data = flare.uc.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IMD",
+  formula = Surv(softflare_time, softflare) ~ IMD,
+  legend_title = "IMD",
+  legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to clinical flare",
+  break_time_by = 200,
+  plot_path = "plots/uc/soft-flare/controlled/imd"
 )
-
-cairo_pdf("plots/uc/soft-flare/controlled/imd.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/controlled/imd.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 7
-fit <- survfit(Surv(hardflare_time, hardflare) ~ IMD, data = flare.uc.df)
-p <- ggsurvplot(fit,
+generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "IMD",
+  formula = Surv(hardflare_time, hardflare) ~ IMD,
+  legend_title = "IMD",
+  legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to hard flare",
+  break_time_by = 500,
+  plot_path = "plots/uc/hard-flare/controlled/imd"
 )
-
-cairo_pdf("plots/uc/hard-flare/controlled/imd.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/controlled/imd.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-print(p, newpage = FALSE)
 ```
 
 :::
@@ -609,35 +293,19 @@ print(p, newpage = FALSE)
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ cat, data = flare.cd.df)
-p <- ggsurvplot(fit,
+p <- generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Faecal calprotectin",
+  formula = Surv(softflare_time, softflare) ~ cat,
+  legend_title = "Faecal calprotectin",
+  legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
-  xlab = "Time from study recrutiment (days)",
+  xlab = "Time from study recruitment (days)",
   title = "Time to clinical flare",
-  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250")
+  break_time_by = 200,
+  plot_path = "plots/cd/soft-flare/controlled/fc"
 )
 
-cairo_pdf("plots/cd/soft-flare/controlled/fc.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/soft-flare/controlled/fc.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-saveRDS(p, paste0(outdir, "fc-cd-soft.RDS"))
+saveRDS(p, paste0(paths$outdir, "fc-cd-soft.RDS"))
 
 print(p, newpage = FALSE)
 ```
@@ -646,35 +314,19 @@ print(p, newpage = FALSE)
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ cat, data = flare.cd.df)
-p <- ggsurvplot(fit,
+p <- generate_survival_plot(
   data = flare.cd.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Faecal calprotectin",
+  formula = Surv(hardflare_time, hardflare) ~ cat,
+  legend_title = "Faecal calprotectin",
+  legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
-  xlab = "Time from study recrutiment (days)",
+  xlab = "Time from study recruitment (days)",
   title = "Time to hard flare",
-  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250")
+  break_time_by = 500,
+  plot_path = "plots/cd/hard-flare/controlled/fc"
 )
 
-cairo_pdf("plots/cd/hard-flare/controlled/fc.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/cd/hard-flare/controlled/fc.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-saveRDS(p, paste0(outdir, "fc-cd-hard.RDS"))
+saveRDS(p, paste0(paths$outdir, "fc-cd-hard.RDS"))
 
 print(p, newpage = FALSE)
 ```
@@ -689,34 +341,19 @@ print(p, newpage = FALSE)
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(softflare_time, softflare) ~ cat, data = flare.uc.df)
-p <- ggsurvplot(fit,
+p <- generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Faecal calprotectin",
-  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250"),
+  formula = Surv(softflare_time, softflare) ~ cat,
+  legend_title = "Faecal calprotectin",
+  legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to clinical flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to clinical flare",
+  break_time_by = 200,
+  plot_path = "plots/uc/soft-flare/controlled/fc"
 )
 
-cairo_pdf("plots/uc/soft-flare/controlled/fc.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/soft-flare/controlled/fc.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-saveRDS(p, paste0(outdir, "fc-uc-soft.RDS"))
+saveRDS(p, paste0(paths$outdir, "fc-uc-soft.RDS"))
 
 print(p, newpage = FALSE)
 ```
@@ -725,35 +362,19 @@ print(p, newpage = FALSE)
 
 ```{R}
 #| fig-height: 6
-fit <- survfit(Surv(hardflare_time, hardflare) ~ cat, data = flare.uc.df)
-p <- ggsurvplot(fit,
+p <- generate_survival_plot(
   data = flare.uc.df,
-  conf.int = TRUE,
-  pval = TRUE,
-  pval.method = TRUE,
-  ggtheme = theme_minimal(),
-  risk.table = TRUE,
-  legend.title = "Faecal calprotectin",
+  formula = Surv(hardflare_time, hardflare) ~ cat,
+  legend_title = "Faecal calprotectin",
+  legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
-  legend.labs = c("FC < 50", "50 \U2264 FC \U2264 250", "FC > 250"),
-  xlab = "Time from study recrutiment (days)",
-  title = "Time to hard flare"
+  xlab = "Time from study recruitment (days)",
+  title = "Time to hard flare",
+  break_time_by = 500,
+  plot_path = "plots/uc/hard-flare/controlled/fc"
 )
 
-cairo_pdf("plots/uc/hard-flare/controlled/fc.pdf")
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-png("plots/uc/hard-flare/controlled/fc.png",
-  width = 7,
-  height = 7,
-  units = "in",
-  res = 300
-)
-print(p, newpage = FALSE)
-invisible(dev.off())
-
-saveRDS(p, paste0(outdir, "fc-uc-hard.RDS"))
+saveRDS(p, paste0(paths$outdir, "fc-uc-hard.RDS"))
 
 print(p, newpage = FALSE)
 ```
@@ -781,7 +402,7 @@ fit.me <- coxph(
   model = TRUE
 )
 
-cd.clin.forest <- GetHR(
+cd.clin.forest <- get_HR(
   fit.me,
   c("SmokePrevious", "SmokeNever")
 )
@@ -798,7 +419,7 @@ fit.me <- coxph(
 
 cd.clin.forest <- rbind(
   cd.clin.forest,
-  GetHR(
+  get_HR(
     fit.me,
     c(
       "SexFemale",
@@ -811,7 +432,7 @@ cd.clin.forest <- rbind(
 
 
 
-invisible(cox.summary(fit.me))
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -827,7 +448,7 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-cd.hard.forest <- GetHR(
+cd.hard.forest <- get_HR(
   fit.me,
   c("SmokePrevious", "SmokeNever")
 )
@@ -842,7 +463,7 @@ fit.me <- coxph(
 
 cd.hard.forest <- rbind(
   cd.hard.forest,
-  GetHR(
+  get_HR(
     fit.me,
     c(
       "SexFemale",
@@ -852,7 +473,7 @@ cd.hard.forest <- rbind(
   )
 )
 
-invisible(cox.summary(fit.me))
+invisible(cox_summary(fit.me))
 ```
 
 :::
@@ -873,7 +494,7 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-uc.clin.forest <- GetHR(
+uc.clin.forest <- get_HR(
   fit.me,
   c("SmokePrevious", "SmokeNever")
 )
@@ -888,7 +509,7 @@ fit.me <- coxph(
 
 uc.clin.forest <- rbind(
   uc.clin.forest,
-  GetHR(
+  get_HR(
     fit.me,
     c(
       "SexFemale",
@@ -898,7 +519,7 @@ uc.clin.forest <- rbind(
   )
 )
 
-invisible(cox.summary(fit.me))
+invisible(cox_summary(fit.me))
 ```
 
 #### Hard flare
@@ -914,7 +535,7 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-uc.hard.forest <- GetHR(
+uc.hard.forest <- get_HR(
   fit.me,
   c("SmokePrevious", "SmokeNever")
 )
@@ -929,7 +550,7 @@ fit.me <- coxph(
 
 uc.hard.forest <- rbind(
   uc.hard.forest,
-  GetHR(
+  get_HR(
     fit.me,
     c(
       "SexFemale",
@@ -940,20 +561,20 @@ uc.hard.forest <- rbind(
   )
 )
 
-invisible(cox.summary(fit.me))
+invisible(cox_summary(fit.me))
 ```
 
 :::
 
 ```{R}
-saveRDS(flare.df, paste0(outdir, "flares-contolled.RDS"))
-saveRDS(flare.cd.df, paste0(outdir, "flares-controlled-cd.RDS"))
-saveRDS(flare.uc.df, paste0(outdir, "flares-controlled-uc.RDS"))
+saveRDS(flare.df, paste0(paths$outdir, "flares-contolled.RDS"))
+saveRDS(flare.cd.df, paste0(paths$outdir, "flares-controlled-cd.RDS"))
+saveRDS(flare.uc.df, paste0(paths$outdir, "flares-controlled-uc.RDS"))
 
-saveRDS(cd.clin.forest, paste0(outdir, "cd-clin-controlled.RDS"))
-saveRDS(cd.hard.forest, paste0(outdir, "cd-hard-controlled.RDS"))
-saveRDS(uc.clin.forest, paste0(outdir, "uc-clin-controlled.RDS"))
-saveRDS(uc.hard.forest, paste0(outdir, "uc-hard-controlled.RDS"))
+saveRDS(cd.clin.forest, paste0(paths$outdir, "cd-clin-controlled.RDS"))
+saveRDS(cd.hard.forest, paste0(paths$outdir, "cd-hard-controlled.RDS"))
+saveRDS(uc.clin.forest, paste0(paths$outdir, "uc-clin-controlled.RDS"))
+saveRDS(uc.hard.forest, paste0(paths$outdir, "uc-hard-controlled.RDS"))
 ```
 
 ## Reproduction and reproducibility {.appendix}
