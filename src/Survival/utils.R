@@ -27,7 +27,7 @@ set_paths <- function() {
     paths$prefix <- "data/end-of-follow-up/"
     paths$followup_dir <- "data/end-of-follow-up/"
     paths$outdir <- "data/processed/"
-    
+
     # Create output directory if it doesn't exist
     if (!dir.exists(paths$outdir)) {
       dir.create(paths$outdir, recursive = TRUE)
@@ -99,10 +99,10 @@ generate_survival_plot <- function(
   plot_path
 ) {
   fit <- survfit(formula, data = data)
-  
+
   # Store the formula in the survfit object to prevent extraction issues
   fit$call$formula <- formula
-  
+
   p <- ggsurvplot(
     fit,
     data = data,
@@ -151,41 +151,41 @@ categorize_by_quantiles <- function(
   if (is.null(reference_data)) {
     reference_data <- df
   }
-  
+
   # Get quantiles
   quants <- quantile(reference_data[[var_name]], na.rm = TRUE)
-  
+
   # Check for unique values and adjust number of quantiles if necessary
   unique_vals <- length(unique(reference_data[[var_name]][!is.na(reference_data[[var_name]])]))
-  
+
   # If we have fewer unique values than desired quantiles, reduce quantiles
   if (unique_vals <= 2) {
     # For very few unique values, create binary categorization
     median_val <- median(reference_data[[var_name]], na.rm = TRUE)
     df[[paste0(var_name, "_cat")]] <- ifelse(
-      df[[var_name]] <= median_val, 
-      "Low", 
+      df[[var_name]] <= median_val,
+      "Low",
       "High"
     )
-    df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]], 
+    df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]],
                                               levels = c("Low", "High"))
   } else {
     # Try to create breaks and check if they are unique
     breaks <- c(0, quants[2:(num_quantiles + 1)])
-    
+
     # Remove duplicate breaks
     breaks <- unique(breaks)
-    
+
     # If we don't have enough unique breaks, use what we have
     if (length(breaks) < 3) {
       # Fall back to binary categorization
       median_val <- median(reference_data[[var_name]], na.rm = TRUE)
       df[[paste0(var_name, "_cat")]] <- ifelse(
-        df[[var_name]] <= median_val, 
-        "Low", 
+        df[[var_name]] <= median_val,
+        "Low",
         "High"
       )
-      df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]], 
+      df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]],
                                                 levels = c("Low", "High"))
     } else {
       # Use the available breaks
@@ -197,7 +197,7 @@ categorize_by_quantiles <- function(
       )
     }
   }
-  
+
   return(df)
 }
 
@@ -231,7 +231,7 @@ run_survival_analysis <- function(
 ) {
   # Check if variable is already categorized
   cat_var_name <- paste0(var_name, "_cat")
-  
+
   # Determine which variable to use for survival analysis and Cox model
   if (cat_var_name %in% names(data) && !var_name %in% names(data)) {
     # Variable is already categorized, use the categorical version
@@ -244,7 +244,7 @@ run_survival_analysis <- function(
   } else {
     stop(paste("Neither", var_name, "nor", cat_var_name, "found in data"))
   }
-  
+
   # Create formula for survival fit
   surv_formula <- as.formula(paste0(
     "Surv(",
@@ -270,15 +270,19 @@ run_survival_analysis <- function(
 
   # Generate survival plot
   fit <- survfit(surv_formula, data = data)
-  
+
   # Store the formula in the survfit object to prevent extraction issues
   fit$call$formula <- surv_formula
-  
+
   # Adjust palette to match number of categories
   cat_levels <- levels(data[[paste0(var_name, "_cat")]])
   n_levels <- length(cat_levels)
   palette_subset <- palette[1:n_levels]
-  
+
+  parsed_event <- str_replace(outcome_event, "hardflare", "hard flare") %>%
+    str_replace("softflare", "patient-reported flare")
+
+
   p <- ggsurvplot(
     fit,
     data = data,
@@ -291,7 +295,7 @@ run_survival_analysis <- function(
     legend.labs = cat_levels,
     palette = palette_subset,
     xlab = "Time from study recruitment (days)",
-    title = paste("Time to", outcome_event),
+    title = paste("Time to", parsed_event),
     break.time.by = break_time_by
   )
 
@@ -324,7 +328,7 @@ run_survival_analysis <- function(
   }, error = function(e) {
     NULL
   })
-  
+
   list(
     plot = p,
     cox_model = fit.me,
@@ -369,7 +373,7 @@ create_km_flare_plot <- function(
   save_path = NULL
 ) {
   fit <- survfit(formula, data = data)
-  
+
   # Store the formula in the survfit object to prevent extraction issues
   fit$call$formula <- formula
 
@@ -411,7 +415,7 @@ setup_analysis <- function() {
   # Check if required files exist
   demo_file <- paste0(paths$outdir, "demo-full.RDS")
   if (!file.exists(demo_file)) {
-    stop(paste("Required file does not exist:", demo_file, 
+    stop(paste("Required file does not exist:", demo_file,
                "\nPlease run the data preparation scripts first."))
   }
 
