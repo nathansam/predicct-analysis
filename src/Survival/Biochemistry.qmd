@@ -38,7 +38,7 @@ uc.hard.forest <- readRDS(paste0(paths$outdir, "uc-hard-IBD.RDS"))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -121,7 +121,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -206,7 +206,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -287,7 +287,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -370,7 +370,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -451,7 +451,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -539,7 +539,7 @@ findings are reported for UC.
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -620,7 +620,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -703,7 +703,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
@@ -784,7 +784,7 @@ invisible(cox_summary(fit.me))
 
 ::: {.panel-tabset group="followup"}
 
-#### Clinical flare
+#### Patient-reported flare
 
 ```{R}
 #| results: "hold"
