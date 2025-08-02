@@ -71,10 +71,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + Meat_sum_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -105,10 +105,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + Meat_sum_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -148,10 +148,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + Meat_sum_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -182,10 +182,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + Meat_sum + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + Meat_sum_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -227,10 +227,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + meat_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -261,10 +261,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + meat_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -304,10 +304,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + meat_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -338,10 +338,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + meat_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + meat_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -383,10 +383,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + fish_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + fish_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -417,10 +417,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -460,10 +460,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -493,10 +493,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fish-overall-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fish_overall + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -540,10 +540,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -574,10 +574,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -617,10 +617,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -651,10 +651,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fibre-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fibre + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fibre_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -700,10 +700,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + PUFA_percEng_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -734,10 +734,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -777,10 +777,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng +
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -812,10 +812,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1016,10 +1016,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1050,10 +1050,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1093,10 +1093,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + UPF_perc +
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1128,10 +1128,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + UPF_perc + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1176,10 +1176,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1210,10 +1210,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1253,10 +1253,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + breadIntake +
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1288,10 +1288,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + breadIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1333,10 +1333,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1367,10 +1367,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1410,10 +1410,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + sweetIntake +
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1445,10 +1445,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + sweetIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1490,10 +1490,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1524,10 +1524,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1567,10 +1567,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + drinkIntake +
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1602,10 +1602,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + drinkIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1647,10 +1647,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1681,10 +1681,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1724,10 +1724,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake +
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1759,10 +1759,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1787,12 +1787,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize processed plant intake by quantiles (with unique breaks for zeros)
-quants <- quantile(flare.df$processedPlantIntake, na.rm = TRUE)
-flare.cd.df$processedPlantIntake_cat <- cut(flare.cd.df$processedPlantIntake,
-  breaks = unique(c(0, quants[2:5])), # minimum to median all 0. 
-  include.lowest = TRUE
-)
+# Categorize processed plant intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "processedPlantIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1808,10 +1804,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1842,10 +1838,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -1868,12 +1864,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize processed plant intake by quantiles (with unique breaks for zeros)
-quants <- quantile(flare.df$processedPlantIntake, na.rm = TRUE)
-flare.uc.df$processedPlantIntake_cat <- cut(flare.uc.df$processedPlantIntake,
-  breaks = unique(c(0, quants[2:5])), # minimum to median all 0. 
-  include.lowest = TRUE
-)
+# Categorize processed plant intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "processedPlantIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1889,10 +1881,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake +
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -1924,10 +1916,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -1971,10 +1963,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2005,10 +1997,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fruitIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2048,10 +2040,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fruitIntake +
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2083,10 +2075,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + fruitIntake + dqi_tot + BMI + frailty(SiteNo),
+    Sex + cat + IMD + fruitIntake_cat + dqi_tot + BMI + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2128,10 +2120,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2162,10 +2154,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2205,10 +2197,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + vegIntake +
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2240,10 +2232,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + vegIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2269,12 +2261,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize red meat intake by quantiles (with unique breaks)
-quants <- quantile(flare.df$redMeatIntake, na.rm = TRUE)
-flare.cd.df$redMeatIntake_cat <- cut(flare.cd.df$redMeatIntake,
-  breaks = unique(c(0, quants[2:5])),
-  include.lowest = TRUE
-)
+# Categorize red meat intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "redMeatIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2290,10 +2278,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2324,10 +2312,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2350,12 +2338,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize red meat intake by quantiles (with unique breaks)
-quants <- quantile(flare.df$redMeatIntake, na.rm = TRUE)
-flare.uc.df$redMeatIntake_cat <- cut(flare.uc.df$redMeatIntake,
-  breaks = unique(c(0, quants[2:5])),
-  include.lowest = TRUE
-)
+# Categorize red meat intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "redMeatIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2371,10 +2355,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake +
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2406,10 +2390,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2434,12 +2418,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize white meat intake by quantiles (with unique breaks)
-quants <- quantile(flare.df$whiteMeatIntake, na.rm = TRUE)
-flare.cd.df$whiteMeatIntake_cat <- cut(flare.cd.df$whiteMeatIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize white meat intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "whiteMeatIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2455,10 +2435,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + whiteMeatIntake + dqi_tot + BMI + frailty(SiteNo),
+    Sex + cat + IMD + whiteMeatIntake_cat + dqi_tot + BMI + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2489,10 +2469,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2515,12 +2495,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize white meat intake by quantiles (with unique breaks)
-quants <- quantile(flare.df$whiteMeatIntake, na.rm = TRUE)
-flare.uc.df$whiteMeatIntake_cat <- cut(flare.uc.df$whiteMeatIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize white meat intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "whiteMeatIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2536,10 +2512,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake +
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2571,10 +2547,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
@@ -2599,12 +2575,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize white fish intake by quantiles (with unique breaks)
-quants <- quantile(flare.df$whiteFishIntake, na.rm = TRUE)
-flare.cd.df$whiteFishIntake_cat <- cut(flare.cd.df$whiteFishIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize white fish intake by quantiles
+flare.cd.df <- categorize_by_quantiles(flare.cd.df, "whiteFishIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2620,10 +2592,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2654,10 +2626,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
@@ -2680,12 +2652,8 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-# Categorize white fish intake by quantiles (with unique breaks)
-quants <- quantile(flare.df$whiteFishIntake, na.rm = TRUE)
-flare.uc.df$whiteFishIntake_cat <- cut(flare.uc.df$whiteFishIntake,
-  breaks = c(0, quants[2:5]),
-  include.lowest = TRUE
-)
+# Categorize white fish intake by quantiles
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "whiteFishIntake", reference_data = flare.df)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2701,10 +2669,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-soft.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake +
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
@@ -2736,10 +2704,10 @@ analysis_result <- run_survival_analysis(
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-hard.RDS"))
 
-# Run Cox model for continuous variable
+# Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )

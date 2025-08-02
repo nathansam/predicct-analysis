@@ -27,6 +27,11 @@ set_paths <- function() {
     paths$prefix <- "data/end-of-follow-up/"
     paths$followup_dir <- "data/end-of-follow-up/"
     paths$outdir <- "data/processed/"
+    
+    # Create output directory if it doesn't exist
+    if (!dir.exists(paths$outdir)) {
+      dir.create(paths$outdir, recursive = TRUE)
+    }
   } else {
     # Run on OS directly
     paths$data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
@@ -146,14 +151,53 @@ categorize_by_quantiles <- function(
   if (is.null(reference_data)) {
     reference_data <- df
   }
+  
+  # Get quantiles
   quants <- quantile(reference_data[[var_name]], na.rm = TRUE)
-  breaks <- c(0, quants[2:(num_quantiles + 1)])
-  df[[paste0(var_name, "_cat")]] <- cut(
-    df[[var_name]],
-    breaks = breaks,
-    include.lowest = TRUE,
-    right = FALSE
-  )
+  
+  # Check for unique values and adjust number of quantiles if necessary
+  unique_vals <- length(unique(reference_data[[var_name]][!is.na(reference_data[[var_name]])]))
+  
+  # If we have fewer unique values than desired quantiles, reduce quantiles
+  if (unique_vals <= 2) {
+    # For very few unique values, create binary categorization
+    median_val <- median(reference_data[[var_name]], na.rm = TRUE)
+    df[[paste0(var_name, "_cat")]] <- ifelse(
+      df[[var_name]] <= median_val, 
+      "Low", 
+      "High"
+    )
+    df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]], 
+                                              levels = c("Low", "High"))
+  } else {
+    # Try to create breaks and check if they are unique
+    breaks <- c(0, quants[2:(num_quantiles + 1)])
+    
+    # Remove duplicate breaks
+    breaks <- unique(breaks)
+    
+    # If we don't have enough unique breaks, use what we have
+    if (length(breaks) < 3) {
+      # Fall back to binary categorization
+      median_val <- median(reference_data[[var_name]], na.rm = TRUE)
+      df[[paste0(var_name, "_cat")]] <- ifelse(
+        df[[var_name]] <= median_val, 
+        "Low", 
+        "High"
+      )
+      df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]], 
+                                                levels = c("Low", "High"))
+    } else {
+      # Use the available breaks
+      df[[paste0(var_name, "_cat")]] <- cut(
+        df[[var_name]],
+        breaks = breaks,
+        include.lowest = TRUE,
+        right = FALSE
+      )
+    }
+  }
+  
   return(df)
 }
 
@@ -230,6 +274,11 @@ run_survival_analysis <- function(
   # Store the formula in the survfit object to prevent extraction issues
   fit$call$formula <- surv_formula
   
+  # Adjust palette to match number of categories
+  cat_levels <- levels(data[[paste0(var_name, "_cat")]])
+  n_levels <- length(cat_levels)
+  palette_subset <- palette[1:n_levels]
+  
   p <- ggsurvplot(
     fit,
     data = data,
@@ -239,8 +288,8 @@ run_survival_analysis <- function(
     ggtheme = theme_minimal(),
     risk.table = TRUE,
     legend.title = legend_title,
-    legend.labs = levels(data[[paste0(var_name, "_cat")]]),
-    palette = palette,
+    legend.labs = cat_levels,
+    palette = palette_subset,
     xlab = "Time from study recruitment (days)",
     title = paste("Time to", outcome_event),
     break.time.by = break_time_by
@@ -359,8 +408,15 @@ setup_analysis <- function() {
   load_libraries()
   paths <- set_paths()
 
+  # Check if required files exist
+  demo_file <- paste0(paths$outdir, "demo-full.RDS")
+  if (!file.exists(demo_file)) {
+    stop(paste("Required file does not exist:", demo_file, 
+               "\nPlease run the data preparation scripts first."))
+  }
+
   # Load demographics data
-  demo <- readRDS(paste0(paths$outdir, "demo-full.RDS"))
+  demo <- readRDS(demo_file)
   demo$FC <- log(demo$FC)
 
   return(list(paths = paths, demo = demo))
