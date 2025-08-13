@@ -566,6 +566,43 @@ invisible(cox_summary(fit.me))
 
 :::
 
+### Across IBD
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare 
+
+```{R}
+#| output: "asis"
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + IMD + cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| output: "asis"
+
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + IMD + cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+:::
+
 ```{R}
 saveRDS(flare.df, paste0(paths$outdir, "flares-contolled.RDS"))
 saveRDS(flare.cd.df, paste0(paths$outdir, "flares-controlled-cd.RDS"))
