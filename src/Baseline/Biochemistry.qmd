@@ -85,7 +85,7 @@ via vertical lines.
 
 As a reminder, only subjects with a faecal calprotectin are included in this 
 analysis, and therefore NA values are not reported for faecal calprotectin.
-Faecal calproectin has been grouped into FC<50, 50 ≤ FC ≤ 250, and FC > 250.
+Faecal calprotectin has been grouped into FC<50, 50 ≤ FC ≤ 250, and FC > 250.
 
 ```{R}
 demo %>%

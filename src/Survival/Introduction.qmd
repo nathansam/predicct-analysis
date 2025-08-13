@@ -21,7 +21,7 @@ The primary study endpoint is patient-reported flare which is defined as a
 participant reporting their disease as being uncontrolled when they completed a
 monthly study questionnaire. 
 
-For patient-reported flaress, only the first two years of follow-up are
+For patient-reported flares, only the first two years of follow-up are
 considered as this was the time interval in which questionnaires were sent to
 participants. 
 

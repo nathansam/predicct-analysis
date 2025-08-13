@@ -604,7 +604,7 @@ invisible(cox_summary(fit.me))
 :::
 
 ```{R}
-saveRDS(flare.df, paste0(paths$outdir, "flares-contolled.RDS"))
+saveRDS(flare.df, paste0(paths$outdir, "flares-controlled.RDS"))
 saveRDS(flare.cd.df, paste0(paths$outdir, "flares-controlled-cd.RDS"))
 saveRDS(flare.uc.df, paste0(paths$outdir, "flares-controlled-uc.RDS"))
 

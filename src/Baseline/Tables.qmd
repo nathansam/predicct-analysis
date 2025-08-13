@@ -488,10 +488,10 @@ table1(~ Extent + Mayo + PRO2 + Smoke + ECigs | cohort,
 )
 ```
 
-### Associations between Crohn's Disease-only variables and cohort membership
+### Associations between UC/IBDU-only variables and cohort membership
 
 None of the UC/IBDU-only variables were found to significantly differ across
-cohorts. 
+cohorts.
 
 #### Montreal extent
 
