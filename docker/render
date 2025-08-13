@@ -1,11 +1,18 @@
 #!/bin/bash
 # Workaround beacause Quarto deletes the output directory before rendering.
-# docs is in use by Docker and cannot be removed so use temp directory for
+# docs is in use by Docker and cannot be removed. Instead use temp directory for
 # output and then copy the files to docs.
+
 rm -f *.qmd
 cp -r src/. .
 rm -rf temp
 mkdir temp
+
+# This version of quarto does not support multiple --to arguments.
+# Run twice and benefit from caching/freezing the second time.
+
 quarto render --output-dir temp --to html
+quarto render --output-dir temp --to pdf
+
 rm -rf docs/*
 cp -r temp/* docs
