@@ -197,6 +197,77 @@ invisible(cox_summary(fit.me))
 
 :::
 
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize meat protein by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "Meat_sum", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "Meat_sum",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Meat protein quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/meat",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + Meat_sum_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "Meat_sum",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Meat protein quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/meat",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + Meat_sum_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
 ## Overall meat intake
 
 ### Crohn's disease
@@ -344,6 +415,77 @@ fit.me <- coxph(
     Sex + cat + IMD + dqi_tot + meat_overall_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize overall meat intake by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "meat_overall", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "meat_overall",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Meat intake quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/meat_overall",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + meat_overall_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "meat_overall",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Meat intake quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/meat_overall",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + meat_overall_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
 )
 
 # Display plot and model summary
@@ -508,6 +650,77 @@ invisible(cox_summary(fit.me))
 
 :::
 
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize overall fish intake by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "fish_overall", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "fish_overall",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fish intake quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/fish_overall",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "fish_overall",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fish intake quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/fish_overall",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + fish_overall_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
 
 ## Dietary fibre
 
@@ -657,6 +870,77 @@ fit.me <- coxph(
     Sex + cat + IMD + dqi_tot + BMI + fibre_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize dietary fibre by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "fibre", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "fibre",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Fibre quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/fibre",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + fibre_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "fibre",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Fibre quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/fibre",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + fibre_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
 )
 
 # Display plot and model summary
@@ -827,6 +1111,77 @@ invisible(cox_summary(fit.me))
 
 :::
 
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize PUFA by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "PUFA_percEng", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "PUFA_percEng",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "PUFA intake (by g) quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/pufa",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "PUFA_percEng",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "PUFA intake (by g) quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/pufa",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
 ## NOVA score
 
 The SAP states emulsifiers (specifically lecithin) will be investigated.
@@ -973,6 +1328,74 @@ fit.me <- coxph(
     Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "NOVAScore",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Nova score",
+  plot_base_path = "plots/ibd/soft-flare/diet/nova",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "NOVAScore",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Nova score",
+  plot_base_path = "plots/ibd/hard-flare/diet/nova",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + NOVAScore_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
 )
 
 # Display plot and model summary
@@ -1143,6 +1566,77 @@ invisible(cox_summary(fit.me))
 
 :::
 
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize UPF percentage by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "UPF_perc", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "UPF_perc",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "UPF as % of energy",
+  plot_base_path = "plots/ibd/soft-flare/diet/UPF",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "UPF_perc",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "UPF as % of energy",
+  plot_base_path = "plots/ibd/hard-flare/diet/UPF",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
 
 ## Processed food subgroups
 
@@ -1294,6 +1788,77 @@ fit.me <- coxph(
     Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
+#### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+##### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize bread intake by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "breadIntake", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "breadIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Bread/cereal intake quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/breadIntake",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "breadIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Bread/cereal intake quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/breadIntake",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
 )
 
 # Display plot and model summary
@@ -1460,6 +2025,77 @@ invisible(cox_summary(fit.me))
 
 :::
 
+#### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+##### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize sweet intake by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "sweetIntake", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "sweetIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Sweet/dessert/snack intake quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/sweetIntake",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "sweetIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Sweet/dessert/snack intake quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/sweetIntake",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
 ### Artificially and sugar-sweetened beverages
 
 #### Crohn's disease
@@ -1608,6 +2244,77 @@ fit.me <- coxph(
     Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
+#### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+##### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize drink intake by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "drinkIntake", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "drinkIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Artificially and sugar-sweetened drink intake quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/drinkIntake",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "drinkIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Artificially and sugar-sweetened drink intake quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/drinkIntake",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
 )
 
 # Display plot and model summary
@@ -1774,6 +2481,77 @@ invisible(cox_summary(fit.me))
 
 :::
 
+#### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+##### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize processed meat intake by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "processedMeatIntake", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "processedMeatIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Processed meat intake quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/processedMeatIntake",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "processedMeatIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Processed meat intake quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/processedMeatIntake",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
 ### Plant-based alternatives
 
 #### Crohn's disease
@@ -1922,6 +2700,77 @@ fit.me <- coxph(
     Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+:::
+
+#### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+
+##### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Categorize processed plant intake by quantiles
+flare.df <- categorize_by_quantiles(flare.df, "processedPlantIntake", reference_data = flare.df)
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "processedPlantIntake",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Processed plant-based alternative intake quantiles",
+  plot_base_path = "plots/ibd/soft-flare/diet/processedPlantIntake",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+##### Hard flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for hard flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "processedPlantIntake",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Processed plant-based alternative intake quantiles",
+  plot_base_path = "plots/ibd/hard-flare/diet/processedPlantIntake",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
 )
 
 # Display plot and model summary
