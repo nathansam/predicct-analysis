@@ -9,10 +9,13 @@ rm -rf temp
 mkdir temp
 
 # This version of quarto does not support multiple --to arguments.
-# Run twice and benefit from caching/freezing the second time.
 
 quarto render --output-dir temp --to html
-quarto render --output-dir temp --to pdf
-
 rm -rf docs/*
+cp -r temp/* docs
+
+
+
+quarto render --output-dir temp --to pdf
+rm -rf temp/index.html
 cp -r temp/* docs
