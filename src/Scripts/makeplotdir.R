@@ -7,6 +7,10 @@ dir.create("plots/cd/hard-flare/diet", recursive = TRUE, showWarnings = FALSE)
 dir.create("plots/uc/soft-flare/diet", recursive = TRUE, showWarnings = FALSE)
 dir.create("plots/uc/hard-flare/diet", recursive = TRUE, showWarnings = FALSE)
 
+dir.create("plots/ibd/soft-flare/diet/", recursive = TRUE, showWarnings = FALSE)
+dir.create("plots/ibd/hard-flare/diet/", recursive = TRUE, showWarnings = FALSE)
+
+
 dir.create(
   "plots/cd/soft-flare/demographics",
   recursive = TRUE,
