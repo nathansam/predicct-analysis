@@ -134,13 +134,13 @@ cox.summary <- function(fit) {
     ) %>%
     print()
 
-  cat("\\newline
+  cat("
 
-Diagnostics: \\newline
+Diagnostics: 
 
 ")
 
-  cat("\\newline
+  cat("
 
 ::: {.panel-tabset}
 
@@ -148,7 +148,7 @@ Diagnostics: \\newline
 
   cat("
 
-###### Proportional hazards assumption test \\newline
+###### Proportional hazards assumption test 
 
   ")
   cox.zph(fit)$table %>%
@@ -163,23 +163,23 @@ Diagnostics: \\newline
     ) %>%
     print()
 
-  cat("\\newline
+  cat("
 
-###### DF betas \\newline
+###### DF betas 
 
   ")
 
   print(ggcoxdiagnostics(fit, type = "dfbeta"))
 
-  cat("\\newline
+  cat("
 
-###### Martingale residuals \\newline
+###### Martingale residuals 
 
       ")
 
   print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
 
-  cat("\\newline
+  cat("
 
 :::
 
@@ -205,7 +205,7 @@ Full results of baseline analysis can be found in separate report (HADS Baseline
 
 ## Analysis for whole cohort 
 
-### Anxiety and soft flare
+### Anxiety and patient-reported flare
 
 * Controlling for site only, significant association both moderate (p=value =
   9.5e-05) and severe (p-value = 1.1e-07) anxiety
@@ -237,7 +237,7 @@ p1 <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
   xlab = "Time from study recruitment (days)",
-  title = "Whole cohort - Time to soft flare"
+  title = "Whole cohort - Time to patient-reported flare"
 )
 p1
 ```
@@ -289,7 +289,7 @@ cox_model <- coxph(
 invisible(cox.summary(cox_model))
 ```
 
-### Depression and soft flares:
+### Depression and patient-reported flares:
 
 
 * Controlling for site only, significant for moderate (p-value = 0.0009, 95% CI
@@ -317,7 +317,7 @@ p1 <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
   xlab = "Time from study recruitment (days)",
-  title = "Whole cohort - Time to soft flare"
+  title = "Whole cohort - Time to patient-reported flare"
 )
 p1
 ```
@@ -520,9 +520,9 @@ invisible(cox.summary(cox_model))
 
 ## Analyses by subgroups (UC/IBDU vs CD)
 
-### UC/IBDU and soft flares
+### UC/IBDU and patient-reported flares
 
-#### UC/IBDU anxiety scores and soft flares
+#### UC/IBDU anxiety scores and patient-reported flares
 
 *	Controlling for site only, significant association with severe anxiety and
   risk of flare (p-value = 0.0024, 95% CI 1.17 - 2.14)
@@ -552,7 +552,7 @@ p.uc.anx <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
   xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to soft flare"
+  title = "UC/IBDU - Time to patient-reported flare"
 )
 
 p.uc.anx
@@ -602,7 +602,7 @@ cox_model <- coxph(
 invisible(cox.summary(cox_model))
 ```
 
-#### UC/IBDU depression scores and soft flares
+#### UC/IBDU depression scores and patient-reported flares
 
 *	Controlling for site only, significant association with moderate depression
   and risk of flare (p-value = 0.008, 95% CI 1.12 - 2.25) and severe depression
@@ -634,7 +634,7 @@ p2 <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
   xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to soft flare"
+  title = "UC/IBDU - Time to patient-reported flare"
 )
 p2
 ```
@@ -682,7 +682,9 @@ invisible(cox.summary(cox_model))
 
 ### UC/IBDU and Hard Flares
 
-```{r, table for participants}
+```{r}
+#| label: tbl-uc-participants
+#| tbl-cap: "UC/IBDU Participants within each score group"
 # Nathan's code for tables function
 my.render.cont <- function(x) {
   with(
@@ -695,11 +697,11 @@ my.render.cont <- function(x) {
 }
 
 # Make table showing how many in each group (anxiety/depression for UC)
-table1::table1(~ score_group | hads_type,
-  data = flare_uc,
-  render.continuous = my.render.cont,
-  caption = "UC/IBDU Participants within each score group"
-)
+#table1::table1(~ score_group | hads_type,
+#  data = flare_uc,
+#  render.continuous = my.render.cont,
+#  caption = "UC/IBDU Participants within each score group"
+#)
 ```
 
 #### UC/IBDU Anxiety and time to hard flare
@@ -851,7 +853,7 @@ cox_model <- coxph(
 invisible(cox.summary(cox_model))
 ```
 
-### CD and Soft flares 
+### CD and patient-reported flares 
 
 n= 820, number of events= 279
 
@@ -885,7 +887,7 @@ p.cd.anx <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
   xlab = "Time from study recruitment (days)",
-  title = "CD - Time to soft flare"
+  title = "CD - Time to patient-reported flare"
 )
 p.cd.anx
 ```
@@ -959,7 +961,7 @@ p2 <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
   xlab = "Time from study recruitment (days)",
-  title = "CD - Time to soft flare"
+  title = "CD - Time to patient-reported flare"
 )
 p2
 ```
@@ -1007,12 +1009,14 @@ invisible(cox.summary(cox_model))
 
 The table below shows the numbers in each score group at baseline.
 
-```{r, table for CD patients}
-table1::table1(~ score_group | hads_type,
-  data = flare_cd,
-  render.continuous = my.render.cont,
-  caption = "CD Participants within each score group"
-)
+```{R}
+#| label: tbl-CD-patients
+#| tbl-cap: CD Participants within each score group
+#table1::table1(~ score_group | hads_type,
+#  data = flare_cd,
+#  render.continuous = my.render.cont,
+#  caption = "CD Participants within each score group"
+#)
 ```
 
 
@@ -1158,18 +1162,18 @@ invisible(cox.summary(cox_model))
 
 Dividing into 2 groups: HADS-Depression 0-7 and 8-21
 
-### Soft Flares
+### Patient-reported flares
 
-* Whole cohort and soft flare:
+* Whole cohort and patient-reported flare:
   * Significant controlling for site only (p-value > 0.0001, 95% CI 1.23-1.86)
   * Significant controlling for site, sex, age, IMD  and age group
     (p-value = 0.0003, 95% CI 1.19-1.81)
   * Significant controlling fo FC additionally (p-value = 0.0002, 95% CI
     1.20-1.84)
-* CD only and soft flare:
+* CD only and patient-reported flare:
   * Significantly only when controlling for site only (p-value 0.016, 95% CI
     1.20-1.93)
-* UC only and soft flare:
+* UC only and patient-reported flare:
   * Significant controlling for site only (p-value = 0.0013, 95% CI 1.20-2.15)
   * Significant controlling for site, sex, age, IMD (p-value = 0.0015,
     95% CI 1.20-2.16)
@@ -1224,7 +1228,7 @@ p5 <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-21"),
   palette = c("#344055", "#266DD3"),
   xlab = "Time from study recruitment (days)",
-  title = "All patients - Time to soft flare"
+  title = "All patients - Time to patient-reported flare"
 )
 p5
 ```
@@ -1293,7 +1297,7 @@ p5 <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-21"),
   palette = c("#344055", "#266DD3"),
   xlab = "Time from study recruitment (days)",
-  title = "CD - Time to soft flare"
+  title = "CD - Time to patient-reported flare"
 )
 p5
 ```
@@ -1360,7 +1364,7 @@ p5 <- ggsurvplot(fit,
   legend.labs = c("0-7", "8-21"),
   palette = c("#344055", "#266DD3"),
   xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to soft flare"
+  title = "UC/IBDU - Time to patient-reported flare"
 )
 p5
 ```
