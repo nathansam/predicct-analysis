@@ -1490,11 +1490,17 @@ cox.summary(cox_model)
 
 
 
-# Alcohol
+# Alcohol Consumption Analysis
 
+## Data Source and Processing
 
-Data on alcohol was taken from the FFQ. 
-Patients were divided into groups stratified based on alcohol intake 0-0.1 unites/week, 0.1-14 units/week and >14 units/week (over recommended limits). 
+Alcohol consumption data was obtained from food frequency questionnaires (FFQ) completed at baseline. Participants were categorized into three groups based on weekly alcohol consumption:
+
+- **0-0.1 units/week**: Minimal or no alcohol consumption
+- **0.1-14 units/week**: Within recommended limits
+- **>14 units/week**: Above recommended guidelines (potentially harmful levels)
+
+These categories align with established public health guidelines for alcohol consumption and enable assessment of both beneficial and potentially harmful drinking patterns.
 
 
 ```{r}
