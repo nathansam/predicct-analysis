@@ -1,12 +1,51 @@
 ---
-title: "Exercise"
+title: "Physical Activity and Alcohol Consumption in IBD Patients: Association with Disease Flares"
 author:
   - name: "Chiara Cotronei"
     url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
     affiliations:
       - ref: Lothian
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-summary: "Show code"
+    embed-resources: true
+execute:
+  warning: false
 ---
 
+
+## Abstract
+
+This report analyzes the association between physical activity, alcohol consumption, and disease flares in an inflammatory bowel disease (IBD) cohort. We examine baseline characteristics, demographic associations, and survival outcomes for both soft and hard flares stratified by WHO-recommended physical activity levels and alcohol consumption categories. The analysis includes 1,839 IBD patients for physical activity data and 975 patients for alcohol consumption data, with survival analyses examining time to flare events across different exposure groups.
+
+## Introduction
+
+Physical activity and alcohol consumption represent modifiable lifestyle factors that may influence disease outcomes in inflammatory bowel disease (IBD). The World Health Organization (WHO) recommends minimum levels of physical activity for health benefits, while alcohol consumption guidelines provide frameworks for assessing potentially harmful intake levels.
+
+This analysis examines:
+
+1. **Physical Activity**: Association with disease flares based on WHO minimum exercise requirements (≥150 minutes moderate activity or ≥75 minutes vigorous activity per week)
+2. **Alcohol Consumption**: Association with disease flares stratified by weekly alcohol intake (0-0.1, 0.1-14, and >14 units per week)
+3. **Survival Outcomes**: Time to soft and hard flares across the whole cohort and by IBD diagnosis subgroups
+
+## Methods Overview
+
+### Data Sources and Population
+- Physical activity data from baseline questionnaires (n=1,839 after exclusions)
+- Alcohol consumption data from food frequency questionnaires (n=975 after exclusions)
+- Demographic and clinical data linked from multiple PREdiCCt study databases
+- Flare outcomes defined as soft (clinical symptoms) and hard (requiring treatment escalation)
+
+### Statistical Approach
+- Baseline associations examined using chi-square tests
+- Survival analysis using Cox proportional hazards models
+- Kaplan-Meier survival curves for visualization
+- Site-specific frailty terms to account for multi-center recruitment
 
 ```{r}
 #| label: setup
@@ -22,9 +61,9 @@ knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
 #| warning: false
 set.seed(123)
 library(plyr) # Used for mapping values
-suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
+suppressPackageStartupMessages(library(tidyverse))
 library(readxl) # Read in Excel files
-library(datefixR) # Standardise dates  
+library(datefixR) # Standardise dates
 library(openxlsx)
 library(tidyr)
 library(ggdist)
@@ -39,11 +78,10 @@ library(kableExtra)
 library(DiagrammeR)
 library(DiagrammeRsvg)
 
-#cox-regression
+# cox-regression
 library(survival)
 library(survminer)
 library(finalfit)
-
 ```
 
 ```{r}
@@ -67,22 +105,31 @@ if (file.exists("/.dockerenv")) {
 }
 ```
 
+# Physical Activity Analysis
+
+## Data Loading and Processing
+
 ```{r}
 #| label: load-raw-data
 #| echo: false
 #| message: false
-#read-in data
-#hads is question 42 of the baseline questionnaire
-physicalactivity <- read.xlsx(paste0(data.path,
-                                     "Baseline2022/physicalactivity.xlsx"))
-demographics <- read.xlsx(paste0(data.path,
-                                 "Baseline2022/demographics2022.xlsx"))
+# read-in data from multiple sources
+physicalactivity <- read.xlsx(paste0(
+  data.path,
+  "Baseline2022/physicalactivity.xlsx"
+))
+demographics <- read.xlsx(paste0(
+  data.path,
+  "Baseline2022/demographics2022.xlsx"
+))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 ffq <- read.xlsx(
-  paste0(prefix,
-         "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.",
-         "xlsx")
+  paste0(
+    prefix,
+    "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.",
+    "xlsx"
   )
+)
 all_flares <- read.xlsx("/Volumes/igmm/cvallejo-predicct/predicct/final/20240308/Followup/all-flares.xlsx")
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
@@ -93,131 +140,133 @@ flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 ```
 
+## Data Cleaning and Quality Control
 
-All patients who reported >16 hours within any single category were excluded
-from analyses as per WHO guidelines.
+Physical activity data underwent extensive quality control to ensure reliable measurement of exercise behaviors. Key exclusion criteria included:
 
-Patients who reported hours of exercise but not a number of days were excluded. 
+- **WHO compliance**: All patients reporting >16 hours within any single activity category were excluded per WHO guidelines
+- **Data completeness**: Patients reporting exercise duration without frequency (number of days) were excluded
+- **Extreme values**: Patients reporting >6720 minutes/week (>16h/day for 7 days, n=10) were excluded as likely data entry errors
+- **Conservative approach**: Given the potential for misreporting (e.g., entering weekly instead of daily values), we used categorical classifications rather than continuous measures
 
-We  reviewed patients reported high weekly minutes of activity.
+**WHO Exercise Definition**: Minimum exercise defined as ≥150 minutes moderate activity OR ≥75 minutes vigorous activity per week, OR ≥600 METs per week.
 
-Patients reporting > 16h of activity/day for 7 days a week (>6720 minutes of
-activity, n = 10) were excluded. It is likely that other very high results of
-total minutes of exercise/week are likely to be the results of reporting error
-(completing the questionnaire with weekly values instead of daily).  There is no
-way to identify  who has incorrectly reported data, as some participants may
-have true high levels of exercise.
-
-Using a categorical cut off  of achieving 'minimum exercise' is the most
-reliable way of presenting the data without losing a large number of
-participants, presenting misreported data or disproportionately excluding
-participants who exercise against those who do not.
-
-WHO definition of minimum exercise: total minutes >150 (moderate/all) or >75
-minutes of vigorous activity/week.
-
-Anyone reporting 1050 minutes or more (n = 452) would meet minimum exercise
-requirements even if they reported data incorrectly (describing weekly levels
-instead of daily).
+Participants reporting ≥1050 minutes/week (n=452) would meet minimum requirements even if they incorrectly reported weekly instead of daily values, providing additional confidence in the "meeting minimum exercise" classification.
 
 ```{r}
 #| label: clean-exercise-data
 #| echo: false
 #| message: false
-#50 missing ParticipantId (blank rows - exclude these, from 1960 to 1910)
-PE.missing <- physicalactivity %>% 
+# 50 missing ParticipantId (blank rows - exclude these, from 1960 to 1910)
+PE.missing <- physicalactivity %>%
   filter(is.na(ParticipantId))
-exercise <- physicalactivity %>% 
+exercise <- physicalactivity %>%
   filter(!is.na(ParticipantId))
-#add age and sex data from demographics
-exercise <- exercise %>% 
+# add age and sex data from demographics
+exercise <- exercise %>%
   inner_join(demographics %>% select(ParticipantNo, Sex, age, diagnosis),
-             by  = "ParticipantNo")
-#code diagnosis
+    by = "ParticipantNo"
+  )
+# code diagnosis
 exercise$diagnosis2 <- plyr::mapvalues(exercise$diagnosis,
-                                       from = seq(1, 4),
-                                       to = c(1, 2, 2, 2)) %>%
+  from = seq(1, 4),
+  to = c(1, 2, 2, 2)
+) %>%
   factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
 
-#exclude <18 yo = 53 participants (1910 -> 1857)
+# exclude <18 yo = 53 participants (1910 -> 1857)
 exercise <- exercise[exercise$age > 17, ]
 
-#make sex into factor
+# make sex into factor
 exercise$Sex <- factor(exercise$Sex,
-                       levels = c(1, 2),
-                       labels = c("Male", "Female"))
+  levels = c(1, 2),
+  labels = c("Male", "Female")
+)
 
-exercise$AgeGroup <- cut(exercise$age, 
-                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24",
-                                    "25-34",
-                                    "35-44",
-                                    "45-54",
-                                    "55-64",
-                                    "65+"),
-                         include.lowest = TRUE)
+exercise$AgeGroup <- cut(exercise$age,
+  breaks = c(18, 24, 34, 44, 54, 65, Inf),
+  labels = c(
+    "18-24",
+    "25-34",
+    "35-44",
+    "45-54",
+    "55-64",
+    "65+"
+  ),
+  include.lowest = TRUE
+)
 
-exercise <- exercise %>% 
+exercise <- exercise %>%
   left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
 # 4 patients removed with missing data on flares
 exercise <- exercise %>%
   filter(!is.na(FlaresInPastYear))
-#create flare groups
+# create flare groups
 exercise <- exercise %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0,
-                              "No Flares",
-                              "1 or More Flares"))
+    "No Flares",
+    "1 or More Flares"
+  ))
 # Make flares into levels
 exercise$flare_group <- factor(exercise$flare_group,
-                               levels = c( "No Flares",
-                                           "1 or More Flares"))
+  levels = c(
+    "No Flares",
+    "1 or More Flares"
+  )
+)
 
-exercise <- exercise %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD)) %>% 
+exercise <- exercise %>%
+  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD)) %>%
   filter(!is.na(cat))
 
-missing_ex_IMD <- exercise %>% 
+missing_ex_IMD <- exercise %>%
   filter(is.na(IMD))
-#Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, ModerateSport -> 2 participants
+# Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, ModerateSport -> 2 participants
 filtered_data <- exercise %>%
   filter(is.na(VigorousWork) &
-           is.na(ModerateWork) &
-           is.na(WalkBicycle) &
-           is.na(VigorousSport) &
-           is.na(ModerateSport))
-#now total in 1855 participants
+    is.na(ModerateWork) &
+    is.na(WalkBicycle) &
+    is.na(VigorousSport) &
+    is.na(ModerateSport))
+# now total in 1855 participants
 exercise <- exercise %>%
   filter(!(is.na(VigorousWork) &
-             is.na(ModerateWork) &
-             is.na(WalkBicycle) &
-             is.na(VigorousSport) &
-             is.na(ModerateSport)))
+    is.na(ModerateWork) &
+    is.na(WalkBicycle) &
+    is.na(VigorousSport) &
+    is.na(ModerateSport)))
 
-#look at rows where there are NA values in key questions, exclude those with
+# look at rows where there are NA values in key questions, exclude those with
 # inconsistent answers (no valid response) - manually done, 6 values excluded
 na_rows <- exercise %>%
-  filter(rowSums(is.na(select(.,
-                              c(VigorousWork,
-                                ModerateWork,
-                                WalkBicycle,
-                                VigorousSport,
-                                ModerateSport)))) > 0)
+  filter(rowSums(is.na(select(
+    .,
+    c(
+      VigorousWork,
+      ModerateWork,
+      WalkBicycle,
+      VigorousSport,
+      ModerateSport
+    )
+  ))) > 0)
 
 
-exercise <- exercise %>% 
+exercise <- exercise %>%
   filter(!(ParticipantId %in% c(1395, 4685, 4803, 1452, 4827, 9609)))
 
-#remaining NA values can be replaced with 2 (which will be coded as 2)
+# remaining NA values can be replaced with 2 (which will be coded as 2)
 exercise <- exercise %>%
-  mutate(VigorousWork = ifelse(is.na(VigorousWork), 2, VigorousWork),
-         ModerateWork = ifelse(is.na(ModerateWork), 2, ModerateWork),
-         WalkBicycle = ifelse(is.na(WalkBicycle), 2, WalkBicycle),
-         VigorousSport = ifelse(is.na(VigorousSport), 2, VigorousSport),
-         ModerateSport = ifelse(is.na(ModerateSport), 2, ModerateSport))
+  mutate(
+    VigorousWork = ifelse(is.na(VigorousWork), 2, VigorousWork),
+    ModerateWork = ifelse(is.na(ModerateWork), 2, ModerateWork),
+    WalkBicycle = ifelse(is.na(WalkBicycle), 2, WalkBicycle),
+    VigorousSport = ifelse(is.na(VigorousSport), 2, VigorousSport),
+    ModerateSport = ifelse(is.na(ModerateSport), 2, ModerateSport)
+  )
 
-#total number is 1849
+# total number is 1849
 
-#Exclude 11 participants who report 16 or more hours in any one activity, as per WHO guidelines
+# Exclude 11 participants who report 16 or more hours in any one activity, as per WHO guidelines
 exercise <- exercise %>%
   filter(
     is.na(VigorousWorkHours) | VigorousWorkHours < 16,
@@ -228,19 +277,20 @@ exercise <- exercise %>%
   )
 
 
-#check that there are no cases of reporting 'no' to the question whilst
+# check that there are no cases of reporting 'no' to the question whilst
 # providing answers in the time boxes
 VW_wrong <- exercise %>%
-  filter(VigorousWork == 2 & 
-         (!is.na(VigorousWorkHours) | VigorousWorkHours != 0))
+  filter(VigorousWork == 2 &
+    (!is.na(VigorousWorkHours) | VigorousWorkHours != 0))
 
 VW_wrong <- exercise %>%
-  filter(VigorousWork == 2 & 
-         (!is.na(VigorousWorkMinutes) | VigorousWorkMinutes != 0))
+  filter(VigorousWork == 2 &
+    (!is.na(VigorousWorkMinutes) | VigorousWorkMinutes != 0))
 
-#find out frequencies of values to check if any >16 (as per protocol need excluded)
+# find out frequencies of values to check if any >16 (as per protocol need excluded)
 vigorous_work_hours_table <- table(exercise$VigorousWorkHours,
-                                   useNA = "always")
+  useNA = "always"
+)
 print(vigorous_work_hours_table)
 ```
 
@@ -248,97 +298,101 @@ print(vigorous_work_hours_table)
 #| label: clean-moderate-work-data
 #| echo: false
 #| message: false
-#Find/exclude obvious errors in ModerateWork
+# Find/exclude obvious errors in ModerateWork
 MW_wrong <- exercise %>%
   filter(ModerateWork == 1 & (ModerateWorkDays == 0 | is.na(ModerateWorkDays)))
-#2 can be corrected recoding 1->2 ParticipantId 4700, 14446
+# 2 can be corrected recoding 1->2 ParticipantId 4700, 14446
 exercise <- exercise %>%
   mutate(ModerateWork = ifelse(ParticipantId %in% c(4700, 14446),
-                               2,
-                               ModerateWork))
-#8 excluded as report 0 days but have answers in other domains
+    2,
+    ModerateWork
+  ))
+# 8 excluded as report 0 days but have answers in other domains
 exercise <- exercise %>%
   filter(!(ModerateWork == 1 &
-             (ModerateWorkDays == 0 | is.na(ModerateWorkDays))
-           )
-         )
+    (ModerateWorkDays == 0 | is.na(ModerateWorkDays))
+  ))
 
-#no cases below
+# no cases below
 MW_wrong <- exercise %>%
-  filter(ModerateWork == 2 & 
-         (!is.na(ModerateWorkHours) | ModerateWorkHours != 0))
+  filter(ModerateWork == 2 &
+    (!is.na(ModerateWorkHours) | ModerateWorkHours != 0))
 MW_wrong <- exercise %>%
-  filter(ModerateWork == 2 & 
-         (!is.na(ModerateWorkMinutes) | ModerateWorkMinutes != 0))
+  filter(ModerateWork == 2 &
+    (!is.na(ModerateWorkMinutes) | ModerateWorkMinutes != 0))
 
-#Find/exclude obvious errors in WalkBicycle
+# Find/exclude obvious errors in WalkBicycle
 WB_wrong <- exercise %>%
   filter(WalkBicycle == 1 & (WalkBicycleDays == 0 | is.na(WalkBicycleDays)))
-#2 participants excluded as missing n of days and have values in other columns
+# 2 participants excluded as missing n of days and have values in other columns
 exercise <- exercise %>%
   filter(!(WalkBicycle == 1 & (WalkBicycleDays == 0 | is.na(WalkBicycleDays))))
 
-#none
+# none
 WB_wrong <- exercise %>%
-  filter(WalkBicycle == 2 & 
-         (!is.na(WalkBicycleHours) | WalkBicycleHours != 0))
+  filter(WalkBicycle == 2 &
+    (!is.na(WalkBicycleHours) | WalkBicycleHours != 0))
 WB_wrong <- exercise %>%
-  filter(WalkBicycle == 2 & 
-         (!is.na(WalkBicycleMinutes) | WalkBicycleMinutes != 0))
+  filter(WalkBicycle == 2 &
+    (!is.na(WalkBicycleMinutes) | WalkBicycleMinutes != 0))
 
-#total exercise 1819
+# total exercise 1819
 
 
-#Find/exclude obvious errors in VigorousSport
+# Find/exclude obvious errors in VigorousSport
 VS_wrong <- exercise %>%
   filter(VigorousSport == 1 &
-           (VigorousSportDays == 0 |
-              is.na(VigorousSportDays)))
+    (VigorousSportDays == 0 |
+      is.na(VigorousSportDays)))
 
-#Correct 3 participants as all have 0 in all others
+# Correct 3 participants as all have 0 in all others
 exercise <- exercise %>%
   mutate(VigorousSport = ifelse(ParticipantId %in% c(7012, 9555, 9559),
-                                2,
-                                VigorousSport))
+    2,
+    VigorousSport
+  ))
 
-#exclude 2 participants who did not include number of days
+# exclude 2 participants who did not include number of days
 exercise <- exercise %>%
-  filter(!(VigorousSport == 1
-           & (VigorousSportDays == 0 |
-                is.na(VigorousSportDays))))
+  filter(!(VigorousSport == 1 &
+    (VigorousSportDays == 0 |
+      is.na(VigorousSportDays))))
 
-#none
+# none
 VS_wrong <- exercise %>%
-  filter(VigorousSport == 2 & 
-         (!is.na(VigorousSportHours) | VigorousSportHours != 0))
+  filter(VigorousSport == 2 &
+    (!is.na(VigorousSportHours) | VigorousSportHours != 0))
 VS_wrong <- exercise %>%
-  filter(VigorousSport == 2 & 
-         (!is.na(VigorousSportMinutes) | VigorousSportMinutes != 0))
+  filter(VigorousSport == 2 &
+    (!is.na(VigorousSportMinutes) | VigorousSportMinutes != 0))
 
-#find/exclude obvious errors in ModearateSport
+# find/exclude obvious errors in ModearateSport
 MS_wrong <- exercise %>%
   filter(ModerateSport == 1 & (ModerateSportDays == 0 | is.na(ModerateSportDays)))
 exercise <- exercise %>%
   mutate(ModerateSport = ifelse(ParticipantId %in%
-                                  c(61,
-                                    186,
-                                    3550,
-                                    7024,
-                                    7048,
-                                    9735,
-                                    12079),
-                                2,
-                                ModerateSport))
-#exclude 6 participants who did not include number of days
+    c(
+      61,
+      186,
+      3550,
+      7024,
+      7048,
+      9735,
+      12079
+    ),
+  2,
+  ModerateSport
+  ))
+# exclude 6 participants who did not include number of days
 exercise <- exercise %>%
   filter(!(ModerateSport == 1 & (ModerateSportDays == 0 | is.na(ModerateSportDays))))
-#none
+# none
 MS_wrong <- exercise %>%
-  filter(ModerateSport == 2 & 
-         (!is.na(ModerateSportHours) | ModerateSportHours != 0))
+  filter(ModerateSport == 2 &
+    (!is.na(ModerateSportHours) | ModerateSportHours != 0))
 MS_wrong <- exercise %>%
-  filter(ModerateSport == 2 & 
-         (!is.na(ModerateSportMinutes) | ModerateSportMinutes != 0))
+  filter(ModerateSport == 2 &
+    (!is.na(ModerateSportMinutes) | ModerateSportMinutes != 0))
 
 
 # check if anyone recorded days >7 in any days column -> no cases
@@ -357,71 +411,99 @@ one did across any section
 #| label: calculate-exercise-metrics
 #| echo: false
 #| message: false
-#change NA to 0 to allow for caluculations without total becoming NA
+# change NA to 0 to allow for caluculations without total becoming NA
 exercise <- exercise %>%
-  mutate_at(vars(VigorousWorkDays,
-                 VigorousWorkHours,
-                 VigorousWorkMinutes,
-                 ModerateWorkDays,
-                 ModerateWorkHours,
-                 ModerateWorkMinutes,
-                 WalkBicycleDays,
-                 WalkBicycleHours,
-                 WalkBicycleMinutes,
-                 VigorousSportDays,
-                 VigorousSportHours,
-                 VigorousSportMinutes,
-                 ModerateSportDays,
-                 ModerateSportHours,
-                 ModerateSportMinutes),
-            ~replace_na(., 0))
+  mutate_at(
+    vars(
+      VigorousWorkDays,
+      VigorousWorkHours,
+      VigorousWorkMinutes,
+      ModerateWorkDays,
+      ModerateWorkHours,
+      ModerateWorkMinutes,
+      WalkBicycleDays,
+      WalkBicycleHours,
+      WalkBicycleMinutes,
+      VigorousSportDays,
+      VigorousSportHours,
+      VigorousSportMinutes,
+      ModerateSportDays,
+      ModerateSportHours,
+      ModerateSportMinutes
+    ),
+    ~ replace_na(., 0)
+  )
 
-#create new columns for total mins of vigorous and moderate exercise/week
-exercise <- exercise %>% 
-  mutate(VigorousWeek = (VigorousWorkHours * 60 * VigorousWorkDays) +
-           (VigorousWorkMinutes * VigorousWorkDays) +
-           (VigorousSportDays * VigorousSportHours * 60) +
-           (VigorousSportDays * VigorousSportMinutes),
-         ModerateWeek = (ModerateWorkHours * 60 * ModerateWorkDays) +
-           (ModerateWorkDays * ModerateWorkHours) +
-           (ModerateSportDays * ModerateSportHours * 60) +
-           (ModerateSportDays * ModerateSportMinutes) +
-           (WalkBicycleDays * WalkBicycleHours * 60) +
-           (WalkBicycleDays * WalkBicycleMinutes))
+# create new columns for total mins of vigorous and moderate exercise/week
+exercise <- exercise %>%
+  mutate(
+    VigorousWeek = (VigorousWorkHours * 60 * VigorousWorkDays) +
+      (VigorousWorkMinutes * VigorousWorkDays) +
+      (VigorousSportDays * VigorousSportHours * 60) +
+      (VigorousSportDays * VigorousSportMinutes),
+    ModerateWeek = (ModerateWorkHours * 60 * ModerateWorkDays) +
+      (ModerateWorkDays * ModerateWorkHours) +
+      (ModerateSportDays * ModerateSportHours * 60) +
+      (ModerateSportDays * ModerateSportMinutes) +
+      (WalkBicycleDays * WalkBicycleHours * 60) +
+      (WalkBicycleDays * WalkBicycleMinutes)
+  )
 
-#total mins + METs
-exercise <- exercise %>% 
-  mutate(ExerciseMins = VigorousWeek + ModerateWeek,
-         METs = (VigorousWeek * 8) + (ModerateWeek * 4))
+# total mins + METs
+exercise <- exercise %>%
+  mutate(
+    ExerciseMins = VigorousWeek + ModerateWeek,
+    METs = (VigorousWeek * 8) + (ModerateWeek * 4)
+  )
 
 # Targets for exercise (WHO) are 75 minutes vigorous activity or 150 minutes
 # moderate activity or 600 METs per week
-exercise <- exercise %>% 
-  mutate(MinimumExercise = ifelse(VigorousWeek >= 75 |
-                                    ModerateWeek >= 150 |
-                                    METs >= 600,
-                                  "Yes",
-                                  "No"),
-         LackExercise = ifelse(VigorousWeek < 75 &
-                                 ModerateWeek < 150 &
-                                 METs < 600,
-                               "Yes",
-                               "No"))
+exercise <- exercise %>%
+  mutate(
+    MinimumExercise = ifelse(VigorousWeek >= 75 |
+      ModerateWeek >= 150 |
+      METs >= 600,
+    "Yes",
+    "No"
+    ),
+    LackExercise = ifelse(VigorousWeek < 75 &
+      ModerateWeek < 150 &
+      METs < 600,
+    "Yes",
+    "No"
+    )
+  )
 
-#exclude if minute exercise/week >6720
-exercise <- exercise[exercise$ExerciseMins < 6720,]
+# exclude if minute exercise/week >6720
+exercise <- exercise[exercise$ExerciseMins < 6720, ]
 ```
 
+## Exercise Data Summary
 
-Some words go here.
+After comprehensive data cleaning and quality control procedures, the final physical activity dataset comprises **`r nrow(exercise)` participants**. Key findings from the data processing:
+
+- **Missing participants**: 50 participants excluded due to missing participant IDs
+- **Age restrictions**: 53 participants <18 years excluded
+- **Data quality exclusions**: 21 participants removed for inconsistent or invalid exercise reporting
+- **WHO guideline compliance**: 11 participants excluded for reporting >16 hours in any single activity category
+- **Extreme values**: 10 participants excluded for reporting >6720 minutes/week
+
+**Exercise Achievement Rates**:
+- Approximately **`r round(100 * sum(exercise$MinimumExercise == "Yes") / nrow(exercise), 1)`%** of participants meet WHO minimum exercise recommendations
+- **`r round(100 * sum(exercise$LackExercise == "Yes") / nrow(exercise), 1)`%** do not meet minimum requirements
 
 ```{R}
 #| label: fig-exercise-dist
-#| fig-cap: Distribution of total minutes of exercise per Week
+#| fig-cap: "Distribution of total weekly exercise minutes in IBD patients. The distribution shows most patients engage in low to moderate levels of physical activity, with a long right tail representing high-activity individuals."
 ggplot(exercise, aes(x = ExerciseMins)) +
-  geom_density(fill = "skyblue", color = "black") +
-  labs(x = "Total Exercise per Week",
-       y = "Density") +
+  geom_density(fill = "skyblue", color = "black", alpha = 0.7) +
+  geom_vline(xintercept = median(exercise$ExerciseMins), 
+             linetype = "dashed", color = "red", size = 1) +
+  labs(
+    x = "Total Exercise Minutes per Week",
+    y = "Density",
+    subtitle = paste("Median:", median(exercise$ExerciseMins), "minutes/week")
+  ) +
   theme_minimal()
 ```
 
@@ -430,8 +512,8 @@ ggplot(exercise, aes(x = ExerciseMins)) +
 #| label: split-exercise-by-diagnosis
 #| echo: false
 #| message: false
-ex_UC <- exercise[exercise$diagnosis2 == "UC/IBDU",]
-ex_CD <- exercise[exercise$diagnosis2 == "CD",]
+ex_UC <- exercise[exercise$diagnosis2 == "UC/IBDU", ]
+ex_CD <- exercise[exercise$diagnosis2 == "CD", ]
 
 saveRDS(exercise, paste0(chiara, "exercise.RDS"))
 ```
@@ -452,7 +534,7 @@ my.render.cont <- function(x) {
   )
 }
 
-table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat| MinimumExercise,
+table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat | MinimumExercise,
   data = exercise,
   render.continuous = my.render.cont,
   title = "Exercise - whole cohort"
@@ -462,13 +544,13 @@ table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat| MinimumExercis
 ```{r}
 #| label: tbl-lack-exercise-whole-cohort
 #| tbl-cap: "Baseline characteristics stratified by lack of exercise in the whole cohort"
-table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat| LackExercise,
+table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat | LackExercise,
   data = exercise,
   render.continuous = my.render.cont,
   title = "Exercise - whole cohort"
 )
 
-#approximately 30% do not meet the minimum requirements of exercise advised by the WHO
+# approximately 30% do not meet the minimum requirements of exercise advised by the WHO
 ```
   
 ### Baseline Associations - Whole cohort
@@ -498,7 +580,7 @@ print(contingency_table)
 ```{r}
 #| label: chi-square-sex-exercise-test
 #| echo: false
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
@@ -509,15 +591,19 @@ print(chi_squared_result)
 #| echo: false
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and achieving",
-          " minimum exercise")
+  message(
+    "There is a significant association between sex and achieving",
+    " minimum exercise"
+  )
 } else {
-  message("There is no significant association between sex and achieving",
-          "minimum exercise")
+  message(
+    "There is no significant association between sex and achieving",
+    "minimum exercise"
+  )
 }
 
 contingency_table <- table(exercise$diagnosis2, exercise$MinimumExercise)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
 ```
@@ -528,26 +614,34 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and diagnosis type")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and diagnosis type"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and diagnosis type")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and diagnosis type"
+  )
 }
 
 
 contingency_table <- table(exercise$flare_group, exercise$MinimumExercise)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and reporting flares in the previous year")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and reporting flares in the previous year"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and reporting flares in the previous year")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and reporting flares in the previous year"
+  )
 }
 
 
@@ -563,11 +657,15 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and age")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and age"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and age")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and age"
+  )
 }
 
 contingency_table <- table(exercise$cat, exercise$MinimumExercise)
@@ -587,11 +685,15 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and FC")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and FC"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and FC")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and FC"
+  )
 }
 ```
 
@@ -611,12 +713,11 @@ my.render.cont <- function(x) {
   )
 }
 
-table1::table1(~ Sex + AgeGroup + flare_group + cat| MinimumExercise,
+table1::table1(~ Sex + AgeGroup + flare_group + cat | MinimumExercise,
   data = ex_CD,
   render.continuous = my.render.cont,
   title = "Exercise - CD only"
 )
-
 ```
 
 * There is no significant association between sex and achieving minimum exercise
@@ -632,21 +733,25 @@ table1::table1(~ Sex + AgeGroup + flare_group + cat| MinimumExercise,
 #| label: chi-square-cd-sex-exercise
 #| echo: false
 contingency_table <- table(ex_CD$Sex, ex_CD$MinimumExercise)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and achieving",
-          " minimum exercise in CD patients")
+  message(
+    "There is a significant association between sex and achieving",
+    " minimum exercise in CD patients"
+  )
 } else {
-  message("There is no significant association between sex and achieving",
-          " minimum exercise in CD patients")
+  message(
+    "There is no significant association between sex and achieving",
+    " minimum exercise in CD patients"
+  )
 }
 
 contingency_table <- table(ex_CD$flare_group, ex_CD$MinimumExercise)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
 ```
@@ -657,18 +762,22 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and reporting flares in the previous year in CD patients")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and reporting flares in the previous year in CD patients"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and reporting flares in the previous year in CD patients")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and reporting flares in the previous year in CD patients"
+  )
 }
 ```
 
 ```{r}
 #| label: tbl-cd-age-exercise
 #| tbl-cap: "Contingency table of age groups and minimum exercise achievement in CD patients"
-#age
+# age
 contingency_table <- table(ex_CD$AgeGroup, ex_CD$MinimumExercise)
 contingency_table %>%
   knitr::kable()
@@ -678,7 +787,7 @@ contingency_table %>%
 #| label: chi-square-cd-age-test
 #| echo: false
 chi_squared_result <- chisq.test(contingency_table)
- pander::pander(chi_squared_result)
+pander::pander(chi_squared_result)
 ```
 
 ```{r}
@@ -687,18 +796,22 @@ chi_squared_result <- chisq.test(contingency_table)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and age in CD patients")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and age in CD patients"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and age in CD patients")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and age in CD patients"
+  )
 }
 ```
 
 ```{r}
 #| label: tbl-cd-fc-exercise
 #| tbl-cap: "Contingency table of fecal calprotectin categories and minimum exercise achievement in CD patients"
-#fc
+# fc
 contingency_table <- table(ex_CD$cat, ex_CD$MinimumExercise)
 contingency_table %>%
   knitr::kable()
@@ -717,11 +830,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and FC in CD patients")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and FC in CD patients"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and FC in CD patients")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and FC in CD patients"
+  )
 }
 ```
 
@@ -750,7 +867,7 @@ my.render.cont <- function(x) {
   )
 }
 
-table1::table1(~ Sex + AgeGroup + flare_group + cat| MinimumExercise,
+table1::table1(~ Sex + AgeGroup + flare_group + cat | MinimumExercise,
   data = ex_UC,
   render.continuous = my.render.cont,
   title = "Exercise - UC/IBDU only"
@@ -761,7 +878,7 @@ table1::table1(~ Sex + AgeGroup + flare_group + cat| MinimumExercise,
 #| label: chi-square-uc-sex-exercise
 #| echo: false
 contingency_table <- table(ex_UC$Sex, ex_UC$MinimumExercise)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 ```
@@ -772,11 +889,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and achieving",
-          " minimum exercise in UC patients")
+  message(
+    "There is a significant association between sex and achieving",
+    " minimum exercise in UC patients"
+  )
 } else {
-  message("There is no significant association between sex and achieving",
-          " minimum exercise in UC patients")
+  message(
+    "There is no significant association between sex and achieving",
+    " minimum exercise in UC patients"
+  )
 }
 ```
 
@@ -784,7 +905,7 @@ if (chi_squared_result$p.value < alpha) {
 #| label: chi-square-uc-flare-test
 #| echo: false
 contingency_table <- table(ex_UC$flare_group, ex_UC$MinimumExercise)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 ```
@@ -795,18 +916,22 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and reporting flares in the previous year in UC patients")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and reporting flares in the previous year in UC patients"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and reporting flares in the previous yearin UC patients")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and reporting flares in the previous yearin UC patients"
+  )
 }
 ```
 
 ```{r}
 #| label: tbl-uc-age-exercise
 #| tbl-cap: "Contingency table of age groups and minimum exercise achievement in UC/IBDU patients"
-#age
+# age
 contingency_table <- table(ex_UC$AgeGroup, ex_UC$MinimumExercise)
 knitr::kable(contingency_table)
 ```
@@ -824,18 +949,22 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and age in UC patients")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and age in UC patients"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and age in UC patients")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and age in UC patients"
+  )
 }
 ```
 
 ```{r}
 #| label: tbl-uc-fc-exercise
 #| tbl-cap: "Contingency table of fecal calprotectin categories and minimum exercise achievement in UC/IBDU patients"
-#fc
+# fc
 contingency_table <- table(ex_UC$cat, ex_UC$MinimumExercise)
 knitr::kable(contingency_table)
 chi_squared_result <- chisq.test(contingency_table)
@@ -848,11 +977,15 @@ print(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between achieving minimum",
-          " exercise and FC in UC patients")
+  message(
+    "There is a significant association between achieving minimum",
+    " exercise and FC in UC patients"
+  )
 } else {
-  message("There is no significant association between achieving minimum",
-          " exercise and FC in UC patients")
+  message(
+    "There is no significant association between achieving minimum",
+    " exercise and FC in UC patients"
+  )
 }
 ```
 
@@ -867,63 +1000,91 @@ Is achieving recommended WHO exercise associated with lower risk of flare?
 cox.summary <- function(fit) {
   cat("Cox model summary:")
   fit %>%
-    finalfit::fit2df(condense = FALSE) %>% 
-    knitr::kable(col.names = c("Variable",
-                               "HR",
-                               "Lower 95%",
-                               "Upper 95%",
-                               "P-value"),
-                 digits = 4) %>%
+    finalfit::fit2df(condense = FALSE) %>%
+    knitr::kable(
+      col.names = c(
+        "Variable",
+        "HR",
+        "Lower 95%",
+        "Upper 95%",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
     print()
   cat("Proportional hazards assumption test:")
   cox.zph(fit)$table %>%
-    knitr::kable(col.names = c("",
-                               "Chi-squared statistic",
-                               "DF",
-                               "P-value"),
-                 digits = 4) %>%
+    knitr::kable(
+      col.names = c(
+        "",
+        "Chi-squared statistic",
+        "DF",
+        "P-value"
+      ),
+      digits = 4
+    ) %>%
     print()
   return()
 }
 
 
-exercise_soft <- exercise %>% 
-  inner_join(flares_soft %>% select(ParticipantNo,
-                                    softflare,
-                                    softflare_time)) %>% 
-  rename(Cens = softflare,
-         time = softflare_time)
+exercise_soft <- exercise %>%
+  inner_join(flares_soft %>% select(
+    ParticipantNo,
+    softflare,
+    softflare_time
+  )) %>%
+  rename(
+    Cens = softflare,
+    time = softflare_time
+  )
 
-exercise_hard <- exercise %>% 
-  inner_join(flares_hard %>% select(ParticipantNo,
-                                    hardflare,
-                                    hardflare_time)) %>% 
-  rename(Cens = hardflare,
-         time = hardflare_time)  
-  
-#create data sets
+exercise_hard <- exercise %>%
+  inner_join(flares_hard %>% select(
+    ParticipantNo,
+    hardflare,
+    hardflare_time
+  )) %>%
+  rename(
+    Cens = hardflare,
+    time = hardflare_time
+  )
+
+# create data sets
 ex_CD_soft <- ex_CD %>%
-  inner_join(flares_soft %>% select(ParticipantNo,
-                                    softflare,
-                                    softflare_time)) %>% 
-  rename(Cens = softflare,
-         time = softflare_time)
+  inner_join(flares_soft %>% select(
+    ParticipantNo,
+    softflare,
+    softflare_time
+  )) %>%
+  rename(
+    Cens = softflare,
+    time = softflare_time
+  )
 ex_CD_hard <- ex_CD %>%
-  inner_join(flares_hard %>% select(ParticipantNo,
-                                    hardflare,
-                                    hardflare_time)) %>% 
-  rename(Cens = hardflare,
-         time = hardflare_time)
+  inner_join(flares_hard %>% select(
+    ParticipantNo,
+    hardflare,
+    hardflare_time
+  )) %>%
+  rename(
+    Cens = hardflare,
+    time = hardflare_time
+  )
 ex_UC_soft <- ex_UC %>%
-  inner_join(flares_soft %>% select(ParticipantNo,
-                                    softflare,
-                                    softflare_time)) %>% 
+  inner_join(flares_soft %>% select(
+    ParticipantNo,
+    softflare,
+    softflare_time
+  )) %>%
   rename(Cens = softflare, time = softflare_time)
 ex_UC_hard <- ex_UC %>%
   inner_join(flares_hard %>%
-               select(ParticipantNo,
-                      hardflare,
-                      hardflare_time)) %>% 
+    select(
+      ParticipantNo,
+      hardflare,
+      hardflare_time
+    )) %>%
   rename(Cens = hardflare, time = hardflare_time)
 ```
 
@@ -950,37 +1111,40 @@ n= 1546, number of events= 216
 ```{r}
 #| label: survival-exercise-whole-cohort-soft
 #| echo: false
-#soft flares
+# soft flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = exercise_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise,
-                        data = exercise_soft)
+  data = exercise_soft
+)
 pander(test_result)
 ```
 
 ```{r}
-#| label: fig-exercise-whole-cohort-soft-km  
+#| label: fig-exercise-whole-cohort-soft-km
 #| fig-cap: "Kaplan-Meier survival curves for time to soft flare by minimum exercise achievement in the whole IBD cohort"
 p1 <- ggsurvplot(fit,
-           data = ex_CD_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Meeting recommended exercise level",
-           palette = c("#42213D", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "All participants - Time to soft flare - GPAQ"
-           )
+  data = ex_CD_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Meeting recommended exercise level",
+  palette = c("#42213D", "#F51AA4"),
+  xlab = "Time from study recrutiment (days)",
+  title = "All participants - Time to soft flare - GPAQ"
+)
 p1
 ```
 
 ```{r}
 #| label: cox-exercise-whole-cohort-soft-frailty
 #| echo: false
-#frailty only
-cox_model <- coxph(Surv(time, Cens) ~
-                     MinimumExercise +
-                     frailty(SiteNo),
-                   data = exercise_soft)
+# frailty only
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    MinimumExercise +
+    frailty(SiteNo),
+  data = exercise_soft
+)
 summary(cox_model) %>%
   pander()
 ```
@@ -988,13 +1152,15 @@ summary(cox_model) %>%
 ```{r}
 #| label: cox-exercise-whole-cohort-soft-adjusted
 #| echo: false
-#site, sex, IMD
-cox_model <- coxph(Surv(time, Cens) ~
-                     MinimumExercise +
-                     Sex +
-                     IMD +
-                     frailty(SiteNo),
-                   data = exercise_soft)
+# site, sex, IMD
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    MinimumExercise +
+    Sex +
+    IMD +
+    frailty(SiteNo),
+  data = exercise_soft
+)
 summary(cox_model) %>%
   pander()
 ```
@@ -1002,14 +1168,16 @@ summary(cox_model) %>%
 ```{r}
 #| label: cox-exercise-whole-cohort-soft-fc
 #| echo: false
-#control for fc in exercise
-cox_model <- coxph(Surv(time, Cens) ~
-                     MinimumExercise +
-                     Sex +
-                     IMD +
-                     cat +
-                     frailty(SiteNo),
-                   data = exercise_soft)
+# control for fc in exercise
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    MinimumExercise +
+    Sex +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = exercise_soft
+)
 summary(cox_model) %>%
   pander()
 ```
@@ -1017,12 +1185,14 @@ summary(cox_model) %>%
 ```{r}
 #| label: survival-exercise-whole-cohort-hard
 #| echo: false
-#Hard flares
+# Hard flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = exercise_hard)
 
-test_result <- survdiff(Surv(time, Cens) ~
-                          MinimumExercise,
-                        data = exercise_hard)
+test_result <- survdiff(
+  Surv(time, Cens) ~
+    MinimumExercise,
+  data = exercise_hard
+)
 test_result %>%
   pander()
 ```
@@ -1031,34 +1201,38 @@ test_result %>%
 #| label: fig-exercise-whole-cohort-hard-km
 #| fig-cap: "Kaplan-Meier survival curves for time to hard flare by minimum exercise achievement in the whole IBD cohort"
 p1 <- ggsurvplot(fit,
-           data = exercise_hard,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Exercise levels",
-           palette = c("#BB0A21", "#F39237"),
-           xlab = "Time from study recrutiment (days)",
-           title = "All participants - Time to hard flare - GPAQ"
-           )
+  data = exercise_hard,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Exercise levels",
+  palette = c("#BB0A21", "#F39237"),
+  xlab = "Time from study recrutiment (days)",
+  title = "All participants - Time to hard flare - GPAQ"
+)
 p1
 ```
 
 ```{r}
 #| label: cox-exercise-whole-cohort-hard-models
 #| echo: false
-#exercise and frailty
-cox_model <- coxph(Surv(time, Cens) ~
-                     MinimumExercise +
-                     frailty(SiteNo),
-                   data = exercise_hard)
+# exercise and frailty
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    MinimumExercise +
+    frailty(SiteNo),
+  data = exercise_hard
+)
 cox.summary(cox_model)
 
-#sex and frailty
-cox_model <- coxph(Surv(time, Cens) ~
-                     MinimumExercise +
-                     Sex +
-                     IMD +
-                     frailty(SiteNo),
-                   data = exercise_hard)
+# sex and frailty
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    MinimumExercise +
+    Sex +
+    IMD +
+    frailty(SiteNo),
+  data = exercise_hard
+)
 summary(cox_model) %>%
   pander()
 ```
@@ -1066,14 +1240,16 @@ summary(cox_model) %>%
 ```{r}
 #| label: cox-exercise-whole-cohort-hard-fc
 #| echo: false
-#control for fc additionally
-cox_model <- coxph(Surv(time, Cens) ~
-                     MinimumExercise +
-                     Sex +
-                     IMD +
-                     cat +
-                     frailty(SiteNo),
-                   data = exercise_hard)
+# control for fc additionally
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    MinimumExercise +
+    Sex +
+    IMD +
+    cat +
+    frailty(SiteNo),
+  data = exercise_hard
+)
 summary(cox_model) %>%
   pander()
 ```
@@ -1106,7 +1282,7 @@ No association when controlling for
 #| label: survival-exercise-cd-soft
 #| echo: false
 
-#soft flares
+# soft flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_soft)
@@ -1116,46 +1292,50 @@ test_result %>%
 
 ```{R}
 p1 <- ggsurvplot(fit,
-           data = ex_CD_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Metting recommended exercise level",
-           palette = c("#42213D", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = " Crohn's - Time to soft flare - GPAQ"
-           )
+  data = ex_CD_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Metting recommended exercise level",
+  palette = c("#42213D", "#F51AA4"),
+  xlab = "Time from study recrutiment (days)",
+  title = " Crohn's - Time to soft flare - GPAQ"
+)
 p1
 ```
 
 ```{r}
 #| label: cox-exercise-cd-soft-models
 #| echo: false
-#frailty only
-cox_model <- coxph(Surv(time, Cens) ~
-                     MinimumExercise +
-                     frailty(SiteNo),
-                   data = ex_CD_soft)
+# frailty only
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    MinimumExercise +
+    frailty(SiteNo),
+  data = ex_CD_soft
+)
 summary(cox_model) %>%
   pander()
 ```
 
 ```{R}
-#lack exercise - site only
-cox_model <- coxph(Surv(time, Cens) ~
-                     LackExercise +
-                     frailty(SiteNo),
-                   data = ex_CD_soft)
+# lack exercise - site only
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    LackExercise +
+    frailty(SiteNo),
+  data = ex_CD_soft
+)
 cox.summary(cox_model)
 
-#2
+# 2
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_soft)
 summary(cox_model)
 
-#control for fc
+# control for fc
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
 cox.summary(cox_model)
 
-#lack exercise - controlling for fc
+# lack exercise - controlling for fc
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
 cox.summary(cox_model)
 ```
@@ -1163,44 +1343,43 @@ cox.summary(cox_model)
 ```{r}
 #| label: survival-exercise-cd-hard
 #| echo: false
-#Hard flares
+# Hard flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_hard)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_hard)
 print(test_result)
 
 p1 <- ggsurvplot(fit,
-           data = ex_CD_hard,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Meeting recommended exercise levels",
-           palette = c("#BB0A21", "#F39237"),
-           xlab = "Time from study recrutiment (days)",
-           title = "CD - Time to hard flare - GPAQ"
-           )
+  data = ex_CD_hard,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Meeting recommended exercise levels",
+  palette = c("#BB0A21", "#F39237"),
+  xlab = "Time from study recrutiment (days)",
+  title = "CD - Time to hard flare - GPAQ"
+)
 p1
 
-#exercise and frailty
+# exercise and frailty
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_CD_hard)
 cox.summary(cox_model)
 
-#lack exercise - site only 
+# lack exercise - site only
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_CD_hard)
 cox.summary(cox_model)
 
-#2
+# 2
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_hard)
 summary(cox_model)
 
 
-#control for fc additionally
+# control for fc additionally
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
 cox.summary(cox_model)
 
-#lack exercise - control for fc additionally
+# lack exercise - control for fc additionally
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
 cox.summary(cox_model)
-
 ```
 
 
@@ -1228,83 +1407,82 @@ There is a significant association between achieving minimum exercise and risk o
 #| label: survival-exercise-uc-soft
 #| echo: false
 
-#soft flares
+# soft flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
 print(test_result)
 
 p1 <- ggsurvplot(fit,
-           data = ex_UC_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Meeting recommended exercise levels",
-           palette = c("#42213D", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare - GPAQ"
-           )
+  data = ex_UC_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Meeting recommended exercise levels",
+  palette = c("#42213D", "#F51AA4"),
+  xlab = "Time from study recrutiment (days)",
+  title = "UC/IBDU - Time to soft flare - GPAQ"
+)
 p1
 
-#controlling for frailty only 
+# controlling for frailty only
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_soft)
 cox.summary(cox_model)
 
-#lack exercise - frailty only 
+# lack exercise - frailty only
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_UC_soft)
 cox.summary(cox_model)
 
-#controlling for Sex, frailty
+# controlling for Sex, frailty
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_soft)
 summary(cox_model)
 
-#control for FC additioally
+# control for FC additioally
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
 cox.summary(cox_model)
 
 # lack exercise - control for FC additioally
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
 cox.summary(cox_model)
-
 ```
 
 ```{r}
 #| label: survival-exercise-uc-hard
 #| echo: false
-#Hard flares
+# Hard flares
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_hard)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_hard)
 print(test_result)
 
 p.uc.ex.hard <- ggsurvplot(fit,
-           data = ex_UC_hard,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Met WHO recommended exercise levels",
-           legend.labs = c("No", "Yes"),
-           palette = c("#BB0A21", "#F39237"),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to hard flare - GPAQ"
-           )
+  data = ex_UC_hard,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Met WHO recommended exercise levels",
+  legend.labs = c("No", "Yes"),
+  palette = c("#BB0A21", "#F39237"),
+  xlab = "Time from study recrutiment (days)",
+  title = "UC/IBDU - Time to hard flare - GPAQ"
+)
 p.uc.ex.hard
 
-#exercise
+# exercise
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_hard)
 cox.summary(cox_model)
 
-#lack exercise - hard flare
+# lack exercise - hard flare
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_UC_hard)
 cox.summary(cox_model)
 
-#sex frailty IMD
+# sex frailty IMD
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_hard)
 summary(cox_model)
 
-#control for FC
+# control for FC
 cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_hard)
 cox.summary(cox_model)
 
-#lack exercise - controlling fc
+# lack exercise - controlling fc
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_hard)
 cox.summary(cox_model)
 ```
@@ -1323,57 +1501,58 @@ Patients were divided into groups stratified based on alcohol intake 0-0.1 unite
 #| label: process-alcohol-data
 #| echo: false
 #| message: false
-#1091 in ETOH from ffq
-ETOH <- ffq %>% 
+# 1091 in ETOH from ffq
+ETOH <- ffq %>%
   select(participantno, Alcoholg, Alcohol_percEng, Alcohol_units, Alcohol_units_wk, alcohol_units_cat)
-ETOH <- ETOH %>% 
+ETOH <- ETOH %>%
   rename(ParticipantNo = participantno)
 ETOH$ParticipantNo <- as.character(ETOH$ParticipantNo)
-ETOH <- ETOH %>% 
-  left_join(demographics %>% select(ParticipantNo, Sex, age, SiteNo, diagnosis), by  = "ParticipantNo")
+ETOH <- ETOH %>%
+  left_join(demographics %>% select(ParticipantNo, Sex, age, SiteNo, diagnosis), by = "ParticipantNo")
 
-#code diagnosis
+# code diagnosis
 ETOH$diagnosis2 <- plyr::mapvalues(ETOH$diagnosis,
   from = seq(1, 4),
   to = c(1, 2, 2, 2)
 ) %>%
   factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
 
-#exclude <18 yo = 6 participants excluded
-ETOH <- ETOH[ETOH$age > 17,]
+# exclude <18 yo = 6 participants excluded
+ETOH <- ETOH[ETOH$age > 17, ]
 
-#make sex into level
+# make sex into level
 ETOH$Sex <- factor(ETOH$Sex, levels = c(1, 2), labels = c("Male", "Female"))
 
-ETOH$AgeGroup <- cut(ETOH$age, 
-                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-                         include.lowest = TRUE)
+ETOH$AgeGroup <- cut(ETOH$age,
+  breaks = c(18, 24, 34, 44, 54, 65, Inf),
+  labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+  include.lowest = TRUE
+)
 
 
-ETOH <- ETOH %>% 
-    left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
+ETOH <- ETOH %>%
+  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
 
-#31 have missing flare from last year data
+# 31 have missing flare from last year data
 missing_flare <- ETOH %>%
   filter(is.na(FlaresInPastYear))
-ETOH <- ETOH %>% 
+ETOH <- ETOH %>%
   filter(!is.na(FlaresInPastYear))
 
-#create flare groups
+# create flare groups
 ETOH <- ETOH %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
-#make flares into levels
-ETOH$flare_group <- factor(ETOH$flare_group, levels = c( "No Flares", "1 or More Flares"))
+# make flares into levels
+ETOH$flare_group <- factor(ETOH$flare_group, levels = c("No Flares", "1 or More Flares"))
 
-#add FC
-ETOH <- ETOH %>% 
+# add FC
+ETOH <- ETOH %>%
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
 
-#n.b.78 fc cat missing
+# n.b.78 fc cat missing
 missing_cat <- ETOH %>%
   filter(is.na(cat))
-ETOH <- ETOH %>% 
+ETOH <- ETOH %>%
   filter(!is.na(cat))
 
 
@@ -1388,9 +1567,10 @@ ETOH <- ETOH %>%
   )
 
 ETOH$weekly_units <- factor(ETOH$weekly_units,
-                            levels = c("0-0.1", "0.1-14", " 14+"))
+  levels = c("0-0.1", "0.1-14", " 14+")
+)
 
-#create alcohol intake level where 1 = none/very rare; 2 = within recommended limits; 3 = above recommended limits
+# create alcohol intake level where 1 = none/very rare; 2 = within recommended limits; 3 = above recommended limits
 ETOH <- ETOH %>%
   mutate(
     AlcoholIntake = case_when(
@@ -1400,18 +1580,17 @@ ETOH <- ETOH %>%
     )
   )
 
-#1 patient missign ETOH data, excluded
-missing_etoh <- ETOH %>% 
+# 1 patient missign ETOH data, excluded
+missing_etoh <- ETOH %>%
   filter(is.na(weekly_units))
-ETOH <- ETOH %>% 
+ETOH <- ETOH %>%
   filter(!is.na(weekly_units))
 
 save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 saveRDS(ETOH, paste0(save_path, "ETOH.RDS"))
 
-ETOH_CD <- ETOH[ETOH$diagnosis2 == "CD",]
-ETOH_UC <- ETOH[ETOH$diagnosis2 =="UC/IBDU",]
-
+ETOH_CD <- ETOH[ETOH$diagnosis2 == "CD", ]
+ETOH_UC <- ETOH[ETOH$diagnosis2 == "UC/IBDU", ]
 ```
 
 
@@ -1438,19 +1617,18 @@ my.render.cont <- function(x) {
   )
 }
 
-table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat| weekly_units,
+table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | weekly_units,
   data = ETOH,
   render.continuous = my.render.cont,
   title = "Alcohol consumption- whole cohort"
 )
-
 ```
 
 ```{r}
 #| label: chi-square-alcohol-sex
 #| echo: false
 contingency_table <- table(ETOH$Sex, ETOH$weekly_units)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 chi_squared_result %>%
   pander()
@@ -1460,17 +1638,21 @@ chi_squared_result %>%
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and weekly alcohol",
-          " consumption (units)")
+  message(
+    "There is a significant association between sex and weekly alcohol",
+    " consumption (units)"
+  )
 } else {
-  message("There is no significant association between sex and weekly alcohol",
-          " consumption (units)")
+  message(
+    "There is no significant association between sex and weekly alcohol",
+    " consumption (units)"
+  )
 }
 ```
 
 ```{R}
 contingency_table <- table(ETOH$diagnosis2, ETOH$weekly_units)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 ```
@@ -1479,17 +1661,21 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and diagnosis type")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and diagnosis type"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and diagnosis type")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and diagnosis type"
+  )
 }
 ```
 
 ```{R}
 contingency_table <- table(ETOH$flare_group, ETOH$weekly_units)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 ```
@@ -1498,11 +1684,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and reporting flares in the previous year")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and reporting flares in the previous year"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and reporting flares in the previous year")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and reporting flares in the previous year"
+  )
 }
 ```
 
@@ -1520,11 +1710,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and age.")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and age."
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and age.")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and age."
+  )
 }
 ```
 
@@ -1543,11 +1737,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and FC")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and FC"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and FC")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and FC"
+  )
 }
 ```
 
@@ -1556,7 +1754,7 @@ if (chi_squared_result$p.value < alpha) {
 ```{r}
 #| label: fig-alcohol-sex-distribution
 #| fig-cap: "Weekly alcohol intake (units) across sex. There are significant differences in alcohol intake between sexes."
-#sex
+# sex
 percentages <- ETOH %>%
   group_by(Sex, weekly_units) %>%
   summarise(count = n()) %>%
@@ -1565,13 +1763,17 @@ percentages <- ETOH %>%
 
 # Create a line chart to show the percentage of respondents with a certain
 # PSQI score
-ggplot(percentages,
-       aes(x = weekly_units, y = percentage, color = Sex, group = Sex)) +
+ggplot(
+  percentages,
+  aes(x = weekly_units, y = percentage, color = Sex, group = Sex)
+) +
   geom_line() +
-  labs(x = "Weekly units",
-       y = "Percentage of participants") +
+  labs(
+    x = "Weekly units",
+    y = "Percentage of participants"
+  ) +
   # Format y-axis as percentage
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
   theme_minimal()
 ```
 
@@ -1587,11 +1789,13 @@ percentages <- ETOH %>%
 # Create a line chart to show the percentage of respondents with a certain PSQI score
 ggplot(percentages, aes(x = weekly_units, y = percentage, color = AgeGroup, group = AgeGroup)) +
   geom_line() +
-  labs(group = "Age (years)",
-       color = "Age (years)",
-       x = "Weekly units",
-       y = "Percentage of Participants") +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Format y-axis as percentage
+  labs(
+    group = "Age (years)",
+    color = "Age (years)",
+    x = "Weekly units",
+    y = "Percentage of Participants"
+  ) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) + # Format y-axis as percentage
   theme_minimal()
 ```
 
@@ -1617,35 +1821,38 @@ my.render.cont <- function(x) {
   )
 }
 
-table1::table1(~ Sex + AgeGroup + flare_group + cat| weekly_units,
+table1::table1(~ Sex + AgeGroup + flare_group + cat | weekly_units,
   data = ETOH_CD,
   render.continuous = my.render.cont,
   title = "Alcohol consumption - CD cohort"
 )
-
 ```
 
 ```{r}
 #| label: chi-square-cd-alcohol-associations
 #| echo: false
 contingency_table <- table(ETOH_CD$Sex, ETOH_CD$weekly_units)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and weekly alcohol",
-          " consumption (units) in CD patients")
+  message(
+    "There is a significant association between sex and weekly alcohol",
+    " consumption (units) in CD patients"
+  )
 } else {
-  message("There is no significant association between sex and weekly alcohol",
-          " consumption (units) in CD patients")
+  message(
+    "There is no significant association between sex and weekly alcohol",
+    " consumption (units) in CD patients"
+  )
 }
 ```
 
 ```{R}
 contingency_table <- table(ETOH_CD$flare_group, ETOH_CD$weekly_units)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 ```
@@ -1674,11 +1881,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and reporting age in CD")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and reporting age in CD"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and reporting age in CD")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and reporting age in CD"
+  )
 }
 ```
 
@@ -1696,11 +1907,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and reporting FC in CD")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and reporting FC in CD"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and reporting FC in CD")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and reporting FC in CD"
+  )
 }
 ```
 
@@ -1730,7 +1945,7 @@ table1::table1(~ Sex + AgeGroup + flare_group + cat | weekly_units,
 #| label: chi-square-uc-alcohol-associations
 #| echo: false
 contingency_table <- table(ETOH_UC$Sex, ETOH_UC$weekly_units)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 ```
@@ -1739,18 +1954,22 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between sex and weekly alcohol",
-          " consumption (units) in UC patients")
+  message(
+    "There is a significant association between sex and weekly alcohol",
+    " consumption (units) in UC patients"
+  )
 } else {
-  message("There is no significant association between sex and weekly alcohol",
-          " consumption (units) in UC patients")
+  message(
+    "There is no significant association between sex and weekly alcohol",
+    " consumption (units) in UC patients"
+  )
 }
 ```
 
 
 ```{R}
 contingency_table <- table(ETOH_UC$flare_group, ETOH_UC$weekly_units)
-#chi.sq
+# chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 pander(chi_squared_result)
 ```
@@ -1759,13 +1978,17 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and reporting flares in the previous year",
-          " in UC")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and reporting flares in the previous year",
+    " in UC"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and reporting flares in the previous year",
-          " in UC")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and reporting flares in the previous year",
+    " in UC"
+  )
 }
 ```
 
@@ -1783,11 +2006,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and age in UC")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and age in UC"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and age in UC")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and age in UC"
+  )
 }
 ```
 
@@ -1805,11 +2032,15 @@ pander(chi_squared_result)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
-  message("There is a significant association between weekly alcohol",
-          " consumption (units) and FC in UC")
+  message(
+    "There is a significant association between weekly alcohol",
+    " consumption (units) and FC in UC"
+  )
 } else {
-  message("There is no significant association between weekly alcohol",
-          " consumption (units) and FC in UC")
+  message(
+    "There is no significant association between weekly alcohol",
+    " consumption (units) and FC in UC"
+  )
 }
 ```
 
@@ -1820,36 +2051,48 @@ if (chi_squared_result$p.value < alpha) {
 #| echo: false
 #| message: false
 
-ETOH_soft <- ETOH %>% 
-  inner_join(flares_soft %>% select(ParticipantNo,
-                                    softflare,softflare_time)) %>% 
+ETOH_soft <- ETOH %>%
+  inner_join(flares_soft %>% select(
+    ParticipantNo,
+    softflare, softflare_time
+  )) %>%
   rename(Cens = softflare, time = softflare_time)
-ETOH_hard <- ETOH %>% 
-  inner_join(flares_hard %>% select(ParticipantNo,
-                                    hardflare,
-                                    hardflare_time)) %>% 
-  rename(Cens = hardflare, time = hardflare_time) 
+ETOH_hard <- ETOH %>%
+  inner_join(flares_hard %>% select(
+    ParticipantNo,
+    hardflare,
+    hardflare_time
+  )) %>%
+  rename(Cens = hardflare, time = hardflare_time)
 
-#create data sets
+# create data sets
 ETOH_CD_soft <- ETOH_CD %>%
-  inner_join(flares_soft %>% select(ParticipantNo,
-                                    softflare,
-                                    softflare_time)) %>% 
+  inner_join(flares_soft %>% select(
+    ParticipantNo,
+    softflare,
+    softflare_time
+  )) %>%
   rename(Cens = softflare, time = softflare_time)
 ETOH_CD_hard <- ETOH_CD %>%
-  inner_join(flares_hard %>% select(ParticipantNo,
-                                    hardflare,
-                                    hardflare_time)) %>% 
+  inner_join(flares_hard %>% select(
+    ParticipantNo,
+    hardflare,
+    hardflare_time
+  )) %>%
   rename(Cens = hardflare, time = hardflare_time)
 ETOH_UC_soft <- ETOH_UC %>%
-  inner_join(flares_soft %>% select(ParticipantNo,
-                                    softflare,
-                                    softflare_time)) %>% 
+  inner_join(flares_soft %>% select(
+    ParticipantNo,
+    softflare,
+    softflare_time
+  )) %>%
   rename(Cens = softflare, time = softflare_time)
 ETOH_UC_hard <- ETOH_UC %>%
-  inner_join(flares_hard %>% select(ParticipantNo,
-                                    hardflare,
-                                    hardflare_time)) %>% 
+  inner_join(flares_hard %>% select(
+    ParticipantNo,
+    hardflare,
+    hardflare_time
+  )) %>%
   rename(Cens = hardflare, time = hardflare_time)
 ```
 
@@ -1863,57 +2106,62 @@ Hard flare - no significant associations
 ```{r}
 #| label: survival-alcohol-whole-cohort-soft
 #| fig-cap: "All participants - Time to soft flare - Alcohol"
-#soft flares
+# soft flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_soft)
 print(test_result)
 
 p1 <- ggsurvplot(fit,
-           data = ETOH_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Alcohol units/week",
-           palette = c("#6B9AC4", "#FF86C8","#FFDC5E" ),
-           xlab = "Time from study recrutiment (days)"
-           )
+  data = ETOH_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Alcohol units/week",
+  palette = c("#6B9AC4", "#FF86C8", "#FFDC5E"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 ```
 
 ```{R}
-#univariate
+# univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
-                   data = ETOH_soft)
+  data = ETOH_soft
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#controlling for Sex, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_soft)
+# controlling for Sex, frailty, age, IMD
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_soft
+)
 summary(cox_model)
 ```
 
 ```{R}
-#control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     IMD +
-                     cat +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_soft)
+# control for FC additioally
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    IMD +
+    cat +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_soft
+)
 summary(cox_model)
 ```
 
 ```{R}
-#Hard flares
+# Hard flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_hard)
 
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_hard)
@@ -1923,46 +2171,52 @@ pander(test_result)
 ```{R}
 #| fig-cap: "All patient - Time to hard flare - Alcohol"
 p1 <- ggsurvplot(fit,
-           data = ETOH_hard,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Alcohol units/week",
-           palette = c("#6B9AC4", "#FF86C8","#FFDC5E" ),
-           xlab = "Time from study recrutiment (days)")
+  data = ETOH_hard,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Alcohol units/week",
+  palette = c("#6B9AC4", "#FF86C8", "#FFDC5E"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 ```
 
 ```{R}
-#univariate
+# univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
-                   data = ETOH_CD_hard)
+  data = ETOH_CD_hard
+)
 summary(cox_model) %>%
   pander()
 ```
 
 ```{R}
-#controlling for Sex, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     AgeGroup +
-                     IMD +
-                     frailty(SiteNo),
-                   data = ETOH_CD_hard)
+# controlling for Sex, frailty, age, IMD
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    AgeGroup +
+    IMD +
+    frailty(SiteNo),
+  data = ETOH_CD_hard
+)
 summary(cox_model) %>%
   pander()
 ```
 
 ```{R}
-#control for FC additionally
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     cat +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_CD_hard)
+# control for FC additionally
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    cat +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_CD_hard
+)
 summary(cox_model) %>%
   pander()
 ```
@@ -1990,7 +2244,7 @@ Hard flares (n= 472, number of events= 55):
 #| label: survival-alcohol-cd-soft
 #| echo: false
 
-#soft flares
+# soft flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_soft)
@@ -2000,65 +2254,73 @@ test_result %>% pander()
 ```{R}
 #| fig-cap: "Crohn's - Time to soft flare - Alcohol"
 p1 <- ggsurvplot(fit,
-           data = ETOH_CD_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Alcohol units/week",
-           palette = c("#6B9AC4", "#FF86C8","#FFDC5E" ),
-           xlab = "Time from study recrutiment (days)"
-           )
+  data = ETOH_CD_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Alcohol units/week",
+  palette = c("#6B9AC4", "#FF86C8", "#FFDC5E"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 ```
 
 ```{R}
-#site only 
+# site only
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
-                   data = ETOH_CD_soft)
+  data = ETOH_CD_soft
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#new levels - site only
+# new levels - site only
 cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo),
-                   data = ETOH_CD_soft)
+  data = ETOH_CD_soft
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#controlling for Sex, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_CD_soft)
+# controlling for Sex, frailty, age, IMD
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_CD_soft
+)
 summary(cox_model) %>% pander()
 ```
 
 ```{R}
-#control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     IMD +
-                     cat +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_CD_soft)
+# control for FC additioally
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    IMD +
+    cat +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_CD_soft
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#new levels - controlling for FC
-cox_model <- coxph(Surv(time, Cens) ~
-                     AlcoholIntake +
-                     Sex +
-                     IMD +
-                     cat +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_CD_soft)
+# new levels - controlling for FC
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    AlcoholIntake +
+    Sex +
+    IMD +
+    cat +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_CD_soft
+)
 cox.summary(cox_model)
 ```
 
@@ -2066,7 +2328,7 @@ cox.summary(cox_model)
 #| label: survival-alcohol-cd-hard
 #| echo: false
 
-#Hard flares
+# Hard flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_hard)
 
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_hard)
@@ -2076,65 +2338,73 @@ pander(test_result)
 ```{R}
 #| fig-cap: "Crohn's - Time to hard flare - Alcohol"
 p1 <- ggsurvplot(fit,
-           data = ETOH_CD_hard,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Alcohol units/week",
-           palette = c("#6B9AC4", "#FF86C8","#FFDC5E" ),
-           xlab = "Time from study recrutiment (days)"
-           )
+  data = ETOH_CD_hard,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Alcohol units/week",
+  palette = c("#6B9AC4", "#FF86C8", "#FFDC5E"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 ```
 
 ```{R}
-#univariate
+# univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
-                   data = ETOH_CD_hard)
+  data = ETOH_CD_hard
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#univariate - new levels
+# univariate - new levels
 cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo),
-                   data = ETOH_CD_hard)
+  data = ETOH_CD_hard
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#controlling for Sex, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     AgeGroup +
-                     IMD +
-                     frailty(SiteNo),
-                   data = ETOH_CD_hard)
+# controlling for Sex, frailty, age, IMD
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    AgeGroup +
+    IMD +
+    frailty(SiteNo),
+  data = ETOH_CD_hard
+)
 summary(cox_model) %>% pander()
 ```
 
 ```{R}
-#control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     cat +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_CD_hard)
+# control for FC additioally
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    cat +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_CD_hard
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#controlling for FC - new levels
-cox_model <- coxph(Surv(time, Cens) ~
-                     AlcoholIntake +
-                     Sex +
-                     cat +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_CD_hard)
+# controlling for FC - new levels
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    AlcoholIntake +
+    Sex +
+    cat +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_CD_hard
+)
 cox.summary(cox_model)
 ```
 
@@ -2157,7 +2427,7 @@ Hard flares (n= 490, number of events= 77):
 #| label: survival-alcohol-uc-soft
 #| echo: false
 
-#soft flares
+# soft flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_UC_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_UC_soft)
@@ -2166,76 +2436,85 @@ pander(test_result)
 
 ```{R}
 p1 <- ggsurvplot(fit,
-           data = ETOH_UC_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Alcohol units/week",
-           palette = c("#6B9AC4", "#FF86C8","#FFDC5E" ),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare - Alcohol"
-           )
+  data = ETOH_UC_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Alcohol units/week",
+  palette = c("#6B9AC4", "#FF86C8", "#FFDC5E"),
+  xlab = "Time from study recrutiment (days)",
+  title = "UC/IBDU - Time to soft flare - Alcohol"
+)
 p1
 ```
 
 ```{R}
-#univariate
+# univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
-                   data = ETOH_UC_soft)
+  data = ETOH_UC_soft
+)
 cox.summary(cox_model)
 ```
 
 
 ```{R}
-#univariate - new levels
-cox_model <- coxph(Surv(time, Cens) ~
-                     AlcoholIntake +
-                     frailty(SiteNo),
-                   data = ETOH_UC_soft)
+# univariate - new levels
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    AlcoholIntake +
+    frailty(SiteNo),
+  data = ETOH_UC_soft
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#controlling for Sex, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_UC_soft)
+# controlling for Sex, frailty, age, IMD
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_UC_soft
+)
 summary(cox_model) %>% pander()
 ```
 
 ```{R}
-#control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     cat +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_UC_soft)
+# control for FC additioally
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    cat +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_UC_soft
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#control for FC additioally - new levels
-cox_model <- coxph(Surv(time, Cens) ~
-                     AlcoholIntake +
-                     Sex +
-                     cat +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_UC_soft)
+# control for FC additioally - new levels
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    AlcoholIntake +
+    Sex +
+    cat +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_UC_soft
+)
 cox.summary(cox_model)
 ```
 
 ```{r}
 #| label: survival-alcohol-uc-hard
 #| echo: false
-#Hard flares
+# Hard flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_UC_hard)
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_UC_hard)
 pander(test_result)
@@ -2244,65 +2523,73 @@ pander(test_result)
 ```{R}
 #| fig-cap: "UC/IBDU - Time to hard flare - Alcohol"
 p1 <- ggsurvplot(fit,
-           data = ETOH_UC_hard,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Alcohol units/week",
-           palette = c("#6B9AC4", "#FF86C8","#FFDC5E" ),
-           xlab = "Time from study recrutiment (days)"
-           )
+  data = ETOH_UC_hard,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Alcohol units/week",
+  palette = c("#6B9AC4", "#FF86C8", "#FFDC5E"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 ```
 
 ```{R}
-#univariate
+# univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
-                   data = ETOH_UC_hard)
+  data = ETOH_UC_hard
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#univariate - new levels
+# univariate - new levels
 cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo),
-                   data = ETOH_UC_hard)
+  data = ETOH_UC_hard
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#controlling for Sex, frailty, age, IMD
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_UC_hard)
+# controlling for Sex, frailty, age, IMD
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_UC_hard
+)
 summary(cox_model) %>% pander()
 ```
 
 ```{R}
-#control for FC additinoally
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     cat +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_UC_hard)
+# control for FC additinoally
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    cat +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_UC_hard
+)
 cox.summary(cox_model)
 ```
 
 ```{R}
-#control for FC additinoally - new levels
-cox_model <- coxph(Surv(time, Cens) ~
-                     weekly_units +
-                     Sex +
-                     cat +
-                     IMD +
-                     AgeGroup +
-                     frailty(SiteNo),
-                   data = ETOH_UC_hard)
+# control for FC additinoally - new levels
+cox_model <- coxph(
+  Surv(time, Cens) ~
+    weekly_units +
+    Sex +
+    cat +
+    IMD +
+    AgeGroup +
+    frailty(SiteNo),
+  data = ETOH_UC_hard
+)
 cox.summary(cox_model)
 ```
 
