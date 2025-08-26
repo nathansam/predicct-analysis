@@ -850,13 +850,13 @@ cox.summary <- function(fit) {
     ) %>%
     print()
 
-  cat("\\newline
+  cat("
 
-Diagnostics: \\newline
+Diagnostics: 
 
 ")
 
-  cat("\\newline
+  cat("
 
 ::: {.panel-tabset}
 
@@ -864,7 +864,7 @@ Diagnostics: \\newline
 
   cat("
 
-###### Proportional hazards assumption test \\newline
+###### Proportional hazards assumption test 
 
   ")
   cox.zph(fit)$table %>%
@@ -879,23 +879,23 @@ Diagnostics: \\newline
     ) %>%
     print()
 
-  cat("\\newline
+  cat("
 
-###### DF betas \\newline
+###### DF betas 
 
   ")
 
   print(ggcoxdiagnostics(fit, type = "dfbeta"))
 
-  cat("\\newline
+  cat("
 
-###### Martingale residuals \\newline
+###### Martingale residuals 
 
       ")
 
   print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
 
-  cat("\\newline
+  cat("
 
 :::
 
