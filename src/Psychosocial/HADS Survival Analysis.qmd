@@ -216,7 +216,9 @@ Full results of baseline analysis can be found in separate report (HADS Baseline
   (p-value = 0.001, 95% CI 1.14-1.73) and severe (p-value < 0.00001, 95% CI
   1.31-2.02)
 
-```{r, soft flares all anxiety}
+```{r}
+#| label: tbl-soft-flares-anxiety-whole
+#| tbl-cap: "Log-rank test results for anxiety scores and patient-reported flares in whole IBD cohort"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = soft_anxiety_IBD
 )
@@ -229,6 +231,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-anxiety-soft-whole
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by anxiety scores in whole IBD cohort"
 p1 <- ggsurvplot(fit,
   data = soft_anxiety_IBD,
   conf.int = TRUE,
@@ -236,8 +240,7 @@ p1 <- ggsurvplot(fit,
   legend.title = "HADS-Anxiety scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
-  xlab = "Time from study recruitment (days)",
-  title = "Whole cohort - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p1
 ```
@@ -300,7 +303,9 @@ invisible(cox.summary(cox_model))
 * Controlling for FC additionally - significant for moderate (0.0008, 95% CI
   1.19-1.99) and severe (p-value = 0.043, 95% CI 1.01-1.95) depression
 
-```{r, soft flares all depression}
+```{r}
+#| label: tbl-soft-flares-depression-whole
+#| tbl-cap: "Log-rank test results for depression scores and patient-reported flares in whole IBD cohort"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_depression_IBD)
 
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_depression_IBD)
@@ -309,15 +314,16 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-depression-soft-whole
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by depression scores in whole IBD cohort"
 p1 <- ggsurvplot(fit,
-  data = soft_anxiety_IBD,
+  data = soft_depression_IBD,
   conf.int = TRUE,
   ggtheme = theme_minimal(),
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
-  xlab = "Time from study recruitment (days)",
-  title = "Whole cohort - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p1
 ```
@@ -371,7 +377,9 @@ invisible(cox.summary(cox_model))
 Anxiety and hard flare
 * no significant associations at any level
 
-```{r, hard flare anxiety whole}
+```{r}
+#| label: tbl-hard-flares-anxiety-whole
+#| tbl-cap: "Log-rank test results for anxiety scores and hard flares in whole IBD cohort"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = hard_anxiety_IBD)
 
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -383,6 +391,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-anxiety-hard-whole
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by anxiety scores in whole IBD cohort"
 p1 <- ggsurvplot(fit,
   data = hard_anxiety_IBD,
   conf.int = TRUE,
@@ -390,8 +400,7 @@ p1 <- ggsurvplot(fit,
   legend.title = "HADS-Anxiety scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
-  xlab = "Time from study recruitment (days)",
-  title = "Whole cohort - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p1
 ```
@@ -451,7 +460,9 @@ invisible(cox.summary(cox_model))
 * Controlling for FC additionally, significant for moderate depression
   (p-value = 0.009, 95% CI 1.14-2.54)
 
-```{r, hard flares all depression whole}
+```{r}
+#| label: tbl-hard-flares-depression-whole
+#| tbl-cap: "Log-rank test results for depression scores and hard flares in whole IBD cohort"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = hard_depression_IBD
 )
@@ -463,6 +474,8 @@ test_result %>% pander()
 ```
 
 ```{R}
+#| label: fig-km-depression-hard-whole
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by depression scores in whole IBD cohort"
 p1 <- ggsurvplot(fit,
   data = hard_depression_IBD,
   conf.int = TRUE,
@@ -470,8 +483,7 @@ p1 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
-  xlab = "Time from study recruitment (days)",
-  title = "Whole cohort - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p1
 ```
@@ -533,7 +545,9 @@ invisible(cox.summary(cox_model))
   1.09- 2.02)
   
   
-```{r, soft flare UC/IBDU}
+```{r}
+#| label: tbl-uc-anxiety-soft
+#| tbl-cap: "Log-rank test results for anxiety scores and patient-reported flares in UC/IBDU patients"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_uc_anx)
 
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -544,6 +558,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-uc-anxiety-soft
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by anxiety scores in UC/IBDU patients"
 p.uc.anx <- ggsurvplot(fit,
   data = soft_uc_anx,
   conf.int = TRUE,
@@ -551,8 +567,7 @@ p.uc.anx <- ggsurvplot(fit,
   legend.title = "HADS-Anxiety scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
-  xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 
 p.uc.anx
@@ -616,6 +631,8 @@ invisible(cox.summary(cox_model))
 
 
 ```{R}
+#| label: tbl-uc-depression-soft
+#| tbl-cap: "Log-rank test results for depression scores and patient-reported flares in UC/IBDU patients"
 # depression
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_uc_dep)
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -626,6 +643,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-uc-depression-soft
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by depression scores in UC/IBDU patients"
 p2 <- ggsurvplot(fit,
   data = soft_uc_dep,
   conf.int = TRUE,
@@ -633,8 +652,7 @@ p2 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
-  xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p2
 ```
@@ -711,7 +729,9 @@ my.render.cont <- function(x) {
 * Controlling for site, sex, IMD, age and FC, no significant
   association
   
-``` {r, flare (hard) and UC }
+```{r}
+#| label: tbl-uc-anxiety-hard
+#| tbl-cap: "Log-rank test results for anxiety scores and hard flares in UC/IBDU patients"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_anx)
 
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -722,6 +742,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-uc-anxiety-hard
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by anxiety scores in UC/IBDU patients"
 p1 <- ggsurvplot(fit,
   data = flare_uc_anx,
   conf.int = TRUE,
@@ -729,8 +751,7 @@ p1 <- ggsurvplot(fit,
   legend.title = "HADS-Anxiety scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
-  xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p1
 ```
@@ -792,6 +813,8 @@ Note: violation of proportional hazards assumption
   (p-value = 0.041, 95% CI 1.03-4.69) depression
 
 ```{R}
+#| label: tbl-uc-depression-hard
+#| tbl-cap: "Log-rank test results for depression scores and hard flares in UC/IBDU patients"
 # UC and depression hard flares
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_uc_dep)
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -802,6 +825,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-uc-depression-hard
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by depression scores in UC/IBDU patients"
 p.uc.dep.hard <- ggsurvplot(fit,
   data = flare_uc_dep,
   conf.int = TRUE,
@@ -809,8 +834,7 @@ p.uc.dep.hard <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
-  xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p.uc.dep.hard 
 ```
@@ -870,7 +894,9 @@ n= 820, number of events= 279
   associations with moderate (p-value = 0.002, 95% CI 1.21-2.21) and severe
   anxiety (p-value > 0.0001, 95% CI 1.36-2.49) 
 
-```{r, soft flare CD}
+```{r}
+#| label: tbl-cd-anxiety-soft
+#| tbl-cap: "Log-rank test results for anxiety scores and patient-reported flares in CD patients"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_cd_anx)
 
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_cd_anx)
@@ -879,6 +905,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-cd-anxiety-soft
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by anxiety scores in CD patients"
 p.cd.anx <- ggsurvplot(fit,
   data = soft_cd_anx,
   conf.int = TRUE,
@@ -886,8 +914,7 @@ p.cd.anx <- ggsurvplot(fit,
   legend.title = "HADS-Anxiety scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
-  xlab = "Time from study recruitment (days)",
-  title = "CD - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p.cd.anx
 ```
@@ -943,6 +970,8 @@ invisible(cox.summary(cox_model))
 *	Controlling for site, sex, IMD and FC – no significant associations
 
 ```{R}
+#| label: tbl-cd-depression-soft
+#| tbl-cap: "Log-rank test results for depression scores and patient-reported flares in CD patients"
 # depression
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = soft_cd_dep)
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -953,6 +982,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-cd-depression-soft
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by depression scores in CD patients"
 p2 <- ggsurvplot(fit,
   data = soft_cd_dep,
   conf.int = TRUE,
@@ -960,8 +991,7 @@ p2 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
-  xlab = "Time from study recruitment (days)",
-  title = "CD - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p2
 ```
@@ -1025,7 +1055,9 @@ The table below shows the numbers in each score group at baseline.
 
 * No significant increase in risk in any analysis
 
-```{r, hads survival in CD hard flare}
+```{r}
+#| label: tbl-cd-anxiety-hard
+#| tbl-cap: "Log-rank test results for anxiety scores and hard flares in CD patients"
 # CD hard flare, anxiety
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_cd_anx)
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -1036,6 +1068,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-cd-anxiety-hard
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by anxiety scores in CD patients"
 p3 <- ggsurvplot(fit,
   data = flare_cd_anx,
   conf.int = TRUE,
@@ -1043,8 +1077,7 @@ p3 <- ggsurvplot(fit,
   legend.title = "HADS-Anxiety scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#42213D", "#BD4089", "#F51AA4"),
-  xlab = "Time from study recruitment (days)",
-  title = "CD - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p3
 ```
@@ -1097,6 +1130,8 @@ invisible(cox.summary(cox_model))
 
 
 ```{R}
+#| label: tbl-cd-depression-hard
+#| tbl-cap: "Log-rank test results for depression scores and hard flares in CD patients"
 # CD hard flare depression
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = flare_cd_dep)
 test_result <- survdiff(Surv(time, DiseaseFlareYN) ~ score_group,
@@ -1107,6 +1142,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-cd-depression-hard
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by depression scores in CD patients"
 p4 <- ggsurvplot(fit,
   data = flare_cd_dep,
   conf.int = TRUE,
@@ -1114,8 +1151,7 @@ p4 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-10", "11-21"),
   palette = c("#344055", "#266DD3", "#78CDD7"),
-  xlab = "Time from study recruitment (days)",
-  title = "CD - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p4
 ```
@@ -1208,7 +1244,9 @@ soft_dep_grouped_UC <-
   soft_dep_grouped_IBD[soft_dep_grouped_IBD$diagnosis2 == "UC/IBDU", ]
 ```
 
-``` {r, survival analysis depression grouped - soft flares}
+```{r}
+#| label: tbl-depression-grouped-soft-whole
+#| tbl-cap: "Log-rank test results for grouped depression scores (0-7 vs 8-21) and patient-reported flares in whole IBD cohort"
 # all IBD soft flare
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = soft_dep_grouped_IBD
@@ -1220,6 +1258,8 @@ test_result %>% pander()
 ```
 
 ```{R}
+#| label: fig-km-depression-grouped-soft-whole
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by grouped depression scores (0-7 vs 8-21) in whole IBD cohort"
 p5 <- ggsurvplot(fit,
   data = soft_dep_grouped_IBD,
   conf.int = TRUE,
@@ -1227,8 +1267,7 @@ p5 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-21"),
   palette = c("#344055", "#266DD3"),
-  xlab = "Time from study recruitment (days)",
-  title = "All patients - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p5
 ```
@@ -1274,7 +1313,9 @@ invisible(cox.summary(cox_model))
 ```
 
 
-```{R, CD, depression grouped and soft flares}
+```{R}
+#| label: tbl-depression-grouped-soft-cd
+#| tbl-cap: "Log-rank test results for grouped depression scores (0-7 vs 8-21) and patient-reported flares in CD patients"
 # CD soft flare
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = soft_dep_grouped_CD
@@ -1289,6 +1330,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-depression-grouped-soft-cd
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by grouped depression scores (0-7 vs 8-21) in CD patients"
 p5 <- ggsurvplot(fit,
   data = soft_dep_grouped_CD,
   conf.int = TRUE,
@@ -1296,8 +1339,7 @@ p5 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-21"),
   palette = c("#344055", "#266DD3"),
-  xlab = "Time from study recruitment (days)",
-  title = "CD - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p5
 ```
@@ -1343,7 +1385,9 @@ cox_model <- coxph(
 invisible(cox.summary(cox_model))
 ```
 
-```{r, soft flare UC depression grouped}
+```{r}
+#| label: tbl-depression-grouped-soft-uc
+#| tbl-cap: "Log-rank test results for grouped depression scores (0-7 vs 8-21) and patient-reported flares in UC/IBDU patients"
 # UC soft flare
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = soft_dep_grouped_UC
@@ -1356,6 +1400,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-depression-grouped-soft-uc
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by grouped depression scores (0-7 vs 8-21) in UC/IBDU patients"
 p5 <- ggsurvplot(fit,
   data = soft_dep_grouped_UC,
   conf.int = TRUE,
@@ -1363,8 +1409,7 @@ p5 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-21"),
   palette = c("#344055", "#266DD3"),
-  xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU - Time to patient-reported flare"
+  xlab = "Time from study recruitment (days)"
 )
 p5
 ```
