@@ -630,7 +630,7 @@ ex_UC_hard <- ex_UC %>%
 
 Is achieving minimum exercise levels in the whole IBD cohort associated a change to risk of
 
-Soft flares:
+Patient-reported flares:
 n= 1571, number of events= 580 
 
 * no association across any analysis
@@ -649,15 +649,17 @@ fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = exercise_soft)
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = exercise_soft)
 print(test_result)
 
+```{r}
+#| label: fig-exercise-whole-cohort-soft-km
+#| fig-cap: "Kaplan-Meier survival curves for time to patient-reported flare by minimum exercise achievement in the whole IBD cohort"
 p1 <- ggsurvplot(fit,
-           data = ex_CD_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Meeting recommended exercise level",
-           palette = c("#42213D", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = "All participants - Time to soft flare - GPAQ"
-           )
+  data = ex_CD_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Meeting recommended exercise level",
+  palette = c("#42213D", "#F51AA4"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 
 #frailty only
@@ -708,7 +710,7 @@ summary(cox_model)
 
 Is time to flare associated with meeting minimum exercise recommendations?
 
-Soft flares:
+Patient-reported flares:
 n= 793, number of events= 272 
 
 No association when controlling for
@@ -734,15 +736,17 @@ fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_soft)
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_soft)
 print(test_result)
 
+```{R}
+#| label: fig-exercise-cd-soft-km
+#| fig-cap: "Crohn's - Time to patient-reported flare - GPAQ"
 p1 <- ggsurvplot(fit,
-           data = ex_CD_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Metting recommended exercise level",
-           palette = c("#42213D", "#F51AA4"),
-           xlab = "Time from study recrutiment (days)",
-           title = " Crohn's - Time to soft flare - GPAQ"
-           )
+  data = ex_CD_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Metting recommended exercise level",
+  palette = c("#42213D", "#F51AA4"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 
 #frailty only
@@ -811,7 +815,7 @@ cox.summary(cox_model)
 
 ### Survival Analysis - UC/IBDU 
 
-Soft flares: 
+Patient-reported flares: 
 n= 787, number of events= 311 
 
 No association when controlling for
@@ -836,6 +840,8 @@ fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
 print(test_result)
 
+```{R}
+#| fig-cap: "UC/IBDU - Time to patient-reported flare - GPAQ"
 p1 <- ggsurvplot(fit,
            data = ex_UC_soft,
            conf.int = TRUE,
@@ -1322,11 +1328,13 @@ ETOH_UC_hard <- ETOH_UC %>%
 
 ## Survival analysis all patients
 
-Soft flare - no significant associations
+Patient-reported flare - no significant associations
 Hard flare - no significant associations
 
-```{r all patients ETOH time to flare}
-#soft flares
+```{r}
+#| label: survival-alcohol-whole-cohort-soft
+#| fig-cap: "All participants - Time to patient-reported flare - Alcohol"
+# soft flares
 fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_soft)
@@ -1391,7 +1399,7 @@ summary(cox_model)
 ## Survival analysis CD patients
 
 
-Soft flares (n= 482, number of events= 173):
+Patient-reported flares (n= 482, number of events= 173):
 
 * No significant association when controlling for frailty(site) only for 14+ units/week (0.1-14.5 p-value = 0.200; 14.5+ p-value = 0.088)
 * Not significant when controlling for frailty(site), sex, smoking, IMD and age
@@ -1412,6 +1420,8 @@ fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_soft)
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_CD_soft)
 print(test_result)
 
+```{R}
+#| fig-cap: "Crohn's - Time to patient-reported flare - Alcohol"
 p1 <- ggsurvplot(fit,
            data = ETOH_CD_soft,
            conf.int = TRUE,
@@ -1488,7 +1498,7 @@ cox.summary(cox_model)
 
 ## Survival analysis UC/IBDU patients
 
-Soft flares (n= 495, number of events= 211):
+Patient-reported flares (n= 495, number of events= 211):
 
 * No significant association when controlling for frailty(site) only
 * Not significant when controlling for frailty(site), sex, smoking, IMD and age
@@ -1508,15 +1518,16 @@ fit <- survfit(Surv(time, Cens) ~ weekly_units, data = ETOH_UC_soft)
 test_result <- survdiff(Surv(time, Cens) ~ weekly_units, data = ETOH_UC_soft)
 print(test_result)
 
+```{R}
+#| fig-cap: "UC/IBDU - Time to patient-reported flare - Alcohol"
 p1 <- ggsurvplot(fit,
-           data = ETOH_UC_soft,
-           conf.int = TRUE,
-           ggtheme = theme_minimal(),
-           legend.title = "Alcohol units/week",
-           palette = c("#6B9AC4", "#FF86C8","#FFDC5E" ),
-           xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare - Alcohol"
-           )
+  data = ETOH_UC_soft,
+  conf.int = TRUE,
+  ggtheme = theme_minimal(),
+  legend.title = "Alcohol units/week",
+  palette = c("#6B9AC4", "#FF86C8", "#FFDC5E"),
+  xlab = "Time from study recrutiment (days)"
+)
 p1
 
 #univariate

@@ -266,7 +266,7 @@ LE_CD_hard <- lifeevents_hard[lifeevents_hard$diagnosis2 == "CD",]
 
 #### Whole cohort 
 
-Soft flaree (n= 1596, number of events= 579) - no significance across any analysis.
+Patient-reported flare (n= 1596, number of events= 579) - no significance across any analysis.
 Hard flare (n= 1552, number of events= 215) - no significance across any analysis.
 
 ```{r, survival analysis whole cohort}
@@ -281,10 +281,10 @@ p1 <- ggsurvplot(fit,
            data = lifeevents_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "All patients, time to soft flare by presence of signficant life event",
+           legend.title = "All patients, time to patient-reported flare by presence of signficant life event",
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
-           title = "Time to soft flare"
+           title = "Time to patient-reported flare"
            )
 p1
 
@@ -310,7 +310,7 @@ p1 <- ggsurvplot(fit,
            data = lifeevents_hard,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "All patients, time to soft flare by presence of signficant life event",
+           legend.title = "All patients, time to patient-reported flare by presence of signficant life event",
            palette = c("#BB0A21", "#F39237"),
            xlab = "Time from study recrutiment (days)",
            title = "Time to hard flare"
@@ -334,7 +334,7 @@ summary(cox_model)
 ### Survival analysis UC/IBDU
 
 
-Soft flare (n= 782, number of events= 305) - no associations. 
+Patient-reported flare (n= 782, number of events= 305) - no associations. 
 Hard flare (n= 763, number of events= 118) - no associations.
 
 ```{r, survival analysis UC/IBDU cohort}
@@ -349,10 +349,10 @@ p1 <- ggsurvplot(fit,
            data = LE_UC_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "UC/IBDU patients, time to soft flare by presence of signficant life event",
+           legend.title = "UC/IBDU patients, time to patient-reported flare by presence of signficant life event",
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
-           title = "Time to soft flare"
+           title = "Time to patient-reported flare"
            )
 p1
 
@@ -378,7 +378,7 @@ p1 <- ggsurvplot(fit,
            data = LE_UC_hard,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "UC/IBDU patients, time to soft flare by presence of signficant life event",
+           legend.title = "UC/IBDU patients, time to patient-reported flare by presence of signficant life event",
            palette = c("#BB0A21", "#F39237"),
            xlab = "Time from study recrutiment (days)",
            title = "Time to hard flare"
@@ -402,7 +402,7 @@ summary(cox_model)
 
 ### Survival analysis CD cohort
 
-Soft flare (n= 814, number of events= 274) - no significance across any analysis.
+Patient-reported flare (n= 814, number of events= 274) - no significance across any analysis.
 Hard flare (n= 789, number of events= 97) - no significance across any analysis.
 
 ```{r, survival analysis CD cohort}
@@ -417,10 +417,10 @@ p1 <- ggsurvplot(fit,
            data = LE_CD_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "CD patients, time to soft flare by presence of signficant life event",
+           legend.title = "CD patients, time to patient-reported flare by presence of signficant life event",
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
-           title = "Time to soft flare"
+           title = "Time to patient-reported flare"
            )
 p1
 
@@ -446,7 +446,7 @@ p1 <- ggsurvplot(fit,
            data = LE_CD_hard,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "CD patients, time to soft flare by presence of signficant life event",
+           legend.title = "CD patients, time to patient-reported flare by presence of signficant life event",
            palette = c("#BB0A21", "#F39237"),
            xlab = "Time from study recrutiment (days)",
            title = "Time to hard flare"
