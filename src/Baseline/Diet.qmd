@@ -470,6 +470,13 @@ cat_theme(p)
 
 ## Diet qualiy index
 
+Diet quality index (DQI) is a measure of overall diet quality ranging from 0
+to 100. A higher DQI indicates a diverse diet likely meeting recommended daily
+intakes but reflecting moderation whilst low values indicate the converse. We
+used Diet Quality Index-International (DQI-I) which has been validated for use
+in diverse populations [@Kim_2003]. It should be noted DQI does not necessarily
+relate to ultra-processed food intake. 
+
 ```{R}
 demo %>%
   drop_na(cat) %>%
@@ -1175,34 +1182,6 @@ demo %>%
 ```{R}
 #| label: tbl-alcohol
 #| tbl-cap: "ANOVA between alcohol intake and FC groups."
-pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
-```
-
-## Diet quality
-
-Diet quality is assessed via diet quality index. 
-
-```{R}
-#| label: fig-dqi
-#| fig-cap: "Distribution of diet quality index, stratified by IBD type."
-
-demo %>%
-  drop_na(dqi_tot) %>%
-  ggplot(aes(x = dqi_tot, color = diagnosis2, fill = diagnosis2)) +
-  geom_histogram(bins = 20) +
-  facet_grid(cols = vars(diagnosis2)) + 
-  theme_minimal() +
-  labs(x = "Diet quality index",
-       y = "Frequency",
-       color = "Diagnosis",
-       fill = "Diagnosis") +
-  scale_fill_manual(values = c("#86DEB7", "#FC5A66")) +
-  scale_color_manual(values = c("#529176",  "#AC353F"))
-```
-
-```{R}
-#| label: tbl-dqi
-#| tbl-cap: "ANOVA between diet quality index and FC groups."
 pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
 ```
 
