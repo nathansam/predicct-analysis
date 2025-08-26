@@ -6,14 +6,6 @@ author:
     affiliations:
       - ref: Lothian
 date: today
-format:
-  html:
-    toc: true
-    toc-depth: 3
-    number-sections: true
-    code-fold: true
-    code-summary: "Show code"
-    embed-resources: true
 execute:
   warning: false
 ---
@@ -94,6 +86,7 @@ if (file.exists("/.dockerenv")) {
   redcap.path <- "data/final/20231030/"
   prefix <- "data/end-of-follow-up/"
   outdir <- "data/processed"
+  flare.dir <- "data/final/20240308/Followup/"
   chiara <- "data/people/chiara/"
 } else {
   # Run on OS directly
@@ -101,6 +94,8 @@ if (file.exists("/.dockerenv")) {
   redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
   prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
   outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  flare.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
+                      "final/20240308/Followup/")
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
 ```
@@ -130,7 +125,7 @@ ffq <- read.xlsx(
     "xlsx"
   )
 )
-all_flares <- read.xlsx("/Volumes/igmm/cvallejo-predicct/predicct/final/20240308/Followup/all-flares.xlsx")
+all_flares <- read.xlsx(paste0(flare.dir, "all-flares.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
 smoking <- readRDS(paste0(chiara, "smoking.rds"))
@@ -142,16 +137,26 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 
 ## Data Cleaning and Quality Control
 
-Physical activity data underwent extensive quality control to ensure reliable measurement of exercise behaviors. Key exclusion criteria included:
+Physical activity data underwent extensive quality control to ensure reliable
+measurement of exercise behaviors. Key exclusion criteria included:
 
-- **WHO compliance**: All patients reporting >16 hours within any single activity category were excluded per WHO guidelines
-- **Data completeness**: Patients reporting exercise duration without frequency (number of days) were excluded
-- **Extreme values**: Patients reporting >6720 minutes/week (>16h/day for 7 days, n=10) were excluded as likely data entry errors
-- **Conservative approach**: Given the potential for misreporting (e.g., entering weekly instead of daily values), we used categorical classifications rather than continuous measures
+- **WHO compliance**: All patients reporting >16 hours within any single
+  activity category were excluded per WHO guidelines
+- **Data completeness**: Patients reporting exercise duration without frequency
+  (number of days) were excluded
+- **Extreme values**: Patients reporting >6720 minutes/week (>16h/day for 7
+  days, n=10) were excluded as likely data entry errors
+- **Conservative approach**: Given the potential for misreporting (e.g.,
+  entering weekly instead of daily values), we used categorical classifications
+  rather than continuous measures
 
-**WHO Exercise Definition**: Minimum exercise defined as ≥150 minutes moderate activity OR ≥75 minutes vigorous activity per week, OR ≥600 METs per week.
+**WHO Exercise Definition**: Minimum exercise defined as ≥150 minutes moderate
+activity OR ≥75 minutes vigorous activity per week, OR ≥600 METs per week.
 
-Participants reporting ≥1050 minutes/week (n=452) would meet minimum requirements even if they incorrectly reported weekly instead of daily values, providing additional confidence in the "meeting minimum exercise" classification.
+Participants reporting ≥1050 minutes/week (n=452) would meet minimum
+requirements even if they incorrectly reported weekly instead of daily values,
+providing additional confidence in the "meeting minimum exercise"
+classification.
 
 ```{r}
 #| label: clean-exercise-data
@@ -219,8 +224,7 @@ exercise <- exercise %>%
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD)) %>%
   filter(!is.na(cat))
 
-missing_ex_IMD <- exercise %>%
-  filter(is.na(IMD))
+missing_ex_IMD <- exercise %>% filter(is.na(IMD))
 # Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, ModerateSport -> 2 participants
 filtered_data <- exercise %>%
   filter(is.na(VigorousWork) &
@@ -286,12 +290,14 @@ VW_wrong <- exercise %>%
 VW_wrong <- exercise %>%
   filter(VigorousWork == 2 &
     (!is.na(VigorousWorkMinutes) | VigorousWorkMinutes != 0))
+```
 
+```{R}
 # find out frequencies of values to check if any >16 (as per protocol need excluded)
 vigorous_work_hours_table <- table(exercise$VigorousWorkHours,
   useNA = "always"
 )
-print(vigorous_work_hours_table)
+knitr::kable(vigorous_work_hours_table)
 ```
 
 ```{r}
@@ -393,15 +399,16 @@ MS_wrong <- exercise %>%
 MS_wrong <- exercise %>%
   filter(ModerateSport == 2 &
     (!is.na(ModerateSportMinutes) | ModerateSportMinutes != 0))
+```
 
-
+```{R}
 # check if anyone recorded days >7 in any days column -> no cases
 # check if any minutes >60 and none are
 vigorous_work_days_table <- table(exercise$VigorousWorkHours, useNA = "always")
-print(vigorous_work_hours_table)
+knitr::kable(vigorous_work_hours_table)
 ```
 
-at this point can confirm that all participants have a valid response to at
+At this point can confirm that all participants have a valid response to at
 least one section, have removed invalid answers (e.g respond yes to activity and
 fill out hours without specifying days)
 checked if anyone said no but then proceeded to report days/hours or minutes, no
@@ -1215,6 +1222,7 @@ p1
 ```{r}
 #| label: cox-exercise-whole-cohort-hard-models
 #| echo: false
+#| results: "asis"
 # exercise and frailty
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -1223,7 +1231,10 @@ cox_model <- coxph(
   data = exercise_hard
 )
 cox.summary(cox_model)
+```
 
+
+```{R}
 # sex and frailty
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -1318,6 +1329,7 @@ summary(cox_model) %>%
 ```
 
 ```{R}
+#| results: "asis"
 # lack exercise - site only
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -1326,17 +1338,43 @@ cox_model <- coxph(
   data = ex_CD_soft
 )
 cox.summary(cox_model)
+```
 
+```{R}
 # 2
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_soft)
-summary(cox_model)
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     frailty(SiteNo),
+                   data = ex_CD_soft)
+summary(cox_model) %>%
+  pander()
+```
 
+```{R}
+#| results: "asis"
 # control for fc
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_CD_soft)
 cox.summary(cox_model)
+```
 
+```{R}
+#| results: "asis"
 # lack exercise - controlling for fc
-cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_soft)
+cox_model <- coxph(Surv(time, Cens) ~
+                     LackExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_CD_soft)
 cox.summary(cox_model)
 ```
 
@@ -1347,38 +1385,72 @@ cox.summary(cox_model)
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_hard)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_CD_hard)
-print(test_result)
+pander(test_result)
+```
 
+```{R}
+#| fig-cap: "CD - Time to hard flare - GPAQ"
 p1 <- ggsurvplot(fit,
   data = ex_CD_hard,
   conf.int = TRUE,
   ggtheme = theme_minimal(),
   legend.title = "Meeting recommended exercise levels",
   palette = c("#BB0A21", "#F39237"),
-  xlab = "Time from study recrutiment (days)",
-  title = "CD - Time to hard flare - GPAQ"
+  xlab = "Time from study recrutiment (days)"
 )
 p1
+```
 
+```{R}
+#| results: "asis"
 # exercise and frailty
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo),
+                   data = ex_CD_hard)
 cox.summary(cox_model)
+```
 
+
+```{R}
 # lack exercise - site only
-cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo),
+                   data = ex_CD_hard)
 cox.summary(cox_model)
+```
 
+```{R}
+#| results: "asis"
 # 2
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     frailty(SiteNo),
+                   data = ex_CD_hard)
 summary(cox_model)
+```
 
-
+```{R}
 # control for fc additionally
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_CD_hard)
 cox.summary(cox_model)
+```
 
+```{R}
+#| results: "asis"
 # lack exercise - control for fc additionally
-cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_CD_hard)
+cox_model <- coxph(Surv(time, Cens) ~
+                     LackExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_CD_hard)
 cox.summary(cox_model)
 ```
 
@@ -1411,37 +1483,73 @@ There is a significant association between achieving minimum exercise and risk o
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
-print(test_result)
+pander(test_result)
+```
 
+```{R}
+#| fig-cap: "UC/IBDU - Time to soft flare - GPAQ"
 p1 <- ggsurvplot(fit,
   data = ex_UC_soft,
   conf.int = TRUE,
   ggtheme = theme_minimal(),
   legend.title = "Meeting recommended exercise levels",
   palette = c("#42213D", "#F51AA4"),
-  xlab = "Time from study recrutiment (days)",
-  title = "UC/IBDU - Time to soft flare - GPAQ"
+  xlab = "Time from study recrutiment (days)"
 )
 p1
+```
 
+```{R}
+#| results: "asis"
 # controlling for frailty only
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_soft)
+cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo),
+                   data = ex_UC_soft)
 cox.summary(cox_model)
+```
 
+```{R}
+#| results: "asis"
 # lack exercise - frailty only
-cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_UC_soft)
+cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo),
+                   data = ex_UC_soft)
 cox.summary(cox_model)
+```
 
+```{R}
+#| results: "asis"
 # controlling for Sex, frailty
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_soft)
-summary(cox_model)
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     frailty(SiteNo),
+                   data = ex_UC_soft)
+summary(cox_model) %>% pander()
+```
 
+```{R}
+#| results: "asis"
 # control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_UC_soft)
 cox.summary(cox_model)
+```
+
+```{R}
 
 # lack exercise - control for FC additioally
-cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_soft)
+cox_model <- coxph(Surv(time, Cens) ~
+                     LackExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_UC_soft)
 cox.summary(cox_model)
 ```
 
@@ -1452,8 +1560,10 @@ cox.summary(cox_model)
 fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_hard)
 
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_hard)
-print(test_result)
+pander(test_result)
+```
 
+```{R}
 p.uc.ex.hard <- ggsurvplot(fit,
   data = ex_UC_hard,
   conf.int = TRUE,
@@ -1465,29 +1575,64 @@ p.uc.ex.hard <- ggsurvplot(fit,
   title = "UC/IBDU - Time to hard flare - GPAQ"
 )
 p.uc.ex.hard
+```
 
+```{R}
+#| results: "asis"
 # exercise
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo), data = ex_UC_hard)
-cox.summary(cox_model)
-
-# lack exercise - hard flare
-cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo), data = ex_UC_hard)
-cox.summary(cox_model)
-
-# sex frailty IMD
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + frailty(SiteNo), data = ex_UC_hard)
-summary(cox_model)
-
-# control for FC
-cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_hard)
-cox.summary(cox_model)
-
-# lack exercise - controlling fc
-cox_model <- coxph(Surv(time, Cens) ~ LackExercise + Sex + IMD + cat + frailty(SiteNo), data = ex_UC_hard)
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     frailty(SiteNo),
+                   data = ex_UC_hard)
 cox.summary(cox_model)
 ```
 
+```{R}
+#| results: "asis"
+# lack exercise - hard flare
+cox_model <- coxph(Surv(time, Cens) ~
+                     LackExercise +
+                     frailty(SiteNo),
+                   data = ex_UC_hard)
+cox.summary(cox_model)
+```
 
+```{R}
+# sex frailty IMD
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     frailty(SiteNo),
+                   data = ex_UC_hard)
+summary(cox_model)
+```
+
+```{R}
+#| results: "asis"
+# control for FC
+cox_model <- coxph(Surv(time, Cens) ~
+                     MinimumExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_UC_hard)
+cox.summary(cox_model)
+```
+
+```{R}
+#| results: "asis"
+# lack exercise - controlling fc
+cox_model <- coxph(Surv(time, Cens) ~
+                     LackExercise +
+                     Sex +
+                     IMD +
+                     cat +
+                     frailty(SiteNo),
+                   data = ex_UC_hard)
+cox.summary(cox_model)
+```
 
 
 # Alcohol Consumption Analysis
@@ -1509,12 +1654,18 @@ These categories align with established public health guidelines for alcohol con
 #| message: false
 # 1091 in ETOH from ffq
 ETOH <- ffq %>%
-  select(participantno, Alcoholg, Alcohol_percEng, Alcohol_units, Alcohol_units_wk, alcohol_units_cat)
+  select(participantno,
+         Alcoholg,
+         Alcohol_percEng,
+         Alcohol_units,
+         Alcohol_units_wk,
+         alcohol_units_cat)
 ETOH <- ETOH %>%
   rename(ParticipantNo = participantno)
 ETOH$ParticipantNo <- as.character(ETOH$ParticipantNo)
 ETOH <- ETOH %>%
-  left_join(demographics %>% select(ParticipantNo, Sex, age, SiteNo, diagnosis), by = "ParticipantNo")
+  left_join(demographics %>% select(ParticipantNo, Sex, age, SiteNo, diagnosis),
+            by = "ParticipantNo")
 
 # code diagnosis
 ETOH$diagnosis2 <- plyr::mapvalues(ETOH$diagnosis,
@@ -1547,9 +1698,13 @@ ETOH <- ETOH %>%
 
 # create flare groups
 ETOH <- ETOH %>%
-  mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
+  mutate(flare_group = ifelse(FlaresInPastYear == 0,
+                              "No Flares",
+                              "1 or More Flares")
+         )
 # make flares into levels
-ETOH$flare_group <- factor(ETOH$flare_group, levels = c("No Flares", "1 or More Flares"))
+ETOH$flare_group <- factor(ETOH$flare_group,
+                           levels = c("No Flares", "1 or More Flares"))
 
 # add FC
 ETOH <- ETOH %>%
@@ -1576,7 +1731,11 @@ ETOH$weekly_units <- factor(ETOH$weekly_units,
   levels = c("0-0.1", "0.1-14", " 14+")
 )
 
-# create alcohol intake level where 1 = none/very rare; 2 = within recommended limits; 3 = above recommended limits
+# create alcohol intake level where:
+# 1 = none/very rarely;
+# 2 = within recommended limits;
+# 3 = above recommended limits
+
 ETOH <- ETOH %>%
   mutate(
     AlcoholIntake = case_when(
@@ -2130,6 +2289,7 @@ p1
 ```
 
 ```{R}
+#| results: "asis"
 # univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
   data = ETOH_soft
@@ -2138,6 +2298,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # controlling for Sex, frailty, age, IMD
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2152,6 +2313,7 @@ summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # control for FC additioally
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2272,6 +2434,7 @@ p1
 
 ```{R}
 # site only
+# #| results: "asis"
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
   data = ETOH_CD_soft
 )
@@ -2279,6 +2442,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # new levels - site only
 cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo),
   data = ETOH_CD_soft
@@ -2301,6 +2465,7 @@ summary(cox_model) %>% pander()
 ```
 
 ```{R}
+#| results: "asis"
 # control for FC additioally
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2316,6 +2481,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # new levels - controlling for FC
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2355,6 +2521,7 @@ p1
 ```
 
 ```{R}
+#| results: "asis"
 # univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
   data = ETOH_CD_hard
@@ -2363,6 +2530,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # univariate - new levels
 cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo),
   data = ETOH_CD_hard
@@ -2385,6 +2553,7 @@ summary(cox_model) %>% pander()
 ```
 
 ```{R}
+#| results: "asis"
 # control for FC additioally
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2400,6 +2569,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # controlling for FC - new levels
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2454,6 +2624,7 @@ p1
 ```
 
 ```{R}
+#| results: "asis"
 # univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
   data = ETOH_UC_soft
@@ -2463,6 +2634,7 @@ cox.summary(cox_model)
 
 
 ```{R}
+#| results: "asis"
 # univariate - new levels
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2503,6 +2675,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # control for FC additioally - new levels
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2540,6 +2713,7 @@ p1
 ```
 
 ```{R}
+#| results: "asis"
 # univariate
 cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
   data = ETOH_UC_hard
@@ -2548,6 +2722,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # univariate - new levels
 cox_model <- coxph(Surv(time, Cens) ~ AlcoholIntake + frailty(SiteNo),
   data = ETOH_UC_hard
@@ -2570,6 +2745,7 @@ summary(cox_model) %>% pander()
 ```
 
 ```{R}
+#| results: "asis"
 # control for FC additinoally
 cox_model <- coxph(
   Surv(time, Cens) ~
@@ -2585,6 +2761,7 @@ cox.summary(cox_model)
 ```
 
 ```{R}
+#| results: "asis"
 # control for FC additinoally - new levels
 cox_model <- coxph(
   Surv(time, Cens) ~
