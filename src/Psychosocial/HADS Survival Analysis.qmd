@@ -1473,7 +1473,9 @@ Time to hard flare for
   * Statistically significant controlling for FC category additionally (p-value
     = 0.00009, 95% CI (1.58-4.02))
 
-```{r, IBD all hard flare and depression (grouped)}
+```{r}
+#| label: tbl-depression-grouped-hard-whole
+#| tbl-cap: "Log-rank test results for grouped depression scores (0-7 vs 8-21) and hard flares in whole IBD cohort"
 # all IBD soft flare
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = hard_dep_grouped_IBD
@@ -1486,6 +1488,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-depression-grouped-hard-whole
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by grouped depression scores (0-7 vs 8-21) in whole IBD cohort"
 p5 <- ggsurvplot(fit,
   data = hard_dep_grouped_IBD,
   conf.int = TRUE,
@@ -1493,8 +1497,7 @@ p5 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-21"),
   palette = c("#6F73D2", "#A3D5FF"),
-  xlab = "Time from study recruitment (days)",
-  title = "All patients - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p5
 ```
@@ -1539,7 +1542,9 @@ cox_model <- coxph(
 invisible(cox.summary(cox_model))
 ```
 
-```{r, hard flare, depression grouped and CD only}
+```{r}
+#| label: tbl-depression-grouped-hard-cd
+#| tbl-cap: "Log-rank test results for grouped depression scores (0-7 vs 8-21) and hard flares in CD patients"
 # all IBD soft flare
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = hard_dep_grouped_CD
@@ -1552,6 +1557,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-depression-grouped-hard-cd
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by grouped depression scores (0-7 vs 8-21) in CD patients"
 p5 <- ggsurvplot(fit,
   data = hard_dep_grouped_CD,
   conf.int = TRUE,
@@ -1559,8 +1566,7 @@ p5 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-21"),
   palette = c("#6F73D2", "#A3D5FF"),
-  xlab = "Time from study recruitment (days)",
-  title = "CD patients - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p5
 ```
@@ -1603,7 +1609,9 @@ cox_model <- coxph(
 invisible(cox.summary(cox_model))
 ```
 
-```{r, hard flare, depression grouped and UC/IBDU only}
+```{r}
+#| label: tbl-depression-grouped-hard-uc
+#| tbl-cap: "Log-rank test results for grouped depression scores (0-7 vs 8-21) and hard flares in UC/IBDU patients"
 # all IBD soft flare
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ score_group,
   data = hard_dep_grouped_UC
@@ -1616,6 +1624,8 @@ test_result %>%
 ```
 
 ```{R}
+#| label: fig-km-depression-grouped-hard-uc
+#| fig-cap: "Kaplan-Meier survival curves for time to hard flare by grouped depression scores (0-7 vs 8-21) in UC/IBDU patients"
 p5 <- ggsurvplot(fit,
   data = hard_dep_grouped_UC,
   conf.int = TRUE,
@@ -1623,8 +1633,7 @@ p5 <- ggsurvplot(fit,
   legend.title = "HADS-Depression scores",
   legend.labs = c("0-7", "8-21"),
   palette = c("#6F73D2", "#A3D5FF"),
-  xlab = "Time from study recruitment (days)",
-  title = "UC/IBDU patients - Time to hard flare"
+  xlab = "Time from study recruitment (days)"
 )
 p5
 ```
