@@ -42,7 +42,7 @@ survs <- lapply(
 
 survs <- do.call(
   gridExtra::marrangeGrob,
-  list(grobs = survs, layout_matrix = lay)
+  list(grobs = survs, layout_matrix = lay, top = NULL)
 )
 
 cairo_pdf(
@@ -123,3 +123,340 @@ ggsave(
   height = 16.5 * 4 / 9,
   units = "in"
 )
+
+
+###################
+#### Figure S3 ####
+###################
+
+p1 <- readRDS(paste0(outdir, "smoke-cd-soft.RDS"))
+p2 <- readRDS(paste0(outdir, "smoke-cd-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "smoke-uc-soft.RDS"))
+p4 <- readRDS(paste0(outdir, "smoke-uc-hard.RDS"))
+
+p <- list(p1, p2, p3, p4)
+
+lay <- rbind(
+  c(1, 2),
+  c(3, 4)
+)
+
+survs <- lapply(
+  p,
+  survminer:::.build_ggsurvplot,
+  surv.plot.height = NULL,
+  risk.table.height = NULL,
+  ncensor.plot.height = NULL
+)
+
+survs <- do.call(
+  gridExtra::marrangeGrob,
+  list(grobs = survs, layout_matrix = lay, top = NULL)
+)
+
+cairo_pdf(
+  "plots/arranged/FigureS3.pdf",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8
+)
+survs
+dev.off()
+
+png(
+  "plots/arranged/FigureS3.png",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+survs
+dev.off()
+
+
+
+###################
+#### Figure S8 ####
+###################
+
+p1 <- readRDS(paste0(outdir, "sex-cd-soft.RDS"))
+p2 <- readRDS(paste0(outdir, "sex-cd-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "sex-uc-soft.RDS"))
+p4 <- readRDS(paste0(outdir, "sex-uc-hard.RDS"))
+
+p <- list(p1, p2, p3, p4)
+
+lay <- rbind(
+  c(1, 2),
+  c(3, 4)
+)
+
+survs <- lapply(
+  p,
+  survminer:::.build_ggsurvplot,
+  surv.plot.height = NULL,
+  risk.table.height = NULL,
+  ncensor.plot.height = NULL
+)
+
+survs <- do.call(
+  gridExtra::marrangeGrob,
+  list(grobs = survs, layout_matrix = lay, top = NULL)
+)
+
+cairo_pdf(
+  "plots/arranged/FigureS8.pdf",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8
+)
+survs
+dev.off()
+
+png(
+  "plots/arranged/FigureS8.png",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+survs
+dev.off()
+
+
+###################
+#### Figure S9 ####
+###################
+
+p1 <- readRDS(paste0(outdir, "imd-cd-soft.RDS"))
+p2 <- readRDS(paste0(outdir, "imd-cd-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "imd-uc-soft.RDS"))
+p4 <- readRDS(paste0(outdir, "imd-uc-hard.RDS"))
+
+p <- list(p1, p2, p3, p4)
+
+lay <- rbind(
+  c(1, 2),
+  c(3, 4)
+)
+
+survs <- lapply(
+  p,
+  survminer:::.build_ggsurvplot,
+  surv.plot.height = NULL,
+  risk.table.height = NULL,
+  ncensor.plot.height = NULL
+)
+
+survs <- do.call(
+  gridExtra::marrangeGrob,
+  list(grobs = survs, layout_matrix = lay, top = NULL)
+)
+
+cairo_pdf(
+  "plots/arranged/FigureS9.pdf",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8
+)
+survs
+dev.off()
+
+png(
+  "plots/arranged/FigureS9.png",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+survs
+dev.off()
+
+
+####################
+#### Figure S10 ####
+####################
+
+p1 <- readRDS(paste0(outdir, "meat-overall-uc-hard.RDS"))
+p2 <- readRDS(paste0(outdir, "redMeatIntake-uc-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "whiteMeatIntake-uc-hard.RDS"))
+
+p <- list(p1, p2, p3)
+
+lay <- rbind(
+  c(1, 1),
+  c(2, 3)
+)
+
+survs <- lapply(
+  p,
+  survminer:::.build_ggsurvplot,
+  surv.plot.height = NULL,
+  risk.table.height = NULL,
+  ncensor.plot.height = NULL
+)
+
+survs <- do.call(
+  gridExtra::marrangeGrob,
+  list(grobs = survs, layout_matrix = lay, top = NULL)
+)
+
+cairo_pdf(
+  "plots/arranged/FigureS10.pdf",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8
+)
+survs
+dev.off()
+
+png(
+  "plots/arranged/FigureS10.png",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+survs
+dev.off()
+
+
+
+####################
+#### Figure S11 ####
+####################
+
+p1 <- readRDS(paste0(outdir, "fibre-cd-soft.RDS"))
+p2 <- readRDS(paste0(outdir, "fibre-cd-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "fibre-uc-soft.RDS"))
+p4 <- readRDS(paste0(outdir, "fibre-uc-hard.RDS"))
+
+p <- list(p1, p2, p3, p4)
+
+lay <- rbind(
+  c(1, 2),
+  c(3, 4)
+)
+
+survs <- lapply(
+  p,
+  survminer:::.build_ggsurvplot,
+  surv.plot.height = NULL,
+  risk.table.height = NULL,
+  ncensor.plot.height = NULL
+)
+
+survs <- do.call(
+  gridExtra::marrangeGrob,
+  list(grobs = survs, layout_matrix = lay, top = NULL)
+)
+
+cairo_pdf(
+  "plots/arranged/FigureS11.pdf",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8
+)
+survs
+dev.off()
+
+png(
+  "plots/arranged/FigureS11.png",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+survs
+dev.off()
+
+
+
+####################
+#### Figure S12 ####
+####################
+
+p1 <- readRDS(paste0(outdir, "pufa-cd-soft.RDS"))
+p2 <- readRDS(paste0(outdir, "pufa-cd-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "pufa-uc-soft.RDS"))
+p4 <- readRDS(paste0(outdir, "pufa-uc-hard.RDS"))
+
+p <- list(p1, p2, p3, p4)
+
+lay <- rbind(
+  c(1, 2),
+  c(3, 4)
+)
+
+survs <- lapply(
+  p,
+  survminer:::.build_ggsurvplot,
+  surv.plot.height = NULL,
+  risk.table.height = NULL,
+  ncensor.plot.height = NULL
+)
+
+survs <- do.call(
+  gridExtra::marrangeGrob,
+  list(grobs = survs, layout_matrix = lay, top = NULL)
+)
+
+cairo_pdf(
+  "plots/arranged/FigureS12.pdf",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8
+)
+survs
+dev.off()
+
+png(
+  "plots/arranged/FigureS12.png",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+survs
+dev.off()
+
+####################
+#### Figure S14 ####
+####################
+
+p1 <- readRDS(paste0(outdir, "upf-cd-soft.RDS"))
+p2 <- readRDS(paste0(outdir, "upf-cd-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "upf-uc-soft.RDS"))
+p4 <- readRDS(paste0(outdir, "upf-uc-hard.RDS"))
+
+p <- list(p1, p2, p3, p4)
+
+lay <- rbind(
+  c(1, 2),
+  c(3, 4)
+)
+
+survs <- lapply(
+  p,
+  survminer:::.build_ggsurvplot,
+  surv.plot.height = NULL,
+  risk.table.height = NULL,
+  ncensor.plot.height = NULL
+)
+
+survs <- do.call(
+  gridExtra::marrangeGrob,
+  list(grobs = survs, layout_matrix = lay, top = NULL)
+)
+
+cairo_pdf(
+  "plots/arranged/FigureS14.pdf",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8
+)
+survs
+dev.off()
+
+png(
+  "plots/arranged/FigureS14.png",
+  width = 16.5 * 5 / 8,
+  height = 18.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+survs
+dev.off()
