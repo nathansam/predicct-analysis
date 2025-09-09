@@ -143,6 +143,28 @@ As should be expected, CRP was found to be associated with FC.
 pander(summary(aov(CReactiveProtein ~ cat, data = demo)))
 ```
 
+```{R}
+#| label: fig-crp-fc-boxplot
+#| fig-cap: "Boxplot of CRP by FC category."
+
+p <- demo %>%
+  drop_na(cat) %>%
+  ggplot(aes(x=cat, y = CReactiveProtein)) +
+  geom_boxplot(staplewidth  = 1,
+               fill = "#C0D8E0",
+               color = "#42797B",
+               outlier.shape = NA) +
+  ylim(0, 12) +
+  theme_minimal() +
+  xlab("Faecal calprotectin category (\U03BCg/g)") +
+  ylab("C-reactivive protein (mg/L)")
+cairo_pdf("plots/CRP-FC-boxplot.pdf", width = 8, height = 6)
+p
+invisible(dev.off())
+
+p
+```
+
 ## Haemoglobin
 
 ```{R}
