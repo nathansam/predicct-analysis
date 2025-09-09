@@ -46,24 +46,26 @@ Of the variables considered here, only sex is associated with disease flare.
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(softflare_time, softflare) ~ Sex,
   legend_title = "Sex",
   legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/cd/soft-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-cd-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(hardflare_time, hardflare) ~ Sex,
   legend_title = "Sex",
@@ -74,6 +76,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-cd-hard.RDS"))
+p
 ```
 
 :::
@@ -86,24 +90,26 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(softflare_time, softflare) ~ Sex,
   legend_title = "Sex",
   legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/uc/soft-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-uc-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(hardflare_time, hardflare) ~ Sex,
   legend_title = "Sex",
@@ -114,6 +120,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-uc-hard.RDS"))
+p
 ```
 
 :::
@@ -128,24 +136,26 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(softflare_time, softflare) ~ Smoke,
   legend_title = "Smoking status",
   legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/cd/soft-flare/controlled/smoke"
 )
+saveRDS(p, paste0(paths$outdir, "smoke-cd-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(hardflare_time, hardflare) ~ Smoke,
   legend_title = "Smoking status",
@@ -156,6 +166,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/smoke"
 )
+saveRDS(p, paste0(paths$outdir, "smoke-cd-hard.RDS"))
+p
 ```
 
 :::
@@ -168,23 +180,27 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(softflare_time, softflare) ~ Smoke,
   legend_title = "Smoking status",
   legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/uc/soft-flare/controlled/smoke"
 )
+saveRDS(p, paste0(paths$outdir, "smoke-uc-soft.RDS"))
+p
+```
+
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(hardflare_time, hardflare) ~ Smoke,
   legend_title = "Smoking status",
@@ -195,12 +211,13 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/smoke"
 )
+
+saveRDS(p, paste0(paths$outdir, "smoke-uc-hard.RDS"))
 ```
 
 :::
 
 ## Social deprivation
-
 
 ### Crohn's disease
 
@@ -210,24 +227,26 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(softflare_time, softflare) ~ IMD,
   legend_title = "IMD",
   legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/cd/soft-flare/controlled/imd"
 )
+saveRDS(p, paste0(paths$outdir, "imd-cd-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(hardflare_time, hardflare) ~ IMD,
   legend_title = "IMD",
@@ -238,7 +257,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/imd"
 )
-
+saveRDS(p, paste0(paths$outdir, "imd-cd-hard.RDS"))
+p
 ```
 
 :::
@@ -251,24 +271,26 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(softflare_time, softflare) ~ IMD,
   legend_title = "IMD",
   legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/uc/soft-flare/controlled/imd"
 )
+saveRDS(p, paste0(paths$outdir, "imd-uc-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(hardflare_time, hardflare) ~ IMD,
   legend_title = "IMD",
@@ -279,6 +301,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/imd"
 )
+saveRDS(p, paste0(paths$outdir, "imd-uc-hard.RDS"))
+p
 ```
 
 :::
@@ -300,7 +324,7 @@ p <- generate_survival_plot(
   legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/cd/soft-flare/controlled/fc"
 )
@@ -348,7 +372,7 @@ p <- generate_survival_plot(
   legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to clinical flare",
+  title = "Time to patient-reported flare",
   break_time_by = 200,
   plot_path = "plots/uc/soft-flare/controlled/fc"
 )
