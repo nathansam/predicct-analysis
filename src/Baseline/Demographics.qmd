@@ -175,7 +175,7 @@ demo[demo[, "age"] < 18, "BMI"] <- NA
 p <- demo %>%
   ggplot(aes(x = BMI)) +
   geom_histogram(color = "#AD013B", fill = "#F0386B", bins = 30) +
-  theme_minimal() +
+  theme_minimal(base_family = "sans") +
   ylab("Frequency")
 
 ggsave("plots/BMI-full-cohort.png",
