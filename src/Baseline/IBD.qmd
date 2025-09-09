@@ -660,7 +660,7 @@ therapy is the most common treatment strategy for CD subjects.
 plt.cols <- c("#52528C", "#DD6E42", "#048A81", "#C585B3")
 
 
-drugs %>%
+p <- drugs %>%
   drop_na(cat) %>%
   ggplot(aes(x = Treatment, fill = Treatment, color = Treatment)) +
   geom_bar() +
@@ -674,7 +674,12 @@ drugs %>%
     na.value = "#032B43"
   ) +
   facet_grid(rows = vars(diagnosis2))
+
+ggsave("plots/baseline/treat_strat.pdf" , p, width = 10, height = 8)
+ggsave("plots/baseline/treat_strat.png" , p, width = 10, height = 8)
+p
 ```
+
 
 ```{R}
 #| label: tbl-treatments-cd
@@ -686,6 +691,61 @@ pander(with(subset(drugs, diagnosis2 == "CD"), chisq.test(Treatment, cat)))
 #| label: tbl-treatments-uc
 #| tbl-cap: "Chi-squared test between treatment strategy and FC groups for participants with Ulcerative colitis/IBDU."
 pander(with(subset(drugs, diagnosis2 == "UC/IBDU"), chisq.test(Treatment, cat)))
+```
+
+### Current medications
+
+```{R}
+findCurrent <- function(x) {
+  sum(x == 1)
+}
+
+
+drug.cols <- c("participantno",
+               "curr_on_mesa",
+               "curr_on_aza",
+               "curr_on_merc",
+               "curr_on_metho",
+               "curr_on_ciclo",
+               "curr_on_inflix",
+               "curr_on_ada",
+               "curr_on_goli",
+               "curr_on_vedo",
+               "curr_on_ust")
+
+drug.tab <- redcap[, drug.cols]
+
+
+drug.tab.cd <- subset(drug.tab,
+                     participantno %in%
+                       subset(demo, diagnosis2 == "CD")$ParticipantNo)
+drug.tab.uc <- subset(drug.tab,
+                     participantno %in%
+                       subset(demo, diagnosis2 == "UC/IBDU")$ParticipantNo)
+
+
+freq.cd <- (nrow(subset(demo.cd, !(ParticipantNo %in% cd.rx.counts)
+
+
+cd.rx.counts <- sapply(drug.tab.cd[, -1], findCurrent) 
+uc.rx.counts <- sapply(drug.tab.uc[, -1], findCurrent) 
+
+rx.counts <- cbind(cd.rx.counts, uc.rx.counts)
+rownames(rx.counts) <- c("5-ASA",
+                         "Azathioprine",
+                         "Mercaptopurine",
+                         "Methotrexate",
+                         "Ciclosporin",
+                         "Infliximab",
+                         "Adalimumab",
+                         "Golimumab",
+                         "Vedolizumab",
+                         "Ustekinumab")
+colnames(rx.counts) <- c("Crohn's disease",
+                         "Ulcerative colitis/IBDU")
+
+
+knitr::kable(rx.counts)
 ```
 
 ### Bio-naive status

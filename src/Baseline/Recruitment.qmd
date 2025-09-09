@@ -32,6 +32,9 @@ if (file.exists("/docker")) { # If running in docker
   metadir <- "/Volumes/igmm/cvallejo-predicct/predicct/metadata/"
 }
 
+eof <- read_xlsx(paste0(prefix, "Followup form.xlsx"))
+
+
 # Demographic data as reported by subjects
 demo <- read_xlsx(paste0(data.path, "Baseline2022/demographics.xlsx"),
   col_types = c(
@@ -204,6 +207,15 @@ graph[splines = ortho]
 }"))
 htmltools::HTML(export_svg(flow))
 ```
+
+### End of study phenotyping
+
+```{R}
+eof <- subset(eof, DiseaseFlareYN != ".")
+```
+
+End of study phenotyping was avaialable for `r nrow(eof)` subjects. This equates
+to `r round(nrow(eof) / nrow(demo) * 100, 1)`% of the total cohort.
 
 ## Reproduction and reproducibility {.appendix}
 
