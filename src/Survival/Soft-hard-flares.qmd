@@ -190,8 +190,7 @@ p <- create_km_flare_plot(
   legend_title = "IBD type",
   legend_labs = c("Crohn's disease", "UC/IBDU"),
   palette = c("#4F6D7A", "#02C3BD"),
-  xlab = "Time from study recruitment (days)",
-  break_time_by = 200
+  xlab = "Time from study recruitment (days)"
 )
 print(p, newpage = FALSE)
 ```
@@ -235,7 +234,6 @@ p <- create_km_flare_plot(
   legend_labs = c("Crohn's disease", "UC/IBDU"),
   palette = c("#4F6D7A", "#02C3BD"),
   xlab = "Time from study recruitment (days)",
-  break_time_by = 400,
   save_path = paste0(paths$outdir, "flare-hard")
 )
 print(p, newpage = FALSE)
@@ -289,7 +287,6 @@ p <- create_km_flare_plot(
   legend_labs = c("Hard flare", "Patient-reported flare"),
   palette = c("#DD6E42", "#EE1B65"),
   xlab = "Time from study recruitment (days)",
-  break_time_by = 300,
   show_pval = FALSE,
   xlim = c(0, 2200),
   save_path = paste0(paths$outdir, "flare-comparison")

@@ -195,7 +195,6 @@ saveRDS(p, paste0(paths$outdir, "smoke-uc-soft.RDS"))
 p
 ```
 
-
 #### Hard flare
 
 ```{R}

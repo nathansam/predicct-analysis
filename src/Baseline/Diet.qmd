@@ -749,12 +749,12 @@ demo %>%
 
 ```{R}
 
-#| label: tbl-upfperc-uc
-#| tbl-cap: "ANOVA between Nova 4 food as a percentage of energy intake and FC for UC/IBDU."
+#| label: tbl-sweetintake-uc
+#| tbl-cap: "ANOVA between sweet/dessert/snack intake intake and FC for UC/IBDU."
 
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
-  aov(formula = UPF_perc ~ cat) %>%
+  aov(formula = sweetIntake ~ cat) %>%
   summary() %>%
   pander()
 ```
@@ -1183,6 +1183,44 @@ demo %>%
 #| label: tbl-alcohol
 #| tbl-cap: "ANOVA between alcohol intake and FC groups."
 pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
+```
+
+## Diet quality index
+
+```{R}
+#| label: fig-dqi
+#| fig-cap: "Distribution of diet quality index, stratified by IBD type."
+
+demo %>%
+  drop_na(dqi_tot) %>%
+  ggplot(aes(x = dqi_tot, color = diagnosis2, fill = diagnosis2)) +
+  geom_histogram(bins = 20) +
+  facet_grid(cols = vars(diagnosis2)) + 
+  theme_minimal() +
+  labs(x = "Diet quality index",
+       y = "Frequency",
+       color = "Diagnosis",
+       fill = "Diagnosis") +
+  scale_fill_manual(values = c("#86DEB7", "#FC5A66")) +
+  scale_color_manual(values = c("#529176",  "#AC353F"))
+```
+
+```{R}
+demo %>%
+  drop_na(dqi_tot, cat) %>%
+  pull(dqi_tot) %>%
+  quantile() %>%
+  knitr::kable(digits = 2,
+    caption = "Diet quality index quantiles for the FFQ subcohort.",
+    col.names = c("Quantile", "DQI")
+  )
+```
+
+
+```{R}
+#| label: tbl-dqi
+#| tbl-cap: "ANOVA between diet quality index and FC groups."
+pander(summary(aov(dqi_tot ~ cat, data = demo)))
 ```
 
 

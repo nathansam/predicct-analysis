@@ -156,7 +156,9 @@ categorize_by_quantiles <- function(
   quants <- quantile(reference_data[[var_name]], na.rm = TRUE)
 
   # Check for unique values and adjust number of quantiles if necessary
-  unique_vals <- length(unique(reference_data[[var_name]][!is.na(reference_data[[var_name]])]))
+  unique_vals <- length(unique(reference_data[[var_name]][
+    !is.na(reference_data[[var_name]])
+  ]))
 
   # If we have fewer unique values than desired quantiles, reduce quantiles
   if (unique_vals <= 2) {
@@ -167,8 +169,10 @@ categorize_by_quantiles <- function(
       "Low",
       "High"
     )
-    df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]],
-                                              levels = c("Low", "High"))
+    df[[paste0(var_name, "_cat")]] <- factor(
+      df[[paste0(var_name, "_cat")]],
+      levels = c("Low", "High")
+    )
   } else {
     # Try to create breaks and check if they are unique
     breaks <- c(0, quants[2:(num_quantiles + 1)])
@@ -185,8 +189,10 @@ categorize_by_quantiles <- function(
         "Low",
         "High"
       )
-      df[[paste0(var_name, "_cat")]] <- factor(df[[paste0(var_name, "_cat")]],
-                                                levels = c("Low", "High"))
+      df[[paste0(var_name, "_cat")]] <- factor(
+        df[[paste0(var_name, "_cat")]],
+        levels = c("Low", "High")
+      )
     } else {
       # Use the available breaks
       df[[paste0(var_name, "_cat")]] <- cut(
@@ -282,7 +288,6 @@ run_survival_analysis <- function(
   parsed_event <- str_replace(outcome_event, "hardflare", "hard flare") %>%
     str_replace("softflare", "patient-reported flare")
 
-
   p <- ggsurvplot(
     fit,
     data = data,
@@ -323,11 +328,14 @@ run_survival_analysis <- function(
 
   # Return results
   # Try to get HR data, but handle case where var_name doesn't match coefficient names
-  hr_data <- tryCatch({
-    get_HR(fit.me, var_name)
-  }, error = function(e) {
-    NULL
-  })
+  hr_data <- tryCatch(
+    {
+      get_HR(fit.me, var_name)
+    },
+    error = function(e) {
+      NULL
+    }
+  )
 
   list(
     plot = p,
@@ -367,7 +375,6 @@ create_km_flare_plot <- function(
   legend_labs = NULL,
   palette = c("#4F6D7A", "#02C3BD"),
   xlab = "Time from study recruitment (days)",
-  break_time_by = 200,
   show_pval = TRUE,
   xlim = NULL,
   save_path = NULL
@@ -389,9 +396,7 @@ create_km_flare_plot <- function(
     legend.labs = legend_labs,
     tables.y.text = FALSE,
     palette = palette,
-    xlab = xlab,
-    tables.col = "strata",
-    break.time.by = break_time_by
+    xlab = xlab
   )
 
   # Apply xlim if specified
@@ -403,7 +408,6 @@ create_km_flare_plot <- function(
   if (!is.null(save_path)) {
     saveRDS(p, paste0(save_path, ".RDS"))
   }
-
   return(p)
 }
 
@@ -415,8 +419,11 @@ setup_analysis <- function() {
   # Check if required files exist
   demo_file <- paste0(paths$outdir, "demo-full.RDS")
   if (!file.exists(demo_file)) {
-    stop(paste("Required file does not exist:", demo_file,
-               "\nPlease run the data preparation scripts first."))
+    stop(paste(
+      "Required file does not exist:",
+      demo_file,
+      "\nPlease run the data preparation scripts first."
+    ))
   }
 
   # Load demographics data
