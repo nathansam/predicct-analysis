@@ -890,7 +890,7 @@ using <- subset(demo, ParticipantId %in% using$ParticipantId)
 using <- using[, c("ParticipantNo", "diagnosis")]
 using$naive <- c("no-using")
 
-drugs <- <- rbind(bio.naive, using)
+drugs <- rbind(bio.naive, using)
 
 for (i in unique(drugs$ParticipantNo)) {
   temp <- subset(drugs, ParticipantNo == i)

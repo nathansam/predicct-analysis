@@ -212,6 +212,7 @@ p <- generate_survival_plot(
 )
 
 saveRDS(p, paste0(paths$outdir, "smoke-uc-hard.RDS"))
+p
 ```
 
 :::
