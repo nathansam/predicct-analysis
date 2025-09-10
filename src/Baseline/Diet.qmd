@@ -1185,7 +1185,6 @@ demo %>%
 pander(summary(aov(Alcohol_percEng ~ cat, data = demo)))
 ```
 
-
 ## Diet quality index
 
 ```{R}
@@ -1223,7 +1222,6 @@ demo %>%
 #| tbl-cap: "ANOVA between diet quality index and FC groups."
 pander(summary(aov(dqi_tot ~ cat, data = demo)))
 ```
-
 
 
 ```{R Save demo file} 

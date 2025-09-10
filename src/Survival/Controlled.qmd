@@ -46,7 +46,7 @@ Of the variables considered here, only sex is associated with disease flare.
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(softflare_time, softflare) ~ Sex,
   legend_title = "Sex",
@@ -57,13 +57,15 @@ generate_survival_plot(
   break_time_by = 200,
   plot_path = "plots/cd/soft-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-cd-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(hardflare_time, hardflare) ~ Sex,
   legend_title = "Sex",
@@ -74,6 +76,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-cd-hard.RDS"))
+p
 ```
 
 :::
@@ -86,7 +90,7 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(softflare_time, softflare) ~ Sex,
   legend_title = "Sex",
@@ -97,13 +101,15 @@ generate_survival_plot(
   break_time_by = 200,
   plot_path = "plots/uc/soft-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-uc-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(hardflare_time, hardflare) ~ Sex,
   legend_title = "Sex",
@@ -114,6 +120,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/sex"
 )
+saveRDS(p, paste0(paths$outdir, "sex-uc-hard.RDS"))
+p
 ```
 
 :::
@@ -128,7 +136,7 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(softflare_time, softflare) ~ Smoke,
   legend_title = "Smoking status",
@@ -139,13 +147,15 @@ generate_survival_plot(
   break_time_by = 200,
   plot_path = "plots/cd/soft-flare/controlled/smoke"
 )
+saveRDS(p, paste0(paths$outdir, "smoke-cd-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(hardflare_time, hardflare) ~ Smoke,
   legend_title = "Smoking status",
@@ -156,6 +166,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/smoke"
 )
+saveRDS(p, paste0(paths$outdir, "smoke-cd-hard.RDS"))
+p
 ```
 
 :::
@@ -168,7 +180,7 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(softflare_time, softflare) ~ Smoke,
   legend_title = "Smoking status",
@@ -179,13 +191,15 @@ generate_survival_plot(
   break_time_by = 200,
   plot_path = "plots/uc/soft-flare/controlled/smoke"
 )
+saveRDS(p, paste0(paths$outdir, "smoke-uc-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 6
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(hardflare_time, hardflare) ~ Smoke,
   legend_title = "Smoking status",
@@ -196,12 +210,14 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/smoke"
 )
+
+saveRDS(p, paste0(paths$outdir, "smoke-uc-hard.RDS"))
+p
 ```
 
 :::
 
 ## Social deprivation
-
 
 ### Crohn's disease
 
@@ -211,7 +227,7 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(softflare_time, softflare) ~ IMD,
   legend_title = "IMD",
@@ -222,13 +238,15 @@ generate_survival_plot(
   break_time_by = 200,
   plot_path = "plots/cd/soft-flare/controlled/imd"
 )
+saveRDS(p, paste0(paths$outdir, "imd-cd-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.cd.df,
   formula = Surv(hardflare_time, hardflare) ~ IMD,
   legend_title = "IMD",
@@ -239,7 +257,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/imd"
 )
-
+saveRDS(p, paste0(paths$outdir, "imd-cd-hard.RDS"))
+p
 ```
 
 :::
@@ -252,7 +271,7 @@ generate_survival_plot(
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(softflare_time, softflare) ~ IMD,
   legend_title = "IMD",
@@ -263,13 +282,15 @@ generate_survival_plot(
   break_time_by = 200,
   plot_path = "plots/uc/soft-flare/controlled/imd"
 )
+saveRDS(p, paste0(paths$outdir, "imd-uc-soft.RDS"))
+p
 ```
 
 #### Hard flare
 
 ```{R}
 #| fig-height: 7
-generate_survival_plot(
+p <- generate_survival_plot(
   data = flare.uc.df,
   formula = Surv(hardflare_time, hardflare) ~ IMD,
   legend_title = "IMD",
@@ -280,6 +301,8 @@ generate_survival_plot(
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/imd"
 )
+saveRDS(p, paste0(paths$outdir, "imd-uc-hard.RDS"))
+p
 ```
 
 :::

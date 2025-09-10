@@ -715,7 +715,19 @@ drug.cols <- c("participantno",
 
 drug.tab <- redcap[, drug.cols]
 
+drug.available <- c()
+for (i in 1:nrow(drug.tab)) {
+  if (any(drug.tab[i, -1] != 0)) {
+    drug.available <- c(drug.available, "yes")
+  } else(drug.available <- c(drug.available, "no"))
+}
 
+drug.tab$available <- drug.available
+```
+
+#### Whole cohort
+
+```{R}
 drug.tab.cd <- subset(drug.tab,
                      participantno %in%
                        subset(demo, diagnosis2 == "CD")$ParticipantNo)
@@ -724,13 +736,13 @@ drug.tab.uc <- subset(drug.tab,
                        subset(demo, diagnosis2 == "UC/IBDU")$ParticipantNo)
 
 
-freq.cd <- (nrow(subset(demo.cd, !(ParticipantNo %in% cd.rx.counts)
 
 
 cd.rx.counts <- sapply(drug.tab.cd[, -1], findCurrent) 
 uc.rx.counts <- sapply(drug.tab.uc[, -1], findCurrent) 
 
 rx.counts <- cbind(cd.rx.counts, uc.rx.counts)
+rx.counts <- rx.counts[-nrow(rx.counts), ] # remove available row 
 rownames(rx.counts) <- c("5-ASA",
                          "Azathioprine",
                          "Mercaptopurine",
@@ -747,6 +759,101 @@ colnames(rx.counts) <- c("Crohn's disease",
 
 knitr::kable(rx.counts)
 ```
+
+
+#### FC cohort
+
+```{R}
+fc.ids <- demo %>%
+  filter(!is.na(cat)) %>%
+  pull(ParticipantNo)
+
+
+drug.tab.fc <- subset(drug.tab,
+                      participantno %in% fc.ids)
+
+drug.tab.fc.cd <- subset(drug.tab.fc,
+                     participantno %in%
+                       subset(demo, diagnosis2 == "CD")$ParticipantNo)
+drug.tab.fc.uc <- subset(drug.tab.fc,
+                     participantno %in%
+                       subset(demo, diagnosis2 == "UC/IBDU")$ParticipantNo)
+
+
+
+
+cd.rx.counts <- sapply(drug.tab.fc.cd[, -1], findCurrent) 
+uc.rx.counts <- sapply(drug.tab.fc.uc[, -1], findCurrent) 
+
+rx.counts <- cbind(cd.rx.counts, uc.rx.counts)
+rx.counts <- rx.counts[-nrow(rx.counts), ] # remove available row
+rownames(rx.counts) <- c("5-ASA",
+                         "Azathioprine",
+                         "Mercaptopurine",
+                         "Methotrexate",
+                         "Ciclosporin",
+                         "Infliximab",
+                         "Adalimumab",
+                         "Golimumab",
+                         "Vedolizumab",
+                         "Ustekinumab")
+colnames(rx.counts) <- c("Crohn's disease",
+                         "Ulcerative colitis/IBDU")
+
+knitr::kable(rx.counts)
+```
+
+
+#### FFQ Cohort 
+
+```{R}
+FFQ <- read_xlsx(paste0(
+  prefix,
+  "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"
+))
+
+FFQ <- FFQ %>%
+  filter(!is.na(fibre))
+
+ffq.ids <- fc.ids[fc.ids %in% FFQ$participantno]
+
+
+
+
+drug.tab.ffq <- subset(drug.tab,
+                      participantno %in% ffq.ids)
+
+drug.tab.ffq.cd <- subset(drug.tab.ffq,
+                     participantno %in%
+                       subset(demo, diagnosis2 == "CD")$ParticipantNo)
+drug.tab.ffq.uc <- subset(drug.tab.ffq,
+                     participantno %in%
+                       subset(demo, diagnosis2 == "UC/IBDU")$ParticipantNo)
+
+
+
+
+cd.rx.counts <- sapply(drug.tab.ffq.cd[, -1], findCurrent) 
+uc.rx.counts <- sapply(drug.tab.ffq.uc[, -1], findCurrent) 
+
+rx.counts <- cbind(cd.rx.counts, uc.rx.counts)
+rx.counts <- rx.counts[-nrow(rx.counts), ] # remove available row
+rownames(rx.counts) <- c("5-ASA",
+                         "Azathioprine",
+                         "Mercaptopurine",
+                         "Methotrexate",
+                         "Ciclosporin",
+                         "Infliximab",
+                         "Adalimumab",
+                         "Golimumab",
+                         "Vedolizumab",
+                         "Ustekinumab")
+colnames(rx.counts) <- c("Crohn's disease",
+                         "Ulcerative colitis/IBDU")
+
+knitr::kable(rx.counts)
+```
+
 
 ### Bio-naive status
 
@@ -783,16 +890,16 @@ using <- subset(demo, ParticipantId %in% using$ParticipantId)
 using <- using[, c("ParticipantNo", "diagnosis")]
 using$naive <- c("no-using")
 
-bio.naive <- rbind(bio.naive, using)
+drugs <- rbind(bio.naive, using)
 
-for (i in unique(bio.naive$ParticipantNo)) {
-  temp <- subset(bio.naive, ParticipantNo == i)
+for (i in unique(drugs$ParticipantNo)) {
+  temp <- subset(drugs, ParticipantNo == i)
   # if "no-using" in either extract then report using
   if (nrow(temp) > 1) {
     if (any(temp$naive == "no-using")) {
-      bio.naive <- subset(bio.naive, ParticipantNo != i)
-      bio.naive <- rbind(
-        bio.naive,
+      drugs <- subset(drugs, ParticipantNo != i)
+      drugs <- rbind(
+        drugs,
         data.frame(
           ParticipantNo = i,
           diagnosis = temp[1, "diagnosis"],
@@ -803,10 +910,10 @@ for (i in unique(bio.naive$ParticipantNo)) {
   }
 }
 
-bio.naive <- distinct(bio.naive, ParticipantNo, .keep_all = TRUE)
+drugs <- distinct(drugs, ParticipantNo, .keep_all = TRUE)
 
 demo <- merge(demo,
-  bio.naive[, c(1, 3)],
+  drugs[, c(1, 3)],
   by = "ParticipantNo",
   all.x = TRUE,
   all.y = FALSE
@@ -895,7 +1002,8 @@ esmoking <- read_xlsx(paste0(data.path, "Baseline2022/lifestyle.xlsx")) %>%
 esmoking$ECigs <- plyr::mapvalues(esmoking$ECigs, from = 2, to = 3)
 
 for (i in 1:nrow(esmoking)) {
-  if ((!is.na(esmoking[i, "ECigsPast"] == 1) & esmoking[i, "ECigsPast"] == 1) & (!is.na(esmoking[i, "ECigs"]) & esmoking[i, "ECigs"] == 3)) {
+  if ((!is.na(esmoking[i, "ECigsPast"] == 1) & esmoking[i, "ECigsPast"] == 1) &
+      (!is.na(esmoking[i, "ECigs"]) & esmoking[i, "ECigs"] == 3)) {
     esmoking[i, "ECigs"] <- 2
   }
 }
@@ -916,7 +1024,7 @@ demo <- merge(demo,
 )
 ```
 
-Some words go here.
+
 
 ```{R}
 #| label: fig-smoke
@@ -942,7 +1050,8 @@ demo %>%
   )
 ```
 
-Smoking status is not associated with FC at recruitment across the entire FC cohort.
+Smoking status is not associated with FC at recruitment across the entire FC
+cohort.
 
 ```{R}
 #| label: tbl-smoke
