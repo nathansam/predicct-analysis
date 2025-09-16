@@ -296,7 +296,7 @@ flares reported in the previous year (flare vs no flares) and faecal
 calprotectin (by categories: <50, 50-250, >250) with score groups for anxiety
 and depression separately. This was done for the PREdiCCt IBD cohort as a whole,
 and for CD and UC/IBDU groups separately. Testing for associations was done by
-chi-square test or Fisher's exact test. 
+chi-square test or Fisher's exact test, where appropriate. 
 
 
 ### Baseline scores
@@ -342,8 +342,8 @@ ggplot(hads_for_analysis, aes(x = hads_score, colour = hads_type)) +
 ```{R}
 #| label: tbl-hads-dist
 #| tbl-cap: "Distribution across score types (anxiety and depression)"
-filtered_data_anxiety <-
-  hads_for_analysis[hads_for_analysis$hads_type == "anxiety_hads", ]
+filtered_data_anxiety <- hads_for_analysis %>% 
+  dplyr::filter(hads_type == "anxiety_hads")
 
 my.render.cont <- function(x) {
   with(
@@ -391,13 +391,17 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
 #create subgroups for analysis
 
 #UC anxiety
-anxiety_uc <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "UC/IBDU",]
+anxiety_uc <- filtered_data_anxiety %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
 #UC depression
-depression_uc <- filtered_data_depression[filtered_data_depression$diagnosis2 == "UC/IBDU",]
+depression_uc <- filtered_data_depression %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
 #CD anxiety
-anxiety_cd <- filtered_data_anxiety[filtered_data_anxiety$diagnosis2 == "CD",]
+anxiety_cd <- filtered_data_anxiety %>% 
+  dplyr::filter(diagnosis2 == "CD")
 #CD depression
-depression_cd <- filtered_data_depression[filtered_data_depression$diagnosis2 == "CD",]
+depression_cd <- filtered_data_depression %>% 
+  dplyr::filter(diagnosis2 == "CD")
 ```
 
 Associations with anxiety scores:
@@ -407,6 +411,8 @@ Associations with anxiety scores:
 * significant association with age group
 * significant association with flares in previous year
 * no association with FC
+
+Note: add in the phrase "at the 95% confidence level". Comment on the magnitude of the differences between groups?
 
 Associations with depression scores:
 
@@ -435,9 +441,9 @@ chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result_anxiety$p.value < alpha) {
-  cat("There is a significant association between diagnosis type and anxiety score groups.\n")
+  cat("There is a significant association between diagnosis type and anxiety score groups at the", (1-alpha)*100, "% confidence level.\n")
 } else {
-  cat("There is no significant association between diagnosis type and anxiety score groups.\n")
+  cat("There is no significant association between diagnosis type and anxiety score groups at the", (1-alpha)*100, "% confidence level.\n")
 }
 
 chi_squared_result_anxiety %>%
@@ -456,9 +462,9 @@ chi_squared_result_depression <- chisq.test(contingency_table_depression)
 
 #check for significance
 if (chi_squared_result_depression$p.value < alpha) {
-  cat("There is a significant association between diagnosis type and score group in depression HADS.\n")
+  cat("There is a significant association between diagnosis type and score group in depression HADS at the", (1-alpha)*100, "% confidence level.\n")
 } else {
-  cat("There is no significant association between diagnosis type and depression score groups.\n")
+  cat("There is no significant association between diagnosis type and depression score groups at the", (1-alpha)*100, "% confidence level.\n")
 }
 
 chi_squared_result_depression %>%
@@ -491,9 +497,9 @@ chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result_anxiety$p.value < alpha) {
-  cat("There is a significant association between sex and anxiety score groups.\n")
+  cat("There is a significant association between sex and anxiety score groups at the", (1-alpha)*100, "% confidence level.\n")
 } else {
-  cat("There is no significant association between sex and anxiety score groups.\n")
+  cat("There is no significant association between sex and anxiety score groups at the", (1-alpha)*100, "% confidence level.\n")
 }
 chi_squared_result_anxiety %>%
   pander()
@@ -535,9 +541,9 @@ chi_squared_result_depression <- chisq.test(contingency_table_depression)
 #check for significance
 
 if (chi_squared_result_depression$p.value < alpha) {
-  cat("There is a significant association between sex and score group in depression HADS.\n")
+  cat("There is a significant association between sex and score group in depression HADS at the", (1-alpha)*100, "% confidence level.\n")
 } else {
-  cat("There is no significant association between sex and depression score groups.\n ")
+  cat("There is no significant association between sex and depression score groups at the", (1-alpha)*100, "% confidence level.\n")
 }
 chi_squared_result_depression %>%
   pander()
@@ -617,9 +623,9 @@ contingency_table_anxiety <- table(filtered_data_anxiety$AgeGroup,
 chi_squared_result_anxiety <- chisq.test(contingency_table_anxiety)
 
 if (chi_squared_result_anxiety$p.value < alpha) {
-  cat("There is a significant association between age groups and anxiety score groups.\n")
+  cat("There is a significant association between age groups and anxiety score groups at the", (1-alpha)*100, "% confidence level.\n")
 } else {
-  cat("There is no significant association between age groups and anxiety score groups.\n")
+  cat("There is no significant association between age groups and anxiety score groups at the", (1-alpha)*100, "% confidence level.\n")
 }
 
 chi_squared_result_anxiety %>%
@@ -680,9 +686,9 @@ chi_squared_result_dep <- chisq.test(contingency_table_depression)
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result_dep$p.value < alpha) {
-  cat("There is a significant association between age groups and depression score groups.\n")
+  cat("There is a significant association between age groups and depression score groups at the", (1-alpha)*100, "% confidence level.\n")
 } else {
-  cat("There is no significant association between age groups and depression score groups.\n")
+  cat("There is no significant association between age groups and depression score groups at the", (1-alpha)*100, "% confidence level.\n")
 }
 chi_squared_result_dep %>%
   pander()
