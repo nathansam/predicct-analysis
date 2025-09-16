@@ -230,8 +230,6 @@ n_missing_fc <- hads_with_demographics %>%
 hads_with_demographics <- hads_with_demographics %>% 
   filter(!is.na(cat))
 
-hads_with_demographics2 <- hads_with_demographics
-
 #Join flare data
 hads_with_demographics <- hads_with_demographics %>% 
   dplyr::left_join(
@@ -246,19 +244,28 @@ hads_with_demographics <- hads_with_demographics %>%
     )
 
 #make flares into levels
-hads_with_demographics$flare_group = factor(hads_with_demographics$flare_group, levels = c( "No flares","One or more flares"))
+hads_with_demographics %<>%
+  dplyr::mutate(flare_group = factor(flare_group, levels = c("No flares","One or more flares")))
 
+# Remove subjects with missing flare group data - 3 subjects
 hads_with_demographics <- hads_with_demographics %>% 
   filter(!is.na(flare_group))
 
-#create hads_for_analysis which has new variable 'hads_type'
+#create hads_for_analysis which has new variable 'hads_type' for anxiety and depression hads
 hads_for_analysis <- hads_with_demographics %>%
-  gather(key = "hads_type", value = "hads_score", anxiety_hads, depression_hads)
+  tidyr::pivot_longer(
+    cols = c(anxiety_hads, depression_hads),
+    names_to = "hads_type", values_to = "hads_score"
+  ) 
 
 #score groups
 hads_for_analysis <- hads_for_analysis %>% 
   mutate(
-    score_group = cut(hads_score, breaks = c(0, 7, 10, 21), labels = c("0-7", "8-10", "11-21"), include.lowest = TRUE)
+    score_group = cut(
+      hads_score, 
+      breaks = c(0, 7, 10, 21), 
+      labels = c("0-7", "8-10", "11-21"), 
+      include.lowest = TRUE)
   )
 
 # save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
