@@ -57,8 +57,8 @@ demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"
 lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 ffq <- read.xlsx(paste0(prefix, "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"))
-demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
-flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
+demo <- readRDS(paste0(outdir, "demo.RDS"))
+flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
 IBD_C <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/IBD_C.RDS")
 IBD_FC <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/IBD_FC.RDS")
 
@@ -88,59 +88,102 @@ separately.
 
 ```{r, join demographics, delete missing data, tidy HADS}
 #join demographics
-hads_with_demographics <- hads %>% 
-  left_join(demographics %>%
-              select(ParticipantNo, Sex, age, diagnosis),
-            by = "ParticipantNo")
+hads_with_demographics <- hads %>%
+  dplyr::left_join(demographics %>%
+                     dplyr::select(ParticipantNo, Sex, age, diagnosis),
+                   by = "ParticipantNo")
 
-hads_with_demographics$diagnosis2 <- plyr::mapvalues(hads_with_demographics$diagnosis,
-  from = seq(1, 4),
-  to = c(1, 2, 2, 2)
-) %>%
-  factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
+# Convert column to factor with labels
+hads_with_demographics %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(
+    diagnosis2 = factor(
+      diagnosis2,
+      levels = c("1", "2"), 
+      labels = c("CD", "UC/IBDU")
+    )
+  )
+
+hads_with_demographics %<>%
+  dplyr::mutate(Sex = factor(
+    Sex,
+    levels = c(1, 2),
+    labels = c("Male", "Female")
+  )
+)
 
 #exclude participants <17, 53 participants excluded, tot 1847
-n_underage <- nrow(hads_with_demographics[hads_with_demographics$age <= 17,])
-hads_with_demographics <- hads_with_demographics[hads_with_demographics$age > 17,]
 
+n_underage <- hads_with_demographics %>%
+  dplyr::filter(age <= 17) %>%
+  nrow()
 
-
-#make sex into factor
-hads_with_demographics$Sex <- factor(hads_with_demographics$Sex,
-                                     levels = c(1, 2),
-                                     labels = c("Male", "Female"))
-
+hads_with_demographics %<>%
+  dplyr::filter(age > 17)
 
 
 #delete missing data, 9 participants, total 1838
 
 n_missing_hads <- hads_with_demographics %>%
-  filter(rowSums(!is.na(select(., 7:20))) != length(7:20)) %>%
+  dplyr::filter(
+    dplyr::if_any(.cols = 7:20, .fns = is.na)
+  ) %>%
   nrow()
 
-hads_with_demographics <- hads_with_demographics %>%
-  filter(rowSums(!is.na(select(., 7:20))) == length(7:20))
+hads_with_demographics %<>%
+  dplyr::filter(
+    !dplyr::if_any(.cols = 7:20, .fns = is.na)
+  )
+
 
 #correcting all HADS scores
-if (any(hads_with_demographics$FeelTense == 4) || any(hads_with_demographics$CanEnjoyBookTV == 4))
-  hads_with_demographics <- hads_with_demographics %>% 
-    mutate_at(vars("FeelTense" : "CanEnjoyBookTV"), list( ~ . - 1))
+# Original data is on a 1 to 4 scale, rescale to between 0 and 3.
+# HADS scores with a max of 4
+# hads_scores_4 <- hads_with_demographics %>%
+#   dplyr::select(FeelTense:CanEnjoyBookTV) %>%
+#   dplyr::summarise(
+#     dplyr::across(.cols = everything(), .fns = max)
+#   ) %>% 
+#   tidyr::pivot_longer(
+#     cols = everything(),
+#     names_to = "Score",
+#     values_to = "max"
+#   )
 
+hads_with_demographics %<>%
+  dplyr::mutate(
+    dplyr::across(
+      .cols = FeelTense:CanEnjoyBookTV,
+      .fns = ~. - 1)
+  )
+
+  
 #correcting inversely coded HADS
-hads_with_demographics <- hads_with_demographics %>%
-  mutate_at(vars("FeelTense", 
+hads_with_demographics %<>%
+  dplyr::mutate(
+    dplyr::across(
+      .cols = c("FeelTense", 
                  "FrightenedFeelingSomethingAwful", 
                  "WorryingThoughts", 
                  "FeelCheerful", 
                  "FeelSlowedDown",
                  "LostInterestAppearance",
                  "FeelRestless",
-                 "SuddenFeelingsPanic"), 
-            ~recode(., `3` = 0, `2` = 1, `1` = 2, `0` = 3))
+                 "SuddenFeelingsPanic"),
+      .fns = ~ 3 - .
+    )
+  )
 
-#anxiety HADS
-hads_with_demographics <- hads_with_demographics %>% 
-  mutate(anxiety_hads = FeelTense + 
+#anxiety HADS composite score
+hads_with_demographics %<>% 
+  dplyr::mutate(anxiety_hads = FeelTense + 
            FrightenedFeelingSomethingAwful + 
            WorryingThoughts +
            SitAtEase +
@@ -148,9 +191,9 @@ hads_with_demographics <- hads_with_demographics %>%
            FeelRestless +
            SuddenFeelingsPanic)
 
-#depression HADS
-hads_with_demographics <- hads_with_demographics %>% 
-  mutate(depression_hads = EnjoyThings +
+#depression HADS composite score
+hads_with_demographics %<>% 
+  dplyr::mutate(depression_hads = EnjoyThings +
            CanLaugh +
            FeelCheerful +
            FeelSlowedDown +
@@ -159,33 +202,52 @@ hads_with_demographics <- hads_with_demographics %>%
            CanEnjoyBookTV)
 
 #remove breakdown hads columns
-hads_with_demographics <- hads_with_demographics[, -(7:20)]
+hads_with_demographics %<>%
+  dplyr::select(-c(FeelTense:CanEnjoyBookTV))
+
 
 #create age groups
-hads_with_demographics$AgeGroup <- cut(hads_with_demographics$age, 
-                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-                         include.lowest = TRUE)
+hads_with_demographics %<>%
+  dplyr::mutate(AgeGroup = cut(
+    age,
+    breaks = c(18, 24, 34, 44, 54, 65, Inf),
+    labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+    include.lowest = TRUE
+  ))
+
 
 #add FC data and exclude missing FC
 hads_with_demographics <- hads_with_demographics %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, IMD, Smoke), by = "ParticipantNo")
+  dplyr::left_join(
+    demo %>% dplyr::select(ParticipantNo, FC, cat, IMD, Smoke), 
+    by = "ParticipantNo")
 
 n_missing_fc <- hads_with_demographics %>% 
   filter(is.na(cat)) %>%
   nrow()
+# 209 removed with no ibd category
 
 hads_with_demographics <- hads_with_demographics %>% 
   filter(!is.na(cat))
 
+hads_with_demographics2 <- hads_with_demographics
+
 #Join flare data
 hads_with_demographics <- hads_with_demographics %>% 
-  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear), by = "ParticipantNo")
+  dplyr::left_join(
+    IBD %>% select(ParticipantNo, FlaresInPastYear), 
+    by = "ParticipantNo"
+    )
+
 #create flare groups
 hads_with_demographics <- hads_with_demographics %>%
-  mutate(flare_group = ifelse(FlaresInPastYear == 0, "No flares", "One or more flares"))
+  dplyr::mutate(
+    flare_group = ifelse(FlaresInPastYear == 0, "No flares", "One or more flares")
+    )
+
 #make flares into levels
-hads_with_demographics$flare_group <- factor(hads_with_demographics$flare_group, levels = c( "No flares","One or more flares"))
+hads_with_demographics$flare_group = factor(hads_with_demographics$flare_group, levels = c( "No flares","One or more flares"))
+
 hads_with_demographics <- hads_with_demographics %>% 
   filter(!is.na(flare_group))
 
@@ -199,9 +261,9 @@ hads_for_analysis <- hads_for_analysis %>%
     score_group = cut(hads_score, breaks = c(0, 7, 10, 21), labels = c("0-7", "8-10", "11-21"), include.lowest = TRUE)
   )
 
-save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-saveRDS(hads_with_demographics, paste0(save_path, "hads_with_demographics.RDS"))
-saveRDS(hads_for_analysis, paste0(save_path, "hads_for_analysis.RDS"))
+# save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+# saveRDS(hads_with_demographics, paste0(save_path, "hads_with_demographics.RDS"))
+# saveRDS(hads_for_analysis, paste0(save_path, "hads_for_analysis.RDS"))
 ```
 
 Participants <18 years old (n = `r n_underage`) and participants missing
