@@ -62,11 +62,11 @@ demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"
 lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 ffq <- read.xlsx(paste0(prefix, "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.xlsx"))
-demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
-flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
+demo <- readRDS(paste0(outdir, "demo.RDS"))
+flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
 hads_for_analysis <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_for_analysis.rds")
-demo_uc <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-uc.RDS")
-demo_cd <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.RDS")
+demo_uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
+demo_cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
 flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
 flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
 ```
@@ -81,6 +81,7 @@ hardflare_hads <- hads_for_analysis %>%
   ) %>%
   mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
 # 3508 here
+
 softflare_hads <- hads_for_analysis %>%
   inner_join(
     flares_soft %>%
@@ -91,31 +92,57 @@ softflare_hads <- hads_for_analysis %>%
 # 3620 here
 
 # create hard flare data sets for both UC/IBDU and CD
-flare_uc <- hardflare_hads[hardflare_hads$diagnosis2 == "UC/IBDU", ]
-flare_uc_anx <- flare_uc[flare_uc$hads_type == "anxiety_hads", ]
-flare_uc_dep <- flare_uc[flare_uc$hads_type == "depression_hads", ]
+flare_uc <- hardflare_hads %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
+
+flare_uc_anx <- flare_uc %>%
+  dplyr::filter(hads_type == "anxiety_hads")
+
+flare_uc_dep <- flare_uc %>%
+  dplyr::filter(hads_type == "depression_hads")
 
 
-flare_cd <- hardflare_hads[hardflare_hads$diagnosis2 == "CD", ]
-flare_cd_anx <- flare_cd[flare_cd$hads_type == "anxiety_hads", ]
-flare_cd_dep <- flare_cd[flare_cd$hads_type == "depression_hads", ]
+flare_cd <- hardflare_hads %>%
+  dplyr::filter(diagnosis2 == "CD")
+
+flare_cd_anx <- flare_cd %>%
+  dplyr::filter(hads_type == "anxiety_hads")
+
+flare_cd_dep <- flare_cd %>%
+  dplyr::filter(hads_type == "depression_hads")
 
 # hard flares, IBD whole cohort
-hard_anxiety_IBD <- hardflare_hads[hardflare_hads$hads_type == "anxiety_hads", ]
-hard_depression_IBD <- hardflare_hads[hardflare_hads$hads_type == "depression_hads", ]
+hard_anxiety_IBD <- hardflare_hads%>%
+  dplyr::filter(hads_type == "anxiety_hads")
+
+hard_depression_IBD <- hardflare_hads%>%
+  dplyr::filter(hads_type == "depression_hads")
 
 # create soft flare data sets for both UC/IBDU and CD
-soft_uc <- softflare_hads[softflare_hads$diagnosis2 == "UC/IBDU", ]
-soft_uc_anx <- soft_uc[soft_uc$hads_type == "anxiety_hads", ]
-soft_uc_dep <- soft_uc[soft_uc$hads_type == "depression_hads", ]
+soft_uc <- softflare_hads%>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
 
-soft_cd <- softflare_hads[softflare_hads$diagnosis2 == "CD", ]
-soft_cd_anx <- soft_cd[soft_cd$hads_type == "anxiety_hads", ]
-soft_cd_dep <- soft_cd[soft_cd$hads_type == "depression_hads", ]
+soft_uc_anx <- soft_uc%>%
+  dplyr::filter(hads_type == "anxiety_hads")
+
+soft_uc_dep <- soft_uc%>%
+  dplyr::filter(hads_type == "depression_hads")
+
+soft_cd <- softflare_hads%>%
+  dplyr::filter(diagnosis2 == "CD")
+
+soft_cd_anx <- soft_cd%>%
+  dplyr::filter(hads_type == "anxiety_hads")
+
+soft_cd_dep <- soft_cd%>%
+  dplyr::filter(hads_type == "depression_hads")
 
 # soft flares, IBD whole cohort
-soft_anxiety_IBD <- softflare_hads[softflare_hads$hads_type == "anxiety_hads", ]
-soft_depression_IBD <- softflare_hads[softflare_hads$hads_type == "depression_hads", ]
+soft_anxiety_IBD <- softflare_hads%>%
+  dplyr::filter(hads_type == "anxiety_hads")
+
+soft_depression_IBD <- softflare_hads%>%
+  dplyr::filter(hads_type == "depression_hads")
 
 #| output: "asis"
 cox.summary <- function(fit) {
