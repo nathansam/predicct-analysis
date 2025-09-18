@@ -10,7 +10,6 @@ execute:
   warning: false
 ---
 
-
 ## Abstract
 
 This report analyzes the association between physical activity, alcohol consumption, and disease flares in an inflammatory bowel disease (IBD) cohort. We examine baseline characteristics, demographic associations, and survival outcomes for both soft and hard flares stratified by WHO-recommended physical activity levels and alcohol consumption categories. The analysis includes 1,839 IBD patients for physical activity data and 975 patients for alcohol consumption data, with survival analyses examining time to flare events across different exposure groups.
@@ -21,23 +20,25 @@ Physical activity and alcohol consumption represent modifiable lifestyle factors
 
 This analysis examines:
 
-1. **Physical Activity**: Association with disease flares based on WHO minimum exercise requirements (≥150 minutes moderate activity or ≥75 minutes vigorous activity per week)
-2. **Alcohol Consumption**: Association with disease flares stratified by weekly alcohol intake (0-0.1, 0.1-14, and >14 units per week)
-3. **Survival Outcomes**: Time to soft and hard flares across the whole cohort and by IBD diagnosis subgroups
+1.  **Physical Activity**: Association with disease flares based on WHO minimum exercise requirements (≥150 minutes moderate activity or ≥75 minutes vigorous activity per week)
+2.  **Alcohol Consumption**: Association with disease flares stratified by weekly alcohol intake (0-0.1, 0.1-14, and \>14 units per week)
+3.  **Survival Outcomes**: Time to soft and hard flares across the whole cohort and by IBD diagnosis subgroups
 
 ## Methods Overview
 
 ### Data Sources and Population
-- Physical activity data from baseline questionnaires (n=1,839 after exclusions)
-- Alcohol consumption data from food frequency questionnaires (n=975 after exclusions)
-- Demographic and clinical data linked from multiple PREdiCCt study databases
-- Flare outcomes defined as soft (clinical symptoms) and hard (requiring treatment escalation)
+
+-   Physical activity data from baseline questionnaires (n=1,839 after exclusions)
+-   Alcohol consumption data from food frequency questionnaires (n=975 after exclusions)
+-   Demographic and clinical data linked from multiple PREdiCCt study databases
+-   Flare outcomes defined as soft (clinical symptoms) and hard (requiring treatment escalation)
 
 ### Statistical Approach
-- Baseline associations examined using chi-square tests
-- Survival analysis using Cox proportional hazards models
-- Kaplan-Meier survival curves for visualization
-- Site-specific frailty terms to account for multi-center recruitment
+
+-   Baseline associations examined using chi-square tests
+-   Survival analysis using Cox proportional hazards models
+-   Kaplan-Meier survival curves for visualization
+-   Site-specific frailty terms to account for multi-center recruitment
 
 ```{r}
 #| label: setup
@@ -137,140 +138,157 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 
 ## Data Cleaning and Quality Control
 
-Physical activity data underwent extensive quality control to ensure reliable
-measurement of exercise behaviors. Key exclusion criteria included:
+Physical activity data underwent extensive quality control to ensure reliable measurement of exercise behaviors. Key exclusion criteria included:
 
-- **WHO compliance**: All patients reporting >16 hours within any single
-  activity category were excluded per WHO guidelines
-- **Data completeness**: Patients reporting exercise duration without frequency
-  (number of days) were excluded
-- **Extreme values**: Patients reporting >6720 minutes/week (>16h/day for 7
-  days, n=10) were excluded as likely data entry errors
-- **Conservative approach**: Given the potential for misreporting (e.g.,
-  entering weekly instead of daily values), we used categorical classifications
-  rather than continuous measures
+-   **WHO compliance**: All patients reporting \>16 hours within any single activity category were excluded per WHO guidelines
+-   **Data completeness**: Patients reporting exercise duration without frequency (number of days) were excluded
+-   **Extreme values**: Patients reporting \>6720 minutes/week (\>16h/day for 7 days, n=10) were excluded as likely data entry errors
+-   **Conservative approach**: Given the potential for misreporting (e.g., entering weekly instead of daily values), we used categorical classifications rather than continuous measures
 
-**WHO Exercise Definition**: Minimum exercise defined as ≥150 minutes moderate
-activity OR ≥75 minutes vigorous activity per week, OR ≥600 METs per week.
+**WHO Exercise Definition**: Minimum exercise defined as ≥150 minutes moderate activity OR ≥75 minutes vigorous activity per week, OR ≥600 METs per week.
 
-Participants reporting ≥1050 minutes/week (n=452) would meet minimum
-requirements even if they incorrectly reported weekly instead of daily values,
-providing additional confidence in the "meeting minimum exercise"
-classification.
+Participants reporting ≥1050 minutes/week (n=452) would meet minimum requirements even if they incorrectly reported weekly instead of daily values, providing additional confidence in the "meeting minimum exercise" classification.
 
 ```{r}
 #| label: clean-exercise-data
 #| echo: false
 #| message: false
 # 50 missing ParticipantId (blank rows - exclude these, from 1960 to 1910)
-PE.missing <- physicalactivity %>%
-  filter(is.na(ParticipantId))
+# PE.missing <- physicalactivity %>%
+#   filter(is.na(ParticipantId)) %>%
+#   nrow()
+
 exercise <- physicalactivity %>%
   filter(!is.na(ParticipantId))
+
 # add age and sex data from demographics
 exercise <- exercise %>%
-  inner_join(demographics %>% select(ParticipantNo, Sex, age, diagnosis),
+  inner_join(
+    demographics %>% select(ParticipantNo, Sex, age, diagnosis),
     by = "ParticipantNo"
   )
-# code diagnosis
-exercise$diagnosis2 <- plyr::mapvalues(exercise$diagnosis,
-  from = seq(1, 4),
-  to = c(1, 2, 2, 2)
-) %>%
-  factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
+
+# Recode diagnosis
+exercise %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(diagnosis2 = factor(
+    diagnosis2,
+    levels = c("1", "2"),
+    labels = c("CD", "UC/IBDU")
+  ))
 
 # exclude <18 yo = 53 participants (1910 -> 1857)
-exercise <- exercise[exercise$age > 17, ]
+exercise %<>% dplyr::filter(age > 17)
 
 # make sex into factor
-exercise$Sex <- factor(exercise$Sex,
+exercise %<>% dplyr::mutate(Sex = factor(
+  Sex,
   levels = c(1, 2),
-  labels = c("Male", "Female")
+  labels = c("Male", "Female"))
 )
 
-exercise$AgeGroup <- cut(exercise$age,
+exercise %<>% dplyr::mutate(AgeGroup = cut(
+  age,
   breaks = c(18, 24, 34, 44, 54, 65, Inf),
-  labels = c(
-    "18-24",
-    "25-34",
-    "35-44",
-    "45-54",
-    "55-64",
-    "65+"
-  ),
-  include.lowest = TRUE
-)
+  labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+  include.lowest = TRUE))
 
 exercise <- exercise %>%
-  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
-# 4 patients removed with missing data on flares
+  left_join(
+    IBD %>% select(ParticipantNo, FlaresInPastYear)
+    )
+
+# 7 patients removed with missing data on flares
 exercise <- exercise %>%
   filter(!is.na(FlaresInPastYear))
+
 # create flare groups
 exercise <- exercise %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0,
     "No Flares",
     "1 or More Flares"
   ))
+
 # Make flares into levels
-exercise$flare_group <- factor(exercise$flare_group,
-  levels = c(
-    "No Flares",
-    "1 or More Flares"
+exercise %<>% 
+  dplyr::mutate(flare_group = factor(
+    flare_group,
+    levels = c(
+      "No Flares",
+      "1 or More Flares"
   )
-)
+))
 
+# Add FC data 
 exercise <- exercise %>%
-  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD)) %>%
-  filter(!is.na(cat))
+  left_join(
+    demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
+    by = 'ParticipantNo'
+    ) 
 
-missing_ex_IMD <- exercise %>% filter(is.na(IMD))
-# Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, ModerateSport -> 2 participants
-filtered_data <- exercise %>%
-  filter(is.na(VigorousWork) &
-    is.na(ModerateWork) &
-    is.na(WalkBicycle) &
-    is.na(VigorousSport) &
-    is.na(ModerateSport))
-# now total in 1855 participants
-exercise <- exercise %>%
-  filter(!(is.na(VigorousWork) &
-    is.na(ModerateWork) &
-    is.na(WalkBicycle) &
-    is.na(VigorousSport) &
-    is.na(ModerateSport)))
+# Remove subjects with missing FC (cat), 211.
+# exercise %>%
+#   filter(is.na(cat)) %>% 
+#   nrow()
 
-# look at rows where there are NA values in key questions, exclude those with
-# inconsistent answers (no valid response) - manually done, 6 values excluded
-na_rows <- exercise %>%
-  filter(rowSums(is.na(select(
-    .,
-    c(
+exercise %<>%
+  dplyr::filter(
+    !is.na(cat)
+  )
+
+#missing_ex_IMD <- exercise %>% filter(is.na(IMD))
+
+# Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, and ModerateSport - Nobody removed
+exercise %<>%
+  filter(!dplyr::if_all(
+    .cols = c(
       VigorousWork,
       ModerateWork,
       WalkBicycle,
       VigorousSport,
       ModerateSport
-    )
-  ))) > 0)
+    ),
+    .fns = is.na
+  ))
 
+# look at rows where there are NA values in key questions, exclude those with
+# inconsistent answers (no valid response) - manually done, 6 values excluded
+# exercise %>%
+#   filter(
+#     dplyr::if_any(
+#       .cols = 
+#     c(
+#       VigorousWork,
+#       ModerateWork,
+#       WalkBicycle,
+#       VigorousSport,
+#       ModerateSport
+#     ),
+#     .fns = is.na))
 
 exercise <- exercise %>%
   filter(!(ParticipantId %in% c(1395, 4685, 4803, 1452, 4827, 9609)))
 
-# remaining NA values can be replaced with 2 (which will be coded as 2)
-exercise <- exercise %>%
-  mutate(
-    VigorousWork = ifelse(is.na(VigorousWork), 2, VigorousWork),
-    ModerateWork = ifelse(is.na(ModerateWork), 2, ModerateWork),
-    WalkBicycle = ifelse(is.na(WalkBicycle), 2, WalkBicycle),
-    VigorousSport = ifelse(is.na(VigorousSport), 2, VigorousSport),
-    ModerateSport = ifelse(is.na(ModerateSport), 2, ModerateSport)
+# For yes/no questions, remaining NA values can be replaced with 2
+exercise %<>%
+  tidyr::replace_na(
+    list(
+      VigorousWork = 2,
+      ModerateWork = 2,
+      WalkBicycle = 2,
+      VigorousSport = 2,
+      ModerateSport = 2
+    )
   )
 
-# total number is 1849
-
-# Exclude 11 participants who report 16 or more hours in any one activity, as per WHO guidelines
+# Exclude 10 participants who report 16 or more hours in any one activity, as per WHO guidelines
 exercise <- exercise %>%
   filter(
     is.na(VigorousWorkHours) | VigorousWorkHours < 16,
@@ -283,21 +301,32 @@ exercise <- exercise %>%
 
 # check that there are no cases of reporting 'no' to the question whilst
 # providing answers in the time boxes
-VW_wrong <- exercise %>%
-  filter(VigorousWork == 2 &
-    (!is.na(VigorousWorkHours) | VigorousWorkHours != 0))
+# There isn't any
+# exercise %>%
+#   filter(VigorousWork == 2 &
+#            (VigorousWorkHours > 0 | VigorousWorkMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(ModerateWork == 2 &
+#            (ModerateWorkHours > 0 | ModerateWorkMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(WalkBicycle == 2 &
+#            (WalkBicycleHours > 0 | WalkBicycleMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(VigorousSport == 2 &
+#            (VigorousSportHours > 0 | VigorousSportMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(ModerateSport == 2 &
+#            (ModerateSportHours > 0 | ModerateSportMinutes > 0)) %>%
+#   nrow()
 
-VW_wrong <- exercise %>%
-  filter(VigorousWork == 2 &
-    (!is.na(VigorousWorkMinutes) | VigorousWorkMinutes != 0))
-```
-
-```{R}
-# find out frequencies of values to check if any >16 (as per protocol need excluded)
-vigorous_work_hours_table <- table(exercise$VigorousWorkHours,
-  useNA = "always"
-)
-knitr::kable(vigorous_work_hours_table)
 ```
 
 ```{r}
@@ -408,11 +437,7 @@ vigorous_work_days_table <- table(exercise$VigorousWorkHours, useNA = "always")
 knitr::kable(vigorous_work_hours_table)
 ```
 
-At this point can confirm that all participants have a valid response to at
-least one section, have removed invalid answers (e.g respond yes to activity and
-fill out hours without specifying days)
-checked if anyone said no but then proceeded to report days/hours or minutes, no
-one did across any section
+At this point can confirm that all participants have a valid response to at least one section, have removed invalid answers (e.g respond yes to activity and fill out hours without specifying days) checked if anyone said no but then proceeded to report days/hours or minutes, no one did across any section
 
 ```{r}
 #| label: calculate-exercise-metrics
@@ -489,15 +514,13 @@ exercise <- exercise[exercise$ExerciseMins < 6720, ]
 
 After comprehensive data cleaning and quality control procedures, the final physical activity dataset comprises **`r nrow(exercise)` participants**. Key findings from the data processing:
 
-- **Missing participants**: 50 participants excluded due to missing participant IDs
-- **Age restrictions**: 53 participants <18 years excluded
-- **Data quality exclusions**: 21 participants removed for inconsistent or invalid exercise reporting
-- **WHO guideline compliance**: 11 participants excluded for reporting >16 hours in any single activity category
-- **Extreme values**: 10 participants excluded for reporting >6720 minutes/week
+-   **Missing participants**: 50 participants excluded due to missing participant IDs
+-   **Age restrictions**: 53 participants \<18 years excluded
+-   **Data quality exclusions**: 21 participants removed for inconsistent or invalid exercise reporting
+-   **WHO guideline compliance**: 11 participants excluded for reporting \>16 hours in any single activity category
+-   **Extreme values**: 10 participants excluded for reporting \>6720 minutes/week
 
-**Exercise Achievement Rates**:
-- Approximately **`r round(100 * sum(exercise$MinimumExercise == "Yes") / nrow(exercise), 1)`%** of participants meet WHO minimum exercise recommendations
-- **`r round(100 * sum(exercise$LackExercise == "Yes") / nrow(exercise), 1)`%** do not meet minimum requirements
+**Exercise Achievement Rates**: - Approximately **`r round(100 * sum(exercise$MinimumExercise == "Yes") / nrow(exercise), 1)`%** of participants meet WHO minimum exercise recommendations - **`r round(100 * sum(exercise$LackExercise == "Yes") / nrow(exercise), 1)`%** do not meet minimum requirements
 
 ```{R}
 #| label: fig-exercise-dist
@@ -514,7 +537,6 @@ ggplot(exercise, aes(x = ExerciseMins)) +
   theme_minimal()
 ```
 
-
 ```{r}
 #| label: split-exercise-by-diagnosis
 #| echo: false
@@ -524,9 +546,6 @@ ex_CD <- exercise[exercise$diagnosis2 == "CD", ]
 
 saveRDS(exercise, paste0(chiara, "exercise.RDS"))
 ```
-
-
-
 
 ```{r}
 #| label: tbl-exercise-whole-cohort
@@ -559,23 +578,16 @@ table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat | LackExercise,
 
 # approximately 30% do not meet the minimum requirements of exercise advised by the WHO
 ```
-  
+
 ### Baseline Associations - Whole cohort
 
-Is achieving minimum exercise levels in our IBD population significantly related
-to:
+Is achieving minimum exercise levels in our IBD population significantly related to:
 
-* There is no significant association between achieving minimum exercise and
-  diagnosis type (p-value = 0.1187)
-* There is a significant association between sex and achieving minimum exercise
-  (p-value = 0.0442)
-* There is no significant association between achieving minimum exercise and
-  reporting flares in the previous year (p-value = 0.179)
-* There is no significant association between age and achieving minimum exercise
-  (p-value = 0.426).
-* There is no significant association between FC category and achieving minimum
-  exercise (p-value = 0.46)
-
+-   There is no significant association between achieving minimum exercise and diagnosis type (p-value = 0.1187)
+-   There is a significant association between sex and achieving minimum exercise (p-value = 0.0442)
+-   There is no significant association between achieving minimum exercise and reporting flares in the previous year (p-value = 0.179)
+-   There is no significant association between age and achieving minimum exercise (p-value = 0.426).
+-   There is no significant association between FC category and achieving minimum exercise (p-value = 0.46)
 
 ```{r}
 #| label: chi-square-sex-exercise
@@ -704,7 +716,6 @@ if (chi_squared_result$p.value < alpha) {
 }
 ```
 
-
 ### Baseline associations - CD
 
 ```{r}
@@ -727,14 +738,10 @@ table1::table1(~ Sex + AgeGroup + flare_group + cat | MinimumExercise,
 )
 ```
 
-* There is no significant association between sex and achieving minimum exercise
-  in CD patients (p-value = 0.06)
-* There is no significant association between achieving minimum exercise and
-  reporting flares in the previous year in CD patients (p-value = 0.43)
-* There is no significant association between achieving minimum exercise and age
-  groups in CD (p-value = 0.19)
-* There is no significant association between achieving minimum exercise and FC
-  in CD (p-value = 0.10)
+-   There is no significant association between sex and achieving minimum exercise in CD patients (p-value = 0.06)
+-   There is no significant association between achieving minimum exercise and reporting flares in the previous year in CD patients (p-value = 0.43)
+-   There is no significant association between achieving minimum exercise and age groups in CD (p-value = 0.19)
+-   There is no significant association between achieving minimum exercise and FC in CD (p-value = 0.10)
 
 ```{r}
 #| label: chi-square-cd-sex-exercise
@@ -849,17 +856,12 @@ if (chi_squared_result$p.value < alpha) {
 }
 ```
 
-
 ### Baseline associations - UC/IBDU
 
-* There is no significant association between sex and achieving minimum exercise
-  in UC patients (p-value = 0.45)
-* There is no significant association between achieving minimum exercise and
-  reporting flares in the previous year in UC patients (p-value = 0.18)
-* There is no significant association between achieving minimum exercise and age
-  groups in UC (p-value = 0.90)
-* There is no significant association between achieving minimum exercise and FC
-  (p-value = 0.33)
+-   There is no significant association between sex and achieving minimum exercise in UC patients (p-value = 0.45)
+-   There is no significant association between achieving minimum exercise and reporting flares in the previous year in UC patients (p-value = 0.18)
+-   There is no significant association between achieving minimum exercise and age groups in UC (p-value = 0.90)
+-   There is no significant association between achieving minimum exercise and FC (p-value = 0.33)
 
 ```{r}
 #| label: tbl-exercise-uc-only
@@ -1097,23 +1099,17 @@ ex_UC_hard <- ex_UC %>%
 
 ### Whole cohort - survival analysis
 
-Is achieving minimum exercise levels in the whole IBD cohort associated a
-change to risk of
+Is achieving minimum exercise levels in the whole IBD cohort associated a change to risk of
 
-Patient-reported flares:
-n= 1571, number of events= 580 
+Patient-reported flares: n= 1571, number of events= 580
 
-* no association across any analysis
+-   no association across any analysis
 
-Hard flare:
-n= 1546, number of events= 216 
+Hard flare: n= 1546, number of events= 216
 
-* Decreased risk for group meeting minimum exercise requirements controlling for
-  site only (p-value = 0.02, 95% CI 0.42-0.95)
-* Decreased risk for group meeting minimum exercise requirements controlling for
-  site, sex, smoking and IMD (p-value = 0.032, 95% CI  0.53-0.97)
-* Decreased risk for group meeting minimum exercise requirements controlling for
-  FC additionally (p-value = 0.035, 95% CI  0.54-0.97)
+-   Decreased risk for group meeting minimum exercise requirements controlling for site only (p-value = 0.02, 95% CI 0.42-0.95)
+-   Decreased risk for group meeting minimum exercise requirements controlling for site, sex, smoking and IMD (p-value = 0.032, 95% CI 0.53-0.97)
+-   Decreased risk for group meeting minimum exercise requirements controlling for FC additionally (p-value = 0.035, 95% CI 0.54-0.97)
 
 ```{r}
 #| label: survival-exercise-whole-cohort-soft
@@ -1232,7 +1228,6 @@ cox_model <- coxph(
 cox.summary(cox_model)
 ```
 
-
 ```{R}
 # sex and frailty
 cox_model <- coxph(
@@ -1264,29 +1259,26 @@ summary(cox_model) %>%
   pander()
 ```
 
-
-
 ### Survival analysis - Crohn's Disease
 
 Is time to flare associated with meeting minimum exercise recommendations?
 
-Patient-reported flares:
-n= 793, number of events= 272 
+Patient-reported flares: n= 793, number of events= 272
 
 No association when controlling for
 
-  * minimum exercise and site (frailty) (p-value = 0.56)
-  * minimum exercise sex, smoking, site (frailty) and IMD (p-value = 0.33)
-  * as above plus FC (p value = 0.43)
+-   minimum exercise and site (frailty) (p-value = 0.56)
+-   minimum exercise sex, smoking, site (frailty) and IMD (p-value = 0.33)
+-   as above plus FC (p value = 0.43)
 
-Hard flares:  
-n= 778, number of events= 97 
- 
+Hard flares:\
+n= 778, number of events= 97
+
 No association when controlling for
 
-  * minimum exercise and site (frailty) (p-value = 0.46)
-  * minimum exercise sex, smoking, site (frailty) and IMD (p=value = 0.71)
-  * as above plus FC (p-value = 0.61)
+-   minimum exercise and site (frailty) (p-value = 0.46)
+-   minimum exercise sex, smoking, site (frailty) and IMD (p=value = 0.71)
+-   as above plus FC (p-value = 0.61)
 
 ```{r}
 #| label: survival-exercise-cd-soft
@@ -1409,7 +1401,6 @@ cox_model <- coxph(Surv(time, Cens) ~ MinimumExercise + frailty(SiteNo),
 cox.summary(cox_model)
 ```
 
-
 ```{R}
 # lack exercise - site only
 cox_model <- coxph(Surv(time, Cens) ~ LackExercise + frailty(SiteNo),
@@ -1454,26 +1445,19 @@ cox_model <- coxph(Surv(time, Cens) ~
 cox.summary(cox_model)
 ```
 
+### Survival Analysis - UC/IBDU
 
-
-### Survival Analysis - UC/IBDU 
-
-Patient-reported flares: 
-n= 787, number of events= 311 
+Patient-reported flares: n= 787, number of events= 311
 
 No association when controlling for
 
-  * site (frailty) (p-value = 0.9)
-  * sex, smoking, site (frailty) and IMD (p-value = 0.78)
-  * as above plus FC (p value = 0.68)
+-   site (frailty) (p-value = 0.9)
+-   sex, smoking, site (frailty) and IMD (p-value = 0.78)
+-   as above plus FC (p value = 0.68)
 
-Hard flares: 
-n= 759, number of events= 119 
+Hard flares: n= 759, number of events= 119
 
-There is a significant association between achieving minimum exercise and risk of flare when controlling for
-  * site (frailty) (p-value = 0.014, 95% CI 0.40-0.90)
-  * sex, smoking, site (frailty) and IMD (p=value = 0.02, 95% CI 0.41-0.92)
-  * as above plus FC (p-value = 0.032, 95% CI 0.42-0.96)
+There is a significant association between achieving minimum exercise and risk of flare when controlling for \* site (frailty) (p-value = 0.014, 95% CI 0.40-0.90) \* sex, smoking, site (frailty) and IMD (p=value = 0.02, 95% CI 0.41-0.92) \* as above plus FC (p-value = 0.032, 95% CI 0.42-0.96)
 
 ```{r}
 #| label: survival-exercise-uc-soft
@@ -1485,7 +1469,6 @@ fit <- survfit(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
 test_result <- survdiff(Surv(time, Cens) ~ MinimumExercise, data = ex_UC_soft)
 pander(test_result)
 ```
-
 
 ```{R}
 #| fig-cap: "UC/IBDU - Time to patient-reported flare - GPAQ"
@@ -1703,19 +1686,17 @@ cox_model <- coxph(Surv(time, Cens) ~
 cox.summary(cox_model)
 ```
 
-
 # Alcohol Consumption Analysis
 
 ## Data Source and Processing
 
 Alcohol consumption data was obtained from food frequency questionnaires (FFQ) completed at baseline. Participants were categorized into three groups based on weekly alcohol consumption:
 
-- **0-0.1 units/week**: Minimal or no alcohol consumption
-- **0.1-14 units/week**: Within recommended limits
-- **>14 units/week**: Above recommended guidelines (potentially harmful levels)
+-   **0-0.1 units/week**: Minimal or no alcohol consumption
+-   **0.1-14 units/week**: Within recommended limits
+-   **\>14 units/week**: Above recommended guidelines (potentially harmful levels)
 
 These categories align with established public health guidelines for alcohol consumption and enable assessment of both beneficial and potentially harmful drinking patterns.
-
 
 ```{r}
 #| label: process-alcohol-data
@@ -1827,16 +1808,15 @@ ETOH_CD <- ETOH[ETOH$diagnosis2 == "CD", ]
 ETOH_UC <- ETOH[ETOH$diagnosis2 == "UC/IBDU", ]
 ```
 
-
 ### Baseline associations - whole cohort
 
 Looking at the whole cohort - are there significant associations at baseline between
 
-* Alcohol consumption and diagnosis type? Yes, p-value = 0.017
-* Alcohol consumption and sex? - Yes, p-value = 0.00008 (Females more likely to drink within recommended units, men more likely to drink above recommended limits)
-* Alcohol consumption and flares in last year? Yes, p-value = 0.029
-* Alcohol consumption and age? Yes, p-value = 0.00003. Younger people are more likely to recommended unit of alcohol, older people are more likely not drink at all. Need to do further analysis on this to comment accurately/significantly.
-* Alcohol consumption and FC? No, p-value = 0.17
+-   Alcohol consumption and diagnosis type? Yes, p-value = 0.017
+-   Alcohol consumption and sex? - Yes, p-value = 0.00008 (Females more likely to drink within recommended units, men more likely to drink above recommended limits)
+-   Alcohol consumption and flares in last year? Yes, p-value = 0.029
+-   Alcohol consumption and age? Yes, p-value = 0.00003. Younger people are more likely to recommended unit of alcohol, older people are more likely not drink at all. Need to do further analysis on this to comment accurately/significantly.
+-   Alcohol consumption and FC? No, p-value = 0.17
 
 ```{r}
 #| label: tbl-alcohol-whole-cohort
@@ -1956,7 +1936,6 @@ if (chi_squared_result$p.value < alpha) {
 }
 ```
 
-
 ```{R}
 contingency_table <- table(ETOH$cat, ETOH$weekly_units)
 knitr::kable(contingency_table)
@@ -1982,8 +1961,6 @@ if (chi_squared_result$p.value < alpha) {
   )
 }
 ```
-
-
 
 ```{r}
 #| label: fig-alcohol-sex-distribution
@@ -2033,14 +2010,13 @@ ggplot(percentages, aes(x = weekly_units, y = percentage, color = AgeGroup, grou
   theme_minimal()
 ```
 
-
 ### CD - baseline associations
 
-* No association between Sex and ETOH in CD subset, p-value = 0.79
-* No association between flares in previous year and ETOH, p-value = 0.12
-* Significant association between age group and ETOH intake, p-value = 0.002
-* No association between smoking and ETOH intake, p-value = 0.549
-* No association between FC and ETOH intake, p-value = 0.56
+-   No association between Sex and ETOH in CD subset, p-value = 0.79
+-   No association between flares in previous year and ETOH, p-value = 0.12
+-   Significant association between age group and ETOH intake, p-value = 0.002
+-   No association between smoking and ETOH intake, p-value = 0.549
+-   No association between FC and ETOH intake, p-value = 0.56
 
 ```{r}
 #| label: tbl-alcohol-cd-only
@@ -2155,14 +2131,10 @@ if (chi_squared_result$p.value < alpha) {
 
 ## UC analysis only - baseline
 
-* There is a significant association between sex and ETOH consumption in UC
-  patients, p-value >0.00001
-* There is a significant association between weekly alcohol consumption (units)
-  and reporting flares in the previous year in UC, p-value 0.007
-* No significant association between alcohol consumption and age groups in UC
-  patients, p-value = 0.153
-* There is no significant association between weekly alcohol consumption
-  (units) and FC in UC, p-value = 0.185
+-   There is a significant association between sex and ETOH consumption in UC patients, p-value \>0.00001
+-   There is a significant association between weekly alcohol consumption (units) and reporting flares in the previous year in UC, p-value 0.007
+-   No significant association between alcohol consumption and age groups in UC patients, p-value = 0.153
+-   There is no significant association between weekly alcohol consumption (units) and FC in UC, p-value = 0.185
 
 ```{R}
 #| label: tbl-UC-ETOH
@@ -2199,7 +2171,6 @@ if (chi_squared_result$p.value < alpha) {
   )
 }
 ```
-
 
 ```{R}
 contingency_table <- table(ETOH_UC$flare_group, ETOH_UC$weekly_units)
@@ -2330,12 +2301,9 @@ ETOH_UC_hard <- ETOH_UC %>%
   rename(Cens = hardflare, time = hardflare_time)
 ```
 
-
-
 ## Survival analysis all patients
 
-Patient-reported flare - no significant associations
-Hard flare - no significant associations
+Patient-reported flare - no significant associations Hard flare - no significant associations
 
 ```{r}
 #| label: survival-alcohol-whole-cohort-soft
@@ -2458,24 +2426,19 @@ summary(cox_model) %>%
   pander()
 ```
 
-
-
 ## Survival analysis CD patients
-
 
 Patient-reported flares (n= 482, number of events= 173):
 
-* No significant association when controlling for frailty(site) only for 14+
-  units/week (0.1-14.5 p-value = 0.200; 14.5+ p-value = 0.088)
-* Not significant when controlling for frailty(site), sex, smoking, IMD and age
-* Not significant when controlling for FC additionally
-
+-   No significant association when controlling for frailty(site) only for 14+ units/week (0.1-14.5 p-value = 0.200; 14.5+ p-value = 0.088)
+-   Not significant when controlling for frailty(site), sex, smoking, IMD and age
+-   Not significant when controlling for FC additionally
 
 Hard flares (n= 472, number of events= 55):
 
-* No significant association when controlling for frailty(site) only
-* Not significant when controlling for frailty(site), sex, smoking, IMD and age
-* Not significant when controlling for FC additionally
+-   No significant association when controlling for frailty(site) only
+-   Not significant when controlling for frailty(site), sex, smoking, IMD and age
+-   Not significant when controlling for FC additionally
 
 ```{r}
 #| label: survival-alcohol-cd-soft
@@ -2723,20 +2686,19 @@ cox_model <- coxph(
 cox.summary(cox_model)
 ```
 
-
 ## Survival analysis UC/IBDU patients
 
 Patient-reported flares (n= 495, number of events= 211):
 
-* No significant association when controlling for frailty(site) only
-* Not significant when controlling for frailty(site), sex, smoking, IMD and age
-* Not significant when controlling for FC additionally
+-   No significant association when controlling for frailty(site) only
+-   Not significant when controlling for frailty(site), sex, smoking, IMD and age
+-   Not significant when controlling for FC additionally
 
 Hard flares (n= 490, number of events= 77):
 
-* No significant association when controlling for frailty(site) only
-* Not significant when controlling for frailty(site), sex, smoking, IMD and age
-* Not significant when controlling for FC additionally
+-   No significant association when controlling for frailty(site) only
+-   Not significant when controlling for frailty(site), sex, smoking, IMD and age
+-   Not significant when controlling for FC additionally
 
 ```{r}
 #| label: survival-alcohol-uc-soft
@@ -2770,7 +2732,6 @@ cox_model <- coxph(Surv(time, Cens) ~ weekly_units + frailty(SiteNo),
 )
 cox.summary(cox_model)
 ```
-
 
 ```{R}
 #| results: "asis"
@@ -2917,8 +2878,9 @@ cox.summary(cox_model)
 
 ## Reproduction and reproducibility {.appendix}
 
-<details class = "appendix">
-  <summary> Session info </summary>
+<details class="appendix">
+
+<summary>Session info</summary>
 
 ```{r}
 #| label: session-info
@@ -2928,6 +2890,4 @@ pander::pander(sessionInfo())
 
 </details>
 
-Licensed by 
-<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
- unless otherwise stated.
+Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.
