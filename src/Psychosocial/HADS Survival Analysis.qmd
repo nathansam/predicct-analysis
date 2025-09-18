@@ -1246,29 +1246,32 @@ Dividing into 2 groups: HADS-Depression 0-7 and 8-21
 ```{r, changing cut off score}
 # hard flares
 hard_dep_grouped_IBD <-
-  hardflare_hads[hardflare_hads$hads_type == "depression_hads", ] %>%
+  hardflare_hads %>%
+  dplyr::filter(hads_type == "depression_hads") %>%
   mutate(score_group = case_when(
     score_group %in% c("8-10", "11-21") ~ "8-21",
     TRUE ~ score_group
   ))
 
-hard_dep_grouped_CD <-
-  hard_dep_grouped_IBD[hard_dep_grouped_IBD$diagnosis2 == "CD", ]
-hard_dep_grouped_UC <-
-  hard_dep_grouped_IBD[hard_dep_grouped_IBD$diagnosis2 == "UC/IBDU", ]
+hard_dep_grouped_CD <- hard_dep_grouped_IBD %>%
+  dplyr::filter(diagnosis2 == "CD")
+  
+hard_dep_grouped_UC <- hard_dep_grouped_IBD %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
 
 # soft flares
-soft_dep_grouped_IBD <-
-  softflare_hads[softflare_hads$hads_type == "depression_hads", ] %>%
+soft_dep_grouped_IBD <- softflare_hads %>%
+  dplyr::filter(hads_type == "depression_hads") %>%
   mutate(score_group = case_when(
     score_group %in% c("8-10", "11-21") ~ "8-21",
     TRUE ~ score_group
   ))
 
-soft_dep_grouped_CD <-
-  soft_dep_grouped_IBD[soft_dep_grouped_IBD$diagnosis2 == "CD", ]
-soft_dep_grouped_UC <-
-  soft_dep_grouped_IBD[soft_dep_grouped_IBD$diagnosis2 == "UC/IBDU", ]
+soft_dep_grouped_CD <- soft_dep_grouped_IBD %>%
+  dplyr::filter(diagnosis2 == "CD")
+  
+soft_dep_grouped_UC <- soft_dep_grouped_IBD %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
 ```
 
 ```{r}
