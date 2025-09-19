@@ -520,10 +520,10 @@ ggplot(exercise, aes(x = ExerciseMins)) +
 #| label: split-exercise-by-diagnosis
 #| echo: false
 #| message: false
-ex_UC <- exercise[exercise$diagnosis2 == "UC/IBDU", ]
-ex_CD <- exercise[exercise$diagnosis2 == "CD", ]
+ex_UC <- exercise %>% dplyr::filter(diagnosis2 == "UC/IBDU")
+ex_CD <- exercise %>% dplyr::filter(diagnosis2 == "CD")
 
-saveRDS(exercise, paste0(chiara, "exercise.RDS"))
+#saveRDS(exercise, paste0(chiara, "exercise.RDS"))
 ```
 
 ```{r}
@@ -544,18 +544,6 @@ table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat | MinimumExerci
   render.continuous = my.render.cont,
   title = "Exercise - whole cohort"
 )
-```
-
-```{r}
-#| label: tbl-lack-exercise-whole-cohort
-#| tbl-cap: "Baseline characteristics stratified by lack of exercise in the whole cohort"
-table1::table1(~ Sex + AgeGroup + diagnosis2 + flare_group + cat | LackExercise,
-  data = exercise,
-  render.continuous = my.render.cont,
-  title = "Exercise - whole cohort"
-)
-
-# approximately 30% do not meet the minimum requirements of exercise advised by the WHO
 ```
 
 ### Baseline Associations - Whole cohort
@@ -591,12 +579,12 @@ alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
   message(
     "There is a significant association between sex and achieving",
-    " minimum exercise"
+    " minimum exercise at the 95% confidence level."
   )
 } else {
   message(
     "There is no significant association between sex and achieving",
-    "minimum exercise"
+    "minimum exercise at the 95% confidence level."
   )
 }
 
@@ -1049,6 +1037,7 @@ ex_CD_soft <- ex_CD %>%
     Cens = softflare,
     time = softflare_time
   )
+
 ex_CD_hard <- ex_CD %>%
   inner_join(flares_hard %>% select(
     ParticipantNo,
@@ -1059,13 +1048,18 @@ ex_CD_hard <- ex_CD %>%
     Cens = hardflare,
     time = hardflare_time
   )
+
 ex_UC_soft <- ex_UC %>%
   inner_join(flares_soft %>% select(
     ParticipantNo,
     softflare,
     softflare_time
   )) %>%
-  rename(Cens = softflare, time = softflare_time)
+  rename(
+    Cens = softflare, 
+    time = softflare_time
+    )
+
 ex_UC_hard <- ex_UC %>%
   inner_join(flares_hard %>%
     select(
@@ -1073,7 +1067,10 @@ ex_UC_hard <- ex_UC %>%
       hardflare,
       hardflare_time
     )) %>%
-  rename(Cens = hardflare, time = hardflare_time)
+  rename(
+    Cens = hardflare, 
+    time = hardflare_time
+    )
 ```
 
 ### Whole cohort - survival analysis
@@ -1689,39 +1686,64 @@ ETOH <- ffq %>%
          Alcohol_units,
          Alcohol_units_wk,
          alcohol_units_cat)
+
 ETOH <- ETOH %>%
   rename(ParticipantNo = participantno)
-ETOH$ParticipantNo <- as.character(ETOH$ParticipantNo)
+
+ETOH %<>%
+  dplyr::mutate(ParticipantNo = as.character(ParticipantNo))
+
 ETOH <- ETOH %>%
-  left_join(demographics %>% select(ParticipantNo, Sex, age, SiteNo, diagnosis),
+  left_join(demographics %>%
+              select(ParticipantNo, Sex, age, SiteNo, diagnosis) ,
             by = "ParticipantNo")
 
 # code diagnosis
-ETOH$diagnosis2 <- plyr::mapvalues(ETOH$diagnosis,
-  from = seq(1, 4),
-  to = c(1, 2, 2, 2)
-) %>%
-  factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
+# Recode diagnosis
+ETOH %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(diagnosis2 = factor(
+    diagnosis2,
+    levels = c("1", "2"),
+    labels = c("CD", "UC/IBDU")
+  ))
 
 # exclude <18 yo = 6 participants excluded
-ETOH <- ETOH[ETOH$age > 17, ]
+ETOH <- ETOH %>%
+  dplyr::filter(age >= 18)
 
 # make sex into level
-ETOH$Sex <- factor(ETOH$Sex, levels = c(1, 2), labels = c("Male", "Female"))
+ETOH %<>%
+  dplyr::mutate(Sex = factor(
+    Sex, 
+    levels = c(1, 2), 
+    labels = c("Male", "Female"))
+  )
 
-ETOH$AgeGroup <- cut(ETOH$age,
-  breaks = c(18, 24, 34, 44, 54, 65, Inf),
-  labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-  include.lowest = TRUE
-)
+ETOH %<>%
+  dplyr::mutate(AgeGroup = cut(
+    age,
+    breaks = c(18, 24, 34, 44, 54, 65, Inf),
+    labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+    include.lowest = TRUE
+))
 
 
 ETOH <- ETOH %>%
   left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
 
 # 31 have missing flare from last year data
-missing_flare <- ETOH %>%
-  filter(is.na(FlaresInPastYear))
+# ETOH %>%
+#   filter(is.na(FlaresInPastYear)) %>%
+#   nrow()
+
 ETOH <- ETOH %>%
   filter(!is.na(FlaresInPastYear))
 
@@ -1731,17 +1753,23 @@ ETOH <- ETOH %>%
                               "No Flares",
                               "1 or More Flares")
          )
+
 # make flares into levels
-ETOH$flare_group <- factor(ETOH$flare_group,
-                           levels = c("No Flares", "1 or More Flares"))
+ETOH %<>%
+  dplyr::mutate(flare_group = factor(flare_group, 
+                                     levels = c("No Flares", "1 or More Flares")
+                                     )
+  )
 
 # add FC
 ETOH <- ETOH %>%
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
 
 # n.b.78 fc cat missing
-missing_cat <- ETOH %>%
-  filter(is.na(cat))
+#ETOH %>%
+#  filter(is.na(cat)) %>%
+#  nrow()
+
 ETOH <- ETOH %>%
   filter(!is.na(cat))
 
@@ -1752,13 +1780,15 @@ ETOH <- ETOH %>%
     weekly_units = case_when(
       Alcohol_units_wk <= 0.1 ~ "0-0.1",
       Alcohol_units_wk > 0.1 & Alcohol_units_wk <= 14 ~ "0.1-14",
-      Alcohol_units_wk > 14 ~ " 14+"
+      Alcohol_units_wk > 14 ~ ">14"
     )
   )
 
-ETOH$weekly_units <- factor(ETOH$weekly_units,
-  levels = c("0-0.1", "0.1-14", " 14+")
-)
+ETOH %<>%
+  dplyr::mutate(weekly_units = factor(
+    weekly_units,
+    levels = c("0-0.1", "0.1-14", ">14")
+))
 
 # create alcohol intake level where:
 # 1 = none/very rarely;
@@ -1774,17 +1804,22 @@ ETOH <- ETOH %>%
     )
   )
 
-# 1 patient missign ETOH data, excluded
-missing_etoh <- ETOH %>%
-  filter(is.na(weekly_units))
+# Any missing units data?
+# ETOH %>%
+#   filter(is.na(weekly_units)) %>%
+#   nrow()
+
 ETOH <- ETOH %>%
   filter(!is.na(weekly_units))
 
 save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-saveRDS(ETOH, paste0(save_path, "ETOH.RDS"))
+#saveRDS(ETOH, paste0(save_path, "ETOH.RDS"))
 
-ETOH_CD <- ETOH[ETOH$diagnosis2 == "CD", ]
-ETOH_UC <- ETOH[ETOH$diagnosis2 == "UC/IBDU", ]
+ETOH_CD <- ETOH %>%
+  dplyr::filter(diagnosis2 == "CD")
+
+ETOH_UC <- ETOH %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
 ```
 
 ### Baseline associations - whole cohort
@@ -1991,11 +2026,11 @@ ggplot(percentages, aes(x = weekly_units, y = percentage, color = AgeGroup, grou
 
 ### CD - baseline associations
 
--   No association between Sex and ETOH in CD subset, p-value = 0.79
--   No association between flares in previous year and ETOH, p-value = 0.12
--   Significant association between age group and ETOH intake, p-value = 0.002
--   No association between smoking and ETOH intake, p-value = 0.549
--   No association between FC and ETOH intake, p-value = 0.56
+-   No association between Sex and alcohol consumption in CD subset, p-value = 0.79
+-   No association between flares in previous year and alcohol consumption, p-value = 0.12
+-   Significant association between age group and alcohol consumption intake, p-value = 0.002
+-   No association between smoking and alcohol consumption intake, p-value = 0.549
+-   No association between FC and alcohol consumption intake, p-value = 0.56
 
 ```{r}
 #| label: tbl-alcohol-cd-only
@@ -2110,7 +2145,7 @@ if (chi_squared_result$p.value < alpha) {
 
 ## UC analysis only - baseline
 
--   There is a significant association between sex and ETOH consumption in UC patients, p-value \>0.00001
+-   There is a significant association between sex and alcohol consumption in UC patients, p-value \>0.00001
 -   There is a significant association between weekly alcohol consumption (units) and reporting flares in the previous year in UC, p-value 0.007
 -   No significant association between alcohol consumption and age groups in UC patients, p-value = 0.153
 -   There is no significant association between weekly alcohol consumption (units) and FC in UC, p-value = 0.185
@@ -2241,6 +2276,7 @@ ETOH_soft <- ETOH %>%
     softflare, softflare_time
   )) %>%
   rename(Cens = softflare, time = softflare_time)
+
 ETOH_hard <- ETOH %>%
   inner_join(flares_hard %>% select(
     ParticipantNo,
@@ -2257,6 +2293,7 @@ ETOH_CD_soft <- ETOH_CD %>%
     softflare_time
   )) %>%
   rename(Cens = softflare, time = softflare_time)
+
 ETOH_CD_hard <- ETOH_CD %>%
   inner_join(flares_hard %>% select(
     ParticipantNo,
@@ -2264,6 +2301,7 @@ ETOH_CD_hard <- ETOH_CD %>%
     hardflare_time
   )) %>%
   rename(Cens = hardflare, time = hardflare_time)
+
 ETOH_UC_soft <- ETOH_UC %>%
   inner_join(flares_soft %>% select(
     ParticipantNo,
@@ -2271,6 +2309,7 @@ ETOH_UC_soft <- ETOH_UC %>%
     softflare_time
   )) %>%
   rename(Cens = softflare, time = softflare_time)
+
 ETOH_UC_hard <- ETOH_UC %>%
   inner_join(flares_hard %>% select(
     ParticipantNo,
