@@ -114,11 +114,14 @@ physicalactivity <- read.xlsx(paste0(
   data.path,
   "Baseline2022/physicalactivity.xlsx"
 ))
+
 demographics <- read.xlsx(paste0(
   data.path,
   "Baseline2022/demographics2022.xlsx"
 ))
+
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+
 ffq <- read.xlsx(
   paste0(
     prefix,
@@ -126,6 +129,7 @@ ffq <- read.xlsx(
     "xlsx"
   )
 )
+
 all_flares <- read.xlsx(paste0(flare.dir, "all-flares.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
@@ -333,108 +337,90 @@ exercise <- exercise %>%
 #| label: clean-moderate-work-data
 #| echo: false
 #| message: false
-# Find/exclude obvious errors in ModerateWork
+
+# Similarly, fix cases of reporting 1 to the questions but for zero/NA hours.
+# ModerateWork
 MW_wrong <- exercise %>%
   filter(ModerateWork == 1 & (ModerateWorkDays == 0 | is.na(ModerateWorkDays)))
+
 # 2 can be corrected recoding 1->2 ParticipantId 4700, 14446
 exercise <- exercise %>%
-  mutate(ModerateWork = ifelse(ParticipantId %in% c(4700, 14446),
-    2,
-    ModerateWork
+  mutate(ModerateWork = dplyr::case_when(
+    ParticipantId %in% c(4700, 14446) ~ 2,
+    TRUE ~ ModerateWork
   ))
+
 # 8 excluded as report 0 days but have answers in other domains
+# Excluding subjects who say they do moderate work but for 0 days (they do have an hour though)
 exercise <- exercise %>%
   filter(!(ModerateWork == 1 &
     (ModerateWorkDays == 0 | is.na(ModerateWorkDays))
   ))
 
-# no cases below
-MW_wrong <- exercise %>%
-  filter(ModerateWork == 2 &
-    (!is.na(ModerateWorkHours) | ModerateWorkHours != 0))
-MW_wrong <- exercise %>%
-  filter(ModerateWork == 2 &
-    (!is.na(ModerateWorkMinutes) | ModerateWorkMinutes != 0))
-
-# Find/exclude obvious errors in WalkBicycle
+# WalkBicycle
 WB_wrong <- exercise %>%
   filter(WalkBicycle == 1 & (WalkBicycleDays == 0 | is.na(WalkBicycleDays)))
-# 2 participants excluded as missing n of days and have values in other columns
+
+# 2 participants say they do but for 0 days
 exercise <- exercise %>%
   filter(!(WalkBicycle == 1 & (WalkBicycleDays == 0 | is.na(WalkBicycleDays))))
 
-# none
-WB_wrong <- exercise %>%
-  filter(WalkBicycle == 2 &
-    (!is.na(WalkBicycleHours) | WalkBicycleHours != 0))
-WB_wrong <- exercise %>%
-  filter(WalkBicycle == 2 &
-    (!is.na(WalkBicycleMinutes) | WalkBicycleMinutes != 0))
-
-# total exercise 1819
+# total exercise 1819 - ?
 
 
-# Find/exclude obvious errors in VigorousSport
-VS_wrong <- exercise %>%
-  filter(VigorousSport == 1 &
-    (VigorousSportDays == 0 |
-      is.na(VigorousSportDays)))
+# VigorousSport
+VS_wrong <- exercise %>% filter(VigorousSport == 1 &
+                                  (VigorousSportDays == 0 |
+                                     is.na(VigorousSportDays)))
 
-# Correct 3 participants as all have 0 in all others
+# Correct 3 participants who responded 1 but said for 0 days/hours/mins
 exercise <- exercise %>%
-  mutate(VigorousSport = ifelse(ParticipantId %in% c(7012, 9555, 9559),
-    2,
-    VigorousSport
-  ))
+  mutate(VigorousSport = dplyr::case_when(ParticipantId %in% c(7012, 9555, 9559) ~ 2,
+                                          TRUE ~ VigorousSport))
 
 # exclude 2 participants who did not include number of days
-exercise <- exercise %>%
-  filter(!(VigorousSport == 1 &
+exercise <- exercise %>% filter(!(VigorousSport == 1 &
     (VigorousSportDays == 0 |
       is.na(VigorousSportDays))))
 
-# none
-VS_wrong <- exercise %>%
-  filter(VigorousSport == 2 &
-    (!is.na(VigorousSportHours) | VigorousSportHours != 0))
-VS_wrong <- exercise %>%
-  filter(VigorousSport == 2 &
-    (!is.na(VigorousSportMinutes) | VigorousSportMinutes != 0))
-
-# find/exclude obvious errors in ModearateSport
+# ModerateSport
 MS_wrong <- exercise %>%
   filter(ModerateSport == 1 & (ModerateSportDays == 0 | is.na(ModerateSportDays)))
+
 exercise <- exercise %>%
-  mutate(ModerateSport = ifelse(ParticipantId %in%
-    c(
-      61,
-      186,
-      3550,
-      7024,
-      7048,
-      9735,
-      12079
-    ),
-  2,
-  ModerateSport
+  mutate(ModerateSport = dplyr::case_when(
+    ParticipantId %in%
+      c(61, 186, 3550, 7024, 7048, 9735, 12079) ~
+      2,
+    TRUE ~ ModerateSport
   ))
+
 # exclude 6 participants who did not include number of days
-exercise <- exercise %>%
-  filter(!(ModerateSport == 1 & (ModerateSportDays == 0 | is.na(ModerateSportDays))))
-# none
-MS_wrong <- exercise %>%
-  filter(ModerateSport == 2 &
-    (!is.na(ModerateSportHours) | ModerateSportHours != 0))
-MS_wrong <- exercise %>%
-  filter(ModerateSport == 2 &
-    (!is.na(ModerateSportMinutes) | ModerateSportMinutes != 0))
+exercise <- exercise %>% filter(!(ModerateSport == 1 &
+                                    (ModerateSportDays == 0 | is.na(ModerateSportDays))
+                                  ))
+
 ```
 
 ```{R}
-# check if anyone recorded days >7 in any days column -> no cases
-# check if any minutes >60 and none are
-vigorous_work_days_table <- table(exercise$VigorousWorkHours, useNA = "always")
-knitr::kable(vigorous_work_hours_table)
+# check if anyone recorded days >7 in any days column - no cases
+# check if any minutes >60 - no cases
+# exercise %>%
+#   filter(VigorousWorkDays > 7 | VigorousWorkMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(ModerateWorkDays > 7 | ModerateWorkMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(WalkBicycleDays > 7 | WalkBicycleMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(VigorousSportDays > 7 | VigorousSportMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(ModerateSportDays > 7 | ModerateSportMinutes > 60) %>%
+#   nrow()
+
 ```
 
 At this point can confirm that all participants have a valid response to at least one section, have removed invalid answers (e.g respond yes to activity and fill out hours without specifying days) checked if anyone said no but then proceeded to report days/hours or minutes, no one did across any section
@@ -443,46 +429,41 @@ At this point can confirm that all participants have a valid response to at leas
 #| label: calculate-exercise-metrics
 #| echo: false
 #| message: false
-# change NA to 0 to allow for caluculations without total becoming NA
-exercise <- exercise %>%
-  mutate_at(
-    vars(
-      VigorousWorkDays,
-      VigorousWorkHours,
-      VigorousWorkMinutes,
-      ModerateWorkDays,
-      ModerateWorkHours,
-      ModerateWorkMinutes,
-      WalkBicycleDays,
-      WalkBicycleHours,
-      WalkBicycleMinutes,
-      VigorousSportDays,
-      VigorousSportHours,
-      VigorousSportMinutes,
-      ModerateSportDays,
-      ModerateSportHours,
-      ModerateSportMinutes
-    ),
-    ~ replace_na(., 0)
+# Replace NA with zero in days/hours/minutes columns
+exercise <- exercise %>% tidyr::replace_na(
+  list(
+    VigorousWorkDays = 0,
+    VigorousWorkHours = 0,
+    VigorousWorkMinutes = 0,
+    ModerateWorkDays = 0,
+    ModerateWorkHours = 0,
+    ModerateWorkMinutes = 0,
+    WalkBicycleDays = 0,
+    WalkBicycleHours = 0,
+    WalkBicycleMinutes = 0,
+    VigorousSportDays = 0,
+    VigorousSportHours = 0,
+    VigorousSportMinutes = 0,
+    ModerateSportDays = 0,
+    ModerateSportHours = 0,
+    ModerateSportMinutes = 0
   )
+)
 
-# create new columns for total mins of vigorous and moderate exercise/week
+# Calculate total mins of vigorous and moderate exercise per week
 exercise <- exercise %>%
   mutate(
-    VigorousWeek = (VigorousWorkHours * 60 * VigorousWorkDays) +
-      (VigorousWorkMinutes * VigorousWorkDays) +
-      (VigorousSportDays * VigorousSportHours * 60) +
-      (VigorousSportDays * VigorousSportMinutes),
-    ModerateWeek = (ModerateWorkHours * 60 * ModerateWorkDays) +
-      (ModerateWorkDays * ModerateWorkHours) +
-      (ModerateSportDays * ModerateSportHours * 60) +
-      (ModerateSportDays * ModerateSportMinutes) +
-      (WalkBicycleDays * WalkBicycleHours * 60) +
-      (WalkBicycleDays * WalkBicycleMinutes)
+    VigorousWeek =
+      VigorousWorkDays * (VigorousWorkMinutes + (VigorousWorkHours * 60)) +
+      VigorousSportDays * (VigorousSportMinutes + (VigorousSportHours * 60)),
+    ModerateWeek = 
+      ModerateWorkDays * (ModerateWorkMinutes + (ModerateWorkHours * 60)) +
+      ModerateSportDays * (ModerateSportMinutes + (ModerateSportHours * 60)) +
+      WalkBicycleDays * (WalkBicycleMinutes + (WalkBicycleHours * 60))
   )
 
 # total mins + METs
-exercise <- exercise %>%
+exercise <- exercise %>% 
   mutate(
     ExerciseMins = VigorousWeek + ModerateWeek,
     METs = (VigorousWeek * 8) + (ModerateWeek * 4)
@@ -492,22 +473,20 @@ exercise <- exercise %>%
 # moderate activity or 600 METs per week
 exercise <- exercise %>%
   mutate(
-    MinimumExercise = ifelse(VigorousWeek >= 75 |
-      ModerateWeek >= 150 |
-      METs >= 600,
-    "Yes",
-    "No"
+    MinimumExercise = dplyr::case_when(
+      VigorousWeek >= 75 | ModerateWeek >= 150 | METs >= 600 ~ "Yes",
+      TRUE ~ "No"
     ),
-    LackExercise = ifelse(VigorousWeek < 75 &
-      ModerateWeek < 150 &
-      METs < 600,
-    "Yes",
-    "No"
+    LackExercise = dplyr::case_when(
+      VigorousWeek < 75 & ModerateWeek < 150 & METs < 600 ~ "Yes",
+      TRUE ~ "No"
     )
   )
 
-# exclude if minute exercise/week >6720
-exercise <- exercise[exercise$ExerciseMins < 6720, ]
+# exclude if minute exercise/week >6720 - 10 cases
+# exercise %>% dplyr::filter(ExerciseMins > 6720) %>% nrow()
+
+exercise <- exercise %>% dplyr::filter(ExerciseMins < 6720)
 ```
 
 ## Exercise Data Summary
@@ -520,7 +499,7 @@ After comprehensive data cleaning and quality control procedures, the final phys
 -   **WHO guideline compliance**: 11 participants excluded for reporting \>16 hours in any single activity category
 -   **Extreme values**: 10 participants excluded for reporting \>6720 minutes/week
 
-**Exercise Achievement Rates**: - Approximately **`r round(100 * sum(exercise$MinimumExercise == "Yes") / nrow(exercise), 1)`%** of participants meet WHO minimum exercise recommendations - **`r round(100 * sum(exercise$LackExercise == "Yes") / nrow(exercise), 1)`%** do not meet minimum requirements
+**Exercise Achievement Rates**: - Approximately **`r round(100 * sum(exercise$MinimumExercise == "Yes") / nrow(exercise), 1)`%** of participants meet WHO minimum exercise recommendations.
 
 ```{R}
 #| label: fig-exercise-dist
@@ -528,7 +507,7 @@ After comprehensive data cleaning and quality control procedures, the final phys
 ggplot(exercise, aes(x = ExerciseMins)) +
   geom_density(fill = "skyblue", color = "black", alpha = 0.7) +
   geom_vline(xintercept = median(exercise$ExerciseMins), 
-             linetype = "dashed", color = "red", size = 1) +
+             linetype = "dashed", color = "red", linewidth = 1) +
   labs(
     x = "Total Exercise Minutes per Week",
     y = "Density",
