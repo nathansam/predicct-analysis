@@ -70,138 +70,220 @@ flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_har
 flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
 ```
 
-
 In the baseline questionnaire, participants were asked:
 
-Have you had any significant life events in the last month? (Q 45.1)
-Answer options were multiple choice and included a free text option 'other'. The options provided are a modified Holmes-Rahe Stress inventory.
+Have you had any significant life events in the last month? (Q 45.1) Answer options were multiple choice and included a free text option 'other'. The options provided are a modified Holmes-Rahe Stress inventory.
 
 Number of responses:
 
-* n 1306 = 0 events
-* n 298 = 1 or more events
-  * n 211 = 1 event
-  * n 63 = 2 events
-  * n 17 = 3 events
-  * n 5 = 4 events
-  * n 2 = 5 events
+-   n 1306 = 0 events
+-   n 298 = 1 or more events
+    -   n 211 = 1 event
+    -   n 63 = 2 events
+    -   n 17 = 3 events
+    -   n 5 = 4 events
+    -   n 2 = 5 events
 
 From the baseline questionnaires 298 people reported a stressful life event (n=132 responded other), 1306 reported no life event.
 
-
-
 Baseline associations whole cohort
 
-* No difference between diagnosis (p-value = 0.1764)
-* Females more likely to report a life event (p-value = 8.635e-07)
-* Difference across age groups (p-value = 0.002117)
-* No difference in flare rates (p-value = 0.7213)
-* No association with FC (p-value = 0.4096)
-
+-   No difference between diagnosis (p-value = 0.1764)
+-   Females more likely to report a life event (p-value = 8.635e-07)
+-   Difference across age groups (p-value = 0.002117)
+-   No difference in flare rates (p-value = 0.7213)
+-   No association with FC (p-value = 0.4096)
 
 Baseline associations UC/IBDU
 
-* Significant difference between sexes (p-value = 0.004856)
-* Significant differences across age groups (p-value = 0.0009646)
-* No difference across flare groups (p-value = 0.9796)
-* No difference across FC cat (p-value = 0.4423)
+-   Significant difference between sexes (p-value = 0.004856)
+-   Significant differences across age groups (p-value = 0.0009646)
+-   No difference across flare groups (p-value = 0.9796)
+-   No difference across FC cat (p-value = 0.4423)
 
 Baseline associations CD
 
-* Significant difference between sexes (p-value = 8.58e-05)
-* No significant difference across age groups (p-value = 0.604)
-* No difference across flare groups (p-value = 0.5257)
-* No difference in FC cat (p-value = 0.7413)
-
+-   Significant difference between sexes (p-value = 8.58e-05)
+-   No significant difference across age groups (p-value = 0.604)
+-   No difference across flare groups (p-value = 0.5257)
+-   No difference in FC cat (p-value = 0.7413)
 
 ```{r, lifeevents}
 #Join demo data, exclude <18, make age groups, code diagnosis
 lifeevents <- lifeevents %>% 
   left_join(demographics %>% select(ParticipantNo, Sex, diagnosis, age))
+
 lifeevents <- lifeevents %>% 
   filter(!is.na(ParticipantNo))
+
 lifeevents <- lifeevents %>% 
   filter(!is.na(AnyLifeEvents))
-lifeevents <- lifeevents[lifeevents$age > 17,]
-lifeevents$Sex <- factor(lifeevents$Sex, levels = c(1, 2), labels = c("Male", "Female"))
-lifeevents$AnyLifeEvents <- factor(lifeevents$AnyLifeEvents, levels = c(1, 2), labels = c("Yes", "No"))
-lifeevents$AgeGroup <- cut(lifeevents$age, 
-                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-                         include.lowest = TRUE)
-lifeevents$diagnosis2 <- plyr::mapvalues(lifeevents$diagnosis,
-  from = seq(1, 4),
-  to = c(1, 2, 2, 2)
-) %>%
-  factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
-lifeevents <- lifeevents %>% 
-  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
+
+lifeevents %<>% dplyr::filter(age >= 18)
+
+lifeevents %<>% dplyr::mutate(Sex = factor(
+  Sex,
+  levels = c(1, 2),
+  labels = c("Male", "Female"))
+)
+
+lifeevents %<>%
+  dplyr::mutate(AnyLifeEvents = factor(AnyLifeEvents, levels = c(1, 2), labels = c("Yes", "No"))) %>%
+  dplyr::mutate(AnyLifeEvents = forcats::fct_relevel(AnyLifeEvents, "No", "Yes"))
+
+lifeevents %<>% dplyr::mutate(AgeGroup = cut(
+  age,
+  breaks = c(18, 24, 34, 44, 54, 65, Inf),
+  labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+  include.lowest = TRUE))
+
+# Recode diagnosis
+lifeevents %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(diagnosis2 = factor(
+    diagnosis2,
+    levels = c("1", "2"),
+    labels = c("CD", "UC/IBDU")
+  ))
 
 lifeevents <- lifeevents %>%
-  mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
-lifeevents$flare_group <- factor(lifeevents$flare_group, levels = c( "No Flares","1 or More Flares"))
+  left_join(
+    IBD %>% select(ParticipantNo, FlaresInPastYear)
+    )
+
+# 1 patient removed with missing data on flares
+lifeevents <- lifeevents %>%
+  filter(!is.na(FlaresInPastYear))
+
+# create flare groups
+lifeevents <- lifeevents %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0,
+    "No Flares",
+    "1 or More Flares"
+  ))
+
+# Make flares into levels
+lifeevents %<>% 
+  dplyr::mutate(flare_group = factor(
+    flare_group,
+    levels = c(
+      "No Flares",
+      "1 or More Flares"
+  )
+))
 
 lifeevents <- lifeevents %>% 
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, Smoke, IMD))
+
+# Removing missing FC
 lifeevents <- lifeevents %>% 
   filter(!is.na(cat))
 ```
 
+## Baseline Associations
 
 ```{r, baseline associations?}
 
 #plot distributions
-variables_of_interest <- lifeevents[, c(
+variables_of_interest <- c(
   "Death", "Divorce", "MaritalSeparation",
   "PersonalInjury", "Marriage", "Dismissal",
   "MaritalReconcil", "Retirement", "HealthFamilyMember", "Pregnancy",
   "SexualDifficulties", "GainNewFamilyMember", "NewMortgage",
   "OtherLifeEvent"
-)]
+)
 
-# Reshape the data into long format
-variables_long <- gather(variables_of_interest, key = "Variable", value = "LifeEvent")
 
 #counts of events
-lifeevents$NumberEvents <- rowSums(!is.na(lifeevents[, 8:25]), na.rm = TRUE)
+lifeevents %<>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    NumberEvents = sum(c_across(8:25), na.rm = TRUE)
+  ) %>%
+  dplyr::ungroup()
+
+
 event_counts <- table(lifeevents$NumberEvents)
+
 print(event_counts)
 
+# Count the number of each type of event
+variables_count <- lifeevents %>%
+  dplyr::select(variables_of_interest) %>%
+  tidyr::pivot_longer(
+    cols = everything(),
+    names_to = "Variable",
+    values_to = "LifeEvent"
+  ) %>%
+  dplyr::group_by(Variable) %>%
+  dplyr::summarise(
+    count = sum(LifeEvent, na.rm = TRUE)
+  ) %>%
+  dplyr::arrange(
+    desc(count)
+  ) %>%
+  dplyr::mutate(
+    Variable = forcats::as_factor(Variable)
+  )
+
+variables_count %>%
+  ggplot(aes(x = count, y = Variable)) +
+  geom_col(position = "dodge") +
+  xlab("Count") +
+  ylab("Life Event") +
+  theme_minimal()
+
+
 # Plot the counts using geom_bar
-events_baseline <- ggplot(variables_long, aes(x = LifeEvent, fill = Variable)) +
-  geom_bar(position = "dodge", color = "black") +
-  ggtitle("Significant Life Event") +
-  xlab("Cause") +
-  ylab("Count") +
-  theme_minimal() +
-  theme(axis.ticks.x = element_blank())
-print(events_baseline)
+# events_baseline <- ggplot(variables_long, aes(x = LifeEvent, fill = Variable)) +
+#   geom_bar(position = "dodge", color = "black") +
+#   ggtitle("Significant Life Event") +
+#   xlab("Cause") +
+#   ylab("Count") +
+#   theme_minimal() +
+#   theme(axis.ticks.x = element_blank())
 
+```
 
+```{r}
 # baseline associations
 # diagnosis 2
 contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$diagnosis2)
 chi_squared <- chisq.test(contingency_table)
 print(chi_squared)
+
 #sex
 contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$Sex)
 chi_squared <- chisq.test(contingency_table)
 print(chi_squared)
+
 # age
 contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$AgeGroup)
 chi_squared <- chisq.test(contingency_table)
 print(chi_squared)
+
 # flare
 contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$flare_group)
 chi_squared <- chisq.test(contingency_table)
 print(chi_squared)
+
 # fc
 contingency_table <- table(lifeevents$AnyLifeEvents, lifeevents$cat)
 chi_squared <- chisq.test(contingency_table)
 print(chi_squared)
 
-LE_UC <- lifeevents[lifeevents$diagnosis2 == "UC/IBDU",]
-LE_CD <- lifeevents[lifeevents$diagnosis2 == "CD",]
+LE_UC <- lifeevents %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
+
+LE_CD <- lifeevents %>%
+  dplyr::filter(diagnosis2 == "CD")
 
 #baseline association UC/IBDU
 #sex
@@ -238,36 +320,42 @@ print(chi_squared)
 contingency_table <- table(LE_CD$AnyLifeEvents, LE_CD$cat)
 chi_squared <- chisq.test(contingency_table)
 print(chi_squared)
-
 ```
-
 
 ## Survival analysis
 
 ```{r, join with flare data}
 flares_soft <- flares_soft %>% 
   rename(DiseaseFlareYN = softflare, time = softflare_time)
+
 flares_hard <- flares_hard %>% 
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 #whole cohort datasets
 lifeevents_soft <- lifeevents %>% 
   inner_join(flares_soft %>% select(ParticipantNo, DiseaseFlareYN, time))
+
 lifeevents_hard <- lifeevents %>%
   inner_join(flares_hard %>% select(ParticipantNo, DiseaseFlareYN, time)) 
 
-LE_UC_soft <- lifeevents_soft[lifeevents_soft$diagnosis2 == "UC/IBDU",]
-LE_CD_soft <- lifeevents_soft[lifeevents_soft$diagnosis2 == "CD",]
+# By IBD type
 
-LE_UC_hard <- lifeevents_hard[lifeevents_hard$diagnosis2 == "UC/IBDU",]
-LE_CD_hard <- lifeevents_hard[lifeevents_hard$diagnosis2 == "CD",]
+LE_UC_soft <- lifeevents_soft %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
+
+LE_CD_soft <- lifeevents_soft %>%
+  dplyr::filter(diagnosis2 == "CD")
+
+LE_UC_hard <- lifeevents_hard %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
+
+LE_CD_hard <- lifeevents_hard %>%
+  dplyr::filter(diagnosis2 == "CD")
 ```
 
+#### Whole cohort
 
-#### Whole cohort 
-
-Patient-reported flare (n= 1596, number of events= 579) - no significance across any analysis.
-Hard flare (n= 1552, number of events= 215) - no significance across any analysis.
+Patient-reported flare (n= 1596, number of events= 579) - no significance across any analysis. Hard flare (n= 1552, number of events= 215) - no significance across any analysis.
 
 ```{r, survival analysis whole cohort}
 
@@ -330,12 +418,9 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup +
 summary(cox_model)
 ```
 
-
 ### Survival analysis UC/IBDU
 
-
-Patient-reported flare (n= 782, number of events= 305) - no associations. 
-Hard flare (n= 763, number of events= 118) - no associations.
+Patient-reported flare (n= 782, number of events= 305) - no associations. Hard flare (n= 763, number of events= 118) - no associations.
 
 ```{r, survival analysis UC/IBDU cohort}
 
@@ -398,12 +483,9 @@ cox_model <- coxph(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents + Sex + AgeGroup +
 summary(cox_model)
 ```
 
-
-
 ### Survival analysis CD cohort
 
-Patient-reported flare (n= 814, number of events= 274) - no significance across any analysis.
-Hard flare (n= 789, number of events= 97) - no significance across any analysis.
+Patient-reported flare (n= 814, number of events= 274) - no significance across any analysis. Hard flare (n= 789, number of events= 97) - no significance across any analysis.
 
 ```{r, survival analysis CD cohort}
 
