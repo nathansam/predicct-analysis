@@ -7,7 +7,6 @@ author:
       - ref: Lothian
 ---
 
-
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
 ```
@@ -66,60 +65,100 @@ health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
-demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
-flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
-smoking <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/smoking.rds")
-flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
-flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
+demo <- readRDS(paste0(outdir, "demo.RDS"))
+flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
+smoking <- readRDS(paste0(save_path, "smoking.rds"))
+flares_hard <- readRDS(paste0(save_path, "flares_hard.RDS"))
+flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
 ```
 
-
- ## The Patient Health Questionnaire (PHQ - 15)
+\## The Patient Health Questionnaire (PHQ - 15)
 
 Q43.1 of the baseline questionnaire: "During the past 4 weeks how much have you been bothered by any of the following problems?"
 
-13 physical symptoms + feeling tired/trouble sleeping. Scores 0 (not at all) to 2 (bothered a lot). 
-Total score is between 0-30. 
-Scores of ≥5, ≥10, ≥15 represent mild, moderate and severe levels of somatisation. The reliability and validity of the PHQ-15 are high in clinical and occupational health care settings.
+13 physical symptoms + feeling tired/trouble sleeping. Scores 0 (not at all) to 2 (bothered a lot). Total score is between 0-30. Scores of ≥5, ≥10, ≥15 represent mild, moderate and severe levels of somatisation. The reliability and validity of the PHQ-15 are high in clinical and occupational health care settings.
 
 ```{r, load and tidy phq data set}
 #61 missing ParticipantId (blank rows - exclude these, from 1960 to 1899)
-part.missing <- phq %>% 
-  filter(is.na(ParticipantId))
+# phq %>% 
+#   filter(is.na(ParticipantId)) %>%nrow()
+
 phq_clean <- phq %>% 
   filter(!is.na(ParticipantId))
+
 #add age and sex data from demographics
-phq_clean <- phq_clean %>% 
-  inner_join(demographics %>% select(ParticipantNo, Sex, age, diagnosis), by  = "ParticipantNo")
-#code diagnosis
-phq_clean$diagnosis2 <- plyr::mapvalues(phq_clean$diagnosis,
-  from = seq(1, 4),
-  to = c(1, 2, 2, 2)
-) %>%
-  factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
+phq_clean <- phq_clean %>%
+  inner_join(
+    demographics %>% select(ParticipantNo, Sex, age, diagnosis), 
+    by  = "ParticipantNo")
+
+# Recode diagnosis
+phq_clean %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(diagnosis2 = factor(
+    diagnosis2,
+    levels = c("1", "2"),
+    labels = c("CD", "UC/IBDU")
+  ))
 
 #exclude <18 yo = 53 participants (1899 -> 1846)
-phq_clean <- phq_clean[phq_clean$age > 17,]
+phq_clean %<>% dplyr::filter(age >= 18)
 
 #make sex into level
-phq_clean$Sex <- factor(phq_clean$Sex, levels = c(1, 2), labels = c("Male", "Female"))
+phq_clean %<>% dplyr::mutate(Sex = factor(
+  Sex,
+  levels = c(1, 2),
+  labels = c("Male", "Female"))
+)
 
-#find out how may columns have missing values (26, excluding menstrual cramp question which )
-miss_phq <- phq_clean %>%
-  filter(rowSums(is.na(select(., c(7:9, 11:21)))) > 0)
+#find out how may columns have missing values (excluding menstrual cramp question)
+# 26
+# phq_clean %>%
+#   filter(
+#     dplyr::if_any(.cols = c(7:9, 11:21), .fns = is.na)
+#   ) %>% nrow()
+
 #total participants 1820
-phq_clean <- phq_clean %>% 
-  filter(!(rowSums(is.na(select(., c(7:9, 11:21)))) > 0))
+phq_clean %<>%
+  filter(
+    !dplyr::if_any(.cols = c(7:9, 11:21), .fns = is.na)
+  )
 
-#detract -1 from all the question colums (C7 to 21) (score 0-2 not 1-3)
-if (any(phq_clean$StomachPain == 3)) {
-  phq_clean <- phq_clean %>% 
-    mutate_at(vars("StomachPain", "BackPain", "PainInArms", "MenstrualCramps", "Headaches", "ChestPain", "Dizziness", "FaintingSpells", "HeartPound", "ShortnessBreath", "SexualIntercourse", "ConstipationDiarrhoea", "NauseaIndigestion", "FeelingTired", "TroubleSleeping"), ~ . - 1)
-}
+# Correct columns being coded 1-3 instead of 0-2
+# Checking
+# phq_clean %>%
+#  dplyr::select(StomachPain:TroubleSleeping) %>%
+#   dplyr::summarise(
+#     dplyr::across(.cols = everything(), .fns = function(x) max(x, na.rm = TRUE))
+#   ) %>%
+#   tidyr::pivot_longer(
+#     cols = everything(),
+#     names_to = "Score",
+#     values_to = "max"
+#   )
 
-# if value is NA (for menstrual symptoms question)
-phq_clean <- phq_clean %>% 
-  mutate(MenstrualCramps = ifelse(is.na(MenstrualCramps), 0, MenstrualCramps))
+# Fixing
+phq_clean %<>%
+  dplyr::mutate(
+    dplyr::across(
+      .cols = StomachPain:TroubleSleeping,
+      .fns = ~. - 1)
+  )
+
+
+
+# Menstrual cramps replace NA with 0
+phq_clean %<>%
+  tidyr::replace_na(
+    list(MenstrualCramps = 0)
+  )
 
 #add all PHQ-15 columns to make final score
 phq_clean <- phq_clean %>% 
@@ -128,30 +167,41 @@ phq_clean <- phq_clean %>%
 #make new variable for no, mild, moderate and severe levels of somatisation
 phq_clean <- phq_clean %>% 
   mutate(
-    somatisation = cut(TotalPHQ, breaks = c(0, 4, 9, 14, 30), labels = c("None", "Mild", "Moderate", "Severe"), include.lowest = TRUE)
+    somatisation = cut(
+      TotalPHQ, 
+      breaks = c(0, 4, 9, 14, 30), 
+      labels = c("None", "Mild", "Moderate", "Severe"), 
+      include.lowest = TRUE)
   )
 
-#split into age groups
-phq_clean$AgeGroup <- cut(phq_clean$age, 
+# Age groups
+phq_clean %<>%
+  dplyr::mutate(AgeGroup = cut(age, 
                          breaks = c(18, 24, 34, 44, 54, 65, Inf), 
                          labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-                         include.lowest = TRUE)
+                         include.lowest = TRUE))
 
 #add flare data, FC, smoking
 #flare data from IBD data set
 phq_clean <- phq_clean %>% 
   left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
+
 #find missing flare data -> 4 participants, these were excluded
-missing_flare <- phq_clean %>%
-  filter(is.na(FlaresInPastYear))
+# phq_clean %>% filter(is.na(FlaresInPastYear)) %>% nrow()
+
 #now 1816
 phq_clean <- phq_clean %>%
   filter(!is.na(FlaresInPastYear))
+
 #create flare groups
 phq_clean <- phq_clean %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
+
 #make flares into levels
-phq_clean$flare_group <- factor(phq_clean$flare_group, levels = c( "No Flares","1 or More Flares"))
+phq_clean %>% 
+  dplyr::mutate(
+    flare_group = factor(flare_group, levels = c( "No Flares","1 or More Flares"))
+  )
 
 phq_clean <- phq_clean %>% 
   left_join(smoking %>% select(ParticipantNo, Smoke))
@@ -159,12 +209,13 @@ phq_clean <- phq_clean %>%
 #204 patient smissing fc data so new dataset for this
 phq_clean <- phq_clean %>% 
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
+
 #tot 1608 participants
 phq_clean <- phq_clean %>% 
   filter(!is.na(cat))
 
 save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-saveRDS(phq_clean, paste0(save_path, "phq_clean.RDS"))
+#saveRDS(phq_clean, paste0(save_path, "phq_clean.RDS"))
 ```
 
 Here we present somatisation prevalance across the cohort.
@@ -189,21 +240,20 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat| somatisation,
 
 ```
 
-
 ### Baseline associations - whole cohort
 
-Somatisation scores are: 
+Somatisation scores are:
 
-* Significantly higher for patients with CD than UC/IBDU (p-value = 0.043)
-* Significantly higher for females (p-value < 2.2e-16).
-* Significantly higher for those who reported one or more flares in the previous year (p-value = 2.879e-07)
-* There was a signficant difference across somatisation score according to age (p-value = 0.017)
-  * The 45-54 age group had the highest percentage of participants in the 'severe somatisation group' (12%)
-  * The 18-24 age group had the highest percentage of participants in the 'moderate somatisation group' (27.2%)
-  * The 65+ had the highest percentage of participants in the 'mild somatisation group' (50%) (likely that this reflects MSK pain associated with age)
-  * The 25-34 had the highet percentage of participants in the 'no somatisation group' (31.7%)    
-  * The percentage of participants in each somatisation category per age group are presented in table below
-* FC was not significantly associated with somatisation category (p-value = 0.99)
+-   Significantly higher for patients with CD than UC/IBDU (p-value = 0.043)
+-   Significantly higher for females (p-value \< 2.2e-16).
+-   Significantly higher for those who reported one or more flares in the previous year (p-value = 2.879e-07)
+-   There was a signficant difference across somatisation score according to age (p-value = 0.017)
+    -   The 45-54 age group had the highest percentage of participants in the 'severe somatisation group' (12%)
+    -   The 18-24 age group had the highest percentage of participants in the 'moderate somatisation group' (27.2%)
+    -   The 65+ had the highest percentage of participants in the 'mild somatisation group' (50%) (likely that this reflects MSK pain associated with age)
+    -   The 25-34 had the highet percentage of participants in the 'no somatisation group' (31.7%)\
+    -   The percentage of participants in each somatisation category per age group are presented in table below
+-   FC was not significantly associated with somatisation category (p-value = 0.99)
 
 ```{r, distribution of scores for sex and disease type}
 # Sex
@@ -330,10 +380,10 @@ Here we investigate whether somatisation scores in CD and UC/IBDU patients have 
 
 ### Baseline Associations - Crohn's Disease
 
-* Females have significantly higher somatisation scores than men (p-value < 2.2e-16)
-* Participants who reported one or more flares in previous year had higher somatisation scores (p-value = 1.8e-05)
-* There was no significant association with age (p-value = 0.119)
-* There was no significant association with faecal calprotectin (p-value = 0.83)
+-   Females have significantly higher somatisation scores than men (p-value \< 2.2e-16)
+-   Participants who reported one or more flares in previous year had higher somatisation scores (p-value = 1.8e-05)
+-   There was no significant association with age (p-value = 0.119)
+-   There was no significant association with faecal calprotectin (p-value = 0.83)
 
 ```{r, CROHNS AND SOMATISATION}
 
@@ -420,12 +470,12 @@ if (chi_squared_result$p.value < alpha) {
 }
 ```
 
-## UC/IBDU patients only 
+## UC/IBDU patients only
 
-* Significant association with sex, more females have higher somatisation scores (p-value =  3.681e-13)
-* Higher scores for those reporting flare previous year (p-value = 0.0002)
-* No significant association between age groups and somatic scores (p-value = 0.104)
-* No significant association with FC (p-value = 0.62)
+-   Significant association with sex, more females have higher somatisation scores (p-value = 3.681e-13)
+-   Higher scores for those reporting flare previous year (p-value = 0.0002)
+-   No significant association between age groups and somatic scores (p-value = 0.104)
+-   No significant association with FC (p-value = 0.62)
 
 ```{r, UC/IBDU AND SOMATISATION}
 
@@ -511,8 +561,7 @@ if (chi_squared_result$p.value < alpha) {
 }
 ```
 
-## Survival analysis 
-
+## Survival analysis
 
 ```{r, code for survival analysis}
 cox.summary <- function(fit) {
@@ -561,19 +610,16 @@ UC_phq_hard <- UC_phq %>%
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 ```
 
-
 ### Whole cohoort
 
 Patient-reported flare
 
-* Significant at all levels in all analyses, here I report controlling for site, sex, smoking, IMD age and FC
-  * Increase risk with mild somatisation (p-value = 8.2e-05, 95% CI 1.26-2.03)
-  * Increase risk with moderate somatisation (p-value = 3.5e-07 , 95% CI 1.51-2.55)
-  * Increase risk with severe somatisation (p-value = 1.4e-08, 95% CI 1.86-3.59)
-  
+-   Significant at all levels in all analyses, here I report controlling for site, sex, smoking, IMD age and FC
+    -   Increase risk with mild somatisation (p-value = 8.2e-05, 95% CI 1.26-2.03)
+    -   Increase risk with moderate somatisation (p-value = 3.5e-07 , 95% CI 1.51-2.55)
+    -   Increase risk with severe somatisation (p-value = 1.4e-08, 95% CI 1.86-3.59)
 
-Hard flare
-* Mild somatisation significant when controlling for site only (p-value = 0.02, 95% CI 1.06-2.11), not significant for other levels or when controlling for other confounding factors
+Hard flare \* Mild somatisation significant when controlling for site only (p-value = 0.02, 95% CI 1.06-2.11), not significant for other levels or when controlling for other confounding factors
 
 ```{r, whole cohort}
 #Soft flares
@@ -634,31 +680,28 @@ summary(cox_model)
 
 ```
 
-
 ### Survival analysis - Crohn's Disease
 
-Patient-reported flare: 
-n= 807, number of events= 273 
+Patient-reported flare: n= 807, number of events= 273
 
-* controlling for site only, significant increase in risk at all levels of somatisation
-* controlling for site, sex, smoking and IMD,  significant increase in risk at all levels of somatisation
-* controlling for FC additionally,  significant increase in risk at all levels of somatisation
-  * Mil p-value = 0.0013, 95% CI 1.29-2.86
-  * Moderate p-value = 5.4e-07, 95% CI 1.93-5.25
-  * Severe p-value = 1.6e-07, 95% CI 2.32 - 6.39
+-   controlling for site only, significant increase in risk at all levels of somatisation
+-   controlling for site, sex, smoking and IMD, significant increase in risk at all levels of somatisation
+-   controlling for FC additionally, significant increase in risk at all levels of somatisation
+    -   Mil p-value = 0.0013, 95% CI 1.29-2.86
+    -   Moderate p-value = 5.4e-07, 95% CI 1.93-5.25
+    -   Severe p-value = 1.6e-07, 95% CI 2.32 - 6.39
 
-Hard flare: 
+Hard flare:
 
-* Controlling for site only 
-  * Significant increased risk for flare for mild  (p-value = 0.011) and severe (p-value = 0.012) somatisation
-  * No significant increase in risk for moderate somatisation (p-value = 0.11)
-* Controlling for sex, smoking, site, IMD
-  * Significant increased risk for flare for mild  (p-value = 0.029) and severe (p-value = 0.050) somatisation
-  * No significant increase in risk for moderate somatisation (p-value = 0.23)
-* Controlling for FC additionally
-  * Significant increased risk for flare for mild (p-value = 0.044, 95% CI 1.01-3.43) and severe (p-value = 0.046, 95% CI 1.01-5.37) somatisation
-  * No significant increase in risk for moderate somatisation (p-value = 0.20, 95% CI 0.78-3.15)
-  
+-   Controlling for site only
+    -   Significant increased risk for flare for mild (p-value = 0.011) and severe (p-value = 0.012) somatisation
+    -   No significant increase in risk for moderate somatisation (p-value = 0.11)
+-   Controlling for sex, smoking, site, IMD
+    -   Significant increased risk for flare for mild (p-value = 0.029) and severe (p-value = 0.050) somatisation
+    -   No significant increase in risk for moderate somatisation (p-value = 0.23)
+-   Controlling for FC additionally
+    -   Significant increased risk for flare for mild (p-value = 0.044, 95% CI 1.01-3.43) and severe (p-value = 0.046, 95% CI 1.01-5.37) somatisation
+    -   No significant increase in risk for moderate somatisation (p-value = 0.20, 95% CI 0.78-3.15)
 
 ```{r, clinical flare for CD patients and somatization}
 # p-value 0.04
@@ -736,25 +779,21 @@ cox.summary(cox_model)
 
 ```
 
-## UC/IBDU 
+## UC/IBDU
 
+Patient-reported flares: n= 794, number of events= 312
 
-Patient-reported flares:
-n= 794, number of events= 312 
+-   significant controlling for site only at all somatisation levels
+-   significant controlling for site, sex, smoking, IMD at all levels
+-   signifciant when controlling for FC additionally
+    -   mild p-value = 0.005, 95% CI 1.13-2.03
+    -   moderate p-value = 0.02, 95% CI 1.06-2.10
+    -   severe p-value = 0.003, 95% CI 1.24-3.06
 
-* significant controlling for site only at all somatisation levels
-* significant controlling for site, sex, smoking, IMD at all levels 
-* signifciant when controlling for FC additionally 
-  * mild p-value = 0.005, 95% CI 1.13-2.03
-  * moderate p-value = 0.02, 95% CI 1.06-2.10
-  * severe p-value = 0.003, 95% CI 1.24-3.06
-  
+Hard flares:\
+n= 774, number of events= 119
 
-Hard flares:   
-n= 774, number of events= 119 
-
-* No significant increase in risk in any analysis
-
+-   No significant increase in risk in any analysis
 
 ```{r, clinical flare for UC/IBDU patients and PHQ}
 # p-value 0.09
@@ -829,11 +868,11 @@ cox.summary(cox_model)
 
 ```
 
-
 ## Reproduction and reproducibility {.appendix}
 
-<details class = "appendix">
-  <summary> Session info </summary>
+<details class="appendix">
+
+<summary>Session info</summary>
 
 ```{R Session info}
 #| echo: false
@@ -842,6 +881,4 @@ pander::pander(sessionInfo())
 
 </details>
 
-Licensed by 
-<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
- unless otherwise stated.
+Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.
