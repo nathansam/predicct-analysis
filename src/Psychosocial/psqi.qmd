@@ -5,6 +5,8 @@ author:
     url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
     affiliations:
       - ref: Lothian
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, warn.conflicts = FALSE}
@@ -57,12 +59,12 @@ health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 psqi <- read.xlsx(paste0(data.path, "Baseline2022/psqi.xlsx"))
-demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
-flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
-smoking <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/smoking.rds")
-flares_combined <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/flares-combined-cut.RDS")
-flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
-flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
+demo <- readRDS(paste0(outdir, "demo.RDS"))
+flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
+smoking <- readRDS(paste0(save_path, "smoking.rds"))
+flares_combined <- readRDS(paste0(outdir, "flares/flares-combined-cut.RDS"))
+flares_hard <- readRDS(paste0(save_path, "flares_hard.RDS"))
+flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
 ```
 
 ### Sleep Quality - the PSQI at basline
@@ -116,76 +118,130 @@ Both scores 0-3, sum/2 and rounded up
 
 ``` {r, tidy psqi}
 #53 missing ParticipantId (blank rows - exclude these)
-part.missing <- psqi %>% 
-  filter(is.na(ParticipantId))
+#psqi %>% filter(is.na(ParticipantId)) %>% nrow()
+
 psqi2 <- psqi %>% 
   filter(!is.na(ParticipantId))
+
 #add age and sex data from demographics
 psqi2 <- psqi2 %>% 
-  left_join(demographics %>%
-              select(ParticipantNo, Sex, age, diagnosis), by  = "ParticipantNo")
-#code diagnosis
-psqi2$diagnosis2 <- plyr::mapvalues(psqi2$diagnosis,
-  from = seq(1, 4),
-  to = c(1, 2, 2, 2)
-) %>%
-  factor(levels = c("1", "2"), labels = c("CD", "UC/IBDU"))
+  left_join(
+    demographics %>% select(ParticipantNo, Sex, age, diagnosis), 
+    by  = "ParticipantNo")
+
+# Recode diagnosis
+psqi2 %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(diagnosis2 = factor(
+    diagnosis2,
+    levels = c("1", "2"),
+    labels = c("CD", "UC/IBDU")
+  ))
 
 #exclude <18 yo = 53 participants (1907 -> 1854)
-psqi2 <- psqi2[psqi2$age > 17,]
+psqi2 %<>% dplyr::filter(age >= 18)
 
 #make sex into level
-psqi2$Sex <- factor(psqi2$Sex, levels = c(1, 2), labels = c("Male", "Female"))
+psqi2 %<>% dplyr::mutate(Sex = factor(
+  Sex,
+  levels = c(1, 2),
+  labels = c("Male", "Female"))
+)
 
 #make age brackets
-psqi2$AgeGroup <- cut(psqi2$age, 
+psqi2 %<>%
+  dplyr::mutate(AgeGroup = cut(age, 
                          breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24",
-                                    "25-34",
-                                    "35-44",
-                                    "45-54",
-                                    "55-64",
-                                    "65+"),
-                         include.lowest = TRUE)
+                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+                         include.lowest = TRUE))
 
 psqi2 <- psqi2 %>% 
   left_join(IBD %>% select(ParticipantNo, FlaresInPastYear),
             by = "ParticipantNo")
+
 #find missing flare data -> 2 participants, these were excluded
-missing_flare <- psqi2 %>%
-  filter(is.na(FlaresInPastYear))
+# This is 7 now?
+#psqi2 %>% filter(is.na(FlaresInPastYear)) %>% nrow()
+
 psqi2 <- psqi2 %>%
   filter(!is.na(FlaresInPastYear))
+
 #create flare groups
 psqi2 <- psqi2 %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0,
                               "No Flares", "1 or More Flares"))
+
 #make flares into levels
-psqi2$flare_group <- factor(psqi2$flare_group,
-                            levels = c( "No Flares","1 or More Flares"))
+psqi2 %<>% 
+  dplyr::mutate(
+    flare_group = factor(flare_group, levels = c( "No Flares","1 or More Flares"))
+  )
 
 psqi2 <- psqi2 %>% 
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
             by = "ParticipantNo")
+
 #204 are missing FC
-missing_fc <- psqi2 %>% 
-  filter(is.na(cat))
+# 211
+#psqi2 %>% filter(is.na(cat)) %>% nrow()
+
 psqi2 <- psqi2 %>% 
   filter(!is.na(cat))
 
 save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-saveRDS(psqi2, paste0(save_path, "psqi_IBD.RDS"))
+#saveRDS(psqi2, paste0(save_path, "psqi_IBD.RDS"))
 
 #delete missing data 
-miss_psqi <- psqi2 %>%
-  filter(rowSums(is.na(select(., c(7, 10, 12, 14:23, 25:28)))) > 0)
+# psqi2 %>%
+#   filter(
+#     dplyr::if_any(.cols = c(7, 10, 12, 14:23, 25:28), .fns = is.na)
+#   ) %>% nrow()
+
 #70 rows with incomplete psqi data were excluded (tot 1784)
-psqi2 <- psqi2 %>%
-  filter(!(rowSums(is.na(select(., c(7, 10, 12, 14:23, 25:28)))) > 0))
-#recode columns 0-3 from 1-4
-if (any(psqi$CantGetToSleep == 4)) {
-  psqi2 <- psqi2 %>% 
-    mutate_at(vars("CantGetToSleep",
+# 58
+
+psqi2 %<>%
+  filter(
+    !dplyr::if_any(.cols = c(7, 10, 12, 14:23, 25:28), .fns = is.na)
+  )
+
+# Correcting columns being coded 1-4 instead of 0-3
+# Checking
+# psqi2 %>%
+#  dplyr::select(c("CantGetToSleep",
+#                    "WakeUpMiddleNight",
+#                    "UseBathroom",
+#                    "CannotBreath",
+#                    "CoughOrSnore",
+#                    "FeelTooCold",
+#                    "FeelTooWarm",
+#                    "BadDreams",
+#                    "HavePain",
+#                    "OtherTroubleSleeping",
+#                    "SleepQuality",
+#                    "SleepMedicines",
+#                    "StayingAwake",
+#                    "EnoughEnthusiasm")) %>%
+#   dplyr::summarise(
+#     dplyr::across(.cols = everything(), .fns = function(x) max(x, na.rm = TRUE))
+#   ) %>%
+#   tidyr::pivot_longer(
+#     cols = everything(),
+#     names_to = "Score",
+#     values_to = "max"
+#   )
+
+psqi2 %<>%
+  dplyr::mutate(
+    dplyr::across(
+      .cols = c("CantGetToSleep",
                    "WakeUpMiddleNight",
                    "UseBathroom",
                    "CannotBreath",
@@ -199,8 +255,8 @@ if (any(psqi$CantGetToSleep == 4)) {
                    "SleepMedicines",
                    "StayingAwake",
                    "EnoughEnthusiasm"),
-              ~ . - 1)
-}
+      .fns = ~. - 1)
+  )
 
 #comp1 (mutate SleepQuality to comp1)
 psqi2 <- psqi2 %>% 
@@ -224,9 +280,13 @@ psqi2 <- psqi2 %>%
   ))
 
 #comp3
+# psqi2 <- psqi2 %>% 
+#   mutate(SleepEachNightMns = ifelse(is.na(BedTimeMns), 0, BedTimeMns)) # Is this an error? Yes
 
-psqi2 <- psqi2 %>% 
-  mutate(SleepEachNightMns = ifelse(is.na(BedTimeMns), 0, BedTimeMns))
+psqi2 %<>%
+  tidyr::replace_na(
+    list(SleepEachNightMns = 0)
+  )
 
 psqi2 <- psqi2 %>%
   mutate(TotalSleepMinutes = SleepEachNightHrs * 60 + SleepEachNightMns,
@@ -238,85 +298,94 @@ psqi2 <- psqi2 %>%
          )) 
 
 #comp4
-
 bedtime_counts <- psqi2 %>%
   group_by(BedTimeHrs) %>%
   summarise(count = n())
+
 pander(bedtime_counts)
+
 ```
 
 
 ```{R}
-# exclude participants 110415 and 110463 - cases in which bed time was accurately
+# Participants 110415 and 110463 - cases in which bed time was accurately
 # reported in 24 hour format (ascertained by bed time being after 12 on 24h
 # clock), one case of 13 mutated to 1 as wakes up at 8.30 and total sleep
 # reported as 7 hour - likely typo. Exclude? For now just amended
 # (PartNo 350001).
-psqi2 <- psqi2 %>%
-  mutate(BedTimeHrs = 
-           ifelse(!(ParticipantNo %in% c(110415, 110463)),
-                  case_when(
-                    BedTimeHrs == 7 ~ 19,
-                    BedTimeHrs == 8 ~ 20,
-                    BedTimeHrs == 9 ~ 21,
-                    BedTimeHrs == 10 ~ 22,
-                    BedTimeHrs == 11 ~ 23,
-                    BedTimeHrs == 12 ~ 00,
-                    BedTimeHrs == 13 ~ 1,
-                    BedTimeHrs == 0 ~ 00,
-                    BedTimeHrs == 1 ~ 01,
-                    BedTimeHrs == 2 ~ 02,
-                    BedTimeHrs == 3 ~ 03,
-                    BedTimeHrs == 4 ~ 04,
-                    TRUE ~ BedTimeHrs
-                  ),
-                  BedTimeHrs
-           )
-         )
 
+# Correcting non 24h clock entries.
+psqi2<- psqi2 %>%
+  dplyr::mutate(
+    BedTimeHrs = dplyr::case_when(
+      ParticipantNo %in% c(110415, 110463) ~ BedTimeHrs,
+      BedTimeHrs == 7 ~ 19,
+      BedTimeHrs == 8 ~ 20,
+      BedTimeHrs == 9 ~ 21,
+      BedTimeHrs == 10 ~ 22,
+      BedTimeHrs == 11 ~ 23,
+      BedTimeHrs == 12 ~ 00,
+      BedTimeHrs == 13 ~ 1,
+      BedTimeHrs == 0 ~ 00,
+      BedTimeHrs == 1 ~ 01,
+      BedTimeHrs == 2 ~ 02,
+      BedTimeHrs == 3 ~ 03,
+      BedTimeHrs == 4 ~ 04,
+      TRUE ~ BedTimeHrs
+    )
+  )
 
 #if mins bed time/wake up time is na assume 0
-psqi2 <- psqi2 %>% 
-  mutate(BedTimeMns = ifelse(is.na(BedTimeMns), 0, BedTimeMns))
-
-psqi2 <- psqi2 %>% 
-  mutate(WokenUpMns = ifelse(is.na(WokenUpMns), 0, WokenUpMns))
+psqi2 %<>%
+  tidyr::replace_na(
+    list(BedTimeMns = 0, 
+         WokenUpMns = 0)
+  )
 
 #Three obvious typos found, 2 corrected above + 1 excluded (found when looking at TotalSleepMins - calculated later)
 #Participant 170004 Bed time 22.30 wake up 20.00 reported 5 hours total sleep - exclude
 psqi2 <- psqi2 %>%
   filter(ParticipantNo != 170004)
+
 #Participant No 110351 woken up hours 16, should be 6 - corrected above
+
 #Participant 120042 woken up hours 19 but with other data provided would be logical for this to be 9 - correct this
 psqi2 <- psqi2 %>%
-  mutate(WokenUpHrs = ifelse(ParticipantNo == 110351, 6, WokenUpHrs))
+  mutate(WokenUpHrs = dplyr::case_when(
+    ParticipantNo == 110351 ~ 6, 
+    ParticipantNo == 120042 ~ 9,
+    .default = WokenUpHrs))
+
+# Calculate time spent in bed as difference between bed time and wake up time
+# Create date times using lubridate and calculate interval
 psqi2 <- psqi2 %>%
-  mutate(WokenUpHrs = ifelse(ParticipantNo == 120042, 9, WokenUpHrs))
+  dplyr::mutate(
+    # Bed Time - automatically sets to 1970-01-01
+    BedTimeDT = lubridate::make_datetime(hour = BedTimeHrs, min = BedTimeMns),
+    # Wake up next morning 1970-01-02
+    WokenUpDT = lubridate::make_datetime(day = 2, hour = WokenUpHrs, min = WokenUpMns))
 
-#calculate how many 'minutes' into the day (by 24 hour clock time x 60 + minutes at bed time). This value will be ignored for those going to bed after twelve.
-psqi2 <- psqi2 %>%   
-mutate(BedTime24hMins = BedTimeHrs * 60 + BedTimeMns) 
+# If asleep after midnight, correct the day
+psqi2 %<>%
+  dplyr::mutate(
+    BedTimeDT = dplyr::case_when(
+      BedTimeHrs >= 0 & BedTimeHrs <= 8 ~ BedTimeDT + lubridate::days(1),
+      TRUE ~ BedTimeDT
+    )
+  )
 
-#calculate time slept before midnight - note this code only applies to bed times of 19.00-23.00
-
-psqi2 <- psqi2 %>% 
-    mutate(BedBefore12Mins = 1440 - BedTime24hMins)
-
-psqi2 <- psqi2 %>% 
-  mutate(BedAfter12Mins = WokenUpHrs * 60 + WokenUpMns)
-
-psqi2 <- psqi2 %>% 
-  mutate(TotalBedMinutes = 
-           ifelse(BedTimeHrs %in% c(19, 20, 21, 22, 23), 
-                  BedBefore12Mins + BedAfter12Mins, 
-                  BedAfter12Mins - BedTime24hMins)
-         )
-
+# Calculate total minutes in bed
+psqi2 %<>%
+  dplyr::mutate(
+    TotalBedMinutes = lubridate::interval(BedTimeDT, WokenUpDT)/lubridate::minutes()
+  )
 
 #calculate comp 4
+# Sleep efficiency
 psqi2 <- psqi2 %>% 
   mutate(SleepEff = TotalSleepMinutes/TotalBedMinutes * 100)
 
+# Convert to a 0-3 scale score.
 psqi2 <- psqi2 %>%
   mutate(comp4 = case_when(
     SleepEff < 65 ~ 3, 
@@ -324,6 +393,9 @@ psqi2 <- psqi2 %>%
     SleepEff < 85 ~ 1,
     SleepEff >= 85 ~ 0, 
   ))
+
+
+
 
 #comp 5 
 psqi2 <- psqi2 %>%
@@ -335,6 +407,7 @@ psqi2 <- psqi2 %>%
     TotalTrouble <= 18 ~ 2,
     TotalTrouble <= 27 ~ 3, 
   ))
+
 psqi2 <- psqi2 %>% 
   select(-TotalTrouble)
 
