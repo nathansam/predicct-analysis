@@ -11,7 +11,8 @@ author:
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
 ```
 
-```{r load libraries, warn.conflicts = FALSE}
+```{r load libraries, warn.conflicts=FALSE}
+#| include: false
 set.seed(123)
 library(plyr) # Used for mapping values
 suppressPackageStartupMessages(library(tidyverse)) # ggplot2, dplyr, and magrittr
@@ -184,7 +185,9 @@ phq_clean %<>%
 #add flare data, FC, smoking
 #flare data from IBD data set
 phq_clean <- phq_clean %>% 
-  left_join(IBD %>% select(ParticipantNo, FlaresInPastYear))
+  left_join(
+    IBD %>% select(ParticipantNo, FlaresInPastYear),
+    by = 'ParticipantNo')
 
 #find missing flare data -> 4 participants, these were excluded
 # phq_clean %>% filter(is.na(FlaresInPastYear)) %>% nrow()
@@ -198,17 +201,21 @@ phq_clean <- phq_clean %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0, "No Flares", "1 or More Flares"))
 
 #make flares into levels
-phq_clean %>% 
+phq_clean %<>% 
   dplyr::mutate(
     flare_group = factor(flare_group, levels = c( "No Flares","1 or More Flares"))
   )
 
 phq_clean <- phq_clean %>% 
-  left_join(smoking %>% select(ParticipantNo, Smoke))
+  left_join(
+    smoking %>% select(ParticipantNo, Smoke),
+    by = 'ParticipantNo')
 
 #204 patient smissing fc data so new dataset for this
 phq_clean <- phq_clean %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD))
+  left_join(
+    demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
+    by = 'ParticipantNo')
 
 #tot 1608 participants
 phq_clean <- phq_clean %>% 
@@ -218,7 +225,7 @@ save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 #saveRDS(phq_clean, paste0(save_path, "phq_clean.RDS"))
 ```
 
-Here we present somatisation prevalance across the cohort.
+Here we present somatisation prevalence across the cohort.
 
 ```{r, average somatisation score across groups, table for whole cohort PHQ}
 my.render.cont <- function(x) {
@@ -258,9 +265,11 @@ Somatisation scores are:
 ```{r, distribution of scores for sex and disease type}
 # Sex
 contingency_table <- table(phq_clean$Sex, phq_clean$somatisation)
+
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -289,6 +298,7 @@ contingency_table <- table(phq_clean$diagnosis2, phq_clean$somatisation)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -387,7 +397,7 @@ Here we investigate whether somatisation scores in CD and UC/IBDU patients have 
 
 ```{r, CROHNS AND SOMATISATION}
 
-CD_phq <- phq_clean[phq_clean$diagnosis2 == "CD",]
+CD_phq <- phq_clean %>% dplyr::filter(diagnosis2 == "CD")
 #total 811 CD patients
 ```
 
@@ -419,6 +429,7 @@ contingency_table <- table(CD_phq$Sex, CD_phq$somatisation)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -434,6 +445,7 @@ print(contingency_table)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -445,8 +457,10 @@ if (chi_squared_result$p.value < alpha) {
 #age - p-value = 0.02
 contingency_table <- table(CD_phq$AgeGroup, CD_phq$somatisation)
 contingency_table
+
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -459,8 +473,10 @@ if (chi_squared_result$p.value < alpha) {
 #FC - 
 contingency_table <- table(CD_phq$cat, CD_phq$somatisation)
 contingency_table
+
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -479,7 +495,7 @@ if (chi_squared_result$p.value < alpha) {
 
 ```{r, UC/IBDU AND SOMATISATION}
 
-UC_phq <- phq_clean[phq_clean$diagnosis2 == "UC/IBDU",]
+UC_phq <- phq_clean %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 #total 904 CD patients
 ```
 
@@ -510,6 +526,7 @@ contingency_table <- table(UC_phq$Sex, UC_phq$somatisation)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -525,6 +542,7 @@ print(contingency_table)
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -538,6 +556,7 @@ contingency_table <- table(UC_phq$AgeGroup, UC_phq$somatisation)
 contingency_table
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -552,6 +571,7 @@ contingency_table <- table(UC_phq$cat, UC_phq$somatisation)
 contingency_table
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
+
 # Check if the result is significant at a certain alpha level (e.g., 0.05)
 alpha <- 0.05
 if (chi_squared_result$p.value < alpha) {
@@ -589,28 +609,43 @@ cox.summary <- function(fit) {
 
 
 phq_soft <- phq_clean %>% 
-  inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 
+  inner_join(
+    flares_soft %>% select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo') %>% 
   rename(DiseaseFlareYN = softflare, time = softflare_time)
+
 phq_hard <- phq_clean %>% 
-  inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time)) %>% 
+  inner_join(
+    flares_hard %>% select(ParticipantNo, hardflare, hardflare_time),
+    by = 'ParticipantNo') %>% 
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)  
   
 CD_phq_soft <- CD_phq %>% 
-  inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 
+  inner_join(
+    flares_soft %>% select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo') %>% 
   rename(DiseaseFlareYN = softflare, time = softflare_time)
+
 CD_phq_hard <- CD_phq %>% 
-  inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time)) %>% 
+  inner_join(
+    flares_hard %>% select(ParticipantNo, hardflare, hardflare_time),
+    by = 'ParticipantNo') %>% 
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 UC_phq_soft <- UC_phq %>% 
-  inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 
+  inner_join(
+    flares_soft %>% select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo') %>% 
   rename(DiseaseFlareYN = softflare, time = softflare_time)
+
 UC_phq_hard <- UC_phq %>% 
-  inner_join(flares_hard %>% select(ParticipantNo, hardflare, hardflare_time)) %>% 
+  inner_join(
+    flares_hard %>% select(ParticipantNo, hardflare, hardflare_time),
+    by = 'ParticipantNo') %>% 
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 ```
 
-### Whole cohoort
+### Whole cohort
 
 Patient-reported flare
 
