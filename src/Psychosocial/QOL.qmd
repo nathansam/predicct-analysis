@@ -362,6 +362,8 @@ QOL <- QOL %>%
 
 Physical score (PSC12) and mental health scores (MCS12) were not normally distributed therefore differences across groups were tested using Mann-Whitney U test (comparing 2 groups: diagnosis type, sex, flares last year) or Kruksal-Wallis (comparing >2 groups: age groups, faecal calprotectin category).
 
+Note: For PSC12 and MCS12, a higher score indicates better health.
+
 ```{r, investigating distribution of scores}
 plot(density(QOL$PSC12))
 
@@ -455,11 +457,26 @@ table1::table1(~ MCS12 | diagnosis2,
 )
 
 #Mann-Whitney-U PSC12
+QOL %>% 
+  ggplot() +
+  geom_density(
+    aes(x = PSC12, colour = diagnosis2)
+  )
+
 pairwise_tests <- pairwise.wilcox.test(QOL$PSC12, QOL$diagnosis2, p.adjust.method = "bonferroni")
 print(pairwise_tests)
+
 #Mann-Whitney-U MCS12
+QOL %>% 
+  ggplot() +
+  geom_density(
+    aes(x = MCS12, colour = diagnosis2)
+  )
+
 pairwise_tests <- pairwise.wilcox.test(QOL$MCS12, QOL$diagnosis2, p.adjust.method = "bonferroni")
 print(pairwise_tests)
+
+# Note: consider a different p adjust than bonferroni?
 
 ```
 
@@ -487,11 +504,23 @@ table1::table1(~ MCS12 | Sex,
 )
 
 #Mann-Whitney-U
+QOL %>% 
+  ggplot() +
+  geom_density(
+    aes(x = PSC12, colour = Sex)
+  )
+
 pairwise_tests <- pairwise.wilcox.test(QOL$PSC12, QOL$Sex, p.adjust.method = "bonferroni")
 print(pairwise_tests)
 
 #mental health
 #Mann-Whitney-U
+QOL %>% 
+  ggplot() +
+  geom_density(
+    aes(x = MCS12, colour = Sex)
+  )
+
 pairwise_tests <- pairwise.wilcox.test(QOL$MCS12, QOL$Sex, p.adjust.method = "bonferroni")
 print(pairwise_tests)
 
@@ -501,7 +530,7 @@ print(pairwise_tests)
 
 ###Age Group
 
-There is a tatistically significant difference between age groups in PSC12 score, p-value = 4.06e-13
+There is a statistically significant difference between age groups in PSC12 score, p-value = 4.06e-13
 There is a statistially significant difference between age groups in MCS12 score, p-value = 0.0001116
 
 ```{r, PSC12 and MCS12 AgeGroup}
@@ -511,6 +540,11 @@ table1::table1(~ PSC12 | AgeGroup,
   caption = "Summary Statistics of PSC12 by Age Group"
 )
 
+# Violin plot
+QOL %>%
+  ggplot() +
+  geom_violin(aes(x = AgeGroup, y = PSC12))
+
 #mental health
 
 table1::table1(~ MCS12 | AgeGroup,
@@ -518,6 +552,11 @@ table1::table1(~ MCS12 | AgeGroup,
   render.continuous = my.render.cont,
   caption = "Summary Statistics of MCS12 by Age Group"
 )
+
+# Violin plot
+QOL %>%
+  ggplot() +
+  geom_density(aes(x = MCS12, colour = AgeGroup))
 
 #Kruksal Wallis test
 kruskal.test(PSC12 ~ AgeGroup, data = QOL)
@@ -545,6 +584,18 @@ table1::table1(~ MCS12 | flare_group,
   render.continuous = my.render.cont,
   caption = "Summary Statistics of MCS12 by flares in previous year"
 )
+
+QOL %>% 
+  ggplot() +
+  geom_density(
+    aes(x = PSC12, colour = flare_group)
+  )
+
+QOL %>% 
+  ggplot() +
+  geom_density(
+    aes(x = MCS12, colour = flare_group)
+  )
 
 #Mann-Whitney-U
 pairwise_tests <- pairwise.wilcox.test(QOL$PSC12, QOL$flare_group, p.adjust.method = "bonferroni")
@@ -574,6 +625,15 @@ table1::table1(~ MCS12 | cat,
   caption = "Summary Statistics of MCS12 by FC category"
 )
 
+QOL %>%
+  ggplot() +
+  geom_violin(aes(x = cat, y = PSC12))
+
+QOL %>%
+  ggplot() +
+  geom_violin(aes(x = cat, y = MCS12))
+
+
 #Kruksal Wallis test
 kruskal.test(PSC12 ~ cat, data = QOL)
 
@@ -594,6 +654,7 @@ Analyses were re-run using chi-squared to compare grouped SF12 scores - there wa
 ```{r, cut offs an re-analyse for associations}
 QOL <- QOL %>% 
   mutate(PSC_grouped = ifelse(PSC12 >= 50, "50+", "<50"))
+
 QOL <- QOL %>% 
   mutate(MCS_grouped = ifelse(MCS12 >= 42, "42+", "<42"))
 ```
@@ -634,6 +695,7 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat  | MCS_grouped,
 ```{r, PSC12 and grouped associations}
 contingency_table <- table(QOL$diagnosis2, QOL$PSC_grouped)
 print(contingency_table)
+
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
@@ -705,6 +767,7 @@ if (chi_squared_result$p.value < alpha) {
 
 contingency_table <- table(QOL$diagnosis2, QOL$MCS_grouped)
 print(contingency_table)
+
 #chi.sq
 chi_squared_result <- chisq.test(contingency_table)
 print(chi_squared_result)
