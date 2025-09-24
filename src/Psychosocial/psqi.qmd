@@ -395,18 +395,20 @@ psqi2 <- psqi2 %>%
   ))
 
 
-
-
 #comp 5 
 psqi2 <- psqi2 %>%
-  mutate(TotalTrouble = rowSums(select(.,
-                                       WakeUpMiddleNight:OtherTroubleSleeping)),
-         comp5 = case_when(
-    TotalTrouble == 0 ~ 0, 
-    TotalTrouble <= 9 ~ 1,
-    TotalTrouble <= 18 ~ 2,
-    TotalTrouble <= 27 ~ 3, 
-  ))
+  mutate(TotalTrouble = rowSums(select(., WakeUpMiddleNight:OtherTroubleSleeping)))
+
+# Categorise
+psqi2 %<>%
+  dplyr::mutate(
+    comp5 = dplyr::case_when(
+      TotalTrouble == 0 ~ 0, 
+      TotalTrouble <= 9 ~ 1,
+      TotalTrouble <= 18 ~ 2,
+      TotalTrouble <= 27 ~ 3
+    )
+  )
 
 psqi2 <- psqi2 %>% 
   select(-TotalTrouble)
@@ -417,12 +419,14 @@ psqi2 <- psqi2 %>%
 
 #comp7
 psqi2 <- psqi2 %>% 
-  mutate(comp7 = case_when(
-    (StayingAwake + EnoughEnthusiasm) %in% c(0) ~ 0,
-    (StayingAwake + EnoughEnthusiasm) %in% c(1, 2) ~ 1,
-    (StayingAwake + EnoughEnthusiasm) %in% c(3, 4) ~ 2,
-    (StayingAwake + EnoughEnthusiasm) %in% c(5, 6) ~ 3
-  ))
+  mutate(
+    comp7 = case_when(
+      (StayingAwake + EnoughEnthusiasm) %in% c(0) ~ 0,
+      (StayingAwake + EnoughEnthusiasm) %in% c(1, 2) ~ 1,
+      (StayingAwake + EnoughEnthusiasm) %in% c(3, 4) ~ 2,
+      (StayingAwake + EnoughEnthusiasm) %in% c(5, 6) ~ 3
+    )
+  )
 
 #TotalComp
 psqi2 <- psqi2 %>% 
@@ -430,10 +434,10 @@ psqi2 <- psqi2 %>%
 
 #score > 5 is "poor sleep"
 psqi2 <- psqi2 %>%
-  mutate(SleepDisturbance = if_else(TotalScore < 6, "No", "Yes"))
+  mutate(SleepDisturbance = if_else(TotalScore <= 5, "No", "Yes"))
 
 #tidy psqi2}
-psqi2 <- psqi2[, -(7:35)]
+psqi2 <- psqi2 %>% dplyr::select(-(7:35))
 ```
 
 ## Baseline associations
