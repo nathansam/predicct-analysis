@@ -35,15 +35,15 @@ summon_chisq_test <- function(data, dependent, independent) {
   
 }
 
-# Test
-dependent = 'score_group'
-independent = c('diagnosis2',
-                'AgeGroup',
-                'Sex',
-                'flare_group',
-                'cat')
-
-summon_chisq_test(data = data_baseline, dependent = dependent, independent = independent)
+# # Test
+# dependent = 'score_group'
+# independent = c('diagnosis2',
+#                 'AgeGroup',
+#                 'Sex',
+#                 'flare_group',
+#                 'cat')
+# 
+# summon_chisq_test(data = data_baseline, dependent = dependent, independent = independent)
 
 
 # Creating proportions for plotting baseline data
@@ -60,20 +60,9 @@ calc_proportion <- function(data, dependent, independent){
 }
 
 # Function to create all baseline plots
-# State dependent and independent variables
-dependent = 'score_group'
 
-data = data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads')
 
-summon_baseline_plots <- function(data, dependent) {
-  
-  # Independent variables
-  independent = c('diagnosis2',
-                  'AgeGroup',
-                  'Sex',
-                  'flare_group',
-                  'cat')
+summon_baseline_plots <- function(data, dependent, independent) {
   
   # Chi squared tests
   chisq_results <- summon_chisq_test(
@@ -87,115 +76,82 @@ summon_baseline_plots <- function(data, dependent) {
   
   # Creating plots for baseline variables with the dependent variable
   
-  # Diagnosis
-  p_diagnosis <- data %>%
-    calc_proportion(., dependent = dependent, independent = 'diagnosis2') %>%
-    ggplot(aes(x = score_group, y = p, fill = diagnosis2)) +
+  plot_list <- list()
+  
+  for (y in independent) {
+    
+    # Create a plot for each independent variable
+    
+    plot <- data %>%
+      calc_proportion(., dependent = x, independent = y) %>%
+      ggplot(aes(x = .data[[dependent]], y = p, fill = .data[[y]])) +
+      geom_col(position = 'dodge') +
+      annotate(
+        "text",
+        label = paste0("Adjusted p-value: ", chisq_results[[y]]),
+        x = Inf,
+        y = Inf,
+        vjust = 2,
+        hjust = 1.3
+      )
+    
+    plot_list[[y]] <- plot
+    
+  }
+  
+  # Return the plots
+  plot_list
+  
+}
+    
+
+
+
+# Test with HADS data
+# State dependent and independent variables
+dependent = 'score_group'
+
+data = data_baseline_anxiety
+
+baseline_plots <- summon_baseline_plots(data = data, dependent = 'score_group')
+
+baseline_plots$diagnosis2
+baseline_plots$AgeGroup
+baseline_plots$Sex
+baseline_plots$flare_group
+baseline_plots$cat
+
+
+
+dependent = 'score_group'
+independent = c('diagnosis2',
+                'AgeGroup',
+                'Sex',
+                'flare_group',
+                'cat')
+
+
+plot_list <- list()
+
+for (y in independent) {
+  
+  plot <- data %>%
+    calc_proportion(., dependent = x, independent = y) %>%
+    ggplot(aes(x = .data[[dependent]], y = p, fill = .data[[y]])) +
     geom_col(position = 'dodge') +
-    # geom_text(
-    #   aes(label = diagnosis2),
-    #   angle = 90,
-    #   position = position_dodge(width = 0.9),
-    #   hjust = -0.1
-    # ) +
     annotate(
       "text",
-      label = paste0("Adjusted p-value: ", chisq_results$diagnosis2),
-      x = Inf, y = Inf, vjust = 2, hjust = 1.3
+      label = paste0("Adjusted p-value: ", chisq_results[[y]]),
+      x = Inf,
+      y = Inf,
+      vjust = 2,
+      hjust = 1.3
     )
   
-  # Sex
-  p_sex <- data %>%
-    calc_proportion(., dependent = dependent, independent = 'Sex') %>%
-    ggplot(aes(x = score_group, y = p, fill = Sex)) +
-    geom_col(position = 'dodge') +
-    # geom_text(
-    #   aes(label = Sex),
-    #   angle = 90,
-    #   position = position_dodge(width = 0.9),
-    #   size = 5,
-    #   hjust = -Inf
-    # ) +
-    annotate(
-      "text",
-      label = paste0("Adjusted p-value: ", chisq_results$Sex),
-      x = Inf, y = Inf, vjust = 2, hjust = 1.3
-    )
+  #assign(plot_name, plot)
   
-  # Age Group
-  p_age <- data %>%
-    calc_proportion(., dependent = dependent, independent = 'AgeGroup') %>%
-    ggplot(aes(x = score_group, y = p, fill = AgeGroup)) +
-    geom_col(position = 'dodge') +
-    # geom_text(
-    #   aes(label = AgeGroup),
-    #   angle = 90,
-    #   position = position_dodge(width = 0.9),
-    #   hjust = -0.1
-    # ) +
-    annotate(
-      "text",
-      label = paste0("Adjusted p-value: ", chisq_results$AgeGroup),
-      x = Inf, y = Inf, vjust = 2, hjust = 1.3
-    )
+  plot_list[[y]] <- plot
   
-  # Flare Group
-  p_flare <- data %>%
-    calc_proportion(., dependent = dependent, independent = 'flare_group') %>%
-    ggplot(aes(x = score_group, y = p, fill = flare_group)) +
-    geom_col(position = 'dodge') +
-    # geom_text(
-    #   aes(label = flare_group),
-    #   angle = 90,
-    #   position = position_dodge(width = 0.9),
-    #   hjust = -0.1
-    # ) +
-    annotate(
-      "text",
-      label = paste0("Adjusted p-value: ", chisq_results$flare_group),
-      x = Inf, y = Inf, vjust = 2, hjust = 1.3
-    )
-  
-  # FC Cat
-  p_cat <- data %>%
-    calc_proportion(., dependent = dependent, independent = 'cat') %>%
-    ggplot(aes(x = score_group, y = p, fill = cat)) +
-    geom_col(position = 'dodge') +
-    # geom_text(
-    #   aes(label = cat),
-    #   angle = 90,
-    #   position = position_dodge(width = 0.9),
-    #   hjust = -0.1
-    # ) +
-    annotate(
-      "text",
-      label = paste0("Adjusted p-value: ", chisq_results$cat),
-      x = Inf, y = Inf, vjust = 2, hjust = 1.3
-    )
-  
-  # Combine with patchwork
-  # p_diagnosis +
-  #   p_age +
-  #   p_sex +
-  #   p_flare +
-  #   p_cat +
-  #   patchwork::plot_layout(ncol = 2)
-  
-  list(
-    "diagnosis2" = p_diagnosis,
-    "AgeGroup" = p_age,
-    "Sex" = p_sex,
-    "flare_group" = p_flare,
-    "cat" = p_cat
-  )
 }
 
-
-# Test
-# baseline_plots <- summon_baseline_plots(data = data, dependent = 'score_group')
-# 
-# baseline_plots$diagnosis2
-# baseline_plots$AgeGroup
-# baseline_plots$Sex
-# baseline_plots$flare_group
-# baseline_plots$cat
+# Return plots in a list
