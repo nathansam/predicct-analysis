@@ -92,16 +92,16 @@ summon_baseline_plots <- function(data, dependent) {
     calc_proportion(., dependent = dependent, independent = 'diagnosis2') %>%
     ggplot(aes(x = score_group, y = p, fill = diagnosis2)) +
     geom_col(position = 'dodge') +
-    geom_text(
-      aes(label = diagnosis2),
-      angle = 90,
-      position = position_dodge(width = 0.9),
-      hjust = -0.1
-    ) +
+    # geom_text(
+    #   aes(label = diagnosis2),
+    #   angle = 90,
+    #   position = position_dodge(width = 0.9),
+    #   hjust = -0.1
+    # ) +
     annotate(
       "text",
       label = paste0("Adjusted p-value: ", chisq_results$diagnosis2),
-      x = Inf, y = Inf, vjust = 1.1, hjust = 1.5
+      x = Inf, y = Inf, vjust = 2, hjust = 1.3
     )
   
   # Sex
@@ -109,16 +109,17 @@ summon_baseline_plots <- function(data, dependent) {
     calc_proportion(., dependent = dependent, independent = 'Sex') %>%
     ggplot(aes(x = score_group, y = p, fill = Sex)) +
     geom_col(position = 'dodge') +
-    geom_text(
-      aes(label = Sex),
-      angle = 90,
-      position = position_dodge(width = 0.9),
-      hjust = -0.1
-    ) +
+    # geom_text(
+    #   aes(label = Sex),
+    #   angle = 90,
+    #   position = position_dodge(width = 0.9),
+    #   size = 5,
+    #   hjust = -Inf
+    # ) +
     annotate(
       "text",
       label = paste0("Adjusted p-value: ", chisq_results$Sex),
-      x = Inf, y = Inf, vjust = 1.1, hjust = 1.5
+      x = Inf, y = Inf, vjust = 2, hjust = 1.3
     )
   
   # Age Group
@@ -126,16 +127,16 @@ summon_baseline_plots <- function(data, dependent) {
     calc_proportion(., dependent = dependent, independent = 'AgeGroup') %>%
     ggplot(aes(x = score_group, y = p, fill = AgeGroup)) +
     geom_col(position = 'dodge') +
-    geom_text(
-      aes(label = AgeGroup),
-      angle = 90,
-      position = position_dodge(width = 0.9),
-      hjust = -0.1
-    ) +
+    # geom_text(
+    #   aes(label = AgeGroup),
+    #   angle = 90,
+    #   position = position_dodge(width = 0.9),
+    #   hjust = -0.1
+    # ) +
     annotate(
       "text",
       label = paste0("Adjusted p-value: ", chisq_results$AgeGroup),
-      x = Inf, y = Inf, vjust = 1.1, hjust = 1.5
+      x = Inf, y = Inf, vjust = 2, hjust = 1.3
     )
   
   # Flare Group
@@ -143,16 +144,16 @@ summon_baseline_plots <- function(data, dependent) {
     calc_proportion(., dependent = dependent, independent = 'flare_group') %>%
     ggplot(aes(x = score_group, y = p, fill = flare_group)) +
     geom_col(position = 'dodge') +
-    geom_text(
-      aes(label = flare_group),
-      angle = 90,
-      position = position_dodge(width = 0.9),
-      hjust = -0.1
-    ) +
+    # geom_text(
+    #   aes(label = flare_group),
+    #   angle = 90,
+    #   position = position_dodge(width = 0.9),
+    #   hjust = -0.1
+    # ) +
     annotate(
       "text",
       label = paste0("Adjusted p-value: ", chisq_results$flare_group),
-      x = Inf, y = Inf, vjust = 1.1, hjust = 1.5
+      x = Inf, y = Inf, vjust = 2, hjust = 1.3
     )
   
   # FC Cat
@@ -160,16 +161,16 @@ summon_baseline_plots <- function(data, dependent) {
     calc_proportion(., dependent = dependent, independent = 'cat') %>%
     ggplot(aes(x = score_group, y = p, fill = cat)) +
     geom_col(position = 'dodge') +
-    geom_text(
-      aes(label = cat),
-      angle = 90,
-      position = position_dodge(width = 0.9),
-      hjust = -0.1
-    ) +
+    # geom_text(
+    #   aes(label = cat),
+    #   angle = 90,
+    #   position = position_dodge(width = 0.9),
+    #   hjust = -0.1
+    # ) +
     annotate(
       "text",
       label = paste0("Adjusted p-value: ", chisq_results$cat),
-      x = Inf, y = Inf, vjust = 1.1, hjust = 1.5
+      x = Inf, y = Inf, vjust = 2, hjust = 1.3
     )
   
   # Combine with patchwork
@@ -191,10 +192,10 @@ summon_baseline_plots <- function(data, dependent) {
 
 
 # Test
-baseline_plots <- summon_baseline_plots(data = data, dependent = 'score_group')
-
-baseline_plots$diagnosis2
-baseline_plots$AgeGroup
-baseline_plots$Sex
-baseline_plots$flare_group
-baseline_plots$cat
+# baseline_plots <- summon_baseline_plots(data = data, dependent = 'score_group')
+# 
+# baseline_plots$diagnosis2
+# baseline_plots$AgeGroup
+# baseline_plots$Sex
+# baseline_plots$flare_group
+# baseline_plots$cat

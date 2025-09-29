@@ -18,14 +18,15 @@ hads_for_analysis %<>%
   )
 
 # Convert to factor
-hads_control %<>% dplyr::mutate(
+hads_for_analysis %<>% dplyr::mutate(
   control_grouped = factor(control_grouped),
   vas_control = factor(vas_control)
 )
 
 # Data is called hads_for_analysis
-# Rename as data baseline
-data_baseline <- hads_for_analysis
+# also contains control scores for whom some will have NA, but they will
+# automatically get filtered out by survival methods.
+
 
 # Survival data
 # Hard flares
@@ -66,87 +67,51 @@ data_baseline %>%
   geom_line(aes(x = hads_score, y = cumsum, colour = hads_type))
 
 
-# Bar plots for baseline variables and hads score group
+# Data split into analysis groups
+# Anxiety, full cohort
+data_baseline_anxiety <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'anxiety_hads')
 
-calc_proportion <- function(data, dependent, independent){
-  
-  data %>%
-    dplyr::group_by(!!rlang::sym(independent), !!rlang::sym(dependent)) %>%
-    dplyr::count() %>%
-    # dplyr::group_by(!!rlang::sym(independent)) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(p = n/sum(n)) 
-  
-}
+# Depression, full cohort
+data_baseline_depression <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'depression_hads')
 
-# Diagnosis 
-data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  calc_proportion(., dependent = 'score_group', independent = 'diagnosis2') %>%
-  ggplot(aes(x = score_group, y = p, fill = diagnosis2)) +
-  geom_col(position = 'dodge') +
-  geom_text(aes(label = diagnosis2), angle = 90, position = position_dodge(width = 0.9), hjust = -0.1)
+# Survival, soft anxiety
+data_survival_soft_anxiety <- data_survival_soft %>%
+  dplyr::filter(hads_type == 'anxiety_hads')
 
-# Sex
-data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  calc_proportion(., hads = 'anxiety_hads', dependent = 'score_group', independent = 'Sex') %>%
-  ggplot(aes(x = score_group, y = p, fill = Sex)) +
-  geom_col(position = 'dodge') +
-  geom_text(aes(label = Sex), angle = 90, position = position_dodge(width = 0.9), hjust = -0.1)
-
-# Age Group
-data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  calc_proportion(., hads = 'anxiety_hads', dependent = 'score_group', independent = 'AgeGroup') %>%
-  ggplot(aes(x = score_group, y = p, fill = AgeGroup)) +
-  geom_col(position = 'dodge') +
-  geom_text(aes(label = AgeGroup), angle = 90, position = position_dodge(width = 0.9), hjust = -0.1)
-
-# Flare Group
-data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  calc_proportion(., hads = 'anxiety_hads', dependent = 'score_group', independent = 'flare_group') %>%
-  ggplot(aes(x = score_group, y = p, fill = flare_group)) +
-  geom_col(position = 'dodge') +
-  geom_text(aes(label = flare_group), angle = 90, position = position_dodge(width = 0.9), hjust = -0.1)
-
-# FC Cat
-data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  calc_proportion(., hads = 'anxiety_hads', dependent = 'score_group', independent = 'cat') %>%
-  ggplot(aes(x = score_group, y = p, fill = cat)) +
-  geom_col( position = 'dodge') +
-  geom_text(aes(label = cat), angle = 90, position = position_dodge(width = 0.9), hjust = -0.1)
-
-# Control 8
-data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  dplyr::filter(!is.na(control_grouped)) %>%
-  calc_proportion(., hads = 'anxiety_hads', dependent = 'score_group', independent = 'control_grouped') %>%
-  ggplot(aes(x = score_group, y = p, fill = control_grouped)) +
-  geom_col(position = 'dodge') +
-  geom_text(aes(label = control_grouped), angle = 90, position = position_dodge(width = 0.9), hjust = -0.1)
-
-# Control vas
-data_baseline %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  dplyr::filter(!is.na(vas_control)) %>%
-  calc_proportion(., hads = 'anxiety_hads', dependent = 'score_group', independent = 'vas_control') %>%
-  ggplot(aes(x = score_group, y = p, fill = vas_control)) +
-  geom_col(position = 'dodge') +
-  geom_text(aes(label = vas_control), angle = 90, position = position_dodge(width = 0.9), hjust = -0.1)
+# Survival, soft depression
+data_survival_soft_depression <- data_survival_soft %>%
+  dplyr::filter(hads_type == 'depression_hads')
 
 
-# Need to repeat for depression, then separated into CD and UC.
+
+# Baseline plots
+# Anxiety
+baseline_plots_anxiety <- summon_baseline_plots(data = data_baseline_anxiety, dependent = 'score_group')
+
+baseline_plots_anxiety$diagnosis2
+baseline_plots_anxiety$AgeGroup
+baseline_plots_anxiety$Sex
+baseline_plots_anxiety$flare_group
+baseline_plots_anxiety$cat
+
+# Depression
+baseline_plots_depression <- summon_baseline_plots(data = data_baseline_depression, dependent = 'score_group')
+
+baseline_plots_depression$diagnosis2
+baseline_plots_depression$AgeGroup
+baseline_plots_depression$Sex
+baseline_plots_depression$flare_group
+baseline_plots_depression$cat
+
 
 
 # Survival analysis ####
 
 # Kaplan Meier
 # Soft
-data_survival_soft %>%
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
+data_survival_soft_anxiety %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
   ggsurvplot(., data = data_survival_soft, conf.int = TRUE, ggtheme = theme_minimal())
 
@@ -159,7 +124,8 @@ data_survival_hard %>%
 
 # Cox model
 # Soft
-cox_soft <- coxph(
+# Anxiety
+cox_soft_anxiety <- coxph(
   Surv(time, DiseaseFlareYN) ~
     score_group +
     IMD +
@@ -167,14 +133,14 @@ cox_soft <- coxph(
     AgeGroup +
     cat +
     frailty(SiteNo),
-  data = data_survival_soft
+  data = data_survival_soft_anxiety
 )
 
-cox_soft %>%
+cox_soft_anxiety %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 
-# Hard
-cox_hard <- coxph(
+# Depression
+cox_soft_depression <- coxph(
   Surv(time, DiseaseFlareYN) ~
     score_group +
     IMD +
@@ -182,8 +148,42 @@ cox_hard <- coxph(
     AgeGroup +
     cat +
     frailty(SiteNo),
-  data = data_survival_hard
+  data = data_survival_soft_depression
 )
 
-cox_hard %>%
+cox_soft_depression %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+
+
+
+# Hard
+# Anxiety
+cox_hard_anxiety <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard_anxiety
+)
+
+cox_hard_anxiety %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+
+# Depression
+
+cox_hard_depression <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard_depression
+)
+
+cox_hard_depression %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
