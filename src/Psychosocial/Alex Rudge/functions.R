@@ -83,7 +83,7 @@ summon_baseline_plots <- function(data, dependent, independent) {
     # Create a plot for each independent variable
     
     plot <- data %>%
-      calc_proportion(., dependent = x, independent = y) %>%
+      calc_proportion(., dependent = dependent, independent = y) %>%
       ggplot(aes(x = .data[[dependent]], y = p, fill = .data[[y]])) +
       geom_col(position = 'dodge') +
       annotate(
@@ -109,49 +109,25 @@ summon_baseline_plots <- function(data, dependent, independent) {
 
 # Test with HADS data
 # State dependent and independent variables
-dependent = 'score_group'
-
-data = data_baseline_anxiety
-
-baseline_plots <- summon_baseline_plots(data = data, dependent = 'score_group')
-
-baseline_plots$diagnosis2
-baseline_plots$AgeGroup
-baseline_plots$Sex
-baseline_plots$flare_group
-baseline_plots$cat
-
-
-
-dependent = 'score_group'
-independent = c('diagnosis2',
-                'AgeGroup',
-                'Sex',
-                'flare_group',
-                'cat')
+# dependent = 'score_group'
+# independent = c('diagnosis2',
+#                 'AgeGroup',
+#                 'Sex',
+#                 'flare_group',
+#                 'cat')
+# 
+# 
+# data = data_baseline_anxiety
+# 
+# baseline_plots <- summon_baseline_plots(data = data, dependent = dependent, independent = independent)
+# 
+# baseline_plots$diagnosis2
+# baseline_plots$AgeGroup
+# baseline_plots$Sex
+# baseline_plots$flare_group
+# baseline_plots$cat
 
 
-plot_list <- list()
 
-for (y in independent) {
-  
-  plot <- data %>%
-    calc_proportion(., dependent = x, independent = y) %>%
-    ggplot(aes(x = .data[[dependent]], y = p, fill = .data[[y]])) +
-    geom_col(position = 'dodge') +
-    annotate(
-      "text",
-      label = paste0("Adjusted p-value: ", chisq_results[[y]]),
-      x = Inf,
-      y = Inf,
-      vjust = 2,
-      hjust = 1.3
-    )
-  
-  #assign(plot_name, plot)
-  
-  plot_list[[y]] <- plot
-  
-}
 
-# Return plots in a list
+
