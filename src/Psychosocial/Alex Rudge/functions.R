@@ -4,7 +4,7 @@
 # Chi squared tests
 summon_chisq_test <- function(data, dependent, independent) {
   
-  # Chi square tests for the dependent variable vs each dependent variable
+  # Chi square tests for the dependent variable vs each independent variable
   
   purrr::map2_df(
     .x = dependent,
@@ -53,8 +53,7 @@ calc_proportion <- function(data, dependent, independent){
     dplyr::group_by(!!rlang::sym(independent), !!rlang::sym(dependent)) %>%
     dplyr::count() %>%
     dplyr::ungroup() %>%
-    # If we want proportions per group uncomment below
-    # dplyr::group_by(!!rlang::sym(independent)) %>%
+    dplyr::group_by(!!rlang::sym(independent)) %>%
     dplyr::mutate(p = n/sum(n)) 
   
 }
