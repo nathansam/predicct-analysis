@@ -1,0 +1,848 @@
+---
+title: "Exercise"
+format: 
+  html:
+    code-fold: true
+    code-tools: true
+editor: visual
+toc: true
+toc-expand: true
+---
+
+# Exercise
+
+## Setting up in R
+
+R Packages
+
+```{r}
+#| label: load-libraries
+#| echo: false
+#| message: false
+#| warning: false
+set.seed(123)
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse))
+library(readxl) # Read in Excel files
+library(datefixR) # Standardise dates
+library(openxlsx)
+library(tidyr)
+library(ggdist)
+library(rstatix)
+
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+library(kableExtra)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+# cox-regression
+library(survival)
+library(survminer)
+library(finalfit)
+```
+
+Helper functions
+
+```{r}
+# Chi squared tests
+summon_chisq_test <- function(data, dependent, independent) {
+  
+  # Chi square tests for the dependent variable vs each independent variable
+  # With p-values adjusted for multiple testing using Holm method
+  
+  purrr::map2_df(
+    .x = dependent,
+    .y = independent,
+    .f = function(.x, .y) {
+      x <- data %>%
+        dplyr::pull(.x)
+      
+      y <- data %>%
+        dplyr::pull(.y)
+      
+      chisq_test(x = x, y = y) %>%
+        dplyr::mutate(dependent = .x, independent = .y)
+    }
+  ) %>%
+    dplyr::mutate(p.adjust = p.adjust(p = p, method = 'holm')) %>%
+    dplyr::mutate(p.adjust = signif(p.adjust, 3)) %>%
+    dplyr::select(-p.signif) %>%
+    dplyr::mutate(
+      p.signif = dplyr::case_when(
+        p.adjust < 0.0001 ~ "****",
+        p.adjust < 0.001 ~ "***",
+        p.adjust < 0.01  ~ "**",
+        p.adjust < 0.05  ~ "*",
+        .default = 'ns'
+      )
+    )
+  
+}
+
+# Creating proportions for plotting baseline data
+calc_proportion <- function(data, dependent, independent){
+  
+  data %>%
+    dplyr::group_by(!!rlang::sym(independent), !!rlang::sym(dependent)) %>%
+    dplyr::count() %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(!!rlang::sym(independent)) %>%
+    dplyr::mutate(p = n/sum(n)) 
+  
+}
+
+summon_baseline_plots <- function(data, dependent, independent) {
+  
+  # Chi squared tests
+  chisq_results <- summon_chisq_test(
+    data = data,
+    dependent = dependent,
+    independent = independent
+  ) %>%
+    dplyr::transmute(independent, p.adjust) %>%
+    {setNames(as.list(.$p.adjust), .$independent)}
+
+  
+  # Creating plots for baseline variables with the dependent variable
+  
+  plot_list <- list()
+  
+  for (y in independent) {
+    
+    # Create a plot for each independent variable
+    
+    plot <- data %>%
+      calc_proportion(., dependent = dependent, independent = y) %>%
+      ggplot(aes(x = .data[[dependent]], y = p, fill = .data[[y]])) +
+      geom_col(position = 'dodge') +
+      annotate(
+        "text",
+        label = paste0("Adjusted p-value: ", chisq_results[[y]]),
+        x = Inf,
+        y = Inf,
+        vjust = 2,
+        hjust = 1.3
+      )
+    
+    plot_list[[y]] <- plot
+    
+  }
+  
+  # Return the plots
+  plot_list
+  
+}
+```
+
+Load data
+
+```{r}
+# paths to PREdiCCt data
+if (file.exists("/.dockerenv")) {
+  # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+  flare.dir <- "data/final/20240308/Followup/"
+  chiara <- "data/people/chiara/"
+} else {
+  # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  flare.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
+                      "final/20240308/Followup/")
+  chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+}
+
+# read-in data from multiple sources
+physicalactivity <- read.xlsx(paste0(
+  data.path,
+  "Baseline2022/physicalactivity.xlsx"
+))
+
+demographics <- read.xlsx(paste0(
+  data.path,
+  "Baseline2022/demographics2022.xlsx"
+))
+
+IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+
+ffq <- read.xlsx(
+  paste0(
+    prefix,
+    "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.",
+    "xlsx"
+  )
+)
+
+all_flares <- read.xlsx(paste0(flare.dir, "all-flares.xlsx"))
+demo <- readRDS(paste0(outdir, "demo.RDS"))
+flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
+smoking <- readRDS(paste0(chiara, "smoking.rds"))
+demo_uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
+demo_cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
+flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
+flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
+```
+
+## Data Cleaning
+
+```{r}
+#| echo: false
+#| message: false
+# 50 missing ParticipantId (blank rows - exclude these, from 1960 to 1910)
+# PE.missing <- physicalactivity %>%
+#   filter(is.na(ParticipantId)) %>%
+#   nrow()
+
+exercise <- physicalactivity %>%
+  filter(!is.na(ParticipantId))
+
+# add age and sex data from demographics
+exercise <- exercise %>%
+  inner_join(
+    demographics %>% select(ParticipantNo, Sex, age, diagnosis),
+    by = "ParticipantNo"
+  )
+
+# Recode diagnosis
+exercise %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(diagnosis2 = factor(
+    diagnosis2,
+    levels = c("1", "2"),
+    labels = c("CD", "UC/IBDU")
+  ))
+
+# exclude <18 yo = 53 participants (1910 -> 1857)
+exercise %<>% dplyr::filter(age > 17)
+
+# make sex into factor
+exercise %<>% dplyr::mutate(Sex = factor(
+  Sex,
+  levels = c(1, 2),
+  labels = c("Male", "Female"))
+)
+
+exercise %<>% dplyr::mutate(AgeGroup = cut(
+  age,
+  breaks = c(18, 24, 34, 44, 54, 65, Inf),
+  labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+  include.lowest = TRUE))
+
+exercise <- exercise %>%
+  left_join(
+    IBD %>% select(ParticipantNo, FlaresInPastYear)
+    )
+
+# 7 patients removed with missing data on flares
+exercise <- exercise %>%
+  filter(!is.na(FlaresInPastYear))
+
+# create flare groups
+exercise <- exercise %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0,
+    "No Flares",
+    "1 or More Flares"
+  ))
+
+# Make flares into levels
+exercise %<>% 
+  dplyr::mutate(flare_group = factor(
+    flare_group,
+    levels = c(
+      "No Flares",
+      "1 or More Flares"
+  )
+))
+
+# Add FC data 
+exercise <- exercise %>%
+  left_join(
+    demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
+    by = 'ParticipantNo'
+    ) 
+
+# Remove subjects with missing FC (cat), 211.
+# exercise %>%
+#   filter(is.na(cat)) %>% 
+#   nrow()
+
+exercise %<>%
+  dplyr::filter(
+    !is.na(cat)
+  )
+
+#missing_ex_IMD <- exercise %>% filter(is.na(IMD))
+
+# Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, and ModerateSport - Nobody removed
+exercise %<>%
+  filter(!dplyr::if_all(
+    .cols = c(
+      VigorousWork,
+      ModerateWork,
+      WalkBicycle,
+      VigorousSport,
+      ModerateSport
+    ),
+    .fns = is.na
+  ))
+
+# look at rows where there are NA values in key questions, exclude those with
+# inconsistent answers (no valid response) - manually done, 6 values excluded
+# exercise %>%
+#   filter(
+#     dplyr::if_any(
+#       .cols = 
+#     c(
+#       VigorousWork,
+#       ModerateWork,
+#       WalkBicycle,
+#       VigorousSport,
+#       ModerateSport
+#     ),
+#     .fns = is.na))
+
+exercise <- exercise %>%
+  filter(!(ParticipantId %in% c(1395, 4685, 4803, 1452, 4827, 9609)))
+
+# For yes/no questions, remaining NA values can be replaced with 2
+exercise %<>%
+  tidyr::replace_na(
+    list(
+      VigorousWork = 2,
+      ModerateWork = 2,
+      WalkBicycle = 2,
+      VigorousSport = 2,
+      ModerateSport = 2
+    )
+  )
+
+# Exclude 10 participants who report 16 or more hours in any one activity, as per WHO guidelines
+exercise <- exercise %>%
+  filter(
+    is.na(VigorousWorkHours) | VigorousWorkHours < 16,
+    is.na(ModerateWorkHours) | ModerateWorkHours < 16,
+    is.na(WalkBicycleHours) | WalkBicycleHours < 16,
+    is.na(VigorousSportHours) | VigorousSportHours < 16,
+    is.na(ModerateSportHours) | ModerateSportHours < 16
+  )
+
+
+# check that there are no cases of reporting 'no' to the question whilst
+# providing answers in the time boxes
+
+# exercise %>%
+#   filter(VigorousWork == 2 &
+#            (VigorousWorkHours > 0 | VigorousWorkMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(ModerateWork == 2 &
+#            (ModerateWorkHours > 0 | ModerateWorkMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(WalkBicycle == 2 &
+#            (WalkBicycleHours > 0 | WalkBicycleMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(VigorousSport == 2 &
+#            (VigorousSportHours > 0 | VigorousSportMinutes > 0)) %>%
+#   nrow()
+# 
+# exercise %>%
+#   filter(ModerateSport == 2 &
+#            (ModerateSportHours > 0 | ModerateSportMinutes > 0)) %>%
+#   nrow()
+
+# No cases, all previously resolved.
+
+# Similarly, fix cases of reporting 1 to the questions but for zero/NA hours.
+# ModerateWork
+MW_wrong <- exercise %>%
+  filter(ModerateWork == 1 & (ModerateWorkDays == 0 | is.na(ModerateWorkDays)))
+
+# 2 can be corrected recoding 1->2 ParticipantId 4700, 14446
+exercise <- exercise %>%
+  mutate(ModerateWork = dplyr::case_when(
+    ParticipantId %in% c(4700, 14446) ~ 2,
+    TRUE ~ ModerateWork
+  ))
+
+# 8 excluded as report 0 days but have answers in other domains
+# Excluding subjects who say they do moderate work but for 0 days (they do have an hour though)
+exercise <- exercise %>%
+  filter(!(ModerateWork == 1 &
+    (ModerateWorkDays == 0 | is.na(ModerateWorkDays))
+  ))
+
+# WalkBicycle
+WB_wrong <- exercise %>%
+  filter(WalkBicycle == 1 & (WalkBicycleDays == 0 | is.na(WalkBicycleDays)))
+
+# 2 participants say they do but for 0 days
+exercise <- exercise %>%
+  filter(!(WalkBicycle == 1 & (WalkBicycleDays == 0 | is.na(WalkBicycleDays))))
+
+
+
+# VigorousSport
+VS_wrong <- exercise %>% filter(VigorousSport == 1 &
+                                  (VigorousSportDays == 0 |
+                                     is.na(VigorousSportDays)))
+
+# Correct 3 participants who responded 1 but said for 0 days/hours/mins
+exercise <- exercise %>%
+  mutate(VigorousSport = dplyr::case_when(ParticipantId %in% c(7012, 9555, 9559) ~ 2,
+                                          TRUE ~ VigorousSport))
+
+# exclude 2 participants who did not include number of days
+exercise <- exercise %>% filter(!(VigorousSport == 1 &
+    (VigorousSportDays == 0 |
+      is.na(VigorousSportDays))))
+
+# ModerateSport
+MS_wrong <- exercise %>%
+  filter(ModerateSport == 1 & (ModerateSportDays == 0 | is.na(ModerateSportDays)))
+
+exercise <- exercise %>%
+  mutate(ModerateSport = dplyr::case_when(
+    ParticipantId %in%
+      c(61, 186, 3550, 7024, 7048, 9735, 12079) ~
+      2,
+    TRUE ~ ModerateSport
+  ))
+
+# exclude 6 participants who did not include number of days
+exercise <- exercise %>% filter(!(ModerateSport == 1 &
+                                    (ModerateSportDays == 0 | is.na(ModerateSportDays))
+                                  ))
+
+# check if anyone recorded days >7 in any days column - no cases
+# check if any minutes >60 - no cases
+# exercise %>%
+#   filter(VigorousWorkDays > 7 | VigorousWorkMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(ModerateWorkDays > 7 | ModerateWorkMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(WalkBicycleDays > 7 | WalkBicycleMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(VigorousSportDays > 7 | VigorousSportMinutes > 60) %>%
+#   nrow()
+# exercise %>%
+#   filter(ModerateSportDays > 7 | ModerateSportMinutes > 60) %>%
+#   nrow()
+
+# Replace NA with zero in days/hours/minutes columns
+exercise <- exercise %>% tidyr::replace_na(
+  list(
+    VigorousWorkDays = 0,
+    VigorousWorkHours = 0,
+    VigorousWorkMinutes = 0,
+    ModerateWorkDays = 0,
+    ModerateWorkHours = 0,
+    ModerateWorkMinutes = 0,
+    WalkBicycleDays = 0,
+    WalkBicycleHours = 0,
+    WalkBicycleMinutes = 0,
+    VigorousSportDays = 0,
+    VigorousSportHours = 0,
+    VigorousSportMinutes = 0,
+    ModerateSportDays = 0,
+    ModerateSportHours = 0,
+    ModerateSportMinutes = 0
+  )
+)
+
+# Calculate total mins of vigorous and moderate exercise per week
+exercise <- exercise %>%
+  mutate(
+    VigorousWeek =
+      VigorousWorkDays * (VigorousWorkMinutes + (VigorousWorkHours * 60)) +
+      VigorousSportDays * (VigorousSportMinutes + (VigorousSportHours * 60)),
+    ModerateWeek = 
+      ModerateWorkDays * (ModerateWorkMinutes + (ModerateWorkHours * 60)) +
+      ModerateSportDays * (ModerateSportMinutes + (ModerateSportHours * 60)) +
+      WalkBicycleDays * (WalkBicycleMinutes + (WalkBicycleHours * 60))
+  )
+
+# total mins + METs
+exercise <- exercise %>% 
+  mutate(
+    ExerciseMins = VigorousWeek + ModerateWeek,
+    METs = (VigorousWeek * 8) + (ModerateWeek * 4)
+  )
+
+# Targets for exercise (WHO) are 75 minutes vigorous activity or 150 minutes
+# moderate activity or 600 METs per week
+exercise <- exercise %>%
+  mutate(
+    MinimumExercise = dplyr::case_when(
+      VigorousWeek >= 75 | ModerateWeek >= 150 | METs >= 600 ~ "Yes",
+      TRUE ~ "No"
+    ),
+    LackExercise = dplyr::case_when(
+      VigorousWeek < 75 & ModerateWeek < 150 & METs < 600 ~ "Yes",
+      TRUE ~ "No"
+    )
+  )
+
+# MinimumExercise as a factor
+exercise %<>%
+  dplyr::mutate(MinimumExercise = factor(MinimumExercise, levels = c('Yes', 'No')))
+
+
+# exclude if minute exercise/week >6720 - 10 cases
+# exercise %>% dplyr::filter(ExerciseMins > 6720) %>% nrow()
+
+exercise <- exercise %>% dplyr::filter(ExerciseMins < 6720)
+```
+
+## Baseline Analysis
+
+### Full Cohort
+
+```{r}
+# Rename exercise as data_baseline
+data_baseline <- exercise
+
+# Independent variables
+independent = c('diagnosis2',
+                'AgeGroup',
+                'Sex',
+                'flare_group',
+                'cat')
+
+# Dependent variable is MinimumExercise
+
+# Chi-squared tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm method.
+summon_chisq_test(
+  data = data_baseline, 
+  dependent = 'MinimumExercise', 
+  independent = independent)
+
+# Plots
+baseline_plots <- summon_baseline_plots(
+  data = data_baseline, 
+  dependent = 'MinimumExercise',
+  independent = independent
+  )
+
+baseline_plots$diagnosis2
+baseline_plots$AgeGroup
+baseline_plots$Sex
+baseline_plots$flare_group
+baseline_plots$cat
+
+```
+
+### Ulcerative Colitis
+
+```{r}
+# UC patients only
+data_baseline_uc <- exercise %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+# Independent variables
+independent = c('AgeGroup',
+                'Sex',
+                'flare_group',
+                'cat')
+
+# Dependent variable is MinimumExercise
+
+# Chi-squared tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm method.
+summon_chisq_test(
+  data = data_baseline_uc, 
+  dependent = 'MinimumExercise', 
+  independent = independent)
+
+# Plots
+baseline_plots_uc <- summon_baseline_plots(
+  data = data_baseline_uc, 
+  dependent = 'MinimumExercise',
+  independent = independent
+  )
+
+baseline_plots_uc$AgeGroup
+baseline_plots_uc$Sex
+baseline_plots_uc$flare_group
+baseline_plots_uc$cat
+
+```
+
+### Crohn's Disease
+
+```{r}
+# CD patients only
+data_baseline_cd <- exercise %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+# Independent variables
+independent = c('AgeGroup',
+                'Sex',
+                'flare_group',
+                'cat')
+
+# Dependent variable is MinimumExercise
+
+# Chi-squared tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm method.
+summon_chisq_test(
+  data = data_baseline_cd, 
+  dependent = 'MinimumExercise', 
+  independent = independent)
+
+# Plots
+baseline_plots_cd <- summon_baseline_plots(
+  data = data_baseline_cd, 
+  dependent = 'MinimumExercise',
+  independent = independent
+  )
+
+baseline_plots_cd$AgeGroup
+baseline_plots_cd$Sex
+baseline_plots_cd$flare_group
+baseline_plots_cd$cat
+
+```
+
+## Survival Analysis
+
+### Full Cohort
+
+```{r}
+# Survival data
+# Patient reported flares
+data_survival_soft <- data_baseline %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard flares
+data_survival_hard <- data_baseline %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+```
+
+Patient reported flare.
+
+```{r}
+# Soft
+# Kaplan Meier
+data_survival_soft %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
+  ggsurvplot(., data = data_survival_soft, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+cox_soft %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# KM
+data_survival_hard %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
+  ggsurvplot(., data = data_survival_hard, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox
+cox_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+cox_hard %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+### Ulcerative Colitis
+
+```{r}
+# Survival data
+# Patient reported flares
+data_survival_soft_uc <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU') %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard flares
+data_survival_hard_uc <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU') %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+```
+
+Patient reported flare.
+
+```{r}
+# Soft
+# Kaplan Meier
+data_survival_soft_uc %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
+  ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+cox_soft %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# KM
+data_survival_hard_uc %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
+  ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox
+cox_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+cox_hard %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+### Crohn's Disease
+
+```{r}
+# Survival data
+# Patient reported flares
+data_survival_soft_cd <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'CD') %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard flares
+data_survival_hard_cd <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'CD') %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+```
+
+Patient reported flare.
+
+```{r}
+# Soft
+# Kaplan Meier
+data_survival_soft_cd %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
+  ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+cox_soft %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# KM
+data_survival_hard_cd %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
+  ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox
+cox_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+cox_hard %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
