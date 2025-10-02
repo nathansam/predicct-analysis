@@ -1058,3 +1058,424 @@ cox_depression_hard_cd <- coxph(
 cox_depression_hard_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
+
+## Additional Analysis
+
+### IBD Control Scores
+
+Associations between IBD control, and anxiety and depression.
+
+```{r}
+# Control score data
+data_control <- hads_for_analysis %>%
+  dplyr::left_join(
+    IBD_C %>% dplyr::select(
+      ParticipantNo,
+      control_score,
+      OverallControl,
+      control_8,
+      control_grouped,
+      vas_control
+    ),
+    by = "ParticipantNo"
+  )
+
+#exclude missing control scores
+data_control %<>% 
+  dplyr::filter(!is.na(control_grouped))
+
+#change control_grouped and vas_control from character into factors
+data_control %<>% 
+  dplyr::mutate(control_grouped = factor(control_grouped))
+
+data_control %<>% 
+  dplyr::mutate(vas_control = factor(vas_control))
+
+# Anxiety
+data_control_anxiety <- data_control %>%
+   dplyr::filter(hads_type == "anxiety_hads")
+
+# Depression
+data_control_depression <- data_control %>%
+   dplyr::filter(hads_type == "depression_hads")
+```
+
+#### Full Cohort
+
+```{r}
+# Chi squared tests
+# Anxiety
+# Independent variables
+independent = c('control_grouped', 'vas_control')
+
+# Multiple testing - we should technically take the other tests we performed during the baseline analysis into account, but relax.
+
+summon_chisq_test(
+  data = data_control_anxiety, 
+  dependent = 'score_group', 
+  independent = independent)
+
+# Plots
+baseline_plots_control_anxiety <- summon_baseline_plots(
+  data = data_control_anxiety, 
+  dependent = 'score_group',
+  independent = independent
+  )
+
+baseline_plots_control_anxiety$control_grouped
+baseline_plots_control_anxiety$vas_control
+
+# Depression
+summon_chisq_test(
+  data = data_control_depression, 
+  dependent = 'score_group', 
+  independent = independent)
+
+# Plots
+baseline_plots_control_depression <- summon_baseline_plots(
+  data = data_control_depression, 
+  dependent = 'score_group',
+  independent = independent
+  )
+
+baseline_plots_control_depression$control_grouped
+baseline_plots_control_depression$vas_control
+```
+
+#### Ulcerative Colitis
+
+```{r}
+# Chi squared tests
+# UC patients only
+data_control_anxiety_uc <- data_control_anxiety %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+data_control_depression_uc <- data_control_depression %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+
+# Anxiety
+# Independent variables
+independent = c('control_grouped', 'vas_control')
+
+summon_chisq_test(
+  data = data_control_anxiety_uc, 
+  dependent = 'score_group', 
+  independent = independent)
+
+# Plots
+baseline_plots_control_anxiety_uc <- summon_baseline_plots(
+  data = data_control_anxiety_uc, 
+  dependent = 'score_group',
+  independent = independent
+  )
+
+baseline_plots_control_anxiety_uc$control_grouped
+baseline_plots_control_anxiety_uc$vas_control
+
+# Depression
+summon_chisq_test(
+  data = data_control_depression_uc, 
+  dependent = 'score_group', 
+  independent = independent)
+
+# Plots
+baseline_plots_control_depression_uc <- summon_baseline_plots(
+  data = data_control_depression_uc, 
+  dependent = 'score_group',
+  independent = independent
+  )
+
+baseline_plots_control_depression_uc$control_grouped
+baseline_plots_control_depression_uc$vas_control
+```
+
+#### Crohn's Disease
+
+```{r}
+# Chi squared tests
+# UC patients only
+data_control_anxiety_cd <- data_control_anxiety %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+data_control_depression_cd <- data_control_depression %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+
+# Anxiety
+# Independent variables
+independent = c('control_grouped', 'vas_control')
+
+summon_chisq_test(
+  data = data_control_anxiety_cd, 
+  dependent = 'score_group', 
+  independent = independent)
+
+# Plots
+baseline_plots_control_anxiety_cd <- summon_baseline_plots(
+  data = data_control_anxiety_cd, 
+  dependent = 'score_group',
+  independent = independent
+  )
+
+baseline_plots_control_anxiety_cd$control_grouped
+baseline_plots_control_anxiety_cd$vas_control
+
+# Depression
+summon_chisq_test(
+  data = data_control_depression_cd, 
+  dependent = 'score_group', 
+  independent = independent)
+
+# Plots
+baseline_plots_control_depression_cd <- summon_baseline_plots(
+  data = data_control_depression_cd, 
+  dependent = 'score_group',
+  independent = independent
+  )
+
+baseline_plots_control_depression_cd$control_grouped
+baseline_plots_control_depression_cd$vas_control
+```
+
+### Depression Grouped
+
+Repeating survival analysis with moderate (8-10) and severe (11-21) depression scores grouped into a single category (8-21).
+
+#### Full Cohort
+
+```{r}
+# Survival data
+# Join HADS with flare data
+
+# Patient reported flares
+data_survival_depression_soft <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'depression_hads') %>%
+  mutate(score_group = case_when(
+    score_group %in% c("8-10", "11-21") ~ "8-21",
+    TRUE ~ score_group
+  )) %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard Flares
+data_survival_depression_hard <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'depression_hads') %>%
+  mutate(score_group = case_when(
+    score_group %in% c("8-10", "11-21") ~ "8-21",
+    TRUE ~ score_group
+  )) %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+```
+
+Patient reported flare.
+
+```{r}
+# Patient reported flare
+# Kaplan Meier
+data_survival_depression_soft %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
+  ggsurvplot(., data = data_survival_depression_soft, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_depression_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_depression_soft
+)
+
+cox_depression_soft %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# Hard flare
+# Kaplan Meier
+data_survival_depression_hard %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
+  ggsurvplot(., data = data_survival_depression_hard, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_depression_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_depression_hard
+)
+
+cox_depression_hard %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+#### Ulcerative Colitis
+
+```{r}
+# Survival data
+# Join HADS with flare data
+
+# Patient reported flares
+data_survival_depression_soft_uc <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'depression_hads') %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU') %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard Flares
+data_survival_depression_hard_uc <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'depression_hads') %>%
+   dplyr::filter(diagnosis2 == 'UC/IBDU') %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+```
+
+Patient reported flare
+
+```{r}
+# Patient reported flare
+# Kaplan Meier
+data_survival_depression_soft_uc %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
+  ggsurvplot(., data = data_survival_depression_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_depression_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_depression_soft_uc
+)
+
+cox_depression_soft_uc %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# Hard flare
+# Kaplan Meier
+data_survival_depression_hard_uc %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
+  ggsurvplot(., data = data_survival_depression_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_depression_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_depression_hard_uc
+)
+
+cox_depression_hard_uc %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+#### Crohn's Disease
+
+```{r}
+# Survival data
+# Join HADS with flare data
+
+# Patient reported flares
+data_survival_depression_soft_cd <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'depression_hads') %>%
+  dplyr::filter(diagnosis2 == 'CD') %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard Flares
+data_survival_depression_hard_cd <- hads_for_analysis %>%
+  dplyr::filter(hads_type == 'depression_hads') %>%
+   dplyr::filter(diagnosis2 == 'CD') %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+```
+
+Patient reported flare.
+
+```{r}
+# Patient reported flare
+# Kaplan Meier
+data_survival_depression_soft_cd %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
+  ggsurvplot(., data = data_survival_depression_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_depression_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_depression_soft_cd
+)
+
+cox_depression_soft_cd %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# Hard flare
+# Kaplan Meier
+data_survival_depression_hard_cd %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
+  ggsurvplot(., data = data_survival_depression_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_depression_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    score_group +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_depression_hard_cd
+)
+
+cox_depression_hard_cd %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
