@@ -4,7 +4,7 @@
 # Chi squared tests
 summon_chisq_test <- function(data, dependent, independent) {
   
-  # Chi square tests for the dependent variable vs each independent variable
+  # Chi square tests/Fisher's exact test for the dependent variable vs each independent variable
   
   purrr::map2_df(
     .x = dependent,
@@ -27,7 +27,7 @@ summon_chisq_test <- function(data, dependent, independent) {
         
       if (fisher_flag){
         # If one of the counts is < 5 use Fisher exact test
-        fisher_test(table(x, y)) %>%
+        fisher_test(table(x, y), simulate.p.value = TRUE) %>%
           dplyr::mutate(
             dependent = .x, 
             independent = .y,
