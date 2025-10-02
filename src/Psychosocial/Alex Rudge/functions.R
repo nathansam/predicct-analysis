@@ -16,8 +16,28 @@ summon_chisq_test <- function(data, dependent, independent) {
       y <- data %>%
         dplyr::pull(.y)
       
-      chisq_test(x = x, y = y) %>%
-        dplyr::mutate(dependent = .x, independent = .y)
+      # Check whether we need a Fisher test
+      fisher_flag <- data %>%
+        # Count combinations of x and y
+        count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
+        # Pull the count
+        dplyr::pull(n) %>%
+        # Check if any counts are < 5
+        min() < 5
+        
+      if (fisher_flag){
+        # If one of the counts is < 5 use Fisher exact test
+        fisher_test(table(x, y)) %>%
+          dplyr::mutate(
+            dependent = .x, 
+            independent = .y,
+            method = 'Fisher\'s exact test')
+        
+      } else {    
+        # Otherwise use chi square
+        chisq_test(x = x, y = y) %>%
+          dplyr::mutate(dependent = .x, independent = .y)
+      }
     }
   ) %>%
     dplyr::mutate(p.adjust = p.adjust(p = p, method = 'holm')) %>%
