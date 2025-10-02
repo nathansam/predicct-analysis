@@ -1,0 +1,655 @@
+---
+title: "Life Events"
+format: 
+  html:
+    code-fold: true
+    code-tools: true
+editor: visual
+toc: true
+toc-expand: true
+---
+
+# Life Events
+
+## Setting up in R
+
+R Packages
+
+```{r}
+#| label: load-libraries
+#| echo: false
+#| message: false
+#| warning: false
+set.seed(123)
+library(plyr) # Used for mapping values
+suppressPackageStartupMessages(library(tidyverse))
+library(readxl) # Read in Excel files
+library(datefixR) # Standardise dates
+library(openxlsx)
+library(tidyr)
+library(ggdist)
+library(rstatix)
+
+suppressPackageStartupMessages(library(table1))
+library(knitr)
+library(pander)
+library(kableExtra)
+
+# Generate flowchart of cohort derivation
+library(DiagrammeR)
+library(DiagrammeRsvg)
+
+# cox-regression
+library(survival)
+library(survminer)
+library(finalfit)
+```
+
+Helper functions
+
+```{r}
+# Chi squared tests
+summon_chisq_test <- function(data, dependent, independent) {
+  
+  # Chi square tests for the dependent variable vs each independent variable
+  # With p-values adjusted for multiple testing using Holm method
+  
+  purrr::map2_df(
+    .x = dependent,
+    .y = independent,
+    .f = function(.x, .y) {
+      x <- data %>%
+        dplyr::pull(.x)
+      
+      y <- data %>%
+        dplyr::pull(.y)
+      
+      chisq_test(x = x, y = y) %>%
+        dplyr::mutate(dependent = .x, independent = .y)
+    }
+  ) %>%
+    dplyr::mutate(p.adjust = p.adjust(p = p, method = 'holm')) %>%
+    dplyr::mutate(p.adjust = signif(p.adjust, 3)) %>%
+    dplyr::select(-p.signif) %>%
+    dplyr::mutate(
+      p.signif = dplyr::case_when(
+        p.adjust < 0.0001 ~ "****",
+        p.adjust < 0.001 ~ "***",
+        p.adjust < 0.01  ~ "**",
+        p.adjust < 0.05  ~ "*",
+        .default = 'ns'
+      )
+    )
+  
+}
+
+# Creating proportions for plotting baseline data
+calc_proportion <- function(data, dependent, independent){
+  
+  data %>%
+    dplyr::group_by(!!rlang::sym(independent), !!rlang::sym(dependent)) %>%
+    dplyr::count() %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(!!rlang::sym(independent)) %>%
+    dplyr::mutate(p = n/sum(n)) 
+  
+}
+
+summon_baseline_plots <- function(data, dependent, independent) {
+  
+  # Chi squared tests
+  chisq_results <- summon_chisq_test(
+    data = data,
+    dependent = dependent,
+    independent = independent
+  ) %>%
+    dplyr::transmute(independent, p.adjust) %>%
+    {setNames(as.list(.$p.adjust), .$independent)}
+
+  
+  # Creating plots for baseline variables with the dependent variable
+  
+  plot_list <- list()
+  
+  for (y in independent) {
+    
+    # Create a plot for each independent variable
+    
+    plot <- data %>%
+      calc_proportion(., dependent = dependent, independent = y) %>%
+      ggplot(aes(x = .data[[dependent]], y = p, fill = .data[[y]])) +
+      geom_col(position = 'dodge') +
+      annotate(
+        "text",
+        label = paste0("Adjusted p-value: ", chisq_results[[y]]),
+        x = Inf,
+        y = Inf,
+        vjust = 2,
+        hjust = 1.3
+      )
+    
+    plot_list[[y]] <- plot
+    
+  }
+  
+  # Return the plots
+  plot_list
+  
+}
+```
+
+Load data
+
+```{r}
+# paths to PREdiCCt data
+if (file.exists("/.dockerenv")) {
+  # If running in docker
+  data.path <- "data/final/20221004/"
+  redcap.path <- "data/final/20231030/"
+  prefix <- "data/end-of-follow-up/"
+  outdir <- "data/processed"
+  flare.dir <- "data/final/20240308/Followup/"
+  chiara <- "data/people/chiara/"
+} else {
+  # Run on OS directly
+  data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
+  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
+  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
+  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+  flare.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
+                      "final/20240308/Followup/")
+  save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+}
+
+# read-in data from multiple sources
+physicalactivity <- read.xlsx(paste0(
+  data.path,
+  "Baseline2022/physicalactivity.xlsx"
+))
+
+demographics <- read.xlsx(paste0(
+  data.path,
+  "Baseline2022/demographics2022.xlsx"
+))
+
+IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+
+ffq <- read.xlsx(
+  paste0(
+    prefix,
+    "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.",
+    "xlsx"
+  )
+)
+
+lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
+demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
+demo <- readRDS(paste0(outdir, "demo.RDS"))
+IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+lifeevents <- readRDS(paste0(save_path, "lifeevents.RDS"))
+QOL <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
+flares_hard <- readRDS(paste0(save_path, "flares_hard.RDS"))
+flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
+```
+
+## Data Cleaning
+
+```{r}
+# Life event data
+lifeevents <- lifeevents %>% 
+  left_join(
+    demographics %>% select(ParticipantNo, Sex, diagnosis, age),
+    by = 'ParticipantNo')
+
+lifeevents <- lifeevents %>% 
+  filter(!is.na(ParticipantNo))
+
+lifeevents <- lifeevents %>% 
+  filter(!is.na(AnyLifeEvents))
+
+lifeevents %<>% dplyr::filter(age >= 18)
+
+lifeevents %<>% dplyr::mutate(Sex = factor(
+  Sex,
+  levels = c(1, 2),
+  labels = c("Male", "Female"))
+)
+
+lifeevents %<>%
+  dplyr::mutate(AnyLifeEvents = factor(AnyLifeEvents, levels = c(1, 2), labels = c("Yes", "No"))) %>%
+  dplyr::mutate(AnyLifeEvents = forcats::fct_relevel(AnyLifeEvents, "No", "Yes"))
+
+lifeevents %<>% dplyr::mutate(AgeGroup = cut(
+  age,
+  breaks = c(18, 24, 34, 44, 54, 65, Inf),
+  labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+  include.lowest = TRUE))
+
+# Recode diagnosis
+lifeevents %<>%
+  dplyr::mutate(
+    diagnosis2 = dplyr::case_when(
+      diagnosis == 1 ~ 1,
+      diagnosis == 2 ~ 2,
+      diagnosis == 3 ~ 2,
+      diagnosis == 4 ~ 2
+    )
+  ) %>%
+  dplyr::mutate(diagnosis2 = factor(
+    diagnosis2,
+    levels = c("1", "2"),
+    labels = c("CD", "UC/IBDU")
+  ))
+
+lifeevents <- lifeevents %>%
+  left_join(
+    IBD %>% select(ParticipantNo, FlaresInPastYear),
+    by = 'ParticipantNo'
+    )
+
+# 1 patient removed with missing data on flares
+lifeevents <- lifeevents %>%
+  filter(!is.na(FlaresInPastYear))
+
+# create flare groups
+lifeevents <- lifeevents %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0,
+    "No Flares",
+    "1 or More Flares"
+  ))
+
+# Make flares into levels
+lifeevents %<>% 
+  dplyr::mutate(flare_group = factor(
+    flare_group,
+    levels = c(
+      "No Flares",
+      "1 or More Flares"
+  )
+))
+
+lifeevents <- lifeevents %>% 
+  left_join(
+    demo %>% select(ParticipantNo, FC, cat, Biologic, Smoke, IMD),
+    by = 'ParticipantNo')
+
+# Removing missing FC
+lifeevents <- lifeevents %>% 
+  filter(!is.na(cat))
+```
+
+```{r}
+#plot distributions
+variables_of_interest <- c(
+  "Death", "Divorce", "MaritalSeparation",
+  "PersonalInjury", "Marriage", "Dismissal",
+  "MaritalReconcil", "Retirement", "HealthFamilyMember", "Pregnancy",
+  "SexualDifficulties", "GainNewFamilyMember", "NewMortgage",
+  "OtherLifeEvent"
+)
+
+
+#counts of events
+lifeevents %<>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    NumberEvents = sum(c_across(8:25), na.rm = TRUE)
+  ) %>%
+  dplyr::ungroup()
+
+# Count the number of each type of event
+lifeevents_counts <- lifeevents %>%
+  dplyr::select(variables_of_interest) %>%
+  tidyr::pivot_longer(
+    cols = everything(),
+    names_to = "Variable",
+    values_to = "LifeEvent"
+  ) %>%
+  dplyr::group_by(Variable) %>%
+  dplyr::summarise(
+    count = sum(LifeEvent, na.rm = TRUE)
+  ) %>%
+  dplyr::arrange(
+    desc(count)
+  ) %>%
+  dplyr::mutate(
+    Variable = forcats::as_factor(Variable)
+  )
+
+lifeevents_counts %>%
+  ggplot(aes(x = count, y = Variable)) +
+  geom_col(position = "dodge") +
+  xlab("Count") +
+  ylab("Life Event") +
+  theme_minimal()
+```
+
+## Baseline Analysis
+
+### Full Cohort
+
+```{r}
+# Rename lifeevents as data_baseline
+data_baseline <- lifeevents
+
+# Independent variables
+independent = c('diagnosis2',
+                'AgeGroup',
+                'Sex',
+                'flare_group',
+                'cat')
+
+# Dependent variable is AnyLifeEvents
+
+# Chi-squared tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm method.
+summon_chisq_test(
+  data = data_baseline, 
+  dependent = 'AnyLifeEvents', 
+  independent = independent)
+
+# Plots
+baseline_plots <- summon_baseline_plots(
+  data = data_baseline, 
+  dependent = 'AnyLifeEvents',
+  independent = independent
+  )
+
+baseline_plots$diagnosis2
+baseline_plots$AgeGroup
+baseline_plots$Sex
+baseline_plots$flare_group
+baseline_plots$cat
+
+```
+
+### Ulcerative Colitis
+
+```{r}
+# UC patients only
+data_baseline_uc <- lifeevents %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+# Independent variables
+independent = c('AgeGroup',
+                'Sex',
+                'flare_group',
+                'cat')
+
+# Dependent variable is AnyLifeEvents
+
+# Chi-squared tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm method.
+summon_chisq_test(
+  data = data_baseline_uc, 
+  dependent = 'AnyLifeEvents', 
+  independent = independent)
+
+# Plots
+baseline_plots_uc <- summon_baseline_plots(
+  data = data_baseline_uc, 
+  dependent = 'AnyLifeEvents',
+  independent = independent
+  )
+
+baseline_plots_uc$AgeGroup
+baseline_plots_uc$Sex
+baseline_plots_uc$flare_group
+baseline_plots_uc$cat
+
+```
+
+### Crohn's Disease
+
+```{r}
+# CD patients only
+data_baseline_cd <- lifeevents %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+# Independent variables
+independent = c('AgeGroup',
+                'Sex',
+                'flare_group',
+                'cat')
+
+# Dependent variable is AnyLifeEvents
+
+# Chi-squared tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm method.
+summon_chisq_test(
+  data = data_baseline_cd, 
+  dependent = 'AnyLifeEvents', 
+  independent = independent)
+
+# Plots
+baseline_plots_cd <- summon_baseline_plots(
+  data = data_baseline_cd, 
+  dependent = 'AnyLifeEvents',
+  independent = independent
+  )
+
+baseline_plots_cd$AgeGroup
+baseline_plots_cd$Sex
+baseline_plots_cd$flare_group
+baseline_plots_cd$cat
+
+```
+
+## Survival Analysis
+
+### Full Cohort
+
+```{r}
+# Survival data
+# Patient reported flares
+data_survival_soft <- data_baseline %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard flares
+data_survival_hard <- data_baseline %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+```
+
+Patient reported flare.
+
+```{r}
+# Soft
+# Kaplan Meier
+data_survival_soft %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
+  ggsurvplot(., data = data_survival_soft, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    AnyLifeEvents +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+cox_soft %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# KM
+data_survival_hard %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
+  ggsurvplot(., data = data_survival_hard, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox
+cox_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    AnyLifeEvents +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+cox_hard %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+### Ulcerative Colitis
+
+```{r}
+# Survival data
+# Patient reported flares
+data_survival_soft_uc <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU') %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard flares
+data_survival_hard_uc <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU') %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+```
+
+Patient reported flare.
+
+```{r}
+# Soft
+# Kaplan Meier
+data_survival_soft_uc %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
+  ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    AnyLifeEvents +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+cox_soft %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# KM
+data_survival_hard_uc %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
+  ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox
+cox_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    AnyLifeEvents +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+cox_hard %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+### Crohn's Disease 
+
+```{r}
+# Survival data
+# Patient reported flares
+data_survival_soft_cd <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'CD') %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# Hard flares
+data_survival_hard_cd <- data_baseline %>%
+  dplyr::filter(diagnosis2 == 'CD') %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+```
+
+Patient reported flare.
+
+```{r}
+# Soft
+# Kaplan Meier
+data_survival_soft_cd %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
+  ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox model
+cox_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    AnyLifeEvents +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+cox_soft %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
+
+Hard flare.
+
+```{r}
+# KM
+data_survival_hard_cd %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
+  ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
+
+# Cox
+cox_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    AnyLifeEvents +
+    IMD +
+    Sex +
+    AgeGroup +
+    cat +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+cox_hard %>%
+  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+```
