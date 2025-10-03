@@ -5,6 +5,9 @@ author:
     url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
     affiliations:
       - ref: Lothian
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup}
@@ -67,12 +70,19 @@ IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 QOL <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 ```
 
+# Quality of life
 
-# Quality of life 
+The SF12 provides two scores: the PSC12 and the MCS12 which give a score
+(0-100) where higher scores equal better quality of life. The PSC12 is
+calculated by domains reflecting physical function, and the MCS12
+reflects mental function.
 
-The SF12 provides two scores: the PSC12 and the MCS12 which give a score (0-100) where higher scores equal better quality of life. The PSC12 is calculated by domains reflecting physical function, and the MCS12 reflects mental function.
-
-Of note, in the PREdiCCt questionnaire, 4/6 questions pertaining to mental health were scored out of 5 options instead of 6 as per the SF12. I have coded to reflect that option 4 ("some of the time") was never selected, and believe this to have influenced the distribution of MCS12 scores (see distribution graph below). However, this should not affect comparison between groups within the PREdiCCt cohort. 
+Of note, in the PREdiCCt questionnaire, 4/6 questions pertaining to
+mental health were scored out of 5 options instead of 6 as per the SF12.
+I have coded to reflect that option 4 ("some of the time") was never
+selected, and believe this to have influenced the distribution of MCS12
+scores (see distribution graph below). However, this should not affect
+comparison between groups within the PREdiCCt cohort.
 
 ```{r, clean QOL as per PREdiCCt paper 2 standard}
 
@@ -162,38 +172,37 @@ QOL %<>%
   )
 ```
 
-
 Methods
 
-Coded according to SF12 guidance which weighs each item response differently. 
-Some code used taken from github https://github.com/lbraglia/lbscorer/blob/master/R/sf12.R.
+Coded according to SF12 guidance which weighs each item response
+differently. Some code used taken from github
+https://github.com/lbraglia/lbscorer/blob/master/R/sf12.R.
 
-Join demographics data and demo (FC data)
-Remove missing Participant No, <18y/o, missing FC
-Check for missing data - exclude if missing answers (n=53)
-Check for data out of range (done manaully):
+Join demographics data and demo (FC data) Remove missing Participant No,
+\<18y/o, missing FC Check for missing data - exclude if missing answers
+(n=53) Check for data out of range (done manaully):
 
-* GeneralHealth - nil out of range
-* ModerateActivities - nil out of range
-* ClimbingStairs - nil out of range
-* PhysicalAccomplishedLess - nil out of range
-* PhysicalLimitedKindWork - nil out of range
-* EmotionalAccomplishedLess - nil out of range
-* EmotionalNotCarefulAsUsual - nil out of range
-* PainInterfere - nil out of range
-* CalmAndPeaceful - nil out of range
-* LotOfEnergy - nil out of range
-* DownheartedBlue - nil out of range
+-   GeneralHealth - nil out of range
+-   ModerateActivities - nil out of range
+-   ClimbingStairs - nil out of range
+-   PhysicalAccomplishedLess - nil out of range
+-   PhysicalLimitedKindWork - nil out of range
+-   EmotionalAccomplishedLess - nil out of range
+-   EmotionalNotCarefulAsUsual - nil out of range
+-   PainInterfere - nil out of range
+-   CalmAndPeaceful - nil out of range
+-   LotOfEnergy - nil out of range
+-   DownheartedBlue - nil out of range
 
 To account for missing option ("some of the time") recode:
 
-* CalmAndPeaceful 4=5 and 5=6
-* LotOfEnergy 4=5 and 5=6
-* DownheartedBlue 4=5 and 5=6
-* SocialActivities 4=5 and 5=6
+-   CalmAndPeaceful 4=5 and 5=6
+-   LotOfEnergy 4=5 and 5=6
+-   DownheartedBlue 4=5 and 5=6
+-   SocialActivities 4=5 and 5=6
 
-
-Reverse code: GeneralHealth, PainInterfere, CalmAndPeaceful, DownheartedBlue
+Reverse code: GeneralHealth, PainInterfere, CalmAndPeaceful,
+DownheartedBlue
 
 ```{r, reverse code as per protocol}
 
@@ -357,10 +366,13 @@ QOL <- QOL %>%
   
 ```
 
-
 ## Investigating distribution of scores.
 
-Physical score (PSC12) and mental health scores (MCS12) were not normally distributed therefore differences across groups were tested using Mann-Whitney U test (comparing 2 groups: diagnosis type, sex, flares last year) or Kruksal-Wallis (comparing >2 groups: age groups, faecal calprotectin category).
+Physical score (PSC12) and mental health scores (MCS12) were not
+normally distributed therefore differences across groups were tested
+using Mann-Whitney U test (comparing 2 groups: diagnosis type, sex,
+flares last year) or Kruksal-Wallis (comparing \>2 groups: age groups,
+faecal calprotectin category).
 
 Note: For PSC12 and MCS12, a higher score indicates better health.
 
@@ -394,40 +406,52 @@ ggplot(QOL, aes(x = MCS12, fill = Sex)) +
 
 ```
 
-
-
 ## Investigating associations with baseline SF12 scores (continuous)
 
-Here we present the summary findings of tests for association. The results can then be seen in the sections and code below.
+Here we present the summary findings of tests for association. The
+results can then be seen in the sections and code below.
 
 Summary:
 
 Physical scores (PSC12)
 
-* No statistical significance by diagnosis type
-* Statistically significant difference in PSC12 scores by sex (p-value = 3.5e-05)
-* There is a statistically significant difference between age groups in PSC12 score, p-value = 4.06e-13
-* No statistically significant difference by FC category in PSC12 scores, p-value = 0.1953
-* There is a statistically significant difference between flares group (reported in the previous year) in PSC12 score, p-value = 4.6e-08
+-   No statistical significance by diagnosis type
+-   Statistically significant difference in PSC12 scores by sex (p-value
+    = 3.5e-05)
+-   There is a statistically significant difference between age groups
+    in PSC12 score, p-value = 4.06e-13
+-   No statistically significant difference by FC category in PSC12
+    scores, p-value = 0.1953
+-   There is a statistically significant difference between flares group
+    (reported in the previous year) in PSC12 score, p-value = 4.6e-08
 
 Mental health scores (MCS12)
 
-* No statistical significance by diagnosis type
-* No statistically significant difference in MSC12 scores (p-value = 0.17), could this be due to missing option 4 - these are specific to mental health domains?
-* There is a statistially significant difference between age groups in MCS12 score, p-value = 0.0001116
-* No statistically significant difference by FC category in PSC12 scores, p-value = 0.5556
-* No statistically significant difference between flares group (reported in the previous year) in MCS12 score, p-value = 0.34
+-   No statistical significance by diagnosis type
+-   No statistically significant difference in MSC12 scores (p-value =
+    0.17), could this be due to missing option 4 - these are specific to
+    mental health domains?
+-   There is a statistially significant difference between age groups in
+    MCS12 score, p-value = 0.0001116
+-   No statistically significant difference by FC category in PSC12
+    scores, p-value = 0.5556
+-   No statistically significant difference between flares group
+    (reported in the previous year) in MCS12 score, p-value = 0.34
 
+Interestingly, there were no associations with sex or flare group for
+mental health domains, which is out of keeping with other data in
+PREdiCCt pertaining to mental health.
 
-Interestingly, there were no associations with sex or flare group for mental health domains, which is out of keeping with other data in PREdiCCt pertaining to mental health.
-
-These tests were re-run using chi-square test and comparing differences between groups using cut-offs of 50 for PSC12 and 42 for MCS12 - associations with key variables remained unchanged. 
+These tests were re-run using chi-square test and comparing differences
+between groups using cut-offs of 50 for PSC12 and 42 for MCS12 -
+associations with key variables remained unchanged.
 
 ### Diagnosis type
 
 Physical scores (PSC12) : No statistical significance by diagnosis type
 
-Mental health scores (MCS12) : No statistical significance by diagnosis type
+Mental health scores (MCS12) : No statistical significance by diagnosis
+type
 
 ```{r, create table showing SF12 and MCS12 scores, diagnosis2}
 my.render.cont <- function(x) {
@@ -476,16 +500,15 @@ QOL %>%
 pairwise_tests <- pairwise.wilcox.test(QOL$MCS12, QOL$diagnosis2, p.adjust.method = "bonferroni")
 print(pairwise_tests)
 
-# Note: consider a different p adjust than bonferroni?
 
 ```
 
-
-
 ### Sex
 
-Statistically significant difference in PSC12 scores by sex (p-value = 3.5e-05)
-No statistically significant difference in MSC12 scores (p-value = 0.17), could this be due to missing option 4 - these are specific to mental health domains?
+Statistically significant difference in PSC12 scores by sex (p-value =
+3.5e-05) No statistically significant difference in MSC12 scores
+(p-value = 0.17), could this be due to missing option 4 - these are
+specific to mental health domains?
 
 ```{r, PSC12 and MCS12 sex}
 table1::table1(~ PSC12 | Sex,
@@ -510,7 +533,7 @@ QOL %>%
     aes(x = PSC12, colour = Sex)
   )
 
-pairwise_tests <- pairwise.wilcox.test(QOL$PSC12, QOL$Sex, p.adjust.method = "bonferroni")
+pairwise_tests <- pairwise.wilcox.test(QOL$PSC12, QOL$Sex)
 print(pairwise_tests)
 
 #mental health
@@ -521,17 +544,16 @@ QOL %>%
     aes(x = MCS12, colour = Sex)
   )
 
-pairwise_tests <- pairwise.wilcox.test(QOL$MCS12, QOL$Sex, p.adjust.method = "bonferroni")
+pairwise_tests <- pairwise.wilcox.test(QOL$MCS12, QOL$Sex)
 print(pairwise_tests)
 
 ```
 
-
-
 ###Age Group
 
-There is a statistically significant difference between age groups in PSC12 score, p-value = 4.06e-13
-There is a statistially significant difference between age groups in MCS12 score, p-value = 0.0001116
+There is a statistically significant difference between age groups in
+PSC12 score, p-value = 4.06e-13 There is a statistially significant
+difference between age groups in MCS12 score, p-value = 0.0001116
 
 ```{r, PSC12 and MCS12 AgeGroup}
 table1::table1(~ PSC12 | AgeGroup,
@@ -569,8 +591,11 @@ kruskal.test(MCS12 ~ AgeGroup, data = QOL)
 
 Flares (in last year)
 
-There is a statistically significant difference between flares group (reported in the previous year) in PSC12 score, p-value = 4.6e-08
-There is no statistically significant difference between flares group (reported in the previous year) in MCS12 score, p-value = 0.34
+There is a statistically significant difference between flares group
+(reported in the previous year) in PSC12 score, p-value = 4.6e-08 There
+is no statistically significant difference between flares group
+(reported in the previous year) in MCS12 score, p-value = 0.34
+
 ```{r, PSC12 and MCS12 flares}
 table1::table1(~ PSC12 | flare_group,
   data = QOL,
@@ -607,10 +632,12 @@ pairwise_tests <- pairwise.wilcox.test(QOL$MCS12, QOL$flare_group, p.adjust.meth
 print(pairwise_tests)
 
 ```
+
 Faecal Calprotectin
 
-No statistically significant difference by FC category in PSC12 scores, p-value = 0.1953
-No statistically significant difference by FC category in PSC12 scores, p-value = 0.5556
+No statistically significant difference by FC category in PSC12 scores,
+p-value = 0.1953 No statistically significant difference by FC category
+in PSC12 scores, p-value = 0.5556
 
 ```{r, PSC12 and MCS12 FC cat}
 table1::table1(~ PSC12 | cat,
@@ -642,14 +669,15 @@ kruskal.test(PSC12 ~ cat, data = QOL)
 kruskal.test(MCS12 ~ cat, data = QOL)
 ```
 
-
 ### Investigating association with grouped SF12 scores
 
-There are limitations in comparing mental health scores given the lack of option "some of the time" in the baseline questionnaire. 
-Suggested cut off of 50 for PSC12 to determine a physical condition; while a score of 42 or less on the MCS-12 may be indicative of ‘clinical depression’.
+There are limitations in comparing mental health scores given the lack
+of option "some of the time" in the baseline questionnaire. Suggested
+cut off of 50 for PSC12 to determine a physical condition; while a score
+of 42 or less on the MCS-12 may be indicative of ‘clinical depression’.
 
-Analyses were re-run using chi-squared to compare grouped SF12 scores - there was no change to associations with key variables.
- 
+Analyses were re-run using chi-squared to compare grouped SF12 scores -
+there was no change to associations with key variables.
 
 ```{r, cut offs an re-analyse for associations}
 QOL <- QOL %>% 
@@ -659,22 +687,21 @@ QOL <- QOL %>%
   mutate(MCS_grouped = ifelse(MCS12 >= 42, "42+", "<42"))
 ```
 
-Tests for associations PSC12 with cut off <50 (chi-squared)
+Tests for associations PSC12 with cut off \<50 (chi-squared)
 
-* diagnosis type not significantly associated
-* sex significant association (p-value = 4.631e-06)
-* age group significant (p-value = 9.029e-09)
-* flare group significant (p-value = 0.0002242)
-* fc category not significantly associated
+-   diagnosis type not significantly associated
+-   sex significant association (p-value = 4.631e-06)
+-   age group significant (p-value = 9.029e-09)
+-   flare group significant (p-value = 0.0002242)
+-   fc category not significantly associated
 
+Test for associations MCS12 with cut off \<42 (chi-squared)
 
-Test for associations MCS12 with cut off <42 (chi-squared)
-
-* diagnosis type not significantly associated
-* sex not significantly associated
-* age group significant (p-value = 0.03874)
-* flare group not significantly associated
-* fc category not significantly associated
+-   diagnosis type not significantly associated
+-   sex not significantly associated
+-   age group significant (p-value = 0.03874)
+-   flare group not significantly associated
+-   fc category not significantly associated
 
 ```{r, PSC12 and MCS12 grouped tables}
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat  | PSC_grouped,
@@ -690,7 +717,6 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat  | MCS_grouped,
 )
 
 ```
-
 
 ```{r, PSC12 and grouped associations}
 contingency_table <- table(QOL$diagnosis2, QOL$PSC_grouped)
@@ -837,8 +863,9 @@ if (chi_squared_result$p.value < alpha) {
 
 ## Reproduction and reproducibility {.appendix}
 
-<details class = "appendix">
-  <summary> Session info </summary>
+<details class="appendix">
+
+<summary>Session info</summary>
 
 ```{R Session info}
 #| echo: false
@@ -847,6 +874,5 @@ pander::pander(sessionInfo())
 
 </details>
 
-Licensed by 
-<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
- unless otherwise stated.
+Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC
+BY</a> unless otherwise stated.

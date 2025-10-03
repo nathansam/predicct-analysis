@@ -9,7 +9,7 @@ toc: true
 toc-expand: true
 ---
 
-# Pittsburgh Sleep Quality Index 
+# Pittsburgh Sleep Quality Index
 
 ## Setting up in R
 
@@ -512,6 +512,13 @@ psqi2 <- psqi2 %>%
 #tidy psqi2}
 psqi2 <- psqi2 %>% dplyr::select(-(7:35))
 
+# SleepDisturbance as a factor
+
+psqi2 %<>%
+  dplyr::mutate(
+    SleepDisturbance = factor(SleepDisturbance, levels = c("No", "Yes"))
+  )
+
 ```
 
 ## Baseline Analysis
@@ -732,7 +739,7 @@ data_survival_soft_uc %>%
   ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     SleepDisturbance +
     IMD +
@@ -743,7 +750,7 @@ cox_soft <- coxph(
   data = data_survival_soft_uc
 )
 
-cox_soft %>%
+cox_soft_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -756,7 +763,7 @@ data_survival_hard_uc %>%
   ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     SleepDisturbance +
     IMD +
@@ -767,11 +774,11 @@ cox_hard <- coxph(
   data = data_survival_hard_uc
 )
 
-cox_hard %>%
+cox_hard_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
-### Crohn's Disease 
+### Crohn's Disease
 
 ```{r}
 # Survival data
@@ -805,7 +812,7 @@ data_survival_soft_cd %>%
   ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     SleepDisturbance +
     IMD +
@@ -816,7 +823,7 @@ cox_soft <- coxph(
   data = data_survival_soft_cd
 )
 
-cox_soft %>%
+cox_soft_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -829,7 +836,7 @@ data_survival_hard_cd %>%
   ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     SleepDisturbance +
     IMD +
@@ -840,6 +847,6 @@ cox_hard <- coxph(
   data = data_survival_hard_cd
 )
 
-cox_hard %>%
+cox_hard_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```

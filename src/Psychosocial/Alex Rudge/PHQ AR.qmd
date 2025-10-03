@@ -333,8 +333,6 @@ phq_clean <- phq_clean %>%
 phq_clean <- phq_clean %>% 
   filter(!is.na(cat))
 
-save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-#saveRDS(phq_clean, paste0(save_path, "phq_clean.RDS"))
 ```
 
 ## Baseline Analysis
@@ -555,7 +553,7 @@ data_survival_soft_uc %>%
   ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     somatisation +
     IMD +
@@ -566,7 +564,7 @@ cox_soft <- coxph(
   data = data_survival_soft_uc
 )
 
-cox_soft %>%
+cox_soft_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -579,7 +577,7 @@ data_survival_hard_uc %>%
   ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     somatisation +
     IMD +
@@ -590,11 +588,11 @@ cox_hard <- coxph(
   data = data_survival_hard_uc
 )
 
-cox_hard %>%
+cox_hard_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
-### Crohn's Disease 
+### Crohn's Disease
 
 ```{r}
 # Survival data
@@ -628,7 +626,7 @@ data_survival_soft_cd %>%
   ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     somatisation +
     IMD +
@@ -639,7 +637,7 @@ cox_soft <- coxph(
   data = data_survival_soft_cd
 )
 
-cox_soft %>%
+cox_soft_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -652,7 +650,7 @@ data_survival_hard_cd %>%
   ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     somatisation +
     IMD +
@@ -663,6 +661,6 @@ cox_hard <- coxph(
   data = data_survival_hard_cd
 )
 
-cox_hard %>%
+cox_hard_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```

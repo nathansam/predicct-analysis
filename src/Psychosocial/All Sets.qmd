@@ -68,28 +68,28 @@ health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 psqi <- read.xlsx(paste0(data.path, "Baseline2022/psqi.xlsx"))
-demo <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo.RDS")
-flares <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/cutoff-flares.RDS")
-smoking <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/smoking.rds")
-flares_combined <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/flares/flares-combined-cut.RDS")
-flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
-flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
-exercise <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/exercise.RDS")
-psqi_IBD <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/psqi_IBD.RDS")
-phq_clean <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/phq_clean.RDS")
-hads_fc <-  readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_fc.RDS")
-ETOH <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/ETOH.RDS")
-hads_with_demographics <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hads_with_demographics.RDS")
-demo_uc <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-uc.RDS")
-demo_cd <- readRDS("/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.RDS")
-softflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/softflare_plot.RDS")
-hardflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hardflare_plot.RDS")
+demo <- readRDS(paste0(outdir, "demo.RDS"))
+flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
+smoking <- readRDS(paste0(save_path, "smoking.rds"))
+flares_combined <- readRDS(paste0(outdir, "flares/flares-combined-cut.RDS"))
+flares_hard <- readRDS(paste0(save_path, "flares_hard.RDS"))
+flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
+exercise <- readRDS(paste0(save_path, "exercise.RDS"))
+psqi_IBD <- readRDS(paste0(save_path, "psqi_IBD.RDS"))
+phq_clean <- readRDS(paste0(save_path, "phq_clean.RDS"))
+hads_fc <-  readRDS(paste0(save_path, "hads_fc.RDS"))
+ETOH <- readRDS(paste0(save_path, "ETOH.RDS"))
+hads_with_demographics <- readRDS(paste0(save_path, "hads_with_demographics.RDS"))
+demo_uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
+demo_cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
+softflareplot <- readRDS(paste0(save_path, "softflare_plot.RDS"))
+hardflareplot <- readRDS(paste0(save_path, "hardflare_plot.RDS"))
 # if needed
 # demo_full <- readRDS(paste0(outdir,"demo-full.RDS"))
 demo_IBD <- readRDS(paste0(outdir,"demo-IBD.RDS"))
 # if needed
-softflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/softflare_plot.RDS")
-hardflareplot <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/hardflare_plot.RDS")
+softflareplot <- readRDS(paste0(save_path, "softflare_plot.RDS"))
+hardflareplot <- readRDS(paste0(save_path, "hardflare_plot.RDS"))
 ```
 
 ```{r, forest plots - hard flare}
@@ -120,12 +120,16 @@ hardflareplot$Variable <- factor(hardflareplot$Variable, levels = c("HADS-A 8-10
 
 softflareplot$Diagnosis <- factor(softflareplot$Diagnosis, levels = c("UC/IBDU", "CD"))
 hardflareplot$Diagnosis <- factor(hardflareplot$Diagnosis, levels = c("UC/IBDU", "CD"))
+
 softflareplot <- softflareplot %>%
   mutate(p_value = as.numeric(as.character(p_value)))
+
 softflareplot <- softflareplot %>%
   mutate(color_group = ifelse(p_value < 0.05, "Significant", "Not Significant"))
+
 hardflareplot <- hardflareplot %>%
   mutate(color_group = ifelse(p_value < 0.05, "Significant", "Not Significant"))
+
 color_palette <- c("Significant" = "red", "Not Significant" = "black") 
 
 #customisation
@@ -375,52 +379,100 @@ Diet is being investigated in central analyses.
 
 
 ```{r patient reported flare}
+
+# Cause of patient reported flares
+
 # Select the columns of interest
 flarecause <- flarecause %>%
   filter(!is.na(ParticipantId))
 
-variables_of_interest <- flarecause[, c(
+variables_of_interest <- flarecause %>%
+  dplyr::select(c(
   "MedsStoppedWorking", "StoppedAttendClinic", "StoppedMeds",
   "DietaryChanges", "Gastroenteritis", "OtherInfection",
   "Travel", "Stress", "Smoking", "Alcohol",
   "Antibiotics", "FCPregnancy", "Breastfeeding",
   "Menstruation", "Exercise", "SleepDisturbance",
   "Pollution", "NSAIDS", "OtherFlareCause"
-)]
+))
 
 # Reshape the data into long format
-variables_long <- gather(variables_of_interest, key = "Variable", value = "Cause")
+variables_count <- variables_of_interest %>%
+  tidyr::pivot_longer(
+    cols = tidyselect::everything(), 
+    names_to = "Variable", 
+    values_to = "Cause") %>%
+  dplyr::group_by(Variable) %>%
+  dplyr::summarise(
+    count = sum(Cause, na.rm = TRUE)
+  ) %>%
+  dplyr::arrange(
+    desc(count)
+  ) %>%
+  dplyr::mutate(
+    Variable = forcats::as_factor(Variable)
+  )
 
-# Plot the counts using geom_bar
-patient_flare_baseline <- ggplot(variables_long, aes(x = Cause, fill = Variable)) +
-  geom_bar(position = "dodge", color = "black") +
-  ggtitle("Patient reported flare cause via baseline questionnaire") +
-  xlab("Cause") +
-  ylab("Count") +
-  theme_minimal() +
-  theme(axis.ticks.x = element_blank())
+variables_count %>%
+  ggplot(aes(x = count, y = Variable)) +
+  geom_col(position = "dodge") +
+  xlab("Count") +
+  ylab("Cause") +
+  theme_minimal()
 
-print(patient_flare_baseline)
 
 ```
 
 ```{r, join datasets}
 
+# Joining variables (common to all dataframes)
+joining_variables <- c('ParticipantNo', 'diagnosis2', 'age', 'AgeGroup', 'Sex', 'cat', 'IMD', 'SiteNo')
+
 #inclusive full dataset 1639
 all_psychosocial <- psqi_IBD %>% 
-  full_join(exercise %>% select(ParticipantNo, MinimumExercise, diagnosis2, age, AgeGroup, cat, IMD, SiteNo, Sex))
+  full_join(
+    exercise %>% 
+      select(tidyselect::all_of(joining_variables), MinimumExercise),
+      by = joining_variables
+    )
 
 all_psychosocial <- all_psychosocial %>% 
-  full_join(hads_with_demographics %>% select(ParticipantNo, anxiety_hads, depression_hads, diagnosis2, cat, AgeGroup, IMD, SiteNo, Sex))
+  full_join(
+    hads_with_demographics %>% 
+      select(tidyselect::all_of(joining_variables), anxiety_hads, depression_hads),
+    by = joining_variables
+  )
 
 all_psychosocial <- all_psychosocial %>% 
-  full_join(phq_clean %>% select(ParticipantNo, TotalPHQ, somatisation, diagnosis2, AgeGroup, cat, IMD, SiteNo, Sex))
+  full_join(
+    phq_clean %>% 
+      select(tidyselect::all_of(joining_variables), TotalPHQ, somatisation),
+    by = joining_variables
+  )
 
 all_psychosocial <- all_psychosocial %>% 
-  full_join(ETOH %>% select(ParticipantNo, Alcoholg, Alcohol_units_wk, weekly_units, diagnosis2, age, AgeGroup, cat, IMD, SiteNo, Sex))
+  full_join(
+    ETOH %>% 
+      select(tidyselect::all_of(joining_variables), Alcoholg, Alcohol_units_wk, weekly_units),
+    by = joining_variables
+  )
 
-all_psychosocial <- all_psychosocial %>% 
-  left_join(demo %>% select(ParticipantNo, diagnosis, Ethnicity, FC, BMIcat, `IBD Duration`, control_8, vas_control, Biologic, CReactiveProtein), by = "ParticipantNo")
+all_psychosocial <- all_psychosocial %>%
+  left_join(
+    demo %>% select(
+      ParticipantNo,
+      diagnosis,
+      Ethnicity,
+      FC,
+      BMIcat,
+      `IBD Duration`,
+      control_8,
+      vas_control,
+      Biologic,
+      CReactiveProtein
+    ),
+    by = "ParticipantNo"
+  )
 
 all_psychosocial_table <- all_psychosocial %>%
   mutate(IMD = as.numeric(as.character(IMD)))
@@ -447,8 +499,12 @@ table1::table1( ~ age + Sex + Ethnicity + BMIcat + IMD + diagnosis.y + `IBD Dura
 
 cd_psychosocial <- all_psychosocial %>% 
   filter(diagnosis2 == "CD")
+
 cd_psychosocial <- cd_psychosocial %>% 
-  left_join(demo_cd %>% select(ParticipantNo, Location, L4, Behaviour, Perianal, HBI, Surgery, Smoke),  by = "ParticipantNo")
+  left_join(
+    demo_cd %>% select(ParticipantNo, Location, L4, Behaviour, Perianal, HBI, Surgery, Smoke),  
+    by = "ParticipantNo"
+    )
 
 #cd diseaqse characteristics - table
 #for table in paper, 'L4 only' was counted manually
@@ -459,8 +515,13 @@ table1::table1( ~ Location + L4 + Behaviour + Perianal + HBI + Surgery + Smoke |
 
 uc_psychosocial <- all_psychosocial %>% 
   filter(diagnosis2 == "UC/IBDU")
+
 uc_psychosocial <- uc_psychosocial %>% 
-  left_join(demo_uc %>% select(ParticipantNo, Extent, Mayo, Smoke), by = "ParticipantNo")
+  left_join(
+    demo_uc %>% select(ParticipantNo, Extent, Mayo, Smoke), 
+    by = "ParticipantNo"
+    )
+
 #uc characteristics
 table1::table1( ~ Extent + Mayo + Smoke | diagnosis2,
   data = uc_psychosocial,
@@ -485,6 +546,21 @@ shapiro.test(psychosocial_ages)
 wilcox_test_result <- wilcox.test(all_ages, psychosocial_ages)
 print(wilcox_test_result)
 
+demo_IBD %>%
+  dplyr::bind_rows(
+    demo_IBD %>% dplyr::filter(ParticipantNo %in% all_psychosocial$ParticipantNo),
+    .id = 'Group'
+  ) %>% 
+  dplyr::mutate(
+    Group = forcats::fct_recode(
+      Group,
+      'All patients' = '1',
+      'Psychosocial Only' = '2'
+    )
+  ) %>%
+  ggplot(aes(x = Age, colour = Group)) +
+  geom_density()
+
 ```
 
 ```{R}
@@ -498,8 +574,11 @@ all_hard <- all_psychosocial %>%
   rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 
-missing_psychosocial <- all_psychosocial %>% 
-  filter(is.na(Sex))
+# all_psychosocial %>%filter(is.na(Sex)) %>% nrow()
+# all_psychosocial %>%filter(is.na(cat)) %>% nrow()
+# all_psychosocial %>%filter(is.na(SiteNo)) %>% nrow()
+# all_psychosocial %>%filter(is.na(IMD)) %>% nrow()
+
 #no missingL DiseaseFlareYN, time in hard or soft
 #no missing cat, SiteNo (fixed) in psychosocial all/soft/hard
 #17 missing IMD (all in exercise)
@@ -588,6 +667,8 @@ This was also true for UC/IBDU patients separately (p-value = 0.00047), but not 
 # redo this with ALL SETS - looking at flare rates/flare groups and associations across all patients
 t_test_result_flare_sex <- t.test(flares_last_year ~ Sex, data = hads_old_flare)
 print(t_test_result_flare_sex)
+
+#wilcox.test(flares_last_year ~ Sex, data = hads_old_flare)
 
 
 ggplot(hads_old_flare, aes(x = flares_last_year, fill = Sex)) +

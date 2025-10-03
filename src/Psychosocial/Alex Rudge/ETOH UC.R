@@ -5,7 +5,7 @@
 # Called exercise, rename to data_baseline
 data_baseline <- exercise
 
-# Crohns patients only
+# UC patients only
 data_baseline %<>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -27,17 +27,25 @@ data_survival_soft <- data_baseline %>%
   ) %>%
   dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
 
-# Our dependent variable is a binary flag indicating whether a patient acheived
+# Our dependent variable is a binary flag indicating whether a patient achieved
 # Minimum exercise guidelines.
 
+# Called MinimumExercise
+
+
 # Counts
-data_survival_hard %>%
+data_baseline %>%
   dplyr::group_by(MinimumExercise) %>%
   dplyr::count()
 
 # Baseline plots
+dependent = 'MinimumExercise'
+independent = c('AgeGroup', 'Sex', 'flare_group', 'cat')
 
-baseline_plots <- summon_baseline_plots(data = data_baseline, dependent = 'MinimumExercise')
+baseline_plots <- summon_baseline_plots(
+  data = data_baseline, 
+  dependent = dependent,
+  independent = independent)
 
 baseline_plots$AgeGroup
 baseline_plots$Sex
@@ -45,12 +53,6 @@ baseline_plots$flare_group
 baseline_plots$cat
 
 # Chi squared tests in a table
-dependent = 'MinimumExercise'
-independent = c('AgeGroup',
-                'Sex',
-                'flare_group',
-                'cat')
-
 summon_chisq_test(data = data_baseline, dependent = dependent, independent = independent)
 
 

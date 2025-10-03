@@ -359,12 +359,12 @@ hads_with_demographics <- hads_with_demographics %>%
 #create flare groups
 hads_with_demographics <- hads_with_demographics %>%
   dplyr::mutate(
-    flare_group = ifelse(FlaresInPastYear == 0, "No flares", "One or more flares")
+    flare_group = ifelse(FlaresInPastYear == 0, "No flares", "1 or More Flares")
     )
 
 #make flares into levels
 hads_with_demographics %<>%
-  dplyr::mutate(flare_group = factor(flare_group, levels = c("No flares","One or more flares")))
+  dplyr::mutate(flare_group = factor(flare_group, levels = c("No flares", "1 or More Flares")))
 
 # Remove subjects with missing flare group data - 3 subjects
 hads_with_demographics <- hads_with_demographics %>% 
@@ -386,6 +386,8 @@ hads_for_analysis <- hads_for_analysis %>%
       labels = c("0-7", "8-10", "11-21"), 
       include.lowest = TRUE)
   )
+
+
 ```
 
 ## Baseline Analysis

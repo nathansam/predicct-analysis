@@ -184,7 +184,6 @@ lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
-lifeevents <- readRDS(paste0(save_path, "lifeevents.RDS"))
 QOL <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 flares_hard <- readRDS(paste0(save_path, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
@@ -274,6 +273,7 @@ lifeevents <- lifeevents %>%
 # Removing missing FC
 lifeevents <- lifeevents %>% 
   filter(!is.na(cat))
+
 ```
 
 ```{r}
@@ -320,6 +320,7 @@ lifeevents_counts %>%
   xlab("Count") +
   ylab("Life Event") +
   theme_minimal()
+
 ```
 
 ## Baseline Analysis
@@ -540,7 +541,7 @@ data_survival_soft_uc %>%
   ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     AnyLifeEvents +
     IMD +
@@ -551,7 +552,7 @@ cox_soft <- coxph(
   data = data_survival_soft_uc
 )
 
-cox_soft %>%
+cox_soft_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -564,7 +565,7 @@ data_survival_hard_uc %>%
   ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     AnyLifeEvents +
     IMD +
@@ -575,7 +576,7 @@ cox_hard <- coxph(
   data = data_survival_hard_uc
 )
 
-cox_hard %>%
+cox_hard_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -613,7 +614,7 @@ data_survival_soft_cd %>%
   ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     AnyLifeEvents +
     IMD +
@@ -624,7 +625,7 @@ cox_soft <- coxph(
   data = data_survival_soft_cd
 )
 
-cox_soft %>%
+cox_soft_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -637,7 +638,7 @@ data_survival_hard_cd %>%
   ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     AnyLifeEvents +
     IMD +
@@ -648,6 +649,6 @@ cox_hard <- coxph(
   data = data_survival_hard_cd
 )
 
-cox_hard %>%
+cox_hard_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```

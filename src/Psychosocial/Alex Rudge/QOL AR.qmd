@@ -9,7 +9,7 @@ toc: true
 toc-expand: true
 ---
 
-# Quality of Life 
+# Quality of Life
 
 ## Setting up in R
 
@@ -1296,7 +1296,7 @@ cox_physical_hard_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
-#### Crohn's Disease 
+#### Crohn's Disease
 
 ```{r}
 # Survival data
@@ -1515,7 +1515,7 @@ cox_mental_hard_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
-#### Crohn's Disease 
+#### Crohn's Disease
 
 ```{r}
 # Survival data

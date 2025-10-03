@@ -350,6 +350,7 @@ ETOH <- ETOH %>%
 
 ETOH <- ETOH %>%
   filter(!is.na(weekly_units))
+
 ```
 
 ## Baseline Analysis
@@ -570,7 +571,7 @@ data_survival_soft_uc %>%
   ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     weekly_units +
     IMD +
@@ -581,7 +582,7 @@ cox_soft <- coxph(
   data = data_survival_soft_uc
 )
 
-cox_soft %>%
+cox_soft_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -594,7 +595,7 @@ data_survival_hard_uc %>%
   ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     weekly_units +
     IMD +
@@ -605,7 +606,7 @@ cox_hard <- coxph(
   data = data_survival_hard_uc
 )
 
-cox_hard %>%
+cox_hard_uc %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -643,7 +644,7 @@ data_survival_soft_cd %>%
   ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox model
-cox_soft <- coxph(
+cox_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     weekly_units +
     IMD +
@@ -654,7 +655,7 @@ cox_soft <- coxph(
   data = data_survival_soft_cd
 )
 
-cox_soft %>%
+cox_soft_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```
 
@@ -667,7 +668,7 @@ data_survival_hard_cd %>%
   ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
 
 # Cox
-cox_hard <- coxph(
+cox_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     weekly_units +
     IMD +
@@ -678,6 +679,6 @@ cox_hard <- coxph(
   data = data_survival_hard_cd
 )
 
-cox_hard %>%
+cox_hard_cd %>%
   broom::tidy(exponentiate = TRUE, conf.int = TRUE)
 ```

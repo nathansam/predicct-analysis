@@ -305,7 +305,7 @@ exercise <- exercise %>%
 
 # check that there are no cases of reporting 'no' to the question whilst
 # providing answers in the time boxes
-# There isn't any
+
 # exercise %>%
 #   filter(VigorousWork == 2 &
 #            (VigorousWorkHours > 0 | VigorousWorkMinutes > 0)) %>%
@@ -330,6 +330,8 @@ exercise <- exercise %>%
 #   filter(ModerateSport == 2 &
 #            (ModerateSportHours > 0 | ModerateSportMinutes > 0)) %>%
 #   nrow()
+
+# No cases, all previously resolved.
 
 ```
 
@@ -423,7 +425,7 @@ exercise <- exercise %>% filter(!(ModerateSport == 1 &
 
 ```
 
-At this point can confirm that all participants have a valid response to at least one section, have removed invalid answers (e.g respond yes to activity and fill out hours without specifying days) checked if anyone said no but then proceeded to report days/hours or minutes, no one did across any section
+At this point can confirm that all participants have a valid response to at least one section, have removed invalid answers (e.g respond yes to activity and fill out hours without specifying days) checked if anyone said no but then proceeded to report days/hours or minutes, no one did across any section.
 
 ```{r}
 #| label: calculate-exercise-metrics
@@ -482,6 +484,11 @@ exercise <- exercise %>%
       TRUE ~ "No"
     )
   )
+
+# MinimumExercise as a factor
+exercise %<>%
+  dplyr::mutate(MinimumExercise = factor(MinimumExercise, levels = c('Yes', 'No')))
+
 
 # exclude if minute exercise/week >6720 - 10 cases
 # exercise %>% dplyr::filter(ExerciseMins > 6720) %>% nrow()

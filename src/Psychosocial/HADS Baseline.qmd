@@ -7,9 +7,7 @@ author:
     affiliations:
       - ref: Lothian
 bibliography: Psychosocial.bib 
-editor:
-  markdown:
-    80
+
 ---
 
 ```{r setup, warn.conflicts = FALSE}
@@ -226,7 +224,7 @@ hads_with_demographics <- hads_with_demographics %>%
 n_missing_fc <- hads_with_demographics %>% 
   filter(is.na(cat)) %>%
   nrow()
-# 209 removed with no ibd category
+# 209 removed with no FC
 
 hads_with_demographics <- hads_with_demographics %>% 
   filter(!is.na(cat))
@@ -286,7 +284,7 @@ We tested for associations of diagnosis type (CD vs UC/IBDU), sex, age group, fl
 
 ### Baseline scores
 
-At baseline, anxiety scores tended to be higher for anxiety compared than for depression.
+At baseline, anxiety scores tended to be higher than depression scores.
 
 A recent meta-analysis by @Barberio2021 looking at the prevalence of anxiety and depression in people with IBD found that
 
@@ -345,8 +343,8 @@ table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
 #| label: tbl-vars-by-depression
 #| tbl-cap: "Distribution of Baseline Depression Scores across Key Variables"
 #depression_hads
-filtered_data_depression <-
-  hads_for_analysis[hads_for_analysis$hads_type == "depression_hads", ]
+filtered_data_depression <- hads_for_analysis %>% 
+  dplyr::filter(hads_type == "depression_hads")
 
 table1::table1(~ diagnosis2 + Sex + AgeGroup + flare_group + cat | score_group,
   data = filtered_data_depression,
@@ -397,6 +395,15 @@ There are no significant differences in HADS-Anxiety or HADS-Depression score gr
 #| output: "asis"
 #| results: "hold"
 # TO-DO add table caption
+
+filtered_data_anxiety %>%
+  dplyr::group_by(score_group, diagnosis2) %>%
+  dplyr::count() %>%
+  dplyr::group_by(diagnosis2) %>%
+  dplyr::mutate(p = n/sum(n)) %>%
+  ggplot() +
+  geom_col(aes(x = score_group, y = p, fill = diagnosis2), position = 'dodge')
+  
 
 # Create the contingency table
 contingency_table_anxiety <- table(filtered_data_anxiety$diagnosis2,
@@ -1011,8 +1018,8 @@ hads_control <- hads_control %>%
   dplyr::filter(!is.na(control_grouped))
 
 #change control_grouped and vas_control from character into factors
-hads_control$control_grouped <- factor(hads_control$control_grouped)
-hads_control$vas_control <- factor(hads_control$vas_control)
+hads_control %<>% dplyr::mutate(control_grouped = factor(control_grouped))
+hads_control %<>% dplyr::mutate(vas_control = factor(vas_control))
 
 filtered_data_anxiety <- hads_control %>% 
   dplyr::filter(hads_type == "anxiety_hads")
