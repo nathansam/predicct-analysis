@@ -27,7 +27,7 @@ summon_chisq_test <- function(data, dependent, independent) {
         
       if (fisher_flag){
         # If one of the counts is < 5 use Fisher exact test
-        fisher_test(table(x, y), simulate.p.value = TRUE) %>%
+        fisher_test(table(x, y), simulate.p.value = TRUE, B = 1e5) %>%
           dplyr::mutate(
             dependent = .x, 
             independent = .y,
@@ -147,6 +147,27 @@ summon_baseline_plots <- function(data, dependent, independent) {
 # baseline_plots$cat
 
 
-
+# Extract levels from the data
+extract_cox_results <- function(data,
+                                cox_model,
+                                variable,
+                                flare_type,
+                                diagnosis2) {
+  data %>%
+    dplyr::pull(variable) %>%
+    levels() %>%
+    # Create tibble to store Cox results including reference level
+    {
+      tibble(term = paste0(variable, .), variable = variable, level = .)
+    } %>%
+    dplyr::left_join(
+      cox_model %>%
+        broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+        dplyr::filter(stringr::str_starts(term, variable)),
+      by = "term"
+    ) %>%
+    # Diagnosis
+    dplyr::mutate(diagnosis2 = diagnosis2, flare_type = flare_type)
+}
 
 
