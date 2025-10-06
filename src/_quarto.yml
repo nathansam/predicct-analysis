@@ -3,13 +3,13 @@ project:
   type: website
   render:
     - "Psychosocial/Introduction.qmd"
-    - "Psychosocial/Exercise and ETOH.qmd"
-    - "Psychosocial/HADS Baseline.qmd"
-    - "Psychosocial/HADS Survival Analysis.qmd"
-    - "Psychosocial/LifeEvents.qmd"
-    - "Psychosocial/PHQ.qmd"
-    - "Psychosocial/psqi.qmd"
-    - "Psychosocial/QOL.qmd"
+    - "Psychosocial/Alex Rudge/Exercise AR.qmd"
+    - "Psychosocial/Alex Rudge/HADS AR.qmd"
+    - "Psychosocial/Alex Rudge/Life Events AR.qmd"
+    - "Psychosocial/Alex Rudge/PHQ AR.qmd"
+    - "Psychosocial/Alex Rudge/PSQI AR.qmd"
+    - "Psychosocial/Alex Rudge/QOL AR.qmd"
+    - "Psychosocial/Alex Rudge/Alcohol AR.qmd"
   output-dir: "../docs"
   resources:
     - "robots.txt"
@@ -79,6 +79,16 @@ website:
           - "Survival/IBD.qmd"
           - "Survival/Biochemistry.qmd"
           - "Survival/Diet.qmd"
+      - section: "Psychosocial factors"
+        contents:
+          - "Psychosocial/Introduction.qmd"
+          - "Psychosocial/Alex Rudge/Exercise AR.qmd"
+          - "Psychosocial/Alex Rudge/HADS AR.qmd"
+          - "Psychosocial/Alex Rudge/Life Events AR.qmd"
+          - "Psychosocial/Alex Rudge/PHQ AR.qmd"
+          - "Psychosocial/Alex Rudge/PSQI AR.qmd"
+          - "Psychosocial/Alex Rudge/QOL AR.qmd"
+          - "Psychosocial/Alex Rudge/Alcohol AR.qmd"
       - "documents.qmd"
   page-footer:
     background: "#dff1f3"

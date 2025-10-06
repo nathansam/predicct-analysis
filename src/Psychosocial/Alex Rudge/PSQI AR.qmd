@@ -1,5 +1,19 @@
 ---
 title: "Pittsburgh Sleep Quality Index"
+author:
+  - name: "Chiara Cotronei"
+    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
+    affiliations:
+      - ref: Lothian
+  - name: "Alex Rudge"
+    affiliations:
+      - ref: CGEM
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
 format: 
   html:
     code-fold: true
@@ -102,6 +116,37 @@ summon_chisq_test <- function(data, dependent, independent) {
   
 }
 
+
+print_chisq <- function(data) {
+  data %>%
+    knitr::kable(digits = c(0, 2, 4, 0, NA, NA, NA, 4, NA),
+                 col.names = c("n",
+                               "Statistic",
+                               "p",
+                               "df",
+                               "Method",
+                               "Dependent",
+                               "Independent",
+                               "Adjusted p-value",
+                               "Adjusted significance")
+               )
+}
+
+print_survival <- function(data) {
+  data %>%
+    broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+    knitr::kable(digits = 3,
+                 col.names = c("Covariate",
+                               "Estimate",
+                               "Std. Error",
+                               "Statistic",
+                               "p value",
+                               "Lower CI",
+                               "Upper CI")
+                 )
+}
+
+
 # Creating proportions for plotting baseline data
 calc_proportion <- function(data, dependent, independent){
   
@@ -145,15 +190,14 @@ summon_baseline_plots <- function(data, dependent, independent) {
         y = Inf,
         vjust = 2,
         hjust = 1.3
-      )
+      ) +
+      theme_minimal()
     
     plot_list[[y]] <- plot
     
   }
-  
   # Return the plots
   plot_list
-  
 }
 ```
 
@@ -236,16 +280,17 @@ psqi2 %<>% dplyr::mutate(Sex = factor(
 psqi2 %<>%
   dplyr::mutate(AgeGroup = cut(age, 
                          breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
+                         labels = c("18-24",
+                                    "25-34",
+                                    "35-44",
+                                    "45-54",
+                                    "55-64",
+                                    "65+"),
                          include.lowest = TRUE))
 
 psqi2 <- psqi2 %>% 
   left_join(IBD %>% select(ParticipantNo, FlaresInPastYear),
             by = "ParticipantNo")
-
-#find missing flare data -> 2 participants, these were excluded
-# This is 7 now?
-#psqi2 %>% filter(is.na(FlaresInPastYear)) %>% nrow()
 
 psqi2 <- psqi2 %>%
   filter(!is.na(FlaresInPastYear))
@@ -253,67 +298,29 @@ psqi2 <- psqi2 %>%
 #create flare groups
 psqi2 <- psqi2 %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0,
-                              "No Flares", "1 or More Flares"))
+                              "No Flares",
+                              "1 or More Flares"))
 
 #make flares into levels
 psqi2 %<>% 
   dplyr::mutate(
-    flare_group = factor(flare_group, levels = c( "No Flares","1 or More Flares"))
+    flare_group = factor(flare_group,
+                         levels = c( "No Flares", "1 or More Flares"))
   )
 
 psqi2 <- psqi2 %>% 
   left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
             by = "ParticipantNo")
 
-#204 are missing FC
-# 211
-#psqi2 %>% filter(is.na(cat)) %>% nrow()
-
 psqi2 <- psqi2 %>% 
   filter(!is.na(cat))
 
 save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-#saveRDS(psqi2, paste0(save_path, "psqi_IBD.RDS"))
-
-#delete missing data 
-# psqi2 %>%
-#   filter(
-#     dplyr::if_any(.cols = c(7, 10, 12, 14:23, 25:28), .fns = is.na)
-#   ) %>% nrow()
-
-#70 rows with incomplete psqi data were excluded (tot 1784)
-# 58
 
 psqi2 %<>%
   filter(
     !dplyr::if_any(.cols = c(7, 10, 12, 14:23, 25:28), .fns = is.na)
   )
-
-# Correcting columns being coded 1-4 instead of 0-3
-# Checking
-# psqi2 %>%
-#  dplyr::select(c("CantGetToSleep",
-#                    "WakeUpMiddleNight",
-#                    "UseBathroom",
-#                    "CannotBreath",
-#                    "CoughOrSnore",
-#                    "FeelTooCold",
-#                    "FeelTooWarm",
-#                    "BadDreams",
-#                    "HavePain",
-#                    "OtherTroubleSleeping",
-#                    "SleepQuality",
-#                    "SleepMedicines",
-#                    "StayingAwake",
-#                    "EnoughEnthusiasm")) %>%
-#   dplyr::summarise(
-#     dplyr::across(.cols = everything(), .fns = function(x) max(x, na.rm = TRUE))
-#   ) %>%
-#   tidyr::pivot_longer(
-#     cols = everything(),
-#     names_to = "Score",
-#     values_to = "max"
-#   )
 
 psqi2 %<>%
   dplyr::mutate(
@@ -356,10 +363,6 @@ psqi2 <- psqi2 %>%
     (FallAsleepMns + CantGetToSleep) %in% c(5, 6) ~ 3
   ))
 
-#comp3
-# psqi2 <- psqi2 %>% 
-#   mutate(SleepEachNightMns = ifelse(is.na(BedTimeMns), 0, BedTimeMns)) # Is this an error? Yes
-
 psqi2 %<>%
   tidyr::replace_na(
     list(SleepEachNightMns = 0)
@@ -371,21 +374,8 @@ psqi2 <- psqi2 %>%
            TotalSleepMinutes < 300 ~ 3,
            TotalSleepMinutes >= 300 & TotalSleepMinutes <= 359 ~ 2,
            TotalSleepMinutes >= 360 & TotalSleepMinutes <= 419 ~ 1,
-           TotalSleepMinutes >= 420 ~ 0
-         )) 
-
-#comp4
-# bedtime_counts <- psqi2 %>%
-#   group_by(BedTimeHrs) %>%
-#   summarise(count = n())
-# 
-# pander(bedtime_counts)
-
-# Participants 110415 and 110463 - cases in which bed time was accurately
-# reported in 24 hour format (ascertained by bed time being after 12 on 24h
-# clock), one case of 13 mutated to 1 as wakes up at 8.30 and total sleep
-# reported as 7 hour - likely typo. Exclude? For now just amended
-# (PartNo 350001).
+           TotalSleepMinutes >= 420 ~ 0)
+         ) 
 
 # Correcting non 24h clock entries.
 psqi2<- psqi2 %>%
@@ -470,7 +460,8 @@ psqi2 <- psqi2 %>%
 
 #comp 5 
 psqi2 <- psqi2 %>%
-  mutate(TotalTrouble = rowSums(select(., WakeUpMiddleNight:OtherTroubleSleeping)))
+  mutate(TotalTrouble = rowSums(
+    select(., WakeUpMiddleNight:OtherTroubleSleeping)))
 
 # Categorise
 psqi2 %<>%
@@ -543,7 +534,8 @@ independent = c('diagnosis2',
 summon_chisq_test(
   data = data_baseline, 
   dependent = 'SleepDisturbance', 
-  independent = independent)
+  independent = independent) %>%
+  print_chisq()
 
 # Plots
 baseline_plots <- summon_baseline_plots(
@@ -557,7 +549,6 @@ baseline_plots$AgeGroup
 baseline_plots$Sex
 baseline_plots$flare_group
 baseline_plots$cat
-
 ```
 
 ### Ulcerative Colitis
@@ -580,7 +571,8 @@ independent = c('AgeGroup',
 summon_chisq_test(
   data = data_baseline_uc, 
   dependent = 'SleepDisturbance', 
-  independent = independent)
+  independent = independent) %>%
+  print_chisq()
 
 # Plots
 baseline_plots_uc <- summon_baseline_plots(
@@ -593,7 +585,6 @@ baseline_plots_uc$AgeGroup
 baseline_plots_uc$Sex
 baseline_plots_uc$flare_group
 baseline_plots_uc$cat
-
 ```
 
 ### Crohn's Disease
@@ -616,7 +607,8 @@ independent = c('AgeGroup',
 summon_chisq_test(
   data = data_baseline_cd, 
   dependent = 'SleepDisturbance', 
-  independent = independent)
+  independent = independent) %>%
+  print_chisq()
 
 # Plots
 baseline_plots_cd <- summon_baseline_plots(
@@ -629,7 +621,6 @@ baseline_plots_cd$AgeGroup
 baseline_plots_cd$Sex
 baseline_plots_cd$flare_group
 baseline_plots_cd$cat
-
 ```
 
 ## Survival Analysis
@@ -663,7 +654,9 @@ Patient reported flare.
 # Kaplan Meier
 data_survival_soft %>%
   survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = .) %>%
-  ggsurvplot(., data = data_survival_soft, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_soft,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox model
 cox_soft <- coxph(
@@ -678,7 +671,7 @@ cox_soft <- coxph(
 )
 
 cox_soft %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 Hard flare.
@@ -687,7 +680,9 @@ Hard flare.
 # KM
 data_survival_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = .) %>%
-  ggsurvplot(., data = data_survival_hard, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_hard,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox
 cox_hard <- coxph(
@@ -702,7 +697,7 @@ cox_hard <- coxph(
 )
 
 cox_hard %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 ### Ulcerative Colitis
@@ -726,7 +721,6 @@ data_survival_hard_uc <- data_baseline %>%
     by = "ParticipantNo"
   ) %>%
   dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
-
 ```
 
 Patient reported flare.
@@ -736,7 +730,9 @@ Patient reported flare.
 # Kaplan Meier
 data_survival_soft_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = .) %>%
-  ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_soft_uc,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox model
 cox_soft_uc <- coxph(
@@ -751,7 +747,7 @@ cox_soft_uc <- coxph(
 )
 
 cox_soft_uc %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 Hard flare.
@@ -760,7 +756,9 @@ Hard flare.
 # KM
 data_survival_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = .) %>%
-  ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_hard_uc,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox
 cox_hard_uc <- coxph(
@@ -775,7 +773,7 @@ cox_hard_uc <- coxph(
 )
 
 cox_hard_uc %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 ### Crohn's Disease
@@ -799,7 +797,6 @@ data_survival_hard_cd <- data_baseline %>%
     by = "ParticipantNo"
   ) %>%
   dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
-
 ```
 
 Patient reported flare.
@@ -809,7 +806,9 @@ Patient reported flare.
 # Kaplan Meier
 data_survival_soft_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = .) %>%
-  ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_soft_cd,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox model
 cox_soft_cd <- coxph(
@@ -824,7 +823,7 @@ cox_soft_cd <- coxph(
 )
 
 cox_soft_cd %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 Hard flare.
@@ -833,7 +832,9 @@ Hard flare.
 # KM
 data_survival_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance, data = .) %>%
-  ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_hard_cd,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox
 cox_hard_cd <- coxph(
@@ -848,5 +849,22 @@ cox_hard_cd <- coxph(
 )
 
 cox_hard_cd %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.
+
