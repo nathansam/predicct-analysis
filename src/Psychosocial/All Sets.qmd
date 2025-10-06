@@ -163,7 +163,7 @@ print(p1)
 
 ```{R}
 # Create a table-like annotation
-#table_data <- hardflareplot %>%
+# table_data <- hardflareplot %>%
 #  mutate(label = paste0("<b>HR:</b> ", round(HR, 2), "<br><b>95% CI:</b> [", round(Lower95, 2), ", ", round(Upper95, 2), "]<br><b>p-value:</b> ", format(p_value, scientific = TRUE))) %>%
 #  select(Variable, label)
 
