@@ -45,7 +45,7 @@ cox_results <- cox_results_hads_anxiety %>%
 
 
 # Ordering for plotting?
-# Need to do manually really
+# Need to do manually
 cox_results %<>%
   dplyr::mutate(
     ordering = dplyr::case_when(
@@ -68,7 +68,72 @@ cox_results %<>%
     )
   )
 
+# Tidy up the term
+cox_results %<>%
+  dplyr::mutate(
+    term_tidy = dplyr::case_when(
+      term == 'score_group0-7' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score 0-7',
+      term == 'score_group8-10' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score Score 8-10',
+      term == 'score_group11-21' & variable == 'score_group_anxiety' ~ 'HADS Anxiety ScoreScore 11-21',
+      term == 'score_group0-7' & variable == 'score_group_depression' ~ 'HADS Depression Score 0-7',
+      term == 'score_group8-10' & variable == 'score_group_depression' ~ 'HADS Depression Score Score 8-10',
+      term == 'score_group11-21' & variable == 'score_group_depression' ~ 'HADS Depression Score Score 11-21',
+      term == 'MinimumExerciseYes' ~ 'Met minimum exercise',
+      term == 'MinimumExerciseNo' ~ 'Not met minimum exercise',
+      term == 'weekly_units0-0.1' ~ 'Weekly units 0-0.1',
+      term == 'weekly_units0.1-14' ~ 'Weekly units 0.1-14',
+      term == 'weekly_units>14' ~ 'Weekly units > 14',
+      term == 'AnyLifeEventsNo' ~ 'No life events in past month',
+      term == 'AnyLifeEventsYes' ~ 'At least 1 life event in past month',
+      term == 'somatisationNone' ~ 'No somatisation',
+      term == 'somatisationMild' ~ 'Mild somatisation',
+      term == 'somatisationModerate' ~ 'Moderate somatisation',
+      term == 'somatisationSevere' ~ 'Severe somatisation',
+      term == 'SleepDisturbanceNo' ~ 'No sleep disturbance',
+      term == 'SleepDisturbanceYes' ~ 'Some sleep disturbance',
+    )
+  )
 
+# Confidence intervals
+cox_results %<>%
+  dplyr::mutate(
+    conf.interval.tidy = dplyr::case_when(
+      (is.na(conf.low) & is.na(conf.high)) ~ "-",
+      TRUE ~ paste0(sprintf("%.3g", estimate), " (", sprintf("%.3g", conf.low), " - ", sprintf("%.3g", conf.high), ")")
+    )
+  )
+
+# Tidy p values
+cox_results %<>%
+  dplyr::mutate(
+    p.value.tidy = dplyr::case_when(
+      is.na(p.value) ~ "-",
+      TRUE ~ sprintf("%.3g", p.value)
+    )
+  )
+
+# Significance
+cox_results %<>%
+  dplyr::mutate(
+    significance = dplyr::case_when(
+      is.na(p.value) ~ "Reference level",
+      p.value <= 0.05 ~ "Significant",
+      p.value > 0.05 ~ "Not Significant"
+    )
+  )
+
+# Title/tidy variable name
+# cox_results %<>%
+#   dplyr::mutate(title = dplyr::case_when(
+#     variable == 'score_group_anxiety' ~ 'HADS Anxiety',
+#     variable == 'score_group_depression' ~ 'HADS Depression',
+#     variable == 'MinimumExercise' ~ 'Exercise',
+#     variable == 'weekly_units' ~ 'Alcohol consumption',
+#     variable == 'AnyLifeEvents' ~ 'Life events',
+#     variable == 'somatisation' ~ 'PHQ-15',
+#     variable == 'SleepDisturbance' ~ 'PSQI'
+#   )
+#   )
 
 
 # Save
