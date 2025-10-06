@@ -1,5 +1,19 @@
 ---
 title: "Exercise"
+author:
+  - name: "Chiara Cotronei"
+    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
+    affiliations:
+      - ref: Lothian
+  - name: "Alex Rudge"
+    affiliations:
+      - ref: CGEM
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+      - ref: HGU
 format: 
   html:
     code-fold: true
@@ -12,8 +26,6 @@ toc-expand: true
 # Exercise
 
 ## Setting up in R
-
-R Packages
 
 ```{r}
 #| label: load-libraries
@@ -43,15 +55,16 @@ library(DiagrammeRsvg)
 library(survival)
 library(survminer)
 library(finalfit)
-```
 
-Helper functions
+########################
+### Helper functions ###
+########################
 
-```{r}
 # Chi squared tests
 summon_chisq_test <- function(data, dependent, independent) {
   
-  # Chi square tests/Fisher's exact test for the dependent variable vs each independent variable
+  # Chi square tests/Fisher's exact test for the dependent variable vs each 
+  # independent variable
   
   purrr::map2_df(
     .x = dependent,
@@ -99,8 +112,37 @@ summon_chisq_test <- function(data, dependent, independent) {
         .default = 'ns'
       )
     )
-  
 }
+
+print_chisq <- function(data) {
+  data %>%
+    knitr::kable(digits = c(0, 2, 4, 0, NA, NA, NA, 4, NA),
+                 col.names = c("n",
+                               "Statistic",
+                               "p",
+                               "df",
+                               "Method",
+                               "Dependent",
+                               "Independent",
+                               "Adjusted p-value",
+                               "Adjusted significance")
+               )
+}
+
+print_survival <- function(data) {
+  data %>%
+    broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+    knitr::kable(digits = 3,
+                 col.names = c("Covariate",
+                               "Estimate",
+                               "Std. Error",
+                               "Statistic",
+                               "p value",
+                               "Lower CI",
+                               "Upper CI")
+                 )
+}
+
 
 # Creating proportions for plotting baseline data
 calc_proportion <- function(data, dependent, independent){
@@ -145,7 +187,8 @@ summon_baseline_plots <- function(data, dependent, independent) {
         y = Inf,
         vjust = 2,
         hjust = 1.3
-      )
+      ) +
+      theme_minimal()
     
     plot_list[[y]] <- plot
     
@@ -308,7 +351,8 @@ exercise %<>%
 
 #missing_ex_IMD <- exercise %>% filter(is.na(IMD))
 
-# Tidy - find and exclude if NA in VigorousWork,ModerateWork,WalkBicycle,VigrorousSport, and ModerateSport - Nobody removed
+# Tidy - find and exclude if NA in VigorousWork, ModerateWork, WalkBicycle,
+# VigrorousSport, and ModerateSport - Nobody removed
 exercise %<>%
   filter(!dplyr::if_all(
     .cols = c(
@@ -351,7 +395,8 @@ exercise %<>%
     )
   )
 
-# Exclude 10 participants who report 16 or more hours in any one activity, as per WHO guidelines
+# Exclude 10 participants who report 16 or more hours in any one activity,
+# as per WHO guidelines
 exercise <- exercise %>%
   filter(
     is.na(VigorousWorkHours) | VigorousWorkHours < 16,
@@ -405,7 +450,9 @@ exercise <- exercise %>%
   ))
 
 # 8 excluded as report 0 days but have answers in other domains
-# Excluding subjects who say they do moderate work but for 0 days (they do have an hour though)
+# Excluding subjects who say they do moderate work but for 0 days
+# (they do have an hour though)
+
 exercise <- exercise %>%
   filter(!(ModerateWork == 1 &
     (ModerateWorkDays == 0 | is.na(ModerateWorkDays))
@@ -527,7 +574,8 @@ exercise <- exercise %>%
 
 # MinimumExercise as a factor
 exercise %<>%
-  dplyr::mutate(MinimumExercise = factor(MinimumExercise, levels = c('Yes', 'No')))
+  dplyr::mutate(MinimumExercise = factor(MinimumExercise,
+                                         levels = c('Yes', 'No')))
 
 
 # exclude if minute exercise/week >6720 - 10 cases
@@ -546,11 +594,11 @@ exercise <- exercise %>% dplyr::filter(ExerciseMins < 6720)
 data_baseline <- exercise
 
 # Independent variables
-independent = c('diagnosis2',
-                'AgeGroup',
-                'Sex',
-                'flare_group',
-                'cat')
+independent <- c('diagnosis2',
+                 'AgeGroup',
+                 'Sex',
+                 'flare_group',
+                 'cat')
 
 # Dependent variable is MinimumExercise
 
@@ -559,7 +607,8 @@ independent = c('diagnosis2',
 summon_chisq_test(
   data = data_baseline, 
   dependent = 'MinimumExercise', 
-  independent = independent)
+  independent = independent) %>%
+  print_chisq()
 
 # Plots
 baseline_plots <- summon_baseline_plots(
@@ -573,7 +622,6 @@ baseline_plots$AgeGroup
 baseline_plots$Sex
 baseline_plots$flare_group
 baseline_plots$cat
-
 ```
 
 ### Ulcerative Colitis
@@ -596,7 +644,8 @@ independent = c('AgeGroup',
 summon_chisq_test(
   data = data_baseline_uc, 
   dependent = 'MinimumExercise', 
-  independent = independent)
+  independent = independent) %>%
+  print_chisq()
 
 # Plots
 baseline_plots_uc <- summon_baseline_plots(
@@ -632,7 +681,8 @@ independent = c('AgeGroup',
 summon_chisq_test(
   data = data_baseline_cd, 
   dependent = 'MinimumExercise', 
-  independent = independent)
+  independent = independent) %>%
+  print_chisq()
 
 # Plots
 baseline_plots_cd <- summon_baseline_plots(
@@ -653,6 +703,7 @@ baseline_plots_cd$cat
 ### Full Cohort
 
 ```{r}
+#| warning: false
 # Survival data
 # Patient reported flares
 data_survival_soft <- data_baseline %>%
@@ -679,7 +730,9 @@ Patient reported flare.
 # Kaplan Meier
 data_survival_soft %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
-  ggsurvplot(., data = data_survival_soft, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_soft,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox model
 cox_soft <- coxph(
@@ -694,7 +747,7 @@ cox_soft <- coxph(
 )
 
 cox_soft %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 Hard flare.
@@ -703,7 +756,9 @@ Hard flare.
 # KM
 data_survival_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
-  ggsurvplot(., data = data_survival_hard, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_hard,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox
 cox_hard <- coxph(
@@ -718,7 +773,7 @@ cox_hard <- coxph(
 )
 
 cox_hard %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 ### Ulcerative Colitis
@@ -752,7 +807,9 @@ Patient reported flare.
 # Kaplan Meier
 data_survival_soft_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
-  ggsurvplot(., data = data_survival_soft_uc, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_soft_uc,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox model
 cox_soft_uc <- coxph(
@@ -767,7 +824,7 @@ cox_soft_uc <- coxph(
 )
 
 cox_soft_uc %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 Hard flare.
@@ -776,7 +833,9 @@ Hard flare.
 # KM
 data_survival_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
-  ggsurvplot(., data = data_survival_hard_uc, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_hard_uc,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox
 cox_hard_uc <- coxph(
@@ -791,7 +850,7 @@ cox_hard_uc <- coxph(
 )
 
 cox_hard_uc %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 ### Crohn's Disease
@@ -825,7 +884,9 @@ Patient reported flare.
 # Kaplan Meier
 data_survival_soft_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
-  ggsurvplot(., data = data_survival_soft_cd, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_soft_cd,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox model
 cox_soft_cd <- coxph(
@@ -840,7 +901,7 @@ cox_soft_cd <- coxph(
 )
 
 cox_soft_cd %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
 
 Hard flare.
@@ -849,7 +910,9 @@ Hard flare.
 # KM
 data_survival_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
-  ggsurvplot(., data = data_survival_hard_cd, conf.int = TRUE, ggtheme = theme_minimal())
+  ggsurvplot(data = data_survival_hard_cd,
+             conf.int = TRUE,
+             ggtheme = theme_minimal())
 
 # Cox
 cox_hard_cd <- coxph(
@@ -864,5 +927,22 @@ cox_hard_cd <- coxph(
 )
 
 cox_hard_cd %>%
-  broom::tidy(exponentiate = TRUE, conf.int = TRUE)
+  print_survival()
 ```
+
+## Reproduction and reproducibility {.appendix}
+
+<details class = "appendix">
+  <summary> Session info </summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
+
+Licensed by 
+<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
+ unless otherwise stated.
+
