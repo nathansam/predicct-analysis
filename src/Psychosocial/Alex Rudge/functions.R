@@ -19,7 +19,7 @@ summon_chisq_test <- function(data, dependent, independent) {
       # Check whether we need a Fisher test
       fisher_flag <- data %>%
         # Count combinations of x and y
-        count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
+        dplyr::count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
         # Pull the count
         dplyr::pull(n) %>%
         # Check if any counts are < 5
@@ -171,3 +171,41 @@ extract_cox_results <- function(data,
 }
 
 
+# Creating KM curves
+summon_km_curves <- function(data,
+                             dependent = 1,
+                             title = NULL,
+                             legend.title = NULL,
+                             legend.labs = NULL,
+                             palette = NULL) {
+  
+  # ggsurvplot
+  plot_surv <- data %>%
+    survfit(as.formula(paste0("Surv(time, DiseaseFlareYN) ~ ", dependent)), 
+            data = .) %>%
+    ggsurvplot(
+      .,
+      data = data,
+      conf.int = TRUE,
+      risk.table = TRUE,
+      pval = TRUE,
+      pval.method = TRUE,
+      title = title,
+      legend.title = legend.title,
+      legend.labs = legend.labs,
+      xlab = "Time from study recruitment (days)",
+      palette = palette,
+      ggtheme = theme_minimal()
+    )
+  
+  # Customise the plot and table separately and recombine
+  
+  plot_surv$plot <- plot_surv$plot +
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  plot_surv$table <- plot_surv$table + ylab("")
+  
+  plot_surv$plot / (plot_surv$table + ylab("")) +
+    patchwork::plot_layout(ncol = 1, heights = c(3, 1))
+  
+}

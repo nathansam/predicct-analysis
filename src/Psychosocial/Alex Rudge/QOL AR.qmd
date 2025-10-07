@@ -81,7 +81,7 @@ summon_chisq_test <- function(data, dependent, independent) {
       # Check whether we need a Fisher test
       fisher_flag <- data %>%
         # Count combinations of x and y
-        count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
+        dplyr::count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
         # Pull the count
         dplyr::pull(n) %>%
         # Check if any counts are < 5
@@ -1667,8 +1667,9 @@ cox_mental_hard_cd %>%
 
 ## Reproduction and reproducibility {.appendix}
 
-<details class = "appendix">
-  <summary> Session info </summary>
+<details class="appendix">
+
+<summary>Session info</summary>
 
 ```{R Session info}
 #| echo: false
@@ -1677,6 +1678,4 @@ pander::pander(sessionInfo())
 
 </details>
 
-Licensed by 
-<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
- unless otherwise stated.
+Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.
