@@ -261,7 +261,7 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 ```{r}
 # Alcohol data
 ETOH <- ffq %>%
-  select(participantno,
+  dplyr::select(participantno,
          Alcoholg,
          Alcohol_percEng,
          Alcohol_units,
@@ -269,7 +269,7 @@ ETOH <- ffq %>%
          alcohol_units_cat)
 
 ETOH <- ETOH %>%
-  rename(ParticipantNo = participantno)
+  dplyr::rename(ParticipantNo = participantno)
 
 ETOH %<>%
   dplyr::mutate(ParticipantNo = as.character(ParticipantNo))

@@ -242,7 +242,7 @@ flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
 #PSQI data
 
 psqi2 <- psqi %>% 
-  filter(!is.na(ParticipantNo))
+  dplyr::filter(!is.na(ParticipantNo))
 
 #add age and sex data from demographics
 psqi2 <- psqi2 %>% 
@@ -293,7 +293,7 @@ psqi2 <- psqi2 %>%
             by = "ParticipantNo")
 
 psqi2 <- psqi2 %>%
-  filter(!is.na(FlaresInPastYear))
+  dplyr::filter(!is.na(FlaresInPastYear))
 
 #create flare groups
 psqi2 <- psqi2 %>%
@@ -313,12 +313,12 @@ psqi2 <- psqi2 %>%
             by = "ParticipantNo")
 
 psqi2 <- psqi2 %>% 
-  filter(!is.na(cat))
+  dplyr::filter(!is.na(cat))
 
 save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 
 psqi2 %<>%
-  filter(
+  dplyr::filter(
     !dplyr::if_any(.cols = c(7, 10, 12, 14:23, 25:28), .fns = is.na)
   )
 
@@ -344,11 +344,11 @@ psqi2 %<>%
 
 #comp1 (mutate SleepQuality to comp1)
 psqi2 <- psqi2 %>% 
-  rename(comp1 = SleepQuality)
+  dplyr::rename(comp1 = SleepQuality)
 
 #comp2
 psqi2 <- psqi2 %>%
-  mutate(FallAsleepMns = case_when(
+  dplyr::mutate(FallAsleepMns = case_when(
     FallAsleepMns <= 14 ~ 0,
     FallAsleepMns <= 30 ~ 1,
     FallAsleepMns <= 60 ~ 2,
@@ -356,7 +356,7 @@ psqi2 <- psqi2 %>%
   ))
 
 psqi2 <- psqi2 %>%
-  mutate(comp2 = case_when(
+  dplyr::mutate(comp2 = case_when(
     (FallAsleepMns + CantGetToSleep) %in% c(0) ~ 0,
     (FallAsleepMns + CantGetToSleep) %in% c(1, 2) ~ 1,
     (FallAsleepMns + CantGetToSleep) %in% c(3, 4) ~ 2,
@@ -369,7 +369,7 @@ psqi2 %<>%
   )
 
 psqi2 <- psqi2 %>%
-  mutate(TotalSleepMinutes = SleepEachNightHrs * 60 + SleepEachNightMns,
+  dplyr::mutate(TotalSleepMinutes = SleepEachNightHrs * 60 + SleepEachNightMns,
          comp3 = case_when(
            TotalSleepMinutes < 300 ~ 3,
            TotalSleepMinutes >= 300 & TotalSleepMinutes <= 359 ~ 2,
@@ -408,7 +408,7 @@ psqi2 %<>%
 #Three obvious typos found, 2 corrected above + 1 excluded (found when looking at TotalSleepMins - calculated later)
 #Participant 170004 Bed time 22.30 wake up 20.00 reported 5 hours total sleep - exclude
 psqi2 <- psqi2 %>%
-  filter(ParticipantNo != 170004)
+  dplyr::filter(ParticipantNo != 170004)
 
 #Participant No 110351 woken up hours 16, should be 6 - corrected above
 
@@ -475,16 +475,16 @@ psqi2 %<>%
   )
 
 psqi2 <- psqi2 %>% 
-  select(-TotalTrouble)
+  dplyr::select(-TotalTrouble)
 
 #comp6
 psqi2 <- psqi2 %>% 
-  rename(comp6 = SleepMedicines)
+  dplyr::rename(comp6 = SleepMedicines)
 
 #comp7
 psqi2 <- psqi2 %>% 
-  mutate(
-    comp7 = case_when(
+  dplyr::mutate(
+    comp7 = dplyr::case_when(
       (StayingAwake + EnoughEnthusiasm) %in% c(0) ~ 0,
       (StayingAwake + EnoughEnthusiasm) %in% c(1, 2) ~ 1,
       (StayingAwake + EnoughEnthusiasm) %in% c(3, 4) ~ 2,
@@ -494,11 +494,11 @@ psqi2 <- psqi2 %>%
 
 #TotalComp
 psqi2 <- psqi2 %>% 
-  mutate(TotalScore = comp1 + comp2 + comp3 + comp4 + comp5 + comp6 + comp7)
+  dplyr::mutate(TotalScore = comp1 + comp2 + comp3 + comp4 + comp5 + comp6 + comp7)
 
 #score > 5 is "poor sleep"
 psqi2 <- psqi2 %>%
-  mutate(SleepDisturbance = if_else(TotalScore <= 5, "No", "Yes"))
+  dplyr::mutate(SleepDisturbance = if_else(TotalScore <= 5, "No", "Yes"))
 
 #tidy psqi2}
 psqi2 <- psqi2 %>% dplyr::select(-(7:35))

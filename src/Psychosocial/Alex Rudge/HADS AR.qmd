@@ -687,6 +687,8 @@ data_survival_anxiety_soft %>%
     data = data_survival_anxiety_soft, 
     conf.int = TRUE, 
     risk.table = TRUE,
+    pval = TRUE,
+    pval.method = TRUE,
     legend.title = 'HADS Anxiety Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
@@ -768,7 +770,7 @@ data_survival_anxiety_soft_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
   ggsurvplot(
     ., 
-    ata = data_survival_anxiety_soft_uc, 
+    data = data_survival_anxiety_soft_uc, 
     conf.int = TRUE, 
     risk.table = TRUE,
     
