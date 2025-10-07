@@ -198,14 +198,20 @@ summon_km_curves <- function(data,
       ggtheme = theme_minimal()
     )
   
-  # Customise the plot and table separately and recombine
+  # Customise the plot and table separately
   
   plot_surv$plot <- plot_surv$plot +
-    theme(plot.title = element_text(hjust = 0.5))
+    theme(
+      plot.title = element_text(hjust = 0.5))
   
   plot_surv$table <- plot_surv$table + ylab("")
   
+  # Recombine using patchwork
   plot_surv$plot / (plot_surv$table + ylab("")) +
-    patchwork::plot_layout(ncol = 1, heights = c(3, 1))
+    patchwork::plot_layout(
+      ncol = 1,
+      heights = c(3, 1)
+      ) &
+    theme(plot.margin = margin(0, 0, 0, 0))
   
 }
