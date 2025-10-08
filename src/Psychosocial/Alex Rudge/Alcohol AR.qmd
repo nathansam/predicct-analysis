@@ -458,7 +458,8 @@ independent = c('AgeGroup',
 summon_chisq_test(
   data = data_baseline_uc, 
   dependent = 'weekly_units', 
-  independent = independent)
+  independent = independent) %>%
+  print_chisq() 
 
 # Plots
 baseline_plots_uc <- summon_baseline_plots(
@@ -470,8 +471,7 @@ baseline_plots_uc <- summon_baseline_plots(
 baseline_plots_uc$AgeGroup
 baseline_plots_uc$Sex
 baseline_plots_uc$flare_group
-baseline_plots_uc$cat
-
+baseline_plots_uc$cat 
 ```
 
 ### Crohn's Disease
@@ -536,6 +536,7 @@ data_survival_hard <- data_baseline %>%
 Patient reported flare.
 
 ```{r}
+#| warning: false
 # Soft
 # Kaplan Meier
 data_survival_soft %>%
