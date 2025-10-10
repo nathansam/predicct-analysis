@@ -105,7 +105,7 @@ their IBD care team, or surgery in the questionnaire response was used. If none
 of these dates were provided then the date of the questionnaire response was
 used instead. 
 
-If a objective flare occurs prior to a patient-reported flare then the
+If an objective flare occurs prior to a patient-reported flare then the
 patient-reported flare is assumed to occur on the same date as the objective flare.
 
 A complete description of the steps taken to calculate patient-reported flares
