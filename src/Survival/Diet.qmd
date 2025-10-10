@@ -84,14 +84,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "Meat_sum",
@@ -161,14 +161,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "Meat_sum",
@@ -235,14 +235,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "Meat_sum",
@@ -311,14 +311,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "meat_overall",
@@ -388,14 +388,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "meat_overall",
@@ -462,14 +462,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "meat_overall",
@@ -538,14 +538,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "fish_overall",
@@ -615,13 +615,13 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "fish_overall",
@@ -688,14 +688,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "fish_overall",
@@ -766,14 +766,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "fibre",
@@ -843,14 +843,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "fibre",
@@ -917,14 +917,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "fibre",
@@ -997,14 +997,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "PUFA_percEng",
@@ -1075,14 +1075,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "PUFA_percEng",
@@ -1149,14 +1149,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "PUFA_percEng",
@@ -1227,14 +1227,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "NOVAScore",
@@ -1301,14 +1301,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "NOVAScore",
@@ -1372,14 +1372,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "NOVAScore",
@@ -1452,14 +1452,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "UPF_perc",
@@ -1530,14 +1530,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "UPF_perc",
@@ -1604,14 +1604,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "UPF_perc",
@@ -1683,14 +1683,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "breadIntake",
@@ -1761,14 +1761,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "breadIntake",
@@ -1835,14 +1835,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "breadIntake",
@@ -1911,14 +1911,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "sweetIntake",
@@ -1989,14 +1989,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "sweetIntake",
@@ -2063,14 +2063,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "sweetIntake",
@@ -2139,14 +2139,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "drinkIntake",
@@ -2217,14 +2217,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "drinkIntake",
@@ -2291,14 +2291,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "drinkIntake",
@@ -2367,14 +2367,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "processedMeatIntake",
@@ -2445,14 +2445,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "processedMeatIntake",
@@ -2519,14 +2519,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "processedMeatIntake",
@@ -2595,14 +2595,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "processedPlantIntake",
@@ -2673,14 +2673,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "processedPlantIntake",
@@ -2747,14 +2747,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "processedPlantIntake",
@@ -2825,14 +2825,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "fruitIntake",
@@ -2903,14 +2903,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "fruitIntake",
@@ -2977,14 +2977,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "fruitIntake",
@@ -3053,14 +3053,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "vegIntake",
@@ -3131,14 +3131,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "vegIntake",
@@ -3205,14 +3205,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "vegIntake",
@@ -3281,14 +3281,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "redMeatIntake",
@@ -3359,14 +3359,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "redMeatIntake",
@@ -3433,14 +3433,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "redMeatIntake",
@@ -3509,14 +3509,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "whiteMeatIntake",
@@ -3587,14 +3587,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "whiteMeatIntake",
@@ -3661,14 +3661,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "whiteMeatIntake",
@@ -3737,14 +3737,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "whiteFishIntake",
@@ -3815,14 +3815,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "whiteFishIntake",
@@ -3889,14 +3889,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-##### Hard flare
+##### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-# Run survival analysis using utility function for hard flare
+# Run survival analysis using utility function for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.df,
   var_name = "whiteFishIntake",

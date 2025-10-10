@@ -105,8 +105,8 @@ their IBD care team, or surgery in the questionnaire response was used. If none
 of these dates were provided then the date of the questionnaire response was
 used instead. 
 
-If a hard flare occurs prior to a patient-reported flare then the
-patient-reported flare is assumed to occur on the same date as the hard flare.
+If an objective flare occurs prior to a patient-reported flare then the
+patient-reported flare is assumed to occur on the same date as the objective flare.
 
 A complete description of the steps taken to calculate patient-reported flares
 is outlined in the below drop-down section. 
@@ -123,25 +123,25 @@ is outlined in the below drop-down section.
    years.
 5. Time is earliest of flare time or end of follow up, from entry date.
 6. All data censored at 2 years.
-7. Including the hard flares (hard flare data are much more straightforward,
+7. Including the objective flares (objective flare data are much more straightforward,
    flare=`diseaseflareyn` and flare date=`firstflarestartdate` from EOS data)
     * If both datasets say no flare, patient-reported flare is no and follow up time from
-      hard flare <= 2 years, patient-reported flare time is longest of
-      questionnaire and hard flare times
+      objective flare <= 2 years, patient-reported flare time is longest of
+      questionnaire and objective flare times
     * If both datasets say no flare, patient-reported flare is no and follow up
-      time from hard flare > 2 years, patient-reported time is 2 years
-    * If no flare in questionnaires, but hard flare reported before 2 years of
-      follow up, take hard flare data
-    * If no flare in questionnaires, but hard flare reported after 2 years,
+      time from objective flare > 2 years, patient-reported time is 2 years
+    * If no flare in questionnaires, but objective flare reported before 2 years of
+      follow up, take objective flare data
+    * If no flare in questionnaires, but objective flare reported after 2 years,
       patient-reported flare is no and patient-reported flare time is 2 years
-    * If flare in questionnaire and no hard flare, patient-reported flare from
+    * If flare in questionnaire and no objective flare, patient-reported flare from
       questionnaire data
-    * If flare in questionnaire and also hard flare, take the earliest time
-    * If questionnaire data is missing and no hard flare, patient-reported flare
-      is no and time is earliest of hard flare follow up and 2 years
-    * If questionnaire data is missing and hard flare reported within 2 years,
-      patient-reported flare data are taken from hard flare data
-    * If questionnaire data is missing and hard flare reported after 2 years
+    * If flare in questionnaire and also objective flare, take the earliest time
+    * If questionnaire data is missing and no objective flare, patient-reported flare
+      is no and time is earliest of objective flare follow up and 2 years
+    * If questionnaire data is missing and objective flare reported within 2 years,
+      patient-reported flare data are taken from objective flare data
+    * If questionnaire data is missing and objective flare reported after 2 years
       then patient-reported flare is no and time is 2 years
     * Otherwise if questionnaire data is not missing and hardflare is, then
       patient-reported flare is taken from questionnaire data
@@ -168,7 +168,7 @@ p <- create_km_flare_plot(
 print(p, newpage = FALSE)
 ```
 
-## Secondary outcome: first hard flare
+## Secondary outcome: first objective flare
 
 Disease flares been reported by clinical care teams instead of being
 reported by subjects themselves.
@@ -176,7 +176,7 @@ reported by subjects themselves.
 ```{R}
 #| fig-height: 6.5
 #| label: fig-km-hard-cutoff
-#| fig-cap: "Kaplan-Meier curves of hard flares stratified by IBD type across the first two years."
+#| fig-cap: "Kaplan-Meier curves of objective flares stratified by IBD type across the first two years."
 
 flare.df.cutoff <- flare.df %>%
   mutate(
@@ -199,7 +199,7 @@ print(p, newpage = FALSE)
 ```{R}
 #| fig-height: 6.5
 #| label: tbl-hard-full
-#| tbl-cap: "Hard flare survival rates across the full follow-up."
+#| tbl-cap: "Objective flare survival rates across the full follow-up."
 
 fit <- survfit(Surv(hardflare_time, hardflare) ~ 1, data = flare.df)
 p <- ggsurvplot(fit,
@@ -226,7 +226,7 @@ fit %>%
 ```{R}
 #| fig-height: 6.5
 #| label: fig-km-hard-diag
-#| fig-cap: "Kaplan-Meier curves of hard flares stratified by IBD type across the full follow-up."
+#| fig-cap: "Kaplan-Meier curves of objective flares stratified by IBD type across the full follow-up."
 p <- create_km_flare_plot(
   data = flare.df,
   formula = Surv(hardflare_time, hardflare) ~ diagnosis2,
@@ -255,13 +255,13 @@ fit %>%
 ```{R}
 #| fig-height: 6.5
 #| label: fig-comb-comp
-#| fig-cap: "Survival curves for patient-reported and hard flares."
+#| fig-cap: "Survival curves for patient-reported and objective flares."
 flare.comb <- rbind(
   data.frame(
     ParticipantNo = flares$ParticipantNo,
     Cens = flares$hardflare,
     time = flares$hardflare_time,
-    type = "Hard flare"
+    type = "Objective flare"
   ),
   data.frame(
     ParticipantNo = flares$ParticipantNo,
@@ -276,7 +276,7 @@ flare.comb <- flare.comb %>%
 
 
 flare.comb$type <- factor(flare.comb$type,
-  levels = c("Hard flare", "Patient-reported flare")
+  levels = c("Objective flare", "Patient-reported flare")
 )
 
 
@@ -284,7 +284,7 @@ p <- create_km_flare_plot(
   data = flare.comb,
   formula = Surv(time, Cens) ~ type,
   legend_title = "Flare type",
-  legend_labs = c("Hard flare", "Patient-reported flare"),
+  legend_labs = c("Objective flare", "Patient-reported flare"),
   palette = c("#DD6E42", "#EE1B65"),
   xlab = "Time from study recruitment (days)",
   show_pval = FALSE,

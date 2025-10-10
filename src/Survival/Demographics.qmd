@@ -82,14 +82,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6.5
 
-# Generate survival plot and run Cox model for hard flare
+# Generate survival plot and run Cox model for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.cd.df,
   var_name = "Age",
@@ -157,14 +157,14 @@ analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6.5
 
-# Generate survival plot and run Cox model for hard flare
+# Generate survival plot and run Cox model for objective flare
 analysis_result <- run_survival_analysis(
   data = flare.uc.df,
   var_name = "Age",
@@ -233,7 +233,7 @@ cd.clin.forest <- rbind(
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
@@ -247,7 +247,7 @@ p <- generate_survival_plot(
   legend_labs = c("Underweight", "Normal", "Overweight", "Obese"),
   palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/demographics/bmi"
 )
@@ -309,7 +309,7 @@ uc.clin.forest <- rbind(
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| results: "hold"
@@ -323,7 +323,7 @@ p <- generate_survival_plot(
   legend_labs = c("Underweight", "Normal", "Overweight", "Obese"),
   palette = c("#1A8FE3", "#E76D83", "#5FB49C", "#FED766"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/demographics/bmi"
 )

@@ -285,7 +285,7 @@ run_survival_analysis <- function(
   n_levels <- length(cat_levels)
   palette_subset <- palette[1:n_levels]
 
-  parsed_event <- str_replace(outcome_event, "hardflare", "hard flare") %>%
+  parsed_event <- str_replace(outcome_event, "hardflare", "objective flare") %>%
     str_replace("softflare", "patient-reported flare")
 
   p <- ggsurvplot(

@@ -25,17 +25,17 @@ For patient-reported flares, only the first two years of follow-up are
 considered as this was the time interval in which questionnaires were sent to
 participants. 
 
-The secondary study endpoint is hard flare, which required elevated CRP and/or
-CRP and for the subject to change medication. Data for this endpoint was
+The secondary study endpoint is objective flare, which required elevated CRP
+and/or CRP and for the subject to change medication. Data for this endpoint was
 collected via end-of-study phenotyping. 
 
-For hard flares, the full study follow-up period has been used, from study
+For objective flares, the full study follow-up period has been used, from study
 recruitment to the time the end of study phenotyping was completed. 
 
-Patient-reported and hard flares have been identified by Dr Linda Williams, the
-PREdiCCt trial statistician. The same flare definitions have been used across
-all teams working on PREdiCCt. The full steps for defining patient-reported
-flares are included below. 
+Patient-reported and objective flares have been identified by Dr Linda Williams,
+the PREdiCCt trial statistician. The same flare definitions have been used
+across all teams working on PREdiCCt. The full steps for defining
+patient-reported flares are included below. 
 
 <details>
 <summary> Steps for calculating patient-reported flares </summary>
@@ -49,25 +49,25 @@ flares are included below.
    years.
 5. Time is earliest of flare time or end of follow up, from entry date.
 6. All data censored at 2 years.
-7. Including the hard flares (hard flare data are much more straightforward,
+7. Including the objective flares (objective flare data are much more straightforward,
    flare=`diseaseflareyn` and flare date=`firstflarestartdate` from EOS data)
     * If both datasets say no flare, patient-reported flare is no and follow up
-      time from hard flare <= 2 years, patient-reported flare time is longest of
-      questionnaire and hard flare times
+      time from objective flare <= 2 years, patient-reported flare time is longest of
+      questionnaire and objective flare times
     * If both datasets say no flare, patient-reported flare is no and follow up
-      time from hard flare > 2 years, patient-reported time is 2 years
-    * If no flare in questionnaires, but hard flare reported before 2 years of
-      follow up, take hard flare data
-    * If no flare in questionnaires, but hard flare reported after 2 years,
+      time from objective flare > 2 years, patient-reported time is 2 years
+    * If no flare in questionnaires, but objective flare reported before 2 years of
+      follow up, take objective flare data
+    * If no flare in questionnaires, but objective flare reported after 2 years,
       patient-reported flare is no and patient-reported flare time is 2 years
-    * If flare in questionnaire and no hard flare, patient-reported flare from
+    * If flare in questionnaire and no objective flare, patient-reported flare from
       questionnaire data
-    * If flare in questionnaire and also hard flare, take the earliest time
-    * If questionnaire data is missing and no hard flare, patient-reported flare
-      is no and time is earliest of hard flare follow up and 2 years
-    * If questionnaire data is missing and hard flare reported within 2 years,
-      patient-reported flare data are taken from hard flare data
-    * If questionnaire data is missing and hard flare reported after 2 years
+    * If flare in questionnaire and also objective flare, take the earliest time
+    * If questionnaire data is missing and no objective flare, patient-reported flare
+      is no and time is earliest of objective flare follow up and 2 years
+    * If questionnaire data is missing and objective flare reported within 2 years,
+      patient-reported flare data are taken from objective flare data
+    * If questionnaire data is missing and objective flare reported after 2 years
       then patient-reported flare is no and time is 2 years
     * Otherwise if questionnaire data is not missing and hardflare is, then
       patient-reported flare is taken from questionnaire data
