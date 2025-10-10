@@ -61,7 +61,7 @@ saveRDS(p, paste0(paths$outdir, "sex-cd-soft.RDS"))
 p
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 6
@@ -72,7 +72,7 @@ p <- generate_survival_plot(
   legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/sex"
 )
@@ -105,7 +105,7 @@ saveRDS(p, paste0(paths$outdir, "sex-uc-soft.RDS"))
 p
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 6
@@ -116,7 +116,7 @@ p <- generate_survival_plot(
   legend_labs = c("Male", "Female"),
   palette = c("#00A6ED", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/sex"
 )
@@ -151,7 +151,7 @@ saveRDS(p, paste0(paths$outdir, "smoke-cd-soft.RDS"))
 p
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 6
@@ -162,7 +162,7 @@ p <- generate_survival_plot(
   legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/smoke"
 )
@@ -195,7 +195,7 @@ saveRDS(p, paste0(paths$outdir, "smoke-uc-soft.RDS"))
 p
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 6
@@ -206,7 +206,7 @@ p <- generate_survival_plot(
   legend_labs = c("Current", "Previous", "Never"),
   palette = c("#00A6ED", "#FFB400", "#F6511D"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/smoke"
 )
@@ -242,7 +242,7 @@ saveRDS(p, paste0(paths$outdir, "imd-cd-soft.RDS"))
 p
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 7
@@ -253,7 +253,7 @@ p <- generate_survival_plot(
   legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/imd"
 )
@@ -286,7 +286,7 @@ saveRDS(p, paste0(paths$outdir, "imd-uc-soft.RDS"))
 p
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 7
@@ -297,7 +297,7 @@ p <- generate_survival_plot(
   legend_labs = c("1 (least deprived)", "2", "3", "4", "5 (most deprived)"),
   palette = c("#F05D5E", "#00C2D1", "#FFBA49", "#EDC9FF", "#034C3C"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/imd"
 )
@@ -334,7 +334,7 @@ saveRDS(p, paste0(paths$outdir, "fc-cd-soft.RDS"))
 print(p, newpage = FALSE)
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 6
@@ -345,7 +345,7 @@ p <- generate_survival_plot(
   legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/cd/hard-flare/controlled/fc"
 )
@@ -382,7 +382,7 @@ saveRDS(p, paste0(paths$outdir, "fc-uc-soft.RDS"))
 print(p, newpage = FALSE)
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| fig-height: 6
@@ -393,7 +393,7 @@ p <- generate_survival_plot(
   legend_labs = c("FC < 50", "50 ≤ FC ≤ 250", "FC > 250"),
   palette = c("#2AAACE", "#FFBF1C", "#FF6726"),
   xlab = "Time from study recruitment (days)",
-  title = "Time to hard flare",
+  title = "Time to objective flare",
   break_time_by = 500,
   plot_path = "plots/uc/hard-flare/controlled/fc"
 )
@@ -459,7 +459,7 @@ cd.clin.forest <- rbind(
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| output: "asis"
@@ -546,7 +546,7 @@ uc.clin.forest <- rbind(
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| output: "asis"
@@ -609,7 +609,7 @@ fit.me <- coxph(
 invisible(cox_summary(fit.me))
 ```
 
-#### Hard flare
+#### Objective flare
 
 ```{R}
 #| output: "asis"
