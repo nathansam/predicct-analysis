@@ -10,6 +10,7 @@ project:
     - "Psychosocial/Alex Rudge/PSQI AR.qmd"
     - "Psychosocial/Alex Rudge/QOL AR.qmd"
     - "Psychosocial/Alex Rudge/Alcohol AR.qmd"
+    - "Psychosocial/Alex Rudge/Forest Plots.qmd"
   output-dir: "../docs"
   resources:
     - "robots.txt"
@@ -89,6 +90,7 @@ website:
           - "Psychosocial/Alex Rudge/PSQI AR.qmd"
           - "Psychosocial/Alex Rudge/QOL AR.qmd"
           - "Psychosocial/Alex Rudge/Alcohol AR.qmd"
+          - "Psychosocial/Alex Rudge/Forest Plots.qmd"
       - "documents.qmd"
   page-footer:
     background: "#dff1f3"
