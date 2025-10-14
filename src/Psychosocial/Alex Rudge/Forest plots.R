@@ -128,6 +128,7 @@ summon_complete_forest <- function(
   plot_anxiety <- summon_forest_plot(data, variable = 'score_group_anxiety', diagnosis2 = diagnosis2)
   plot_depression <- summon_forest_plot(data, variable = 'score_group_depression', diagnosis2 = diagnosis2)
   plot_exercise <- summon_forest_plot(data, variable = 'MinimumExercise', diagnosis2 = diagnosis2)
+  plot_alcohol <- summon_forest_plot(data, variable = 'weekly_units', diagnosis2 = diagnosis2)
   plot_lifeevents <- summon_forest_plot(data, variable = 'AnyLifeEvents', diagnosis2 = diagnosis2)
   plot_sleep <- summon_forest_plot(data, variable = 'SleepDisturbance', diagnosis2 = diagnosis2)
   plot_somatisation <- summon_forest_plot(data, variable = 'somatisation', diagnosis2 = diagnosis2)
@@ -141,6 +142,7 @@ summon_complete_forest <- function(
        theme(plot.title = element_text(size = 12))) +
    plot_depression$plot + plot_depression$hr +  plot_depression$p +
    plot_exercise$plot + plot_exercise$hr + plot_exercise$p +
+    plot_alcohol$plot + plot_alcohol$hr + plot_alcohol$p +
    plot_lifeevents$plot + plot_lifeevents$hr + plot_lifeevents$p +
    plot_sleep$plot + plot_sleep$hr + plot_sleep$p +
    plot_somatisation$plot + plot_somatisation$hr + plot_somatisation$p +
@@ -149,7 +151,7 @@ summon_complete_forest <- function(
      guides = 'collect',
      axes = 'collect',
      width = c(3, 1, 0.5),
-     height = c(3,3,1,1,1,4)
+     height = c(3,3,1,3,1,1,4)
    ) +
    patchwork::plot_annotation(
       title = title
