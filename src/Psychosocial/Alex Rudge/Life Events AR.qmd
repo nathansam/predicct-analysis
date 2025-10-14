@@ -237,17 +237,23 @@ flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
 
 ```{r}
 # Life event data
+
+# Remove patients with missing ParticipantId
 lifeevents <- lifeevents %>% 
-  left_join(
+  dplyr::filter(!is.na(ParticipantId))
+
+# Add demographics
+lifeevents <- lifeevents %>% 
+  dplyr::left_join(
     demographics %>% select(ParticipantNo, Sex, diagnosis, age),
     by = 'ParticipantNo')
 
-lifeevents <- lifeevents %>% 
-  filter(!is.na(ParticipantNo))
 
+# Exclude missing life events (these patients simply did not fill out the questionnaire)
 lifeevents <- lifeevents %>% 
-  filter(!is.na(AnyLifeEvents))
+  dplyr::filter(!is.na(AnyLifeEvents))
 
+# Age
 lifeevents %<>% dplyr::filter(age >= 18)
 
 lifeevents %<>% dplyr::mutate(Sex = factor(
@@ -309,14 +315,16 @@ lifeevents %<>%
   )
 ))
 
+# add FC data and exclude missing FC
 lifeevents <- lifeevents %>% 
-  left_join(
-    demo %>% select(ParticipantNo, FC, cat, Biologic, Smoke, IMD),
-    by = 'ParticipantNo')
+  dplyr::left_join(
+    demo %>% dplyr::select(ParticipantNo, FC, cat, Biologic, Smoke, IMD),
+    by = "ParticipantNo")
+
 
 # Removing missing FC
-lifeevents <- lifeevents %>% 
-  filter(!is.na(cat))
+# lifeevents <- lifeevents %>% 
+#   filter(!is.na(cat))
 
 ```
 

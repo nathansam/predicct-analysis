@@ -388,7 +388,7 @@ ETOH <- ETOH %>%
     )
   )
 
-# Any missing units data?
+# Any missing units data? 0
 # ETOH %>%
 #   filter(is.na(weekly_units)) %>%
 #   nrow()
@@ -548,7 +548,7 @@ data_survival_soft %>%
 cox_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     weekly_units +
-    IMD +
+    #IMD +
     Sex +
     AgeGroup +
     cat +

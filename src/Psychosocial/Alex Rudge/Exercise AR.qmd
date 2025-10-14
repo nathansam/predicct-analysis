@@ -269,7 +269,7 @@ exercise <- physicalactivity %>%
 
 # add age and sex data from demographics
 exercise <- exercise %>%
-  inner_join(
+  dplyr::inner_join(
     demographics %>% select(ParticipantNo, Sex, age, diagnosis),
     by = "ParticipantNo"
   )
@@ -307,8 +307,8 @@ exercise %<>% dplyr::mutate(AgeGroup = cut(
   include.lowest = TRUE))
 
 exercise <- exercise %>%
-  left_join(
-    IBD %>% select(ParticipantNo, FlaresInPastYear)
+  dplyr::left_join(
+    IBD %>% dplyr::select(ParticipantNo, FlaresInPastYear)
     )
 
 # 7 patients removed with missing data on flares
@@ -334,7 +334,7 @@ exercise %<>%
 
 # Add FC data 
 exercise <- exercise %>%
-  left_join(
+  dplyr::left_join(
     demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
     by = 'ParticipantNo'
     ) 
@@ -344,10 +344,10 @@ exercise <- exercise %>%
 #   filter(is.na(cat)) %>% 
 #   nrow()
 
-exercise %<>%
-  dplyr::filter(
-    !is.na(cat)
-  )
+# exercise %<>%
+#   dplyr::filter(
+#     !is.na(cat)
+#   )
 
 #missing_ex_IMD <- exercise %>% filter(is.na(IMD))
 

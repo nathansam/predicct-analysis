@@ -235,6 +235,7 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 
 ```{r}
 # Exclude cases with missing ParticipantId
+# 60 removed - but they are all completely empty rows.
 hads <- hads %>%
   filter(!is.na(ParticipantId))
 
@@ -372,8 +373,8 @@ n_missing_fc <- hads_with_demographics %>%
   nrow()
 # 209 removed with no FC
 
-hads_with_demographics <- hads_with_demographics %>% 
-  filter(!is.na(cat))
+# hads_with_demographics <- hads_with_demographics %>%
+#   filter(!is.na(cat))
 
 #Join flare data
 hads_with_demographics <- hads_with_demographics %>% 
@@ -697,7 +698,7 @@ data_survival_anxiety_soft %>%
 cox_anxiety_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     score_group +
-    IMD +
+   # IMD +
     Sex +
     AgeGroup +
     cat +

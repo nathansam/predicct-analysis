@@ -364,14 +364,14 @@ phq_clean <- phq_clean %>%
     smoking %>% select(ParticipantNo, Smoke),
     by = 'ParticipantNo')
 
-#204 patient smissing fc data so new dataset for this
+#204 patient smissing fc data
 phq_clean <- phq_clean %>% 
   left_join(
     demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
     by = 'ParticipantNo')
 
 #tot 1608 participants
-phq_clean <- phq_clean %>% 
+phq_clean <- phq_clean %>%
   filter(!is.na(cat))
 ```
 
