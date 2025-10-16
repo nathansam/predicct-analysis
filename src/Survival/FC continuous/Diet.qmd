@@ -1,0 +1,717 @@
+---
+title: "Diet"
+format: 
+  html:
+    code-fold: true
+    code-tools: true
+editor: visual
+toc: true
+toc-expand: true
+---
+
+# Setting up in R
+
+## Load the data
+
+```{r}
+library(splines)
+
+source("Survival/utils.R")
+
+# Setup analysis environment
+analysis_setup <- setup_analysis()
+paths <- analysis_setup$paths
+demo <- analysis_setup$demo
+
+flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
+flare.cd.df <- readRDS(paste0(paths$outdir, "flares-biochem-cd.RDS"))
+flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
+```
+
+## Data cleaning
+
+```{r}
+# FC has been logged twice - reverse
+flare.df %<>%
+  dplyr::mutate(FC = exp(FC))
+
+flare.cd.df %<>%
+  dplyr::mutate(FC = exp(FC))
+
+flare.uc.df %<>%
+  dplyr::mutate(FC = exp(FC))
+# So now FC is the log of the FC measurement
+
+# Transform age variable to decades
+flare.df %<>%
+  dplyr::mutate(
+    age_decade = Age/10
+  )
+
+flare.cd.df %<>%
+  dplyr::mutate(
+    age_decade = Age/10
+  )
+
+flare.uc.df %<>%
+  dplyr::mutate(
+    age_decade = Age/10
+  )
+
+```
+
+## Helper functions
+
+```{r}
+
+summon_reference_values <- function(data, variables){
+  # Function that extracts the reference value for each variable in a data frame
+  # Reference is either the first factor level or the median
+  # Used for producing HR plots
+  
+  data %>%
+    dplyr::select(tidyselect::all_of(variables)) %>%
+    dplyr::summarise(across(
+      .cols = everything(),
+      .fns = function(x) {
+        if (is.factor(x)) {
+          levels(x) %>% dplyr::first()
+        } else if (is.numeric(x)) {
+          median(x, na.rm = TRUE)
+        } else {
+          NULL
+        }
+      }
+    ))
+  
+}
+
+
+plot_continuous_hr <- function(data, model, variable){
+  # Plotting continuous Hazard Ratio curves
+  
+  # model is a Cox model
+  # variable is the variable we are plotting
+  
+  # Range of the variable to plot
+  variable_range <- data %>%
+    dplyr::pull(variable) %>%
+    quantile(., probs = seq(0, 0.95, 0.01), na.rm = TRUE) %>%
+    unname() %>%
+    unique()
+  
+  # Reference variables
+  # Extract variables used in the Cox model
+  # Remove the variable we want to vary and the SiteNo
+  ref_variables <- all.vars(delete.response(terms(model))) %>%
+    tibble(x = .) %>%
+    dplyr::filter(
+      x != variable,
+      x != 'SiteNo'
+    ) %>%
+    dplyr::pull(x)
+  
+  # Reference level of the continuous variable
+  # Set to the lowest
+  ref_value <- variable_range %>% min()
+  
+  # Create dummy data for plotting
+  # Reference levels
+  data %>%
+    summon_reference_values(
+      data = .,
+      variables = ref_variables
+    ) %>% {
+    # Creating dummy data
+      tibble(
+        .,
+        !!sym(variable) := variable_range
+      )
+    } %>% {
+      pred = predict(model, newdata = ., type = "lp", se = TRUE)
+      
+      tibble(., p = pred$fit, se = pred$se)
+    } %>% {
+      df <- .
+      
+      # Subtract chosen reference value to set linear predictor to 0 at that value
+      denominator <- df %>% 
+        dplyr::filter(!!sym(variable) == ref_value) %>%
+        dplyr::pull(p)
+    
+      df %>% 
+        dplyr::mutate(p = p - denominator)
+    
+    } %>%
+    ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
+    geom_point() +
+    geom_line() +
+    geom_ribbon(alpha = 0.2) +
+    ylab("HR")
+  
+}
+```
+
+# Survival Analysis
+
+## Total meat protein
+
+### Crohns' disease
+
+#### Patient reported flare
+
+```{r}
+
+cox_meat_cd_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(Meat_sum, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_meat_cd_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+# Age
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_soft,
+  variable = 'age_decade'
+)
+
+# BMI
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_soft,
+  variable = 'BMI'
+)
+
+# FC
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_soft,
+  variable = 'FC'
+)
+
+# Meat sum
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_soft,
+  variable = 'Meat_sum'
+)
+
+# DQI
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_soft,
+  variable = 'dqi_tot'
+)
+```
+
+#### Objective flare
+
+```{r}
+
+cox_meat_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(Meat_sum, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_meat_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+# Age
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_hard,
+  variable = 'age_decade'
+)
+
+# BMI
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_hard,
+  variable = 'BMI'
+)
+
+# FC
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_hard,
+  variable = 'FC'
+)
+
+# Meat sum
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_hard,
+  variable = 'Meat_sum'
+)
+
+# DQI
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_meat_cd_hard,
+  variable = 'dqi_tot'
+)
+```
+
+### Ulcerative colitis
+
+#### Patient reported flare
+
+```{r}
+
+cox_meat_uc_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(Meat_sum, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_meat_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+# Age
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_soft,
+  variable = 'age_decade'
+)
+
+# BMI
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_soft,
+  variable = 'BMI'
+)
+
+# FC
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_soft,
+  variable = 'FC'
+)
+
+# Meat sum
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_soft,
+  variable = 'Meat_sum'
+)
+
+# DQI
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_soft,
+  variable = 'dqi_tot'
+)
+```
+
+#### Objective flare
+
+```{r}
+
+cox_meat_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(Meat_sum, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_meat_uc_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+# Age
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_hard,
+  variable = 'age_decade'
+)
+
+# BMI
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_hard,
+  variable = 'BMI'
+)
+
+# FC
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_hard,
+  variable = 'FC'
+)
+
+# Meat sum
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_hard,
+  variable = 'Meat_sum'
+)
+
+# DQI
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_hard,
+  variable = 'dqi_tot'
+)
+```
+
+## Dietary Fibre
+
+### Crohn's disease
+
+#### Patient reported flare
+
+```{r}
+cox_fibre_cd_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(fibre, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_fibre_cd_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.cd.df,
+                   model = cox_fibre_cd_soft,
+                   variable = 'fibre')
+
+```
+
+#### Objective Flare
+
+```{r}
+cox_fibre_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(fibre, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_fibre_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.cd.df,
+                   model = cox_fibre_cd_hard,
+                   variable = 'fibre')
+
+```
+
+### Ulcerative colitis
+
+#### Patient reported flare
+
+```{r}
+cox_fibre_uc_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(fibre, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_fibre_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.uc.df,
+                   model = cox_fibre_uc_soft,
+                   variable = 'fibre')
+
+```
+
+#### Objective Flare
+
+```{r}
+cox_fibre_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(fibre, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_fibre_uc_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.uc.df,
+                   model = cox_fibre_uc_hard,
+                   variable = 'fibre')
+
+```
+
+
+## Polyunsaturated fatty acids
+
+### Crohn's disease
+
+#### Patient reported flare
+
+```{r}
+cox_pufa_cd_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(PUFA_percEng, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_pufa_cd_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.cd.df,
+                   model = cox_pufa_cd_soft,
+                   variable = 'PUFA_percEng')
+
+```
+
+#### Objective Flare
+
+```{r}
+cox_pufa_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(PUFA_percEng, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_pufa_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.cd.df,
+                   model = cox_pufa_cd_hard,
+                   variable = 'PUFA_percEng')
+
+```
+
+### Ulcerative colitis
+
+#### Patient reported flare
+
+```{r}
+cox_pufa_uc_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(PUFA_percEng, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_pufa_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.uc.df,
+                   model = cox_pufa_uc_soft,
+                   variable = 'PUFA_percEng')
+
+```
+
+#### Objective Flare
+
+```{r}
+cox_pufa_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(PUFA_percEng, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_pufa_uc_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.uc.df,
+                   model = cox_pufa_uc_hard,
+                   variable = 'PUFA_percEng')
+
+```
+
+
+## Ultra-processed food
+
+### Crohn's disease
+
+#### Patient reported flare
+
+```{r}
+cox_upf_cd_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(UPF_perc, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_upf_cd_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.cd.df,
+                   model = cox_upf_cd_soft,
+                   variable = 'UPF_perc')
+
+```
+
+#### Objective Flare
+
+```{r}
+cox_upf_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(UPF_perc, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.cd.df
+)
+
+cox_upf_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.cd.df,
+                   model = cox_upf_cd_hard,
+                   variable = 'UPF_perc')
+
+```
+
+### Ulcerative colitis
+
+#### Patient reported flare
+
+```{r}
+cox_upf_uc_soft <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(UPF_perc, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_upf_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.uc.df,
+                   model = cox_upf_uc_soft,
+                   variable = 'UPF_perc')
+
+```
+
+#### Objective Flare
+
+```{r}
+cox_upf_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
+               Sex + 
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               ns(UPF_perc, df = 2) + 
+               ns(dqi_tot, df = 2) +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_upf_uc_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+```
+
+```{r}
+
+plot_continuous_hr(data = flare.uc.df,
+                   model = cox_upf_uc_hard,
+                   variable = 'UPF_perc')
+
+```
