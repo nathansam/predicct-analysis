@@ -61,21 +61,26 @@ coxph(Surv(softflare_time, softflare) ~
 # Remove IMD
 
 # Add Age - in decades so coefficients are easier to interpret/scale is better
+# Zero at age 40
 flare.cd.df %<>%
   dplyr::mutate(
     age_decade = Age/10
   )
+
+# DQI scaled
+
 
 # Add BMIcat
 # Add FC using a spline
 
 cox <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
-               Meat_sum_cat + 
-               dqi_tot_scaled +
+               ns(Meat_sum, df = 2) + 
+               dqi_tot +
                frailty(SiteNo),
              data = flare.cd.df
 )
@@ -120,13 +125,14 @@ plot_continuous_hr <- function(data, model, variable){
   # Range of the variable to plot
   variable_range <- data %>%
     dplyr::pull(variable) %>%
-    quantile(., probs = seq(0, 1, 0.01), na.rm = TRUE) %>%
-    unname()
+    quantile(., probs = seq(0, 0.9, 0.01), na.rm = TRUE) %>%
+    unname() %>%
+    unique()
   
   # Reference variables
   # Extract variables used in the Cox model
   # Remove the variable we want to vary and the SiteNo
-  ref_variables <- all.vars(delete.response(terms(cox))) %>%
+  ref_variables <- all.vars(delete.response(terms(model))) %>%
     tibble(x = .) %>%
     dplyr::filter(
       x != variable,
@@ -134,6 +140,9 @@ plot_continuous_hr <- function(data, model, variable){
     ) %>%
     dplyr::pull(x)
   
+  # Reference level of the continuous variable
+  # Set to the lowest
+  ref_value <- variable_range %>% min()
   
   # Create dummy data for plotting
   # Reference levels
@@ -148,9 +157,20 @@ plot_continuous_hr <- function(data, model, variable){
         !!sym(variable) := variable_range
       )
     } %>% {
-      pred = predict(cox, newdata = ., type = "lp", se = TRUE)
+      pred = predict(model, newdata = ., type = "lp", se = TRUE)
       
       tibble(., p = pred$fit, se = pred$se)
+    } %>% {
+      df <- .
+      
+      # Subtract chosen reference value to set linear predictor to 0 at that value
+      denominator <- df %>% 
+        dplyr::filter(!!sym(variable) == ref_value) %>%
+        dplyr::pull(p)
+    
+      df %>% 
+        dplyr::mutate(p = p - denominator)
+    
     } %>%
     ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
     geom_point() +
