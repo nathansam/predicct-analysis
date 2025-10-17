@@ -183,6 +183,7 @@ summon_lrt <- function(model, term) {
 
 cox_meat_cd_soft <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -242,6 +243,7 @@ plot_continuous_hr(
 
 cox_meat_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -302,6 +304,7 @@ plot_continuous_hr(
 
 cox_meat_uc_soft <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -360,6 +363,7 @@ plot_continuous_hr(
 
 cox_meat_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -422,6 +426,7 @@ plot_continuous_hr(
 ```{r}
 cox_fibre_cd_soft <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -451,6 +456,7 @@ plot_continuous_hr(data = flare.cd.df,
 ```{r}
 cox_fibre_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -481,7 +487,8 @@ plot_continuous_hr(data = flare.cd.df,
 
 ```{r}
 cox_fibre_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
+               Sex +
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -511,6 +518,7 @@ plot_continuous_hr(data = flare.uc.df,
 ```{r}
 cox_fibre_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -545,6 +553,7 @@ plot_continuous_hr(data = flare.uc.df,
 ```{r}
 cox_pufa_cd_soft <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -573,6 +582,7 @@ plot_continuous_hr(data = flare.cd.df,
 ```{r}
 cox_pufa_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -603,6 +613,7 @@ plot_continuous_hr(data = flare.cd.df,
 ```{r}
 cox_pufa_uc_soft <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -632,6 +643,7 @@ plot_continuous_hr(data = flare.uc.df,
 ```{r}
 cox_pufa_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -666,6 +678,7 @@ plot_continuous_hr(data = flare.uc.df,
 ```{r}
 cox_upf_cd_soft <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -695,6 +708,7 @@ plot_continuous_hr(data = flare.cd.df,
 ```{r}
 cox_upf_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -726,6 +740,7 @@ plot_continuous_hr(data = flare.cd.df,
 ```{r}
 cox_upf_uc_soft <- coxph(Surv(softflare_time, softflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
@@ -755,6 +770,7 @@ plot_continuous_hr(data = flare.uc.df,
 ```{r}
 cox_upf_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
                Sex + 
+               IMD +
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
