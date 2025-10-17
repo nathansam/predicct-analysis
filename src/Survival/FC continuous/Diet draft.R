@@ -10,48 +10,18 @@ library(splines)
 # Run first chunk of Diet.qmd
 
 # FC has been logged twice - reverse
-flare.cd.df$FC <- exp(flare.cd.df$FC)
+flare.uc.df$FC <- exp(flare.uc.df$FC)
 # So now FC is the log of the FC measurement
 
-# Total meat protein
-# Patient reported flare
-# Crohn's
-
-# Categorize meat protein by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "Meat_sum", reference_data = flare.df)
-
-# Missingness
-flare.cd.df %>%
-  dplyr::filter(
-    !is.na(Meat_sum_cat)) %>%
-  dplyr::count(softflare)
-# 530 patients with Meat sum data
-# 187 events
-# 2 with missing events - remove
-flare.cd.df %<>%
-  dplyr::filter(!is.na(softflare))
-
-# Some exploration
-# Relationship between dqi and meat
-flare.cd.df %>%
-  ggplot(aes(x = dqi_tot, y = Meat_sum)) +
-  geom_point(alpha = 0.5) +
-  geom_smooth()
-# High dqi associated with lower total meat consumption.
-
-# Statistical test
-lm(dqi_tot ~ Meat_sum, data = flare.cd.df) %>% 
-  broom::tidy()
-# Very significant
-
+# UPF
 
 # Survival analysis
 
 # Original
 coxph(Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + Meat_sum_cat + frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + UPF_perc + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
-  data = flare.cd.df
+  data = flare.uc.df
 ) %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
@@ -62,7 +32,7 @@ coxph(Surv(softflare_time, softflare) ~
 
 # Add Age - in decades so coefficients are easier to interpret/scale is better
 # Zero at age 40
-flare.cd.df %<>%
+flare.uc.df %<>%
   dplyr::mutate(
     age_decade = Age/10
   )
@@ -79,14 +49,57 @@ cox <- coxph(Surv(softflare_time, softflare) ~
                ns(age_decade, df = 2) + 
                ns(BMI, df = 2) +
                ns(FC, df = 2) +
-               ns(Meat_sum, df = 2) + 
+               ns(UPF_perc, df = 2) + 
                dqi_tot +
                frailty(SiteNo),
-             data = flare.cd.df
+             data = flare.uc.df
 )
 
 cox %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
+
+# Null model without the exposure for calculating overall p-value
+
+cox_null <- coxph(Surv(softflare_time, softflare) ~
+               Sex + 
+               IMD +
+               ns(age_decade, df = 2) + 
+               ns(BMI, df = 2) +
+               ns(FC, df = 2) +
+               dqi_tot +
+               frailty(SiteNo),
+             data = flare.uc.df
+)
+
+cox_null %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)
+
+# Likelihood ratio test
+anova(cox, cox_null, test = 'LRT')
+
+# Function to perform the LRT
+summon_lrt <- function(model, term) {
+  # Function that removes a term and performs a
+  # Likelihood ratio test to determine its significance
+  
+  # Rename term to avoid problems
+  term_removed <- term
+  
+  update(model, paste0("~ . - ", term_removed)) %>%
+    anova(model, ., test = 'LRT') %>%
+    broom::tidy() %>%
+    dplyr::filter(!is.na(p.value)) %>%
+    dplyr::mutate(term = term_removed) %>%
+    dplyr::mutate(test = 'LRT') %>%
+    dplyr::relocate(term) %>%
+    dplyr::relocate(test, .after = term)
+  
+}
+
+summon_lrt(cox, term = "ns(UPF_perc, df = 2)")
+
+
+
 
 
 # Plotting the shape of age
@@ -182,21 +195,21 @@ plot_continuous_hr <- function(data, model, variable){
 
 # Age
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox,
   variable = 'age_decade'
 )
 
 # FC
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox,
   variable = 'FC'
 )
 
 # BMI
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox,
   variable = 'BMI'
 )
