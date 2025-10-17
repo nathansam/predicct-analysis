@@ -152,18 +152,15 @@ plot_continuous_hr <- function(data, model, variable){
 }
 
 # Function to perform an LRT
-summon_lrt <- function(model, term) {
+summon_lrt <- function(model, remove) {
   # Function that removes a term and performs a
   # Likelihood ratio test to determine its significance
   
-  # Rename term to avoid problems
-  term_removed <- term
-  
-  update(model, paste0("~ . - ", term_removed)) %>%
+  update(model, paste0("~ . - ", remove)) %>%
     anova(model, ., test = 'LRT') %>%
     broom::tidy() %>%
     dplyr::filter(!is.na(p.value)) %>%
-    dplyr::mutate(term = term_removed) %>%
+    dplyr::mutate(term = remove) %>%
     dplyr::mutate(test = 'LRT') %>%
     dplyr::relocate(term) %>%
     dplyr::relocate(test, .after = term)
@@ -196,7 +193,7 @@ cox_meat_cd_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_meat_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_meat_cd_soft, term = "ns(Meat_sum, df = 2)")
+summon_lrt(cox_meat_cd_soft, remove =  "ns(Meat_sum, df = 2)")
 
 ```
 
@@ -256,7 +253,7 @@ cox_meat_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_meat_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_meat_cd_hard, term = "ns(Meat_sum, df = 2)")
+summon_lrt(cox_meat_cd_hard, remove =  "ns(Meat_sum, df = 2)")
 ```
 
 ```{r}
@@ -317,7 +314,7 @@ cox_meat_uc_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_meat_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_meat_uc_soft, term = "ns(Meat_sum, df = 2)")
+summon_lrt(cox_meat_uc_soft, remove =  "ns(Meat_sum, df = 2)")
 ```
 
 ```{r}
@@ -376,7 +373,7 @@ cox_meat_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_meat_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_meat_uc_hard, term = "ns(Meat_sum, df = 2)")
+summon_lrt(cox_meat_uc_hard, remove =  "ns(Meat_sum, df = 2)")
 
 ```
 
@@ -439,7 +436,7 @@ cox_fibre_cd_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_fibre_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_fibre_cd_soft, term = "ns(fibre, df = 2)")
+summon_lrt(cox_fibre_cd_soft, remove =  "ns(fibre, df = 2)")
 
 ```
 
@@ -469,7 +466,7 @@ cox_fibre_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_fibre_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_fibre_cd_hard, term = "ns(fibre, df = 2)")
+summon_lrt(cox_fibre_cd_hard, remove =  "ns(fibre, df = 2)")
 
 ```
 
@@ -501,7 +498,7 @@ cox_fibre_uc_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_fibre_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_fibre_uc_soft, term = "ns(fibre, df = 2)")
+summon_lrt(cox_fibre_uc_soft, remove =  "ns(fibre, df = 2)")
 
 ```
 
@@ -531,7 +528,7 @@ cox_fibre_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_fibre_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_fibre_uc_hard, term = "ns(fibre, df = 2)")
+summon_lrt(cox_fibre_uc_hard, remove =  "ns(fibre, df = 2)")
 
 ```
 
@@ -566,7 +563,7 @@ cox_pufa_cd_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_pufa_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_pufa_cd_soft, term = "ns(PUFA_percEng, df = 2)")
+summon_lrt(cox_pufa_cd_soft, remove =  "ns(PUFA_percEng, df = 2)")
 ```
 
 ```{r}
@@ -595,7 +592,7 @@ cox_pufa_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_pufa_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_pufa_cd_hard, term = "ns(PUFA_percEng, df = 2)")
+summon_lrt(cox_pufa_cd_hard, remove =  "ns(PUFA_percEng, df = 2)")
 ```
 
 ```{r}
@@ -626,7 +623,7 @@ cox_pufa_uc_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_pufa_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_pufa_uc_soft, term = "ns(PUFA_percEng, df = 2)")
+summon_lrt(cox_pufa_uc_soft, remove =  "ns(PUFA_percEng, df = 2)")
 
 ```
 
@@ -656,7 +653,7 @@ cox_pufa_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_pufa_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_pufa_uc_hard, term = "ns(PUFA_percEng, df = 2)")
+summon_lrt(cox_pufa_uc_hard, remove =  "ns(PUFA_percEng, df = 2)")
 
 ```
 
@@ -691,7 +688,7 @@ cox_upf_cd_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_upf_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_upf_cd_soft, term = "ns(UPF_perc, df = 2)")
+summon_lrt(cox_upf_cd_soft, remove =  "ns(UPF_perc, df = 2)")
 
 ```
 
@@ -721,7 +718,7 @@ cox_upf_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_upf_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_upf_cd_hard, term = "ns(UPF_perc, df = 2)")
+summon_lrt(cox_upf_cd_hard, remove =  "ns(UPF_perc, df = 2)")
 
 ```
 
@@ -753,7 +750,7 @@ cox_upf_uc_soft <- coxph(Surv(softflare_time, softflare) ~
 cox_upf_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_upf_uc_soft, term = "ns(UPF_perc, df = 2)")
+summon_lrt(cox_upf_uc_soft, remove =  "ns(UPF_perc, df = 2)")
 
 ```
 
@@ -783,7 +780,7 @@ cox_upf_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
 cox_upf_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-summon_lrt(cox_upf_uc_hard, term = "ns(UPF_perc, df = 2)")
+summon_lrt(cox_upf_uc_hard, remove =  "ns(UPF_perc, df = 2)")
 
 ```
 
