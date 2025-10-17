@@ -680,6 +680,20 @@ ggsave("plots/baseline/treat_strat.png" , p, width = 10, height = 8)
 p
 ```
 
+```{R}
+#| label: tbl-treatments
+drugs <- drugs %>%
+  mutate(Treatment = if_else(is.na(Treatment), 
+                             "None reported",
+                             Treatment))
+demo <- merge(demo,
+              drugs[, c("ParticipantNo", "Treatment")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE,
+              sort = FALSE)                             
+```
+
 
 ```{R}
 #| label: tbl-treatments-cd

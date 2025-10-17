@@ -29,7 +29,6 @@ cd.clin.forest <- readRDS(paste0(paths$outdir, "cd-clin-IBD.RDS"))
 cd.hard.forest <- readRDS(paste0(paths$outdir, "cd-hard-IBD.RDS"))
 uc.clin.forest <- readRDS(paste0(paths$outdir, "uc-clin-IBD.RDS"))
 uc.hard.forest <- readRDS(paste0(paths$outdir, "uc-hard-IBD.RDS"))
-
 ```
 
 ## C-reactive protein
