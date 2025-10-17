@@ -139,8 +139,8 @@ summon_population_cum_incidence <- function(data, model, times, variable, values
 # Set softflare_time
 # Set age_decade, which we will vary
 times = seq(from = 0, to = 730, by = 182.5)
-variable = 'age_decade'
-values = c(2.5, 3.5, 4.5, 5.5, 6.5, 7.5)
+variable = 'BMI'
+values = quantile(flare.uc.df$BMI, probs = seq(0, 0.95, length.out = 5), na.rm = TRUE)
 
 summon_population_cum_incidence(
   flare.uc.df,
@@ -148,4 +148,10 @@ summon_population_cum_incidence(
   times = times,
   variable = variable,
   values = values
-)
+) %>%
+  ggplot(aes(x = time, y = cum_incidence_mean,
+             ymin = conf.low, ymax = conf.high,
+             colour = BMI, fill = BMI)) +
+  geom_point() + 
+  geom_line() +
+  geom_ribbon(alpha = 0.2)
