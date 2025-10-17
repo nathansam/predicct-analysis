@@ -886,6 +886,115 @@ invisible(cox_summary(fit.me))
 
 :::
 
+<details class = "appendix">
+  <summary> Control for additional covariates </summary>
+  
+<h3> Crohn's disease </h3>
+
+<h4> Patient-reported flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h3> Ulcerative colitis </h3>
+
+<h4> Patient-reported flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+</details>
+  
 ## Reproduction and reproducibility {.appendix}
 
 <details class = "appendix">
