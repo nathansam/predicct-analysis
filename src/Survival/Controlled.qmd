@@ -32,6 +32,12 @@ flare.cd.df$Treatment <- factor(flare.cd.df$Treatment,
                                            "None reported"))
 
 flare.uc.df <- subset(flare.df, diagnosis2 == "UC/IBDU")
+flare.uc.df$Treatment <- factor(flare.uc.df$Treatment,
+                                levels = c("Mono immunotherapy",
+                                           "Mono biologic",
+                                           "Combo therapy",
+                                           "5-ASA",
+                                           "None reported"))
 ```
 
 The variables being controlled for in later cox models analyses are first
