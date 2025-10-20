@@ -1146,6 +1146,83 @@ saveRDS(uc.hard.forest, paste0(paths$outdir, "uc-hard-IBD.RDS"))
 
 <h4> Patient-reported flare </h4>
 
+<h5> IBD Control-8 </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    control_8 +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> IBD Control VAS </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    vas_control +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Previous surgery </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Surgery +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal location </h5>
+
 ```{R}
 #| results: "hold"
 #| output: "asis"
@@ -1161,6 +1238,55 @@ fit.me <- coxph(
     Treatment +
     Age +
     Location +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal L4 presence </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    L4 +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal behaviour </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
     Behaviour +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
@@ -1170,7 +1296,109 @@ fit.me <- coxph(
 invisible(cox_summary(fit.me))
 ```
 
+<h5> Perianal disease </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Perianal +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
 <h4> Objective flare </h4>
+
+<h5> IBD Control-8 </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    control_8 +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> IBD Control VAS </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    vas_control +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Previous surgery </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Surgery +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal location </h5>
 
 ```{R}
 #| results: "hold"
@@ -1187,7 +1415,81 @@ fit.me <- coxph(
     Treatment +
     Age +
     Location +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal L4 presence </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    L4 +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal behaviour </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
     Behaviour +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Perianal disease </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Perianal +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
@@ -1200,6 +1502,58 @@ invisible(cox_summary(fit.me))
 
 <h4> Patient-reported flare </h4>
 
+<h5> IBD Control-8 </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    control_8 +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> IBD Control VAS </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    vas_control +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal extent </h5>
+
 ```{R}
 #| results: "hold"
 #| output: "asis"
@@ -1215,6 +1569,30 @@ fit.me <- coxph(
     Treatment +
     Age +
     Extent +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Mayo score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
     Mayo +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
@@ -1225,6 +1603,58 @@ invisible(cox_summary(fit.me))
 ```
 
 <h4> Objective flare </h4>
+
+<h5> IBD Control-8 </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    control_8 +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> IBD Control VAS </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    vas_control +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Montreal extent </h5>
 
 ```{R}
 #| results: "hold"
@@ -1241,6 +1671,30 @@ fit.me <- coxph(
     Treatment +
     Age +
     Extent +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Mayo score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
     Mayo +
     frailty(SiteNo),
   control = coxph.control(outer.max = 20),
