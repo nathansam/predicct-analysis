@@ -81,77 +81,78 @@ plot_continuous_hr(
 # Expected probability of event occurring if entire population was unexposed
 # Minus the expected probability of event occurring if entire population was exposed
 
-# For continuous variables, I guess we should choose some values to estimate at
-# Ironically, I think I will probably choose quantiles
-
-
-summon_population_cum_incidence <- function(data, model, times, variable, values) {
-  # Function that calculates mean population cumulative incidence at a given time
-  # with a specified value of the variable
-  # using a Cox model
-  
-  tidyr::expand_grid(times, values) %>%
-    {
-      purrr::map2_dfr(
-        .x = .$times,
-        .y = .$values,
-        .f = function(time, value) {
-          data %>%
-            dplyr::mutate(softflare_time = time, !!sym(variable) := value) %>%
-            # Estimate expected for entire population
-            predict(model, newdata = ., type = 'expected') %>%
-            tibble(expected = .) %>%
-            # Remove NA
-            dplyr::filter(!is.na(expected)) %>%
-            # Calculate survival and cumulative incidence (1 - survival)
-            dplyr::mutate(survival = exp(-expected),
-                          cum_incidence = 1 - survival) %>%
-            dplyr::select(cum_incidence) %>% {
-              df = .
-              
-              # Bootstrapping for confidence intervals
-              nboot = 100
-              
-              1:nboot %>%
-                purrr::map_dfr(
-                  .f = function(x) {
-                    df %>%
-                      dplyr::slice_sample(prop = 1, replace = TRUE) %>%
-                      dplyr::summarise(cum_incidence_mean_boot = mean(cum_incidence))
-                  }
-                )
-            } %>%
-            dplyr::summarise(
-              cum_incidence_mean = mean(cum_incidence_mean_boot),
-              conf.low = quantile(cum_incidence_mean_boot, 0.025),
-              conf.high = quantile(cum_incidence_mean_boot, 0.975)
-            ) %>%
-            dplyr::mutate(time = time, !!sym(variable) := value)
-        }
-      )
-    } %>%
-    dplyr::mutate(!!sym(variable) := forcats::as_factor(!!sym(variable)))
-  
-}
 
 # Use age_decade for illustration
 
 # Set softflare_time
 # Set age_decade, which we will vary
+data = flare.uc.df
+model = cox
 times = seq(from = 0, to = 730, by = 182.5)
-variable = 'BMI'
-values = quantile(flare.uc.df$BMI, probs = seq(0, 0.95, length.out = 5), na.rm = TRUE)
+variable = 'age_decade'
+values = c(2.5,4.5,6.5)
 
-summon_population_cum_incidence(
-  flare.uc.df,
-  cox,
+summon_population_risk_difference(
+  data = flare.uc.df,
+  model = cox,
   times = times,
   variable = variable,
-  values = values
+  values = values,
+  ref_value = NULL
 ) %>%
-  ggplot(aes(x = time, y = cum_incidence_mean,
+  ggplot(aes(x = time, y = rd*100, colour = age_decade)) +
+  geom_point() + 
+  geom_line()
+
+
+# Confidence intervals using bootstrapping
+
+nboot = 9
+
+purrr::map_dfr(
+    .x = seq_len(nboot),
+    .f = function(b){
+      
+      # Variable used in the model
+      all_variables <- all.vars(terms(model))
+      
+      # Bootstrap sample of the data
+      data_boot <- data %>%
+        # Remove any NAs as Cox doesn't use these
+        dplyr::select(tidyselect::all_of(all_variables)) %>%
+        dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na)) %>% 
+        # Sample the df
+        dplyr::slice_sample(prop = 1, replace = TRUE)
+      
+      # Refit cox model of bootstrapped data
+      model_boot <- coxph(formula(model), data = data_boot, model = TRUE)
+      
+      # Calculate risk differences
+      summon_population_risk_difference(
+        data = data_boot,
+        model = model_boot,
+        times = times,
+        variable = variable,
+        values = values,
+        ref_value = NULL
+      )
+      
+    }
+  ) %>%
+  dplyr::group_by(!!sym(variable), time) %>%
+  # Bootstrapped estimate and confidence intervals
+  dplyr::summarise(
+    mean_rd = mean(rd),
+    conf.low = quantile(rd, prob = 0.025),
+    conf.high = quantile(rd, prob = 0.975)
+  ) %>%
+  dplyr::rename(rd = mean_rd) %>%
+  # Convert to percentages
+  dplyr::mutate(rd = 100*rd, conf.low = 100*conf.low, conf.high = 100*conf.high) %>%
+  ggplot(aes(x = time, y = rd, 
              ymin = conf.low, ymax = conf.high,
-             colour = BMI, fill = BMI)) +
+             colour = !!sym(variable), fill = !!sym(variable))) +
   geom_point() + 
   geom_line() +
   geom_ribbon(alpha = 0.2)
+
