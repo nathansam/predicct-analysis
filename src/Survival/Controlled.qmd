@@ -23,7 +23,21 @@ demo <- analysis_setup$demo
 
 flare.df <- readRDS(paste0(paths$outdir, "flares-overview.RDS"))
 flare.cd.df <- subset(flare.df, diagnosis2 == "CD")
+
+flare.cd.df$Treatment <- factor(flare.cd.df$Treatment,
+                                levels = c("Mono immunotherapy",
+                                           "Mono biologic",
+                                           "Combo therapy",
+                                           "5-ASA",
+                                           "None reported"))
+
 flare.uc.df <- subset(flare.df, diagnosis2 == "UC/IBDU")
+flare.uc.df$Treatment <- factor(flare.uc.df$Treatment,
+                                levels = c("Mono immunotherapy",
+                                           "Mono biologic",
+                                           "Combo therapy",
+                                           "5-ASA",
+                                           "None reported"))
 ```
 
 The variables being controlled for in later cox models analyses are first
@@ -638,6 +652,115 @@ saveRDS(uc.clin.forest, paste0(paths$outdir, "uc-clin-controlled.RDS"))
 saveRDS(uc.hard.forest, paste0(paths$outdir, "uc-hard-controlled.RDS"))
 ```
 
+<details class = "appendix">
+  <summary> Control for additional covariates </summary>
+  
+<h3> Crohn's disease </h3>
+
+<h4> Patient-reported flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Smoke +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Smoke +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h3> Ulcerative colitis </h3>
+
+<h4> Patient-reported flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Smoke +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Smoke +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+</details>
+  
 ## Reproduction and reproducibility {.appendix}
 
 <details class = "appendix">

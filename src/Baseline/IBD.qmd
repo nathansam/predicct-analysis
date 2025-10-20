@@ -279,7 +279,7 @@ demo %>%
 
 demo %>%
   filter(diagnosis2 == "UC/IBDU") %>%
-  aov(formula = `IBD Duration` ~ cat,) %>%
+  aov(formula = `IBD Duration` ~ cat) %>%
   summary() %>%
   pander()
 ```
@@ -678,6 +678,24 @@ p <- drugs %>%
 ggsave("plots/baseline/treat_strat.pdf" , p, width = 10, height = 8)
 ggsave("plots/baseline/treat_strat.png" , p, width = 10, height = 8)
 p
+```
+
+As we are unable to differentiate between participants which are are no
+treatment and those for whom treatment data is missing, we will instead
+use a `None reported` category.
+
+```{R}
+#| label: merge-treatments
+drugs <- drugs %>%
+  mutate(Treatment = if_else(is.na(Treatment), 
+                             "None reported",
+                             Treatment))
+demo <- merge(demo,
+              drugs[, c("ParticipantNo", "Treatment")],
+              by = "ParticipantNo",
+              all.x = TRUE,
+              all.y = FALSE,
+              sort = FALSE)                             
 ```
 
 
