@@ -59,3 +59,12 @@ to patient-reported or hard flare. The
 by this SAP.
 
 {{< pdf pdf/Longitudinal-SAP-v1.0.pdf width=100% height=1080 >}}
+
+### SAP ammendment
+
+This document acts as a time stamped amendment to the SAP. Produced as a result
+of the peer review process for PREdiCCt. Whilst the outcomes (time-to-flare) are
+unchanged, this amendment clarifies the core dietary dataset and outlines
+additional sensitivity analyses.
+
+{{< pdf pdf/PREdiCCt-SAP-Amendment.pdf width=100% height=1080 >}}
