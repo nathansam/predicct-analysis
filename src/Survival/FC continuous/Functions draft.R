@@ -89,12 +89,12 @@ plot_continuous_hr <- function(data, model, variable){
       df <- .
       
       # Subtract chosen reference value to set linear predictor to 0 at that value
-      denominator <- df %>% 
+      p_ref <- df %>% 
         dplyr::filter(!!sym(variable) == ref_value) %>%
         dplyr::pull(p)
       
       df %>% 
-        dplyr::mutate(p = p - denominator)
+        dplyr::mutate(p = p - p_ref)
       
     } %>%
     ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
@@ -103,4 +103,90 @@ plot_continuous_hr <- function(data, model, variable){
     geom_ribbon(alpha = 0.2) +
     ylab("HR")
   
+}
+
+
+summon_population_cum_incidence <- function(data, model, times, variable, values) {
+  # Function that calculates mean population cumulative incidence at a given time
+  # with a specified value of the variable
+  # using a Cox model
+  
+  tidyr::expand_grid(times, values) %>%
+    {
+      purrr::map2_dfr(
+        .x = .$times,
+        .y = .$values,
+        .f = function(time, value) {
+          data %>%
+            dplyr::mutate(softflare_time = time, !!sym(variable) := value) %>%
+            # Estimate expected for entire population
+            predict(model, newdata = ., type = 'expected') %>%
+            tibble(expected = .) %>%
+            # Remove NA
+            dplyr::filter(!is.na(expected)) %>%
+            # Calculate survival and cumulative incidence (1 - survival)
+            dplyr::mutate(survival = exp(-expected),
+                          cum_incidence = 1 - survival) %>%
+            dplyr::select(cum_incidence) %>% 
+            dplyr::summarise(
+              cum_incidence = mean(cum_incidence)
+            ) %>%
+            dplyr::mutate(time = time, !!sym(variable) := value)
+        }
+      )
+    } %>%
+    dplyr::mutate(!!sym(variable) := forcats::as_factor(!!sym(variable)))
+  
+}
+
+
+
+summon_population_risk_difference <- function(data, model, times, variable, values, ref_value = NULL) {
+  # Function that calculates mean population cumulative incidence at a given time
+  # with a specified value of the variable
+  # using a Cox model
+  
+  # If no reference value then use lowest
+  if (is.null(ref_value)) {ref_value <- values %>% min()}
+  
+  df <- tidyr::expand_grid(times, values) 
+      
+  purrr::map2(
+    .x = df$times,
+    .y = df$values,
+    .f = function(x, y) {
+      
+      data %>%
+        # Set values for time and the variable
+        dplyr::mutate(softflare_time = x, !!sym(variable) := y) %>%
+        # Estimate expected for entire population{
+        predict(model, newdata = ., type = 'expected') %>%
+        tibble(expected = .) %>%
+        # Remove NA
+        dplyr::filter(!is.na(expected)) %>%
+        # Calculate survival and cumulative incidence (1 - survival)
+        dplyr::mutate(survival = exp(-expected),
+                      cum_incidence = 1 - survival) %>%
+        dplyr::select(cum_incidence) %>%
+        dplyr::summarise(cum_incidence = mean(cum_incidence)) %>%
+        dplyr::mutate(time = x, !!sym(variable) := y)
+    }
+  ) %>%
+    purrr::list_rbind() %>%
+    dplyr::mutate(!!sym(variable) := forcats::as_factor(!!sym(variable))) %>%
+    # Calculate risk difference relative to a reference
+    {
+      df <- .
+      
+      # Subtract chosen reference value to set linear predictor to 0 at that value
+      cum_incidence_ref <- df %>% 
+        dplyr::filter(!!sym(variable) == ref_value) %>%
+        dplyr::rename(cum_incidence_ref = cum_incidence) %>%
+        dplyr::select(time, cum_incidence_ref)
+      
+      df %>% 
+        dplyr::left_join(cum_incidence_ref, by = 'time') %>%
+        dplyr::mutate(rd = cum_incidence - cum_incidence_ref, .keep = "unused")
+      
+    } 
 }
