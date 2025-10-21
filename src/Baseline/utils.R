@@ -8,7 +8,7 @@
 #'   be saved as a csv file to the current working directory
 #' @return A ggplot2 object
 #' @export
-custom_missing <- function(
+missing_plot2 <- function(
   .data,
   col.name = "SiteName",
   dependent = NULL,
@@ -35,7 +35,7 @@ custom_missing <- function(
     site.no <- df.in[i, col.name]
     for (j in 1:ncol(df.in)) {
       if (is.na(df.in[i, j]) == FALSE) {
-        df.in[i, j] <- "0 NA"
+        df.in[i, j] <- "Not missing"
       } else {
         df.in[i, j] <- site.no
       }
@@ -57,7 +57,7 @@ custom_missing <- function(
     file.name <- paste(deparse(substitute(.data)), "_NA_count.csv", sep = "")
     utils::write.csv(counts, file.name)
   }
-  high.na <- c("0 NA", as.character(counts[1:5, 1]))
+  high.na <- c("Not missing", as.character(counts[1:5, 1]))
 
   for (i in 1:nrow(df.in)) {
     for (j in 1:ncol(df.in)) {
@@ -69,11 +69,26 @@ custom_missing <- function(
 
   n.color <- length(high.na) + 1
 
-  plot.colors <- c("#102033", grDevices::rainbow(n.color - 1))
+  plot.colors <- c(
+    "#102033",
+    "#ff595e",
+    "#ff924c",
+    "#ffca3a",
+    "#8ac926",
+    "#1982c4",
+    "#6a4c93"
+  )
 
   df.in$.id = as.numeric(rownames(df.in))
 
   plot_df <- tidyr::gather(df.in, "var", "value", -.id, factor_key = TRUE)
+
+  # Include "Other" in the legend order
+  legend_levels <- c(high.na, "Other")
+
+  # Set factor levels to ensure "Not missing" appears first in legend
+  plot_df$value <- factor(plot_df$value, levels = legend_levels)
+
   if (is.null(title)) {
     title = paste(deparse(substitute(.data)), "Missing Values Map")
   }
@@ -82,7 +97,8 @@ custom_missing <- function(
     plot_df,
     ggplot2::aes(x = .id, y = forcats::fct_rev(var), fill = value)
   )
-  p <- p + ggplot2::scale_fill_manual(values = plot.colors)
+  p <- p +
+    ggplot2::scale_fill_manual(values = plot.colors, breaks = legend_levels, name = "Recruitment site")
   p <- p + ggplot2::geom_raster() + ggplot2::xlab("Observation")
   p <- p +
     ggplot2::scale_y_discrete(
