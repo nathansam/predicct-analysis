@@ -149,6 +149,9 @@ summon_population_risk_difference <- function(data, model, times, variable, valu
   # If no reference value then use lowest
   if (is.null(ref_value)) {ref_value <- values %>% min()}
   
+  # Identify the time variable - to differentiate between soft and hard flare models
+  time_variable <- all.vars(terms(model))[1]
+  
   df <- tidyr::expand_grid(times, values) 
       
   purrr::map2(
@@ -158,7 +161,7 @@ summon_population_risk_difference <- function(data, model, times, variable, valu
       
       data %>%
         # Set values for time and the variable
-        dplyr::mutate(softflare_time = x, !!sym(variable) := y) %>%
+        dplyr::mutate(!!sym(time_variable) := x, !!sym(variable) := y) %>%
         # Estimate expected for entire population
         predict(model, newdata = ., type = 'expected') %>%
         tibble(expected = .) %>%
@@ -169,18 +172,18 @@ summon_population_risk_difference <- function(data, model, times, variable, valu
                       cum_incidence = 1 - survival) %>%
         dplyr::select(cum_incidence) %>%
         dplyr::summarise(cum_incidence = mean(cum_incidence)) %>%
-        dplyr::mutate(time = x, !!sym(variable) := y)
+        # Note time, value and variable
+        dplyr::mutate(time = x, value = y, variable = variable)
     }
   ) %>%
     purrr::list_rbind() %>%
-    dplyr::mutate(!!sym(variable) := forcats::as_factor(!!sym(variable))) %>%
     # Calculate risk difference relative to a reference
     {
       df <- .
       
       # Subtract chosen reference value to set linear predictor to 0 at that value
       cum_incidence_ref <- df %>% 
-        dplyr::filter(!!sym(variable) == ref_value) %>%
+        dplyr::filter(value == ref_value) %>%
         dplyr::rename(cum_incidence_ref = cum_incidence) %>%
         dplyr::select(time, cum_incidence_ref)
       
@@ -198,11 +201,18 @@ summon_population_risk_difference_boot <- function(data,
                                                    variable,
                                                    values,
                                                    ref_value = NULL,
-                                                   nboot = 99) {
+                                                   nboot = 99,
+                                                   seed = 1) {
   
   # Function to calculate population risk difference for a given variable at given time points
   # relative to a specified reference value
   # Confidence intervals calculated using bootstrapping.
+  
+  # Set seed
+  set.seed(seed)
+  
+  # If no reference value then use lowest
+  if (is.null(ref_value)) {ref_value <- values %>% min()}
   
   purrr::map_dfr(
     .x = seq_len(nboot),
@@ -233,7 +243,7 @@ summon_population_risk_difference_boot <- function(data,
       
     }
   ) %>%
-    dplyr::group_by(time, !!sym(variable)) %>%
+    dplyr::group_by(time, value) %>%
     # Bootstrapped estimate and confidence intervals
     dplyr::summarise(
       mean_rd = mean(rd),
@@ -241,6 +251,36 @@ summon_population_risk_difference_boot <- function(data,
       conf.high = quantile(rd, prob = 0.975)
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::rename(rd = mean_rd)
+    dplyr::rename(estimate = mean_rd) %>%
+    # Note variable, reference level flag
+    dplyr::mutate(
+      variable = variable,
+      reference_flag = (value == ref_value)
+      ) %>%
+    # Ordering for plotting
+    dplyr::arrange(time, value) %>%
+    dplyr::group_by(time) %>%
+    dplyr::mutate(ordering = dplyr::row_number()) %>%
+    # Tidy confidence intervals
+    # Remove confidence intervals for reference level
+    dplyr::mutate(
+      conf.low = dplyr::case_when(reference_flag == TRUE ~ NA, .default = conf.low),
+      conf.high = dplyr::case_when(reference_flag == TRUE ~ NA, .default = conf.high)
+    ) %>%
+    dplyr::mutate(
+      conf.interval.tidy = dplyr::case_when(
+        (is.na(conf.low) & is.na(conf.high)) ~ "-",
+        TRUE ~ paste0(sprintf("%.3g", estimate), " (", sprintf("%.3g", conf.low), ", ", sprintf("%.3g", conf.high), ")")
+      )
+    ) %>%
+    # Significance
+    dplyr::mutate(
+      significance = dplyr::case_when(
+        reference_flag == TRUE ~ "Reference level",
+        sign(conf.low) == sign(conf.high) ~ "Significant",
+        sign(conf.low) != sign(conf.high) ~ "Not Significant"
+      )
+    )
+    
   
 }
