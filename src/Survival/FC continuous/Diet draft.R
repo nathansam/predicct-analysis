@@ -107,52 +107,15 @@ summon_population_risk_difference(
 
 # Confidence intervals using bootstrapping
 
-nboot = 9
+summon_population_risk_difference_boot(
+  data = flare.uc.df,
+  model = cox,
+  times = times,
+  variable = variable,
+  values = values,
+  ref_value = NULL,
+  nboot = 9
+) 
 
-purrr::map_dfr(
-    .x = seq_len(nboot),
-    .f = function(b){
-      
-      # Variable used in the model
-      all_variables <- all.vars(terms(model))
-      
-      # Bootstrap sample of the data
-      data_boot <- data %>%
-        # Remove any NAs as Cox doesn't use these
-        dplyr::select(tidyselect::all_of(all_variables)) %>%
-        dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na)) %>% 
-        # Sample the df
-        dplyr::slice_sample(prop = 1, replace = TRUE)
-      
-      # Refit cox model of bootstrapped data
-      model_boot <- coxph(formula(model), data = data_boot, model = TRUE)
-      
-      # Calculate risk differences
-      summon_population_risk_difference(
-        data = data_boot,
-        model = model_boot,
-        times = times,
-        variable = variable,
-        values = values,
-        ref_value = NULL
-      )
-      
-    }
-  ) %>%
-  dplyr::group_by(!!sym(variable), time) %>%
-  # Bootstrapped estimate and confidence intervals
-  dplyr::summarise(
-    mean_rd = mean(rd),
-    conf.low = quantile(rd, prob = 0.025),
-    conf.high = quantile(rd, prob = 0.975)
-  ) %>%
-  dplyr::rename(rd = mean_rd) %>%
-  # Convert to percentages
-  dplyr::mutate(rd = 100*rd, conf.low = 100*conf.low, conf.high = 100*conf.high) %>%
-  ggplot(aes(x = time, y = rd, 
-             ymin = conf.low, ymax = conf.high,
-             colour = !!sym(variable), fill = !!sym(variable))) +
-  geom_point() + 
-  geom_line() +
-  geom_ribbon(alpha = 0.2)
+
 
