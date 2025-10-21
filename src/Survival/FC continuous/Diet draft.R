@@ -2,6 +2,7 @@ library(tidyverse)
 library(magrittr)
 library(survival)
 library(splines)
+library(patchwork)
 
 
 # Version of Diet with FC as a continuous variable
@@ -88,7 +89,7 @@ plot_continuous_hr(
 # Set age_decade, which we will vary
 data = flare.uc.df
 model = cox
-times = seq(from = 0, to = 730, by = 182.5)
+times = seq(0, 730, by = 182.5)
 variable = 'age_decade'
 values = c(2.5,4.5,6.5)
 
@@ -100,22 +101,50 @@ summon_population_risk_difference(
   values = values,
   ref_value = NULL
 ) %>%
-  ggplot(aes(x = time, y = rd*100, colour = age_decade)) +
+  dplyr::mutate(value = forcats::as_factor(value)) %>%
+  ggplot(aes(x = time, y = rd*100, colour = value)) +
   geom_point() + 
   geom_line()
 
 
 # Confidence intervals using bootstrapping
 
-summon_population_risk_difference_boot(
+data_rd <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox,
-  times = times,
+  times = c(365, 730),
   variable = variable,
   values = values,
   ref_value = NULL,
   nboot = 9
 ) 
 
+data_rd
 
+# Forest plot?
+
+# 1-year risk difference
+plot <- data_rd_cd_soft_meat %>%
+  dplyr::filter(time == 365) %>%
+  ggplot(aes(
+    x = estimate,
+    y = forcats::as_factor(term_tidy),
+    xmin = conf.low,
+    xmax = conf.high
+  )) +
+  geom_point() +
+  geom_errorbarh() +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  custom_theme
+
+# RD values
+table <- data_rd_cd_soft_meat %>%
+  dplyr::filter(time == 365) %>%
+  ggplot() +
+  geom_text(aes(
+    x = 0,
+    y = forcats::as_factor(term_tidy),
+    label = conf.interval.tidy)) +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5))
 
