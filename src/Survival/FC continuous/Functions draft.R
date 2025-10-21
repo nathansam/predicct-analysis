@@ -142,9 +142,9 @@ summon_population_cum_incidence <- function(data, model, times, variable, values
 
 
 summon_population_risk_difference <- function(data, model, times, variable, values, ref_value = NULL) {
-  # Function that calculates mean population cumulative incidence at a given time
-  # with a specified value of the variable
-  # using a Cox model
+  # Function that calculates (population average) risk difference of a variable at given time points
+  # with respect to specified value of the variable
+  # from a Cox model
   
   # If no reference value then use lowest
   if (is.null(ref_value)) {ref_value <- values %>% min()}
@@ -159,7 +159,7 @@ summon_population_risk_difference <- function(data, model, times, variable, valu
       data %>%
         # Set values for time and the variable
         dplyr::mutate(softflare_time = x, !!sym(variable) := y) %>%
-        # Estimate expected for entire population{
+        # Estimate expected for entire population
         predict(model, newdata = ., type = 'expected') %>%
         tibble(expected = .) %>%
         # Remove NA
@@ -199,6 +199,10 @@ summon_population_risk_difference_boot <- function(data,
                                                    values,
                                                    ref_value = NULL,
                                                    nboot = 99) {
+  
+  # Function to calculate population risk difference for a given variable at given time points
+  # relative to a specified reference value
+  # Confidence intervals calculated using bootstrapping.
   
   purrr::map_dfr(
     .x = seq_len(nboot),
