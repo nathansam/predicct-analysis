@@ -19,6 +19,8 @@ bibliography: Baseline.bib
 ```{R}
 set.seed(123)
 
+source("Baseline/utils.R")
+
 ##############
 ## Packages ##
 ##############
@@ -1776,6 +1778,46 @@ However, the low number of subjects reported to use E-cigarettes
 pander(fisher.test(demo.uc$ECigs, demo.uc$cat))
 ```
 
+## Missingness
+
+```{R}
+demo %>%
+  select(
+  `IBD Duration`,
+  control_8,
+  vas_control,
+  Smoke,
+  ECigs, 
+  SiteName
+  ) %>%
+missing_plot2(title = "Disease phenotyping missingness")
+```
+
+```{R}
+demo.cd %>%
+  select(
+  Location,
+  L4,
+  Behaviour,
+  Perianal,
+  HBI, 
+  PRO2,
+  SiteName
+  ) %>%
+missing_plot2(title = "Disease phenotyping missingness (CD)")
+```
+
+
+```{R}
+demo.uc %>%
+  select(
+  Extent,
+  Mayo,
+  PRO2,
+  SiteName
+  ) %>%
+missing_plot2(title = "Disease phenotyping missingness (UC/IBDU)")
+```
 
 ```{R}
 saveRDS(demo, paste0(outdir, "demo-IBD.RDS"))
