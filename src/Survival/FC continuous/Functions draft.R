@@ -190,3 +190,53 @@ summon_population_risk_difference <- function(data, model, times, variable, valu
       
     } 
 }
+
+
+summon_population_risk_difference_boot <- function(data,
+                                                   model,
+                                                   times,
+                                                   variable,
+                                                   values,
+                                                   ref_value = NULL,
+                                                   nboot = 99) {
+  
+  purrr::map_dfr(
+    .x = seq_len(nboot),
+    .f = function(b) {
+      # Variable used in the model
+      all_variables <- all.vars(terms(model))
+      
+      # Bootstrap sample of the data
+      data_boot <- data %>%
+        # Remove any NAs as Cox doesn't use these
+        dplyr::select(tidyselect::all_of(all_variables)) %>%
+        dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na)) %>%
+        # Sample the df
+        dplyr::slice_sample(prop = 1, replace = TRUE)
+      
+      # Refit cox model of bootstrapped data
+      model_boot <- coxph(formula(model), data = data_boot, model = TRUE)
+      
+      # Calculate risk differences
+      summon_population_risk_difference(
+        data = data_boot,
+        model = model_boot,
+        times = times,
+        variable = variable,
+        values = values,
+        ref_value = ref_value
+      )
+      
+    }
+  ) %>%
+    dplyr::group_by(time, !!sym(variable)) %>%
+    # Bootstrapped estimate and confidence intervals
+    dplyr::summarise(
+      mean_rd = mean(rd),
+      conf.low = quantile(rd, prob = 0.025),
+      conf.high = quantile(rd, prob = 0.975)
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::rename(rd = mean_rd)
+  
+}
