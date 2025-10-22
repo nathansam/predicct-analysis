@@ -1,7 +1,5 @@
 ## ------------------------------------------------------------------------------------------------------------------------------------------------------
 #| message: false
-setwd("src")
-source("Survival/utils.R")
 
 # Setup analysis environment
 analysis_setup <- setup_analysis()
