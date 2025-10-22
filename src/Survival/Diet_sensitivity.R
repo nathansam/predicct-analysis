@@ -8,7 +8,6 @@ analysis_setup <- setup_analysis()
 paths <- analysis_setup$paths
 demo <- analysis_setup$demo
 
-
 demo$FC <- log(demo$FC)
 
 flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
@@ -50,6 +49,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value)
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -81,6 +86,13 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Hard") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
+
 
 # Display plot and model summary
 analysis_result$plot
@@ -119,6 +131,11 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "UC", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -151,6 +168,11 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -186,6 +208,11 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -215,6 +242,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -255,6 +288,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -286,6 +325,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -325,6 +370,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -356,6 +407,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -392,6 +449,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -420,6 +483,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -459,6 +528,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -490,6 +565,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -528,6 +609,11 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
 
 # Display plot and model summary
 analysis_result$plot
@@ -559,6 +645,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value))
+
 
 # Display plot and model summary
 analysis_result$plot
@@ -596,6 +688,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -624,6 +722,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+  select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -665,6 +769,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -696,6 +806,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -736,6 +852,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -768,6 +889,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -803,6 +929,11 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -832,6 +963,11 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -870,6 +1006,11 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -903,6 +1044,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -943,6 +1089,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -975,6 +1126,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1011,6 +1167,11 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1040,6 +1201,11 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1072,6 +1238,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1104,6 +1275,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1136,6 +1312,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1168,6 +1349,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1197,6 +1383,11 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1225,6 +1416,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1265,6 +1462,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1296,6 +1498,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1336,6 +1544,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1368,6 +1581,11 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1403,6 +1621,11 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1432,6 +1655,11 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1470,6 +1698,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1502,6 +1735,11 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1541,6 +1779,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1572,6 +1816,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1608,6 +1858,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1636,6 +1892,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1675,6 +1937,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1706,6 +1974,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1746,6 +2020,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1777,6 +2057,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1813,6 +2099,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1841,6 +2133,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1880,6 +2178,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1911,6 +2215,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -1951,6 +2261,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1982,6 +2298,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2018,6 +2340,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2046,6 +2374,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2085,6 +2419,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2116,6 +2456,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2156,6 +2502,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2187,6 +2539,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2223,6 +2581,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2251,6 +2615,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2290,6 +2660,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2321,6 +2697,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2361,6 +2743,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2392,6 +2780,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2428,6 +2822,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2456,6 +2856,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2495,6 +2901,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2526,6 +2938,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2566,6 +2984,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2597,6 +3021,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2633,6 +3063,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2661,6 +3097,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2700,6 +3142,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2731,6 +3179,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2771,6 +3225,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2802,6 +3262,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2838,6 +3304,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2866,6 +3338,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2905,6 +3383,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -2936,6 +3420,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -2976,6 +3466,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3007,6 +3503,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -3043,6 +3545,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3071,6 +3579,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -3110,6 +3624,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3141,6 +3661,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -3181,6 +3707,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3212,6 +3744,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -3248,6 +3786,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3276,6 +3820,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -3315,6 +3865,12 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3346,6 +3902,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -3386,6 +3948,12 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3417,6 +3985,12 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
+
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
 
 # Display plot and model summary
 analysis_result$plot
@@ -3453,6 +4027,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3482,6 +4062,12 @@ fit.me <- coxph(
   data = flare.df
 )
 
+hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare) |>
+    select(-p.value) )
+
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -3490,4 +4076,3 @@ invisible(cox_summary(fit.me))
 ## ----Session info--------------------------------------------------------------------------------------------------------------------------------------
 #| echo: false
 pander::pander(sessionInfo())
-
