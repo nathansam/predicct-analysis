@@ -4647,6 +4647,3201 @@ pvalues$adjusted.p.value <- ifelse(
 )
 ```
 
+<details class = "appendix">
+  <summary> Control for additional covariates </summary>
+  
+<h3> Crohn's disease </h3>
+
+<h4> Patient-reported flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Fruit intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fruitIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Vegetable and legumes intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    vegIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Red meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    redMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    whiteMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h3> Ulcerative colitis </h3>
+
+<h4> Patient-reported flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Fruit intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fruitIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Vegetable and legumes intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    vegIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Red meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    redMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    whiteMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Fruit intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fruitIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Vegetable and legumes intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    vegIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Red meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    redMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    whiteMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+</details>
+
+
+## Save tables with p-values and hazard ratios
+```{r}
+
+pvalues <- hrs |> 
+  select(diagnosis, flare, term, p.value)
+
+pvalues$term <- c(rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Overall meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Overall fish intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Dietary fibre", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("PUFA", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("NOVA Score", c("2", "3", "4")), 6),
+  rep(paste("%UPF", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Bread intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Sweet intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Drink intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Processed meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Fruit intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Vegetable intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Read meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("White mean intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("White fish intake", c("2nd", "3rd", "4th"), "quartile"), 6)
+)
+
+pvalues <- pvalues |>
+  mutate(adjusted.p.value = ifelse(
+    grepl(
+      "^Meat|^%UP|^PUFA|^Dietary", term), 
+      NA,
+      p.value*216
+    )
+  )
+pvalues$adjusted.p.value <- ifelse(
+  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value>1, 
+  1, 
+  pvalues$adjusted.p.value
+)
+```
+
+<details class = "appendix">
+  <summary> Control for additional covariates </summary>
+  
+<h3> Crohn's disease </h3>
+
+<h4> Patient-reported flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Fruit intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fruitIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Vegetable and legumes intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    vegIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Red meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    redMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    whiteMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h3> Ulcerative colitis </h3>
+
+<h4> Patient-reported flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Fruit intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fruitIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Vegetable and legumes intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    vegIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Red meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    redMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    whiteMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+<h5> Total meat protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    Meat_sum_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    meat_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Overall fish intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fish_overall_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Dietary fibre </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fibre_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Polyunsaturated fatty acids </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    PUFA_percEng_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> NOVA score </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    NOVAScore_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> UPF intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    UPF_perc_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Bread intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    breadIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Sweet intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    sweetIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Drink intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    drinkIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Processed plant intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    processedPlantIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Fruit intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    fruitIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Vegetable and legumes intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    vegIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Red meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    redMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White meat intake </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    cat +
+    IMD +
+    dqi_tot +
+    BMI +
+    `IBD Duration` +
+    Treatment +
+    Age +
+    whiteMeatIntake_cat +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+</details>
+
+
 ## Reproduction and reproducibility {.appendix}
 
 <details class = "appendix">
