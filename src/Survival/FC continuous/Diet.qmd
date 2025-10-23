@@ -154,18 +154,30 @@ plot_continuous_hr <- function(data, model, variable){
 }
 
 # Function to perform an LRT
-summon_lrt <- function(model, remove) {
+summon_lrt <- function(model, remove = NULL, add = NULL) {
   # Function that removes a term and performs a
   # Likelihood ratio test to determine its significance
   
-  update(model, paste0("~ . - ", remove)) %>%
+  new_formula = "~ ."
+
+  if (!is.null(remove)){
+    new_formula = paste0(new_formula, " - ", remove)
+  } else {remove = NA}
+  
+  if (!is.null(add)){
+    new_formula = paste0(new_formula, " + ", add)
+  } else {add = NA}
+  
+  update(model, new_formula) %>%
     anova(model, ., test = 'LRT') %>%
     broom::tidy() %>%
     dplyr::filter(!is.na(p.value)) %>%
-    dplyr::mutate(term = remove) %>%
+    dplyr::select(-term) %>%
+    dplyr::mutate(
+      removed = remove,
+      added = add) %>%
     dplyr::mutate(test = 'LRT') %>%
-    dplyr::relocate(term) %>%
-    dplyr::relocate(test, .after = term)
+    dplyr::select(test, removed, added, tidyselect::everything())
   
 }
 
