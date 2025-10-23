@@ -4,18 +4,30 @@ library(survival)
 
 
 # Function to perform the LRT
-summon_lrt <- function(model, remove) {
+summon_lrt <- function(model, remove = NULL, add = NULL) {
   # Function that removes a term and performs a
   # Likelihood ratio test to determine its significance
   
-  update(model, paste0("~ . - ", remove)) %>%
+  new_formula = "~ ."
+
+  if (!is.null(remove)){
+    new_formula = paste0(new_formula, " - ", remove)
+  } else {remove = NA}
+  
+  if (!is.null(add)){
+    new_formula = paste0(new_formula, " + ", add)
+  } else {add = NA}
+  
+  update(model, new_formula) %>%
     anova(model, ., test = 'LRT') %>%
     broom::tidy() %>%
     dplyr::filter(!is.na(p.value)) %>%
-    dplyr::mutate(term = remove) %>%
+    dplyr::select(-term) %>%
+    dplyr::mutate(
+      removed = remove,
+      added = add) %>%
     dplyr::mutate(test = 'LRT') %>%
-    dplyr::relocate(term) %>%
-    dplyr::relocate(test, .after = term)
+    dplyr::select(test, removed, added, tidyselect::everything())
   
 }
 
@@ -96,11 +108,12 @@ plot_continuous_hr <- function(data, model, variable){
       df %>% 
         dplyr::mutate(p = p - p_ref)
       
+      # Note: SE is now wrong - need to use delta method at some point
+      
     } %>%
-    ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
+    ggplot(aes(x = !!rlang::sym(variable), y = exp(p))) +
     geom_point() +
     geom_line() +
-    geom_ribbon(alpha = 0.2) +
     ylab("HR")
   
 }
@@ -282,5 +295,4 @@ summon_population_risk_difference_boot <- function(data,
       )
     )
     
-  
 }

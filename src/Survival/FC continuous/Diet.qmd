@@ -97,7 +97,7 @@ plot_continuous_hr <- function(data, model, variable){
   # Range of the variable to plot
   variable_range <- data %>%
     dplyr::pull(variable) %>%
-    quantile(., probs = seq(0, 0.95, 0.01), na.rm = TRUE) %>%
+    quantile(., probs = seq(0, 0.9, 0.01), na.rm = TRUE) %>%
     unname() %>%
     unique()
   
@@ -123,7 +123,7 @@ plot_continuous_hr <- function(data, model, variable){
       data = .,
       variables = ref_variables
     ) %>% {
-    # Creating dummy data
+      # Creating dummy data
       tibble(
         .,
         !!sym(variable) := variable_range
@@ -136,18 +136,19 @@ plot_continuous_hr <- function(data, model, variable){
       df <- .
       
       # Subtract chosen reference value to set linear predictor to 0 at that value
-      denominator <- df %>% 
+      p_ref <- df %>% 
         dplyr::filter(!!sym(variable) == ref_value) %>%
         dplyr::pull(p)
-    
+      
       df %>% 
-        dplyr::mutate(p = p - denominator)
-    
+        dplyr::mutate(p = p - p_ref)
+      
+      # Note: SE is now wrong - need to use delta method at some point
+      
     } %>%
-    ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
+    ggplot(aes(x = !!rlang::sym(variable), y = exp(p))) +
     geom_point() +
     geom_line() +
-    geom_ribbon(alpha = 0.2) +
     ylab("HR")
   
 }
