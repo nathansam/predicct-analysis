@@ -41,7 +41,7 @@ flare.uc.df %>%
 # Calculate cumulative hazard
 
 # Soft flare
-data_impute_soft <- flare.cd.df %>%
+data_impute_meat_cd_soft <- flare.cd.df %>%
   dplyr::select(softflare_time,
                 softflare,
                 Sex,
@@ -65,13 +65,13 @@ data_impute_soft <- flare.cd.df %>%
   ))
 
 # Predictor matrix - need to exclude time from the model
-pred_matrix <- mice::make.predictorMatrix(data_impute_soft)
+pred_matrix <- mice::make.predictorMatrix(data_impute_meat_cd_soft)
 
 pred_matrix[, 'softflare_time'] <- 0
 
-# MICE with 5 imputations
+# MICE with 10 imputations
 mice_meat_cd_soft <- mice::mice(
-  data = data_impute_soft,
+  data = data_impute_meat_cd_soft,
   predictorMatrix = pred_matrix,
   m = 10,
   maxit = 20,
@@ -92,8 +92,7 @@ with(
       dqi_tot +
       Meat_sum_cat +
       Smoke +
-      frailty(SiteNo),
-    data = flare.cd.df
+      frailty(SiteNo)
   )
 ) %>%
   mice::pool() %>%

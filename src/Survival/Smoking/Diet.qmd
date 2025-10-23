@@ -63,15 +63,48 @@ flare.uc.df %<>%
 
 # Categorize meat protein by quantiles
 flare.cd.df <- categorize_by_quantiles(flare.cd.df, "Meat_sum", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "Meat_sum", reference_data = flare.df)
+
 
 # Categorize dietary fibre by quantiles
 flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fibre", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fibre", reference_data = flare.df)
+
 
 # Categorize PUFA by quantiles
 flare.cd.df <- categorize_by_quantiles(flare.cd.df, "PUFA_percEng", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "PUFA_percEng", reference_data = flare.df)
+
 
 # Categorize UPF percentage by quantiles
 flare.cd.df <- categorize_by_quantiles(flare.cd.df, "UPF_perc", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df, "UPF_perc", reference_data = flare.df)
+
+# Smoking
+# Reorder Smoke factor levels
+flare.cd.df %<>%
+  dplyr::mutate(
+    Smoke = forcats::fct_relevel(Smoke, "Never", "Previous", "Current")
+  )
+
+flare.uc.df %<>%
+  dplyr::mutate(
+    Smoke = forcats::fct_relevel(Smoke, "Never", "Previous", "Current")
+  )
+
+# Missingness in smoking
+# CD
+flare.cd.df %>%
+  dplyr::pull(Smoke) %>%
+  forcats::fct_count(prop = TRUE)
+# 28.5% missing
+
+# UC
+flare.uc.df %>%
+  dplyr::pull(Smoke) %>%
+  forcats::fct_count(prop = TRUE)
+# 25.7%
+
 ```
 
 ## Helper functions
@@ -380,20 +413,75 @@ summon_population_risk_difference_boot <- function(data,
 #### Patient reported flare
 
 ```{r}
+# Only select relevant columns for the imputation model
+# Only imputing smoking so remove missing others
+# Calculate cumulative hazard
 
-cox_meat_cd_soft <- coxph(
-  Surv(softflare_time, softflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    meat_overall_cat +
-    frailty(SiteNo),
-  data = flare.cd.df
+# Soft flare
+data_impute_meat_cd_soft <- flare.cd.df %>%
+  dplyr::select(softflare_time,
+                softflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                Meat_sum_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+    data = .,
+    timevar = softflare_time,
+    statusvar = softflare
+  ))
+
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_meat_cd_soft)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_meat_cd_soft <- mice::mice(
+  data = data_impute_meat_cd_soft,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73,
+  print = FALSE
 )
 
-cox_meat_cd_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_meat_cd_soft %>% plot()
+
+```
+
+
+```{r}
+
+# Fit pooled Cox model
+with(
+  mice_meat_cd_soft,
+  coxph(
+    Surv(softflare_time, softflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      Meat_sum_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
 
 ```
 
@@ -402,20 +490,71 @@ cox_meat_cd_soft %>%
 #### Objective flare
 
 ```{r}
+# Hard flare
+data_impute_meat_cd_hard <- flare.cd.df %>%
+  dplyr::select(hardflare_time,
+                hardflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                Meat_sum_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+    data = .,
+    timevar = hardflare_time,
+    statusvar = hardflare
+  ))
 
-cox_meat_cd_hard <- coxph(
-  Surv(hardflare_time, hardflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    meat_overall_cat +
-    frailty(SiteNo),
-  data = flare.cd.df
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_meat_cd_hard)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_meat_cd_hard <- mice::mice(
+  data = data_impute_meat_cd_hard,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73,
+  print = FALSE
 )
 
-cox_meat_cd_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_meat_cd_hard %>% plot()
+
+```
+
+
+```{r}
+
+# Fit pooled Cox model
+with(
+  mice_meat_cd_hard,
+  coxph(
+    Surv(hardflare_time, hardflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      Meat_sum_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
 
 ```
 
@@ -425,40 +564,148 @@ cox_meat_cd_hard %>%
 #### Patient reported flare
 
 ```{r}
+# Only select relevant columns for the imputation model
+# Only imputing smoking so remove missing others
+# Calculate cumulative hazard
 
-cox_meat_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    meat_overall_cat +
-    frailty(SiteNo),
-             data = flare.uc.df
+# Soft flare
+data_impute_meat_uc_soft <- flare.uc.df %>%
+  dplyr::select(softflare_time,
+                softflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                Meat_sum_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = softflare_time,
+      statusvar = softflare
+    ))
+
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_meat_uc_soft)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_meat_uc_soft <- mice::mice(
+  data = data_impute_meat_uc_soft,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73, 
+  print = FALSE
 )
 
-cox_meat_uc_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_meat_uc_soft %>% plot()
 
 ```
+
+
+```{r}
+
+# Fit pooled Cox model
+with(
+  mice_meat_uc_soft,
+  coxph(
+    Surv(softflare_time, softflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      Meat_sum_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
 
 
 #### Objective flare
 
 ```{r}
+# Hard flare
+data_impute_meat_uc_hard <- flare.uc.df %>%
+  dplyr::select(hardflare_time,
+                hardflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                Meat_sum_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = hardflare_time,
+      statusvar = hardflare
+    ))
 
-cox_meat_uc_hard <- coxph(
-  Surv(hardflare_time, hardflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    meat_overall_cat +
-    frailty(SiteNo),
-  data = flare.uc.df
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_meat_uc_hard)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_meat_uc_hard <- mice::mice(
+  data = data_impute_meat_uc_hard,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73, 
+  print = FALSE
 )
 
-cox_meat_uc_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_meat_uc_hard %>% plot()
+
+```
+
+
+```{r}
+
+# Fit pooled Cox model
+with(
+  mice_meat_uc_hard,
+  coxph(
+    Surv(hardflare_time, hardflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      Meat_sum_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
 
 ```
 
@@ -470,39 +717,148 @@ cox_meat_uc_hard %>%
 #### Patient reported flare
 
 ```{r}
-cox_fibre_cd_soft <- coxph(
-  Surv(softflare_time, softflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    fibre_cat +
-    frailty(SiteNo),
-  data = flare.cd.df
+# Only select relevant columns for the imputation model
+# Only imputing smoking so remove missing others
+# Calculate cumulative hazard
+
+# Soft flare
+data_impute_fibre_cd_soft <- flare.cd.df %>%
+  dplyr::select(softflare_time,
+                softflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                fibre_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = softflare_time,
+      statusvar = softflare
+    ))
+
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_cd_soft)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_fibre_cd_soft <- mice::mice(
+  data = data_impute_fibre_cd_soft,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73,
+  print = FALSE
 )
 
-cox_fibre_cd_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_fibre_cd_soft %>% plot()
 
 ```
 
 
-#### Objective Flare
+```{r}
+
+# Fit pooled Cox model
+with(
+  mice_fibre_cd_soft,
+  coxph(
+    Surv(softflare_time, softflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      fibre_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+
+
+#### Objective flare
 
 ```{r}
-cox_fibre_cd_hard <- coxph(
-  Surv(hardflare_time, hardflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    fibre_cat +
-    frailty(SiteNo),
-  data = flare.cd.df
+# Hard flare
+data_impute_fibre_cd_hard <- flare.cd.df %>%
+  dplyr::select(hardflare_time,
+                hardflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                fibre_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = hardflare_time,
+      statusvar = hardflare
+    ))
+
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_cd_hard)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_fibre_cd_hard <- mice::mice(
+  data = data_impute_fibre_cd_hard,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73,
+  print = FALSE
 )
 
-cox_fibre_cd_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_fibre_cd_hard %>% plot()
+
+```
+
+
+```{r}
+
+# Fit pooled Cox model
+with(
+  mice_fibre_cd_hard,
+  coxph(
+    Surv(hardflare_time, hardflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      fibre_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
 
 ```
 
@@ -512,38 +868,148 @@ cox_fibre_cd_hard %>%
 #### Patient reported flare
 
 ```{r}
-cox_fibre_uc_soft <- coxph(
-  Surv(softflare_time, softflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    fibre_cat +
-    frailty(SiteNo),
-  data = flare.uc.df
+# Only select relevant columns for the imputation model
+# Only imputing smoking so remove missing others
+# Calculate cumulative hazard
+
+# Soft flare
+data_impute_fibre_uc_soft <- flare.uc.df %>%
+  dplyr::select(softflare_time,
+                softflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                fibre_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = softflare_time,
+      statusvar = softflare
+    ))
+
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_uc_soft)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_fibre_uc_soft <- mice::mice(
+  data = data_impute_fibre_uc_soft,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73,
+  print = FALSE
 )
 
-cox_fibre_uc_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_fibre_uc_soft %>% plot()
 
 ```
 
-#### Objective Flare
 
 ```{r}
-cox_fibre_uc_hard <- coxph(
-  Surv(hardflare_time, hardflare) ~
-    Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    fibre_cat +
-    frailty(SiteNo),
-  data = flare.uc.df
+
+# Fit pooled Cox model
+with(
+  mice_fibre_uc_soft,
+  coxph(
+    Surv(softflare_time, softflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      fibre_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+
+
+#### Objective flare
+
+```{r}
+# Hard flare
+data_impute_fibre_uc_hard <- flare.uc.df %>%
+  dplyr::select(hardflare_time,
+                hardflare,
+                Sex,
+                cat,
+                IMD,
+                dqi_tot,
+                fibre_cat,
+                Smoke,
+                SiteNo) %>%
+  # Remove missing on all columns except smoke
+  dplyr::filter(!dplyr::if_any(
+    .cols = -Smoke,
+    .fns = is.na
+  )) %>%
+  # Calculate Cumulative hazard
+  dplyr::mutate(
+    cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = hardflare_time,
+      statusvar = hardflare
+    ))
+
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_uc_hard)
+
+pred_matrix[, 'softflare_time'] <- 0
+
+# MICE with 10 imputations
+mice_fibre_uc_hard <- mice::mice(
+  data = data_impute_fibre_uc_hard,
+  predictorMatrix = pred_matrix,
+  m = 10,
+  maxit = 20,
+  seed = 73,
+  print = FALSE
 )
 
-cox_fibre_uc_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+# Check convergence
+mice_fibre_uc_hard %>% plot()
+
+```
+
+
+```{r}
+
+# Fit pooled Cox model
+with(
+  mice_fibre_uc_hard,
+  coxph(
+    Surv(hardflare_time, hardflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      fibre_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
 
 ```
 
