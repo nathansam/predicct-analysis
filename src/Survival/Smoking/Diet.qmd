@@ -172,11 +172,11 @@ plot_continuous_hr <- function(data, model, variable){
       )
     } %>% {
       # Risk calculate HR relative to the default chosen by cox
-      pred = predict(model, newdata = ., type = "risk", se = TRUE)
+      pred = predict(model, newdata = ., type = "lp", se = TRUE)
       
       tibble(., p = pred$fit, se = pred$se)
     } %>%
-    ggplot(aes(x = !!rlang::sym(variable), y = p, ymin = p - 1.96*se, ymax = p + 1.96*se)) +
+    ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
     geom_point() +
     geom_line() +
     geom_ribbon(alpha = 0.2) +
@@ -269,7 +269,6 @@ mice_meat_cd_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -292,8 +291,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -342,7 +339,6 @@ mice_meat_cd_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -365,7 +361,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
 
 ### Ulcerative colitis
 
@@ -420,7 +415,6 @@ mice_meat_uc_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -443,8 +437,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -493,7 +485,6 @@ mice_meat_uc_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -516,7 +507,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
 
 ## Dietary Fibre
 
@@ -573,7 +563,6 @@ mice_fibre_cd_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -596,8 +585,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -646,7 +633,6 @@ mice_fibre_cd_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -669,7 +655,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
 
 ### Ulcerative colitis
 
@@ -724,7 +709,6 @@ mice_fibre_uc_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -747,8 +731,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -797,7 +779,6 @@ mice_fibre_uc_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -820,7 +801,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
 
 ## Polyunsaturated fatty acids
 
@@ -877,7 +857,6 @@ mice_pufa_cd_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -900,8 +879,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -950,7 +927,6 @@ mice_pufa_cd_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -973,7 +949,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
 
 ### Ulcerative colitis
 
@@ -1028,7 +1003,6 @@ mice_pufa_uc_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -1051,8 +1025,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -1101,7 +1073,6 @@ mice_pufa_uc_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -1124,7 +1095,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
 
 ## Ultra-processed food
 
@@ -1181,7 +1151,6 @@ mice_upf_cd_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -1204,8 +1173,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -1254,7 +1221,6 @@ mice_upf_cd_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -1277,7 +1243,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
 
 ### Ulcerative colitis
 
@@ -1332,7 +1297,6 @@ mice_upf_uc_soft %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -1355,8 +1319,6 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
 
 #### Objective flare
 
@@ -1405,7 +1367,6 @@ mice_upf_uc_hard %>% plot()
 
 ```
 
-
 ```{r}
 
 # Fit pooled Cox model
@@ -1428,5 +1389,3 @@ with(
           exponentiate = TRUE)
 
 ```
-
-
