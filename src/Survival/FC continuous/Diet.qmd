@@ -166,48 +166,17 @@ summon_lrt <- function(model, remove = NULL, add = NULL) {
   
 }
 
-summon_population_cum_incidence <- function(data, model, times, variable, values) {
-  # Function that calculates mean population cumulative incidence at a given time
-  # with a specified value of the variable
-  # using a Cox model
-  
-  tidyr::expand_grid(times, values) %>%
-    {
-      purrr::map2_dfr(
-        .x = .$times,
-        .y = .$values,
-        .f = function(time, value) {
-          data %>%
-            dplyr::mutate(softflare_time = time, !!sym(variable) := value) %>%
-            # Estimate expected for entire population
-            predict(model, newdata = ., type = 'expected') %>%
-            tibble(expected = .) %>%
-            # Remove NA
-            dplyr::filter(!is.na(expected)) %>%
-            # Calculate survival and cumulative incidence (1 - survival)
-            dplyr::mutate(survival = exp(-expected),
-                          cum_incidence = 1 - survival) %>%
-            dplyr::select(cum_incidence) %>% 
-            dplyr::summarise(
-              cum_incidence = mean(cum_incidence)
-            ) %>%
-            dplyr::mutate(time = time, !!sym(variable) := value)
-        }
-      )
-    } %>%
-    dplyr::mutate(!!sym(variable) := forcats::as_factor(!!sym(variable)))
-  
-}
-
-
 
 summon_population_risk_difference <- function(data, model, times, variable, values, ref_value = NULL) {
   # Function that calculates (population average) risk difference of a variable at given time points
   # with respect to specified value of the variable
   # from a Cox model
   
-  # If no reference value then use lowest
-  if (is.null(ref_value)) {ref_value <- values %>% min()}
+  # If no reference value then use one in the middle
+  if (is.null(ref_value)) {
+    pos <- (length(values) / 2) %>% ceiling()
+    ref_value <- values %>% purrr::pluck(pos)
+    }
   
   # Identify the time variable - to differentiate between soft and hard flare models
   time_variable <- all.vars(terms(model))[1]
@@ -271,8 +240,11 @@ summon_population_risk_difference_boot <- function(data,
   # Set seed
   set.seed(seed)
   
-  # If no reference value then use lowest
-  if (is.null(ref_value)) {ref_value <- values %>% min()}
+  # If no reference value then use one in the middle
+  if (is.null(ref_value)) {
+    pos <- (length(values) / 2) %>% ceiling()
+    ref_value <- values %>% purrr::pluck(pos)
+    }
   
   purrr::map_dfr(
     .x = seq_len(nboot),
@@ -793,6 +765,12 @@ plot_continuous_hr(
   variable = 'Meat_sum'
 )
 
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_meat_uc_hard,
+  variable = 'FC'
+)
+
 ```
 
 ## Dietary Fibre
@@ -960,9 +938,14 @@ cox_pufa_cd_soft <- coxph(Surv(softflare_time, softflare) ~
 )
 
 summon_lrt(cox_pufa_cd_soft, remove = "ns(PUFA_percEng, df = 2)", add = "ns(PUFA_percEng, df = 3)")
+# df = 2 is sufficient
 
 cox_pufa_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
+
+# Significance - need to use LRT
+summon_lrt(cox_pufa_cd_soft, remove = "ns(PUFA_percEng, df = 2)")
+
 ```
 
 ```{r}
@@ -1366,8 +1349,12 @@ plot_rd_cd_soft_meat_1y$plot + (plot_rd_cd_soft_meat_1y$rd +
     guides = 'collect',
     axes = 'collect',
     width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "1-year risk difference",
+    subtitle = "Crohn's, patient reported flare."
   ) &
-  coord_cartesian(xlim = c(-0.7, 0.3))
+  coord_cartesian(xlim = c(-0.3, 0.6))
                                   
 ```
 
@@ -1383,8 +1370,12 @@ plot_rd_cd_soft_meat_2y$plot + (plot_rd_cd_soft_meat_2y$rd +
     guides = 'collect',
     axes = 'collect',
     width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "2-year risk difference",
+    subtitle = "Crohn's, patient reported flare."
   ) &
-  coord_cartesian(xlim = c(-0.7, 0.3))
+  coord_cartesian(xlim = c(-0.3, 0.6))
 ```
 
 #### Objective Flare
@@ -1446,6 +1437,71 @@ data_rd_cd_hard_upf <- summon_population_risk_difference_boot(
   )
 
 ```
+
+```{r}
+# Creating combined forest plot
+# 1-year risk difference
+plot_rd_cd_hard_meat_1y <- summon_rd_forest_plot(data_rd_cd_hard_meat, time = 365)
+
+plot_rd_cd_hard_fibre_1y <- summon_rd_forest_plot(data_rd_cd_hard_fibre, time = 365)
+
+plot_rd_cd_hard_pufa_1y <- summon_rd_forest_plot(data_rd_cd_hard_pufa, time = 365)
+
+plot_rd_cd_hard_upf_1y <- summon_rd_forest_plot(data_rd_cd_hard_upf, time = 365)
+
+# 2-year risk difference
+plot_rd_cd_hard_meat_2y <- summon_rd_forest_plot(data_rd_cd_hard_meat, time = 730)
+
+plot_rd_cd_hard_fibre_2y <- summon_rd_forest_plot(data_rd_cd_hard_fibre, time = 730)
+
+plot_rd_cd_hard_pufa_2y <- summon_rd_forest_plot(data_rd_cd_hard_pufa, time = 730)
+
+plot_rd_cd_hard_upf_2y <- summon_rd_forest_plot(data_rd_cd_hard_upf, time = 730)
+```
+
+```{r}
+#| warning: false
+# Final plots using patchwork
+
+# 1-year risk difference
+plot_rd_cd_hard_meat_1y$plot + (plot_rd_cd_hard_meat_1y$rd +
+                                  labs(title = "Risk difference (95% CI)")) +
+  plot_rd_cd_hard_fibre_1y$plot + plot_rd_cd_hard_fibre_1y$rd +
+  plot_rd_cd_hard_pufa_1y$plot + plot_rd_cd_hard_pufa_1y$rd +
+  plot_rd_cd_hard_upf_1y$plot + plot_rd_cd_hard_upf_1y$rd +
+  patchwork::plot_layout(
+    ncol = 2,
+    guides = 'collect',
+    axes = 'collect',
+    width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "1-year risk difference",
+    subtitle = "Crohn's, objective flare."
+  ) &
+  coord_cartesian(xlim = c(-0.1, 0.2))
+```
+
+```{r}
+# 2-year risk difference
+plot_rd_cd_hard_meat_2y$plot + (plot_rd_cd_hard_meat_2y$rd +
+                                  labs(title = "Risk difference (95% CI)")) +
+  plot_rd_cd_hard_fibre_2y$plot + plot_rd_cd_hard_fibre_2y$rd +
+  plot_rd_cd_hard_pufa_2y$plot + plot_rd_cd_hard_pufa_2y$rd +
+  plot_rd_cd_hard_upf_2y$plot + plot_rd_cd_hard_upf_2y$rd +
+  patchwork::plot_layout(
+    ncol = 2,
+    guides = 'collect',
+    axes = 'collect',
+    width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "2-year risk difference",
+    subtitle = "Crohn's, objective flare."
+  ) &
+  coord_cartesian(xlim = c(-0.1, 0.3))
+```
+
 
 ### Ulcerative colitis
 
@@ -1554,8 +1610,12 @@ plot_rd_uc_soft_meat_1y$plot + (plot_rd_uc_soft_meat_1y$rd +
     guides = 'collect',
     axes = 'collect',
     width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "1-year risk difference",
+    subtitle = "Ulcerative colitis, patient reported flare."
   ) &
-  coord_cartesian(xlim = c(-0.6, 0.3))
+  coord_cartesian(xlim = c(-0.2, 0.3))
                                   
 ```
 
@@ -1571,8 +1631,12 @@ plot_rd_uc_soft_meat_2y$plot + (plot_rd_uc_soft_meat_2y$rd +
     guides = 'collect',
     axes = 'collect',
     width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "2-year risk difference",
+    subtitle = "Ulcerative colitis, patient reported flare."
   ) &
-  coord_cartesian(xlim = c(-0.6, 0.3))
+  coord_cartesian(xlim = c(-0.2, 0.3))
 ```
 
 #### Objective Flare
@@ -1671,8 +1735,12 @@ plot_rd_uc_hard_meat_1y$plot + (plot_rd_uc_hard_meat_1y$rd +
     guides = 'collect',
     axes = 'collect',
     width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "1-year risk difference",
+    subtitle = "Ulcerative colitis, objective flare."
   ) &
-  coord_cartesian(xlim = c(-0.3, 0.1))
+  coord_cartesian(xlim = c(-0.1, 0.2))
 ```
 
 ```{r}
@@ -1687,6 +1755,10 @@ plot_rd_uc_hard_meat_2y$plot + (plot_rd_uc_hard_meat_2y$rd +
     guides = 'collect',
     axes = 'collect',
     width = c(2, 1)
+  ) +
+  patchwork::plot_annotation(
+    title = "2-year risk difference",
+    subtitle = "Ulcerative colitis, objective flare."
   ) &
-  coord_cartesian(xlim = c(-0.5, 0.2))
+  coord_cartesian(xlim = c(-0.1, 0.3))
 ```
