@@ -112,10 +112,6 @@ plot_continuous_hr <- function(data, model, variable){
     ) %>%
     dplyr::pull(x)
   
-  # Reference level of the continuous variable
-  # Set to the lowest
-  ref_value <- variable_range %>% min()
-  
   # Create dummy data for plotting
   # Reference levels
   data %>%
@@ -129,26 +125,15 @@ plot_continuous_hr <- function(data, model, variable){
         !!sym(variable) := variable_range
       )
     } %>% {
+      # Predict uses the mean as the reference level by default
       pred = predict(model, newdata = ., type = "lp", se = TRUE)
       
       tibble(., p = pred$fit, se = pred$se)
-    } %>% {
-      df <- .
-      
-      # Subtract chosen reference value to set linear predictor to 0 at that value
-      p_ref <- df %>% 
-        dplyr::filter(!!sym(variable) == ref_value) %>%
-        dplyr::pull(p)
-      
-      df %>% 
-        dplyr::mutate(p = p - p_ref)
-      
-      # Note: SE is now wrong - need to use delta method at some point
-      
     } %>%
-    ggplot(aes(x = !!rlang::sym(variable), y = exp(p))) +
+    ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
     geom_point() +
     geom_line() +
+    geom_ribbon(alpha = 0.2) +
     ylab("HR")
   
 }
