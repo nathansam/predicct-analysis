@@ -1,102 +1,55 @@
-dir.create("plots/baseline", recursive = TRUE, showWarnings = FALSE)
+# Create plot directories with proper permissions
+create_plot_dir <- function(path) {
+  dir.create(path, recursive = TRUE, showWarnings = FALSE)
+  Sys.chmod(path, mode = "0755", use_umask = FALSE)
+}
 
-dir.create("plots/arranged", recursive = TRUE, showWarnings = FALSE)
+create_plot_dir("plots/baseline")
+create_plot_dir("plots/arranged")
 
-dir.create("plots/cd/soft-flare/diet", recursive = TRUE, showWarnings = FALSE)
-dir.create("plots/cd/hard-flare/diet", recursive = TRUE, showWarnings = FALSE)
-dir.create("plots/uc/soft-flare/diet", recursive = TRUE, showWarnings = FALSE)
-dir.create("plots/uc/hard-flare/diet", recursive = TRUE, showWarnings = FALSE)
+create_plot_dir("plots/cd/soft-flare/diet")
+create_plot_dir("plots/cd/hard-flare/diet")
+create_plot_dir("plots/uc/soft-flare/diet")
+create_plot_dir("plots/uc/hard-flare/diet")
 
-dir.create("plots/ibd/soft-flare/diet/", recursive = TRUE, showWarnings = FALSE)
-dir.create("plots/ibd/hard-flare/diet/", recursive = TRUE, showWarnings = FALSE)
+# Sensitivity analysis subdirectories
+create_plot_dir("plots/cd/soft-flare/diet/sensitivity")
+create_plot_dir("plots/cd/hard-flare/diet/sensitivity")
+create_plot_dir("plots/uc/soft-flare/diet/sensitivity")
+create_plot_dir("plots/uc/hard-flare/diet/sensitivity")
 
+create_plot_dir("plots/ibd/soft-flare/diet/")
+create_plot_dir("plots/ibd/hard-flare/diet/")
 
-dir.create(
-  "plots/cd/soft-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/cd/hard-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/soft-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/hard-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-
-dir.create(
-  "plots/cd/soft-flare/biochem",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/cd/hard-flare/biochem",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/soft-flare/biochem",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/hard-flare/biochem",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
+# IBD sensitivity analysis subdirectories
+create_plot_dir("plots/ibd/soft-flare/diet/sensitivity")
+create_plot_dir("plots/ibd/hard-flare/diet/sensitivity")
 
 
-dir.create(
-  "plots/cd/soft-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/cd/hard-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/soft-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/hard-flare/demographics",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
+create_plot_dir("plots/cd/soft-flare/demographics")
+create_plot_dir("plots/cd/hard-flare/demographics")
+create_plot_dir("plots/uc/soft-flare/demographics")
+create_plot_dir("plots/uc/hard-flare/demographics")
 
-dir.create(
-  "plots/cd/soft-flare/controlled",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/cd/hard-flare/controlled",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/soft-flare/controlled",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
-dir.create(
-  "plots/uc/hard-flare/controlled",
-  recursive = TRUE,
-  showWarnings = FALSE
-)
+create_plot_dir("plots/cd/soft-flare/biochem")
+create_plot_dir("plots/cd/hard-flare/biochem")
+create_plot_dir("plots/uc/soft-flare/biochem")
+create_plot_dir("plots/uc/hard-flare/biochem")
 
-dir.create("plots/cd/soft-flare/ibd", recursive = TRUE, showWarnings = FALSE)
-dir.create("plots/cd/hard-flare/ibd", recursive = TRUE, showWarnings = FALSE)
-dir.create("plots/uc/soft-flare/ibd", recursive = TRUE, showWarnings = FALSE)
-dir.create("plots/uc/hard-flare/ibd", recursive = TRUE, showWarnings = FALSE)
+
+create_plot_dir("plots/cd/soft-flare/demographics")
+create_plot_dir("plots/cd/hard-flare/demographics")
+create_plot_dir("plots/uc/soft-flare/demographics")
+create_plot_dir("plots/uc/hard-flare/demographics")
+
+create_plot_dir("plots/cd/soft-flare/controlled")
+create_plot_dir("plots/cd/hard-flare/controlled")
+create_plot_dir("plots/uc/soft-flare/controlled")
+create_plot_dir("plots/uc/hard-flare/controlled")
+
+create_plot_dir("plots/cd/soft-flare/ibd")
+create_plot_dir("plots/cd/hard-flare/ibd")
+create_plot_dir("plots/uc/soft-flare/ibd")
+create_plot_dir("plots/uc/hard-flare/ibd")
+
+create_plot_dir("docx")
