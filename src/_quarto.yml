@@ -22,6 +22,7 @@ project:
   post-render:
     - "Scripts/arrangeplots.R"
     - "Scripts/forest.R"
+    - "Scripts/generate_tables.R"
   output-dir: "../docs"
   resources:
     - "robots.txt"

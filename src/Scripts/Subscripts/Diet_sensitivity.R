@@ -20,7 +20,11 @@ paths$outdir <- paste0(paths$outdir, "sensitivity/")
 #| fig-height: 6
 
 # Categorize meat protein by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "Meat_sum", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "Meat_sum",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -47,9 +51,9 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- broom::tidy(fit.me) |> 
+hrs_sensitivity <- broom::tidy(fit.me) |>
   filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
+  mutate(diagnosis = "CD", flare = "Soft") |>
   relocate(diagnosis, flare) |>
   select(-p.value)
 
@@ -85,11 +89,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 
 # Display plot and model summary
@@ -103,7 +110,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize meat protein by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "Meat_sum", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "Meat_sum",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -129,11 +140,14 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -166,11 +180,14 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -183,7 +200,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize meat protein by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "Meat_sum", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "Meat_sum",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -206,11 +227,14 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -241,11 +265,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -258,7 +285,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize overall meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "meat_overall", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "meat_overall",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -286,11 +317,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -324,11 +358,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -341,7 +378,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize overall meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "meat_overall", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "meat_overall",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -368,11 +409,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -406,11 +450,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -423,7 +470,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize overall meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "meat_overall", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "meat_overall",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -447,11 +498,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -482,11 +536,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -499,7 +556,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize overall fish intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fish_overall", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "fish_overall",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -526,11 +587,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -564,11 +628,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -581,7 +648,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize overall fish intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fish_overall", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "fish_overall",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -607,11 +678,14 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -643,11 +717,14 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value))
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 
 # Display plot and model summary
@@ -661,7 +738,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize overall fish intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "fish_overall", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "fish_overall",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -686,11 +767,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -721,11 +805,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-  select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -737,9 +824,12 @@ invisible(cox_summary(fit.me))
 #| output: "asis"
 #| fig-height: 6
 
-
 # Categorize dietary fibre by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fibre", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "fibre",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -767,11 +857,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -805,11 +898,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -822,7 +918,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize fibre by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fibre", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "fibre",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -850,11 +950,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -887,11 +990,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -903,7 +1009,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize dietary fibre by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "fibre", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "fibre",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -927,11 +1037,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -961,11 +1074,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -977,7 +1093,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize PUFA by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "PUFA_percEng", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "PUFA_percEng",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -1004,11 +1124,14 @@ fit.me <- coxph(
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1042,11 +1165,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1058,7 +1184,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize PUFA by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "PUFA_percEng", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "PUFA_percEng",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -1081,17 +1211,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1124,11 +1256,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1140,7 +1275,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize PUFA by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "PUFA_percEng", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "PUFA_percEng",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -1165,11 +1304,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1199,11 +1341,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1236,11 +1381,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1273,11 +1421,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1310,11 +1461,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1347,11 +1501,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1381,11 +1538,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1415,11 +1575,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1432,7 +1595,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize UPF percentage by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "UPF_perc", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "UPF_perc",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -1460,11 +1627,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1497,11 +1667,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1514,7 +1687,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize UPF percentage by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "UPF_perc", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "UPF_perc",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -1536,17 +1713,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1579,11 +1758,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1595,7 +1777,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize UPF percentage by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "UPF_perc", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "UPF_perc",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -1619,11 +1805,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1653,11 +1842,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1669,7 +1861,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize bread intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "breadIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "breadIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -1696,11 +1892,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1733,11 +1932,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
@@ -1749,7 +1951,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize bread intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "breadIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "breadIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -1771,17 +1977,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1815,11 +2023,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1832,7 +2043,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize bread intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "breadIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "breadIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -1856,11 +2071,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1891,11 +2109,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1908,7 +2129,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize sweet intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "sweetIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "sweetIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -1935,11 +2160,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1973,11 +2201,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -1990,7 +2221,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize sweet intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "sweetIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "sweetIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -2012,17 +2247,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2056,11 +2293,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2073,7 +2313,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize sweet intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "sweetIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "sweetIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -2097,11 +2341,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2132,11 +2379,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2149,7 +2399,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize drink intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "drinkIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "drinkIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -2176,11 +2430,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2214,11 +2471,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2231,7 +2491,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize drink intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "drinkIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "drinkIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -2253,17 +2517,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2297,11 +2563,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2314,7 +2583,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize drink intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "drinkIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "drinkIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -2338,11 +2611,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2373,11 +2649,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2390,7 +2669,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize processed meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "processedMeatIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "processedMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -2407,7 +2690,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -2417,11 +2703,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2445,7 +2734,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -2455,11 +2747,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2472,7 +2767,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize processed meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "processedMeatIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "processedMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -2489,22 +2788,27 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2528,7 +2832,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -2538,11 +2845,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2555,7 +2865,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize processed meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "processedMeatIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "processedMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -2579,11 +2893,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2614,11 +2931,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2631,7 +2951,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize processed plant intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "processedPlantIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "processedPlantIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -2648,21 +2972,33 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2686,21 +3022,33 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2713,7 +3061,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize processed plant intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "processedPlantIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "processedPlantIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -2730,22 +3082,33 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat +
-    frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2769,21 +3132,33 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2796,7 +3171,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize processed plant intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "processedPlantIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "processedPlantIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -2815,16 +3194,25 @@ analysis_result <- run_survival_analysis(
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2850,16 +3238,25 @@ analysis_result <- run_survival_analysis(
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2872,7 +3269,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize fruit intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fruitIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "fruitIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -2899,11 +3300,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2937,11 +3341,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -2954,7 +3361,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize fruit intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fruitIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "fruitIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -2976,17 +3387,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fruitIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3020,11 +3433,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3037,7 +3453,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize fruit intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "fruitIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "fruitIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -3061,11 +3481,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3096,11 +3519,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3113,7 +3539,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize vegetable intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "vegIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "vegIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -3140,11 +3570,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3178,11 +3611,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3195,7 +3631,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize vegetable intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "vegIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "vegIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -3217,17 +3657,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3261,11 +3703,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3278,7 +3723,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize vegetable intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "vegIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "vegIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -3302,11 +3751,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3337,11 +3789,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3354,7 +3809,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize red meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "redMeatIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "redMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -3381,11 +3840,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3419,11 +3881,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3436,7 +3901,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize red meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "redMeatIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "redMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -3458,17 +3927,19 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3502,11 +3973,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3519,7 +3993,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize red meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "redMeatIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "redMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -3543,11 +4021,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3578,11 +4059,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3595,7 +4079,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize white meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "whiteMeatIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "whiteMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -3612,7 +4100,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -3622,11 +4113,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3650,7 +4144,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -3660,11 +4157,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3677,7 +4177,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize white meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "whiteMeatIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "whiteMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -3694,22 +4198,27 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3733,7 +4242,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -3743,11 +4255,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3760,7 +4275,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize white meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "whiteMeatIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "whiteMeatIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -3784,11 +4303,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3819,11 +4341,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3836,7 +4361,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize white fish intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "whiteFishIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "whiteFishIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.cd.df <- flare.cd.df |> filter(exp(exp(FC)) < 250)
@@ -3853,7 +4382,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -3863,11 +4395,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3891,7 +4426,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -3901,11 +4439,14 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3918,7 +4459,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize white fish intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "whiteFishIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "whiteFishIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.uc.df <- flare.uc.df |> filter(exp(exp(FC)) < 250)
@@ -3935,22 +4480,27 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -3974,7 +4524,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -3984,11 +4537,14 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -4001,7 +4557,11 @@ invisible(cox_summary(fit.me))
 #| fig-height: 6
 
 # Categorize white fish intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "whiteFishIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "whiteFishIntake",
+  reference_data = flare.df
+)
 
 # Sensitivity analysis using FC < 250
 flare.df <- flare.df |> filter(exp(exp(FC)) < 250)
@@ -4025,11 +4585,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
@@ -4060,11 +4623,14 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs_sensitivity <- rbind(hrs_sensitivity, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare) |>
-    select(-p.value) )
+hrs_sensitivity <- rbind(
+  hrs_sensitivity,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare) |>
+    select(-p.value)
+)
 
 # Display plot and model summary
 analysis_result$plot
