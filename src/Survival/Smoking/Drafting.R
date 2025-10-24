@@ -100,4 +100,48 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE)
 
-# Smoking is significant
+summon_plot_broom_hr <- function(data){
+  data %>%
+    # Remove frailty
+    dplyr::filter(!stringr::str_detect(term, "frailty")) %>%
+    # Rename the confidence intervals
+    dplyr::rename(
+      conf.low = `2.5 %`,
+      conf.high = `97.5 %`
+    ) %>%
+    # Significance flag
+    dplyr::mutate(
+      significant = (p.value <= 0.05)
+    ) %>%
+    ggplot(aes(
+      y = forcats::as_factor(term), 
+      x = estimate, 
+      xmin = conf.low, 
+      xmax = conf.high,
+      colour = significant)) +
+    geom_point() +
+    geom_errorbarh() +
+    geom_vline(xintercept = 1, linetype = "dashed") +
+    xlab("Hazard Ratio (95% CI)") +
+    ylab("") +
+    scale_colour_manual(values = c("TRUE" = "red", "FALSE" = "black"))
+}
+
+with(
+  mice_meat_cd_soft,
+  coxph(
+    Surv(softflare_time, softflare) ~
+      Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      Meat_sum_cat +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool() %>%
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE) %>%
+  summon_plot_broom_hr()
