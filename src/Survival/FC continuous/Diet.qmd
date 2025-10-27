@@ -46,30 +46,28 @@ flare.uc.df %<>%
 # Transform age variable to decades
 flare.df %<>%
   dplyr::mutate(
-    age_decade = Age/10
+    age_decade = Age / 10
   )
 
 flare.cd.df %<>%
   dplyr::mutate(
-    age_decade = Age/10
+    age_decade = Age / 10
   )
 
 flare.uc.df %<>%
   dplyr::mutate(
-    age_decade = Age/10
+    age_decade = Age / 10
   )
-
 ```
 
 ## Helper functions
 
 ```{r}
-
-summon_reference_values <- function(data, variables){
+summon_reference_values <- function(data, variables) {
   # Function that extracts the reference value for each variable in a data frame
   # Reference is either the first factor level or the median
   # Used for producing HR plots
-  
+
   data %>%
     dplyr::select(tidyselect::all_of(variables)) %>%
     dplyr::summarise(across(
@@ -84,23 +82,22 @@ summon_reference_values <- function(data, variables){
         }
       }
     ))
-  
 }
 
 
-plot_continuous_hr <- function(data, model, variable){
+plot_continuous_hr <- function(data, model, variable) {
   # Plotting continuous Hazard Ratio curves
-  
+
   # model is a Cox model
   # variable is the variable we are plotting
-  
+
   # Range of the variable to plot
   variable_range <- data %>%
     dplyr::pull(variable) %>%
     quantile(., probs = seq(0, 0.9, 0.01), na.rm = TRUE) %>%
     unname() %>%
     unique()
-  
+
   # Reference variables
   # Extract variables used in the Cox model
   # Remove the variable we want to vary and the SiteNo
@@ -108,97 +105,113 @@ plot_continuous_hr <- function(data, model, variable){
     tibble(x = .) %>%
     dplyr::filter(
       x != variable,
-      x != 'SiteNo'
+      x != "SiteNo"
     ) %>%
     dplyr::pull(x)
-  
+
   # Create dummy data for plotting
   # Reference levels
   data %>%
     summon_reference_values(
       data = .,
       variables = ref_variables
-    ) %>% {
+    ) %>%
+    {
       # Creating dummy data
       tibble(
         .,
         !!sym(variable) := variable_range
       )
-    } %>% {
+    } %>%
+    {
       # Predict uses the mean as the reference level by default
-      pred = predict(model, newdata = ., type = "lp", se = TRUE)
-      
+      pred <- predict(model, newdata = ., type = "lp", se = TRUE)
+
       tibble(., p = pred$fit, se = pred$se)
     } %>%
-    ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
+    ggplot(aes(
+      x = !!rlang::sym(variable),
+      y = exp(p),
+      ymin = exp(p - 1.96 * se),
+      ymax = exp(p + 1.96 * se)
+    )) +
     geom_point() +
     geom_line() +
     geom_ribbon(alpha = 0.2) +
     ylab("HR")
-  
 }
 
 # Function to perform an LRT
 summon_lrt <- function(model, remove = NULL, add = NULL) {
   # Function that removes a term and performs a
   # Likelihood ratio test to determine its significance
-  
-  new_formula = "~ ."
 
-  if (!is.null(remove)){
-    new_formula = paste0(new_formula, " - ", remove)
-  } else {remove = NA}
-  
-  if (!is.null(add)){
-    new_formula = paste0(new_formula, " + ", add)
-  } else {add = NA}
-  
+  new_formula <- "~ ."
+
+  if (!is.null(remove)) {
+    new_formula <- paste0(new_formula, " - ", remove)
+  } else {
+    remove <- NA
+  }
+
+  if (!is.null(add)) {
+    new_formula <- paste0(new_formula, " + ", add)
+  } else {
+    add <- NA
+  }
+
   update(model, new_formula) %>%
-    anova(model, ., test = 'LRT') %>%
+    anova(model, ., test = "LRT") %>%
     broom::tidy() %>%
     dplyr::filter(!is.na(p.value)) %>%
     dplyr::select(-term) %>%
     dplyr::mutate(
       removed = remove,
-      added = add) %>%
-    dplyr::mutate(test = 'LRT') %>%
+      added = add
+    ) %>%
+    dplyr::mutate(test = "LRT") %>%
     dplyr::select(test, removed, added, tidyselect::everything())
-  
 }
 
 
-summon_population_risk_difference <- function(data, model, times, variable, values, ref_value = NULL) {
-  # Function that calculates (population average) risk difference of a variable at given time points
-  # with respect to specified value of the variable
-  # from a Cox model
-  
+summon_population_risk_difference <- function(data,
+                                              model,
+                                              times,
+                                              variable,
+                                              values,
+                                              ref_value = NULL) {
+  # Function that calculates (population average) risk difference of a variable
+  # at given time points with respect to specified value of the variable from a
+  # Cox model
+
   # If no reference value then use one in the middle
   if (is.null(ref_value)) {
     pos <- (length(values) / 2) %>% ceiling()
     ref_value <- values %>% purrr::pluck(pos)
-    }
-  
+  }
+
   # Identify the time variable - to differentiate between soft and hard flare models
   time_variable <- all.vars(terms(model))[1]
-  
-  df <- tidyr::expand_grid(times, values) 
-      
+
+  df <- tidyr::expand_grid(times, values)
+
   purrr::map2(
     .x = df$times,
     .y = df$values,
     .f = function(x, y) {
-      
       data %>%
         # Set values for time and the variable
         dplyr::mutate(!!sym(time_variable) := x, !!sym(variable) := y) %>%
         # Estimate expected for entire population
-        predict(model, newdata = ., type = 'expected') %>%
+        predict(model, newdata = ., type = "expected") %>%
         tibble(expected = .) %>%
         # Remove NA
         dplyr::filter(!is.na(expected)) %>%
         # Calculate survival and cumulative incidence (1 - survival)
-        dplyr::mutate(survival = exp(-expected),
-                      cum_incidence = 1 - survival) %>%
+        dplyr::mutate(
+          survival = exp(-expected),
+          cum_incidence = 1 - survival
+        ) %>%
         dplyr::select(cum_incidence) %>%
         dplyr::summarise(cum_incidence = mean(cum_incidence)) %>%
         # Note time, value and variable
@@ -209,18 +222,17 @@ summon_population_risk_difference <- function(data, model, times, variable, valu
     # Calculate risk difference relative to a reference
     {
       df <- .
-      
+
       # Subtract chosen reference value to set linear predictor to 0 at that value
-      cum_incidence_ref <- df %>% 
+      cum_incidence_ref <- df %>%
         dplyr::filter(value == ref_value) %>%
         dplyr::rename(cum_incidence_ref = cum_incidence) %>%
         dplyr::select(time, cum_incidence_ref)
-      
-      df %>% 
-        dplyr::left_join(cum_incidence_ref, by = 'time') %>%
+
+      df %>%
+        dplyr::left_join(cum_incidence_ref, by = "time") %>%
         dplyr::mutate(rd = cum_incidence - cum_incidence_ref, .keep = "unused")
-      
-    } 
+    }
 }
 
 
@@ -232,26 +244,25 @@ summon_population_risk_difference_boot <- function(data,
                                                    ref_value = NULL,
                                                    nboot = 99,
                                                    seed = 1) {
-  
   # Function to calculate population risk difference for a given variable at given time points
   # relative to a specified reference value
   # Confidence intervals calculated using bootstrapping.
-  
+
   # Set seed
   set.seed(seed)
-  
+
   # If no reference value then use one in the middle
   if (is.null(ref_value)) {
     pos <- (length(values) / 2) %>% ceiling()
     ref_value <- values %>% purrr::pluck(pos)
-    }
-  
+  }
+
   purrr::map_dfr(
     .x = seq_len(nboot),
     .f = function(b) {
       # Variable used in the model
       all_variables <- all.vars(terms(model))
-      
+
       # Bootstrap sample of the data
       data_boot <- data %>%
         # Remove any NAs as Cox doesn't use these
@@ -259,10 +270,10 @@ summon_population_risk_difference_boot <- function(data,
         dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na)) %>%
         # Sample the df
         dplyr::slice_sample(prop = 1, replace = TRUE)
-      
+
       # Refit cox model of bootstrapped data
       model_boot <- coxph(formula(model), data = data_boot, model = TRUE)
-      
+
       # Calculate risk differences
       summon_population_risk_difference(
         data = data_boot,
@@ -272,7 +283,6 @@ summon_population_risk_difference_boot <- function(data,
         values = values,
         ref_value = ref_value
       )
-      
     }
   ) %>%
     dplyr::group_by(time, value) %>%
@@ -288,7 +298,7 @@ summon_population_risk_difference_boot <- function(data,
     dplyr::mutate(
       variable = variable,
       reference_flag = (value == ref_value)
-      ) %>%
+    ) %>%
     # Ordering for plotting
     dplyr::arrange(time, value) %>%
     dplyr::group_by(time) %>%
@@ -296,13 +306,24 @@ summon_population_risk_difference_boot <- function(data,
     # Tidy confidence intervals
     # Remove confidence intervals for reference level
     dplyr::mutate(
-      conf.low = dplyr::case_when(reference_flag == TRUE ~ NA, .default = conf.low),
-      conf.high = dplyr::case_when(reference_flag == TRUE ~ NA, .default = conf.high)
+      conf.low = dplyr::case_when(reference_flag == TRUE ~ NA,
+        .default = conf.low
+      ),
+      conf.high = dplyr::case_when(reference_flag == TRUE ~ NA,
+        .default = conf.high
+      )
     ) %>%
     dplyr::mutate(
       conf.interval.tidy = dplyr::case_when(
         (is.na(conf.low) & is.na(conf.high)) ~ "-",
-        TRUE ~ paste0(sprintf("%.3g", estimate), " (", sprintf("%.3g", conf.low), ", ", sprintf("%.3g", conf.high), ")")
+        TRUE ~ paste0(
+          sprintf("%.3g", estimate),
+          " (",
+          sprintf("%.3g", conf.low),
+          ", ",
+          sprintf("%.3g", conf.high),
+          ")"
+        )
       )
     ) %>%
     # Significance
@@ -313,20 +334,19 @@ summon_population_risk_difference_boot <- function(data,
         sign(conf.low) != sign(conf.high) ~ "Not Significant"
       )
     )
-    
 }
 
 
 summon_rd_forest_plot <- function(data, time) {
   # Creating a forest plot of risk difference from the result of
   # summon_population_risk_difference_boot
-  
+
   # Mask time
   time_point <- time
-  
+
   data_plot <- data %>%
     dplyr::filter(time == time_point)
-  
+
   # Forest plot
   plot <- data_plot %>%
     ggplot(aes(
@@ -341,13 +361,13 @@ summon_rd_forest_plot <- function(data, time) {
     theme_minimal() +
     xlab("Risk Difference") +
     theme(
-    # Title
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_text(size = 8),
-    # Axes
-    axis.title.y = element_blank()
+      # Title
+      plot.title = element_text(size = 10),
+      plot.subtitle = element_text(size = 8),
+      # Axes
+      axis.title.y = element_blank()
     )
-  
+
   # RD values
   rd <- data_plot %>%
     ggplot() +
@@ -358,11 +378,9 @@ summon_rd_forest_plot <- function(data, time) {
     )) +
     theme_void() +
     theme(plot.title = element_text(hjust = 0.5))
-  
-  return(list(plot = plot, rd = rd))
-  
-}
 
+  return(list(plot = plot, rd = rd))
+}
 ```
 
 # Survival Analysis
@@ -378,30 +396,31 @@ Using splines for the continuous variables. Testing the splines significance usi
 ```{r}
 # Just the continuous variables
 
-cox_cd_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_cd_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Is there any benefit to using spline for:
 
 # age
-summon_lrt(cox_cd_soft, remove = 'age_decade', add =  "ns(age_decade, df = 2)")
+summon_lrt(cox_cd_soft, remove = "age_decade", add = "ns(age_decade, df = 2)")
 
 # BMI
-summon_lrt(cox_cd_soft, remove = 'BMI', add =  "ns(BMI, df = 2)")
+summon_lrt(cox_cd_soft, remove = "BMI", add = "ns(BMI, df = 2)")
 
 # FC
-summon_lrt(cox_cd_soft, remove = 'FC', add =  "ns(FC, df = 2)")
+summon_lrt(cox_cd_soft, remove = "FC", add = "ns(FC, df = 2)")
 
 # dqi_tot
-summon_lrt(cox_cd_soft, remove = 'dqi_tot', add =  "ns(dqi_tot, df = 2)")
+summon_lrt(cox_cd_soft, remove = "dqi_tot", add = "ns(dqi_tot, df = 2)")
 
 # None of the continuous variables benefit from a spline term
 ```
@@ -411,21 +430,21 @@ summon_lrt(cox_cd_soft, remove = 'dqi_tot', add =  "ns(dqi_tot, df = 2)")
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
-  variable = 'age_decade'
+  variable = "age_decade"
 )
 
 # BMI
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
-  variable = 'BMI'
+  variable = "BMI"
 )
 
 # FC
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
-  variable = 'FC'
+  variable = "FC"
 )
 
 
@@ -433,7 +452,7 @@ plot_continuous_hr(
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
-  variable = 'dqi_tot'
+  variable = "dqi_tot"
 )
 ```
 
@@ -442,30 +461,31 @@ plot_continuous_hr(
 ```{r}
 # Just the continuous variables
 
-cox_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_cd_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Is there any benefit to using spline for:
 
 # age
-summon_lrt(cox_cd_hard, remove = 'age_decade', add =  "ns(age_decade, df = 2)")
+summon_lrt(cox_cd_hard, remove = "age_decade", add = "ns(age_decade, df = 2)")
 
 # BMI
-summon_lrt(cox_cd_hard, remove = 'BMI', add =  "ns(BMI, df = 2)")
+summon_lrt(cox_cd_hard, remove = "BMI", add = "ns(BMI, df = 2)")
 
 # FC
-summon_lrt(cox_cd_hard, remove = 'FC', add =  "ns(FC, df = 2)")
+summon_lrt(cox_cd_hard, remove = "FC", add = "ns(FC, df = 2)")
 
 # dqi_tot
-summon_lrt(cox_cd_hard, remove = 'dqi_tot', add =  "ns(dqi_tot, df = 2)")
+summon_lrt(cox_cd_hard, remove = "dqi_tot", add = "ns(dqi_tot, df = 2)")
 
 # None of the continuous variables benefit from a spline term
 ```
@@ -475,21 +495,21 @@ summon_lrt(cox_cd_hard, remove = 'dqi_tot', add =  "ns(dqi_tot, df = 2)")
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
-  variable = 'age_decade'
+  variable = "age_decade"
 )
 
 # BMI
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
-  variable = 'BMI'
+  variable = "BMI"
 )
 
 # FC
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
-  variable = 'FC'
+  variable = "FC"
 )
 
 
@@ -497,7 +517,7 @@ plot_continuous_hr(
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
-  variable = 'dqi_tot'
+  variable = "dqi_tot"
 )
 ```
 
@@ -508,80 +528,84 @@ plot_continuous_hr(
 ```{r}
 # Just the continuous variables
 
-cox_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_uc_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Is there any benefit to using spline for:
 
 # age
-summon_lrt(cox_uc_soft, remove = 'age_decade', add =  "ns(age_decade, df = 2)")
+summon_lrt(cox_uc_soft, remove = "age_decade", add = "ns(age_decade, df = 2)")
 
 # BMI
-summon_lrt(cox_uc_soft, remove = 'BMI', add =  "ns(BMI, df = 2)")
+summon_lrt(cox_uc_soft, remove = "BMI", add = "ns(BMI, df = 2)")
 
 # FC
-summon_lrt(cox_uc_soft, remove = 'FC', add = "ns(FC, df = 2)")
+summon_lrt(cox_uc_soft, remove = "FC", add = "ns(FC, df = 2)")
 
 # dqi_tot
-summon_lrt(cox_uc_soft, remove = 'dqi_tot', add =  "ns(dqi_tot, df = 2)")
+summon_lrt(cox_uc_soft, remove = "dqi_tot", add = "ns(dqi_tot, df = 2)")
 
 # FC and dqi_tot can get a spline
-cox_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               ns(dqi_tot, df = 2) +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_uc_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    ns(dqi_tot, df = 2) +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Test for df = 3
 # FC
-summon_lrt(cox_uc_soft, remove = 'ns(FC, df = 2)', add = "ns(FC, df = 3)")
+summon_lrt(cox_uc_soft, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 
 # dqi_tot
-summon_lrt(cox_uc_soft, remove = 'ns(dqi_tot, df = 2)', add =  "ns(dqi_tot, df = 3)")
-
+summon_lrt(cox_uc_soft,
+  remove = "ns(dqi_tot, df = 2)",
+  add = "ns(dqi_tot, df = 3)"
+)
 ```
 
 ```{r}
 # Age
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_soft,
-  variable = 'age_decade'
+  variable = "age_decade"
 )
 
 # BMI
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_soft,
-  variable = 'BMI'
+  variable = "BMI"
 )
 
 # FC
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_soft,
-  variable = 'FC'
+  variable = "FC"
 )
 
 
 # DQI
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_soft,
-  variable = 'dqi_tot'
+  variable = "dqi_tot"
 )
 ```
 
@@ -590,46 +614,48 @@ plot_continuous_hr(
 ```{r}
 # Just the continuous variables
 
-cox_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_uc_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Is there any benefit to using spline for:
 
 # age
-summon_lrt(cox_uc_hard, remove = 'age_decade', add =  "ns(age_decade, df = 2)")
+summon_lrt(cox_uc_hard, remove = "age_decade", add = "ns(age_decade, df = 2)")
 
 # BMI
-summon_lrt(cox_uc_hard, remove = 'BMI', add =  "ns(BMI, df = 2)")
+summon_lrt(cox_uc_hard, remove = "BMI", add = "ns(BMI, df = 2)")
 
 # FC
-summon_lrt(cox_uc_hard, remove = 'FC', add =  "ns(FC, df = 2)")
+summon_lrt(cox_uc_hard, remove = "FC", add = "ns(FC, df = 2)")
 
 # dqi_tot
-summon_lrt(cox_uc_hard, remove = 'dqi_tot', add =  "ns(dqi_tot, df = 2)")
+summon_lrt(cox_uc_hard, remove = "dqi_tot", add = "ns(dqi_tot, df = 2)")
 
 # FC benefits from a spline
-cox_uc_hard <-  coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_uc_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Test for df = 3
 # FC
-summon_lrt(cox_uc_soft, remove = 'ns(FC, df = 2)', add = "ns(FC, df = 3)")
+summon_lrt(cox_uc_soft, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 
 # df = 2 is sufficient for FC
 ```
@@ -639,21 +665,21 @@ summon_lrt(cox_uc_soft, remove = 'ns(FC, df = 2)', add = "ns(FC, df = 3)")
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_uc_hard,
-  variable = 'age_decade'
+  variable = "age_decade"
 )
 
 # BMI
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_uc_hard,
-  variable = 'BMI'
+  variable = "BMI"
 )
 
 # FC
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_uc_hard,
-  variable = 'FC'
+  variable = "FC"
 )
 
 
@@ -661,7 +687,7 @@ plot_continuous_hr(
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_uc_hard,
-  variable = 'dqi_tot'
+  variable = "dqi_tot"
 )
 ```
 
@@ -672,17 +698,17 @@ plot_continuous_hr(
 #### Patient reported flare
 
 ```{r}
-
-cox_meat_cd_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               Meat_sum + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_meat_cd_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    Meat_sum +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Do we need a spline?
@@ -691,34 +717,31 @@ summon_lrt(cox_meat_cd_soft, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
 
 cox_meat_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
 # Meat sum
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_meat_cd_soft,
-  variable = 'Meat_sum'
+  variable = "Meat_sum"
 )
-
 ```
 
 #### Objective flare
 
 ```{r}
-
-cox_meat_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               Meat_sum + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_meat_cd_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    Meat_sum +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Do we need a spline?
@@ -727,18 +750,15 @@ summon_lrt(cox_meat_cd_hard, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
 
 cox_meat_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
 # Meat sum
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_meat_cd_hard,
-  variable = 'Meat_sum'
+  variable = "Meat_sum"
 )
-
 ```
 
 ### Ulcerative colitis
@@ -746,17 +766,17 @@ plot_continuous_hr(
 #### Patient reported flare
 
 ```{r}
-
-cox_meat_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               Meat_sum + 
-               ns(dqi_tot, df = 2) +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_meat_uc_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    Meat_sum +
+    ns(dqi_tot, df = 2) +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Do we need a spline?
@@ -765,34 +785,31 @@ summon_lrt(cox_meat_uc_soft, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
 
 cox_meat_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
 # Meat sum
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_soft,
-  variable = 'Meat_sum'
+  variable = "Meat_sum"
 )
-
 ```
 
 #### Objective flare
 
 ```{r}
-
-cox_meat_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               Meat_sum + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_meat_uc_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    Meat_sum +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Do we need a spline?
@@ -801,24 +818,21 @@ summon_lrt(cox_meat_uc_hard, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
 
 cox_meat_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
 # Meat sum
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
-  variable = 'Meat_sum'
+  variable = "Meat_sum"
 )
 
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
-  variable = 'FC'
+  variable = "FC"
 )
-
 ```
 
 ## Dietary Fibre
@@ -828,16 +842,17 @@ plot_continuous_hr(
 #### Patient reported flare
 
 ```{r}
-cox_fibre_cd_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               fibre + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_fibre_cd_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    fibre +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Do we need a spline?
@@ -846,45 +861,44 @@ summon_lrt(cox_fibre_cd_soft, remove = "fibre", add = "ns(fibre, df = 2)")
 
 cox_fibre_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.cd.df,
-                   model = cox_fibre_cd_soft,
-                   variable = 'fibre')
-
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_fibre_cd_soft,
+  variable = "fibre"
+)
 ```
 
 #### Objective Flare
 
 ```{r}
-cox_fibre_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               fibre + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_fibre_cd_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    fibre +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 summon_lrt(cox_fibre_cd_hard, remove = "fibre", add = "ns(fibre, df = 2)")
 
 cox_fibre_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.cd.df,
-                   model = cox_fibre_cd_hard,
-                   variable = 'fibre')
-
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_fibre_cd_hard,
+  variable = "fibre"
+)
 ```
 
 ### Ulcerative colitis
@@ -892,16 +906,17 @@ plot_continuous_hr(data = flare.cd.df,
 #### Patient reported flare
 
 ```{r}
-cox_fibre_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex +
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               fibre + 
-               ns(dqi_tot, df = 2) +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_fibre_uc_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    fibre +
+    ns(dqi_tot, df = 2) +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 summon_lrt(cox_fibre_uc_soft, remove = "fibre", add = "ns(fibre, df = 2)")
@@ -909,45 +924,44 @@ summon_lrt(cox_fibre_uc_soft, remove = "fibre", add = "ns(fibre, df = 2)")
 
 cox_fibre_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.uc.df,
-                   model = cox_fibre_uc_soft,
-                   variable = 'fibre')
-
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_fibre_uc_soft,
+  variable = "fibre"
+)
 ```
 
 #### Objective Flare
 
 ```{r}
-cox_fibre_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               fibre + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_fibre_uc_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    fibre +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 summon_lrt(cox_fibre_uc_hard, remove = "fibre", add = "ns(fibre, df = 2)")
 
 cox_fibre_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.uc.df,
-                   model = cox_fibre_uc_hard,
-                   variable = 'fibre')
-
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_fibre_uc_hard,
+  variable = "fibre"
+)
 ```
 
 ## Polyunsaturated fatty acids
@@ -957,35 +971,43 @@ plot_continuous_hr(data = flare.uc.df,
 #### Patient reported flare
 
 ```{r}
-cox_pufa_cd_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               PUFA_percEng + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_pufa_cd_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    PUFA_percEng +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Do we need a spline?
-summon_lrt(cox_pufa_cd_soft, remove = "PUFA_percEng", add = "ns(PUFA_percEng, df = 2)")
+summon_lrt(cox_pufa_cd_soft,
+  remove = "PUFA_percEng",
+  add = "ns(PUFA_percEng, df = 2)"
+)
 # Close to 0.05, lets add one
 
-cox_pufa_cd_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               ns(PUFA_percEng, df = 2) + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_pufa_cd_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    ns(PUFA_percEng, df = 2) +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
-summon_lrt(cox_pufa_cd_soft, remove = "ns(PUFA_percEng, df = 2)", add = "ns(PUFA_percEng, df = 3)")
+summon_lrt(cox_pufa_cd_soft,
+  remove = "ns(PUFA_percEng, df = 2)",
+  add = "ns(PUFA_percEng, df = 3)"
+)
 # df = 2 is sufficient
 
 cox_pufa_cd_soft %>%
@@ -993,47 +1015,49 @@ cox_pufa_cd_soft %>%
 
 # Significance - need to use LRT
 summon_lrt(cox_pufa_cd_soft, remove = "ns(PUFA_percEng, df = 2)")
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.cd.df,
-                   model = cox_pufa_cd_soft,
-                   variable = 'PUFA_percEng')
-
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_pufa_cd_soft,
+  variable = "PUFA_percEng"
+)
 ```
 
 #### Objective Flare
 
 ```{r}
-cox_pufa_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               PUFA_percEng + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_pufa_cd_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    PUFA_percEng +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Do we need a spline?
-summon_lrt(cox_pufa_cd_hard, remove = "PUFA_percEng", add = "ns(PUFA_percEng, df = 2)")
-# Nop
+summon_lrt(cox_pufa_cd_hard,
+  remove = "PUFA_percEng",
+  add = "ns(PUFA_percEng, df = 2)"
+)
+# No
 
 cox_pufa_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.cd.df,
-                   model = cox_pufa_cd_hard,
-                   variable = 'PUFA_percEng')
-
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_pufa_cd_hard,
+  variable = "PUFA_percEng"
+)
 ```
 
 ### Ulcerative colitis
@@ -1041,65 +1065,71 @@ plot_continuous_hr(data = flare.cd.df,
 #### Patient reported flare
 
 ```{r}
-cox_pufa_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               PUFA_percEng + 
-               ns(dqi_tot, df = 2) +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_pufa_uc_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    PUFA_percEng +
+    ns(dqi_tot, df = 2) +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Do we need a spline?
-summon_lrt(cox_pufa_uc_soft, remove = "PUFA_percEng", add = "ns(PUFA_percEng, df = 2)")
-# Nop
+summon_lrt(cox_pufa_uc_soft,
+  remove = "PUFA_percEng",
+  add = "ns(PUFA_percEng, df = 2)"
+)
+# No
 
 cox_pufa_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.uc.df,
-                   model = cox_pufa_uc_soft,
-                   variable = 'PUFA_percEng')
-
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_pufa_uc_soft,
+  variable = "PUFA_percEng"
+)
 ```
 
 #### Objective Flare
 
 ```{r}
-cox_pufa_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               PUFA_percEng + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_pufa_uc_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    PUFA_percEng +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Do we need a spline?
-summon_lrt(cox_pufa_uc_hard, remove = "PUFA_percEng", add = "ns(PUFA_percEng, df = 2)")
-# Nop
+summon_lrt(cox_pufa_uc_hard,
+  remove = "PUFA_percEng",
+  add = "ns(PUFA_percEng, df = 2)"
+)
+# No
 
 cox_pufa_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.uc.df,
-                   model = cox_pufa_uc_hard,
-                   variable = 'PUFA_percEng')
-
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_pufa_uc_hard,
+  variable = "PUFA_percEng"
+)
 ```
 
 ## Ultra-processed food
@@ -1109,66 +1139,65 @@ plot_continuous_hr(data = flare.uc.df,
 #### Patient reported flare
 
 ```{r}
-cox_upf_cd_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               UPF_perc + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_upf_cd_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    UPF_perc +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Do we need a spline?
 summon_lrt(cox_upf_cd_soft, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
-# Nop
+# No
 
 cox_upf_cd_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.cd.df,
-                   model = cox_upf_cd_soft,
-                   variable = 'UPF_perc')
-
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_upf_cd_soft,
+  variable = "UPF_perc"
+)
 ```
 
 #### Objective Flare
 
 ```{r}
-cox_upf_cd_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               FC +
-               UPF_perc + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.cd.df
+cox_upf_cd_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    FC +
+    UPF_perc +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.cd.df
 )
 
 # Do we need a spline?
 summon_lrt(cox_upf_cd_hard, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
-# Nop
+# No
 
 cox_upf_cd_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.cd.df,
-                   model = cox_upf_cd_hard,
-                   variable = 'UPF_perc')
-
+plot_continuous_hr(
+  data = flare.cd.df,
+  model = cox_upf_cd_hard,
+  variable = "UPF_perc"
+)
 ```
 
 ### Ulcerative colitis
@@ -1176,16 +1205,17 @@ plot_continuous_hr(data = flare.cd.df,
 #### Patient reported flare
 
 ```{r}
-cox_upf_uc_soft <- coxph(Surv(softflare_time, softflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               UPF_perc + 
-               ns(dqi_tot, df = 2) +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_upf_uc_soft <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    UPF_perc +
+    ns(dqi_tot, df = 2) +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Do we need a spline?
@@ -1194,47 +1224,46 @@ summon_lrt(cox_upf_uc_soft, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
 
 cox_upf_uc_soft %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.uc.df,
-                   model = cox_upf_uc_soft,
-                   variable = 'UPF_perc')
-
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_upf_uc_soft,
+  variable = "UPF_perc"
+)
 ```
 
 #### Objective Flare
 
 ```{r}
-cox_upf_uc_hard <- coxph(Surv(hardflare_time, hardflare) ~
-               Sex + 
-               IMD +
-               age_decade + 
-               BMI +
-               ns(FC, df = 2) +
-               UPF_perc + 
-               dqi_tot +
-               frailty(SiteNo),
-             data = flare.uc.df
+cox_upf_uc_hard <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    age_decade +
+    BMI +
+    ns(FC, df = 2) +
+    UPF_perc +
+    dqi_tot +
+    frailty(SiteNo),
+  data = flare.uc.df
 )
 
 # Do we need a spline?
 summon_lrt(cox_upf_uc_hard, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
-# Nop
+# No
 
 cox_upf_uc_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 ```
 
 ```{r}
-
-plot_continuous_hr(data = flare.uc.df,
-                   model = cox_upf_uc_hard,
-                   variable = 'UPF_perc')
-
+plot_continuous_hr(
+  data = flare.uc.df,
+  model = cox_upf_uc_hard,
+  variable = "UPF_perc"
+)
 ```
 
 # Results
@@ -1246,15 +1275,30 @@ plot_continuous_hr(data = flare.uc.df,
 #### Patient reported flare
 
 ```{r}
-
 # Values for calculation risk difference
-rd_values_meat_cd <- quantile(flare.cd.df$Meat_sum, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round()
+rd_values_meat_cd <- quantile(flare.cd.df$Meat_sum,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round()
 
-rd_values_fibre_cd <- quantile(flare.cd.df$fibre, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round()
+rd_values_fibre_cd <- quantile(flare.cd.df$fibre,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round()
 
-rd_values_pufa_cd <- quantile(flare.cd.df$PUFA_percEng, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round(digits = 1)
+rd_values_pufa_cd <- quantile(flare.cd.df$PUFA_percEng,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round(digits = 1)
 
-rd_values_upf_cd <- quantile(flare.cd.df$UPF_perc, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round()
+rd_values_upf_cd <- quantile(flare.cd.df$UPF_perc,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round()
 
 # Calculate risk difference for these values
 data_rd_cd_soft_meat <- summon_population_risk_difference_boot(
@@ -1312,23 +1356,38 @@ data_rd_cd_soft_upf <- summon_population_risk_difference_boot(
 
 # Creating combined forest plot
 # 1-year risk difference
-plot_rd_cd_soft_meat_1y <- summon_rd_forest_plot(data_rd_cd_soft_meat, time = 365)
+plot_rd_cd_soft_meat_1y <- summon_rd_forest_plot(data_rd_cd_soft_meat,
+  time = 365
+)
 
-plot_rd_cd_soft_fibre_1y <- summon_rd_forest_plot(data_rd_cd_soft_fibre, time = 365)
+plot_rd_cd_soft_fibre_1y <- summon_rd_forest_plot(data_rd_cd_soft_fibre,
+  time = 365
+)
 
-plot_rd_cd_soft_pufa_1y <- summon_rd_forest_plot(data_rd_cd_soft_pufa, time = 365)
+plot_rd_cd_soft_pufa_1y <- summon_rd_forest_plot(data_rd_cd_soft_pufa,
+  time = 365
+)
 
-plot_rd_cd_soft_upf_1y <- summon_rd_forest_plot(data_rd_cd_soft_upf, time = 365)
+plot_rd_cd_soft_upf_1y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
+  time = 365
+)
 
 # 2-year risk difference
-plot_rd_cd_soft_meat_2y <- summon_rd_forest_plot(data_rd_cd_soft_meat, time = 730)
+plot_rd_cd_soft_meat_2y <- summon_rd_forest_plot(data_rd_cd_soft_meat,
+  time = 730
+)
 
-plot_rd_cd_soft_fibre_2y <- summon_rd_forest_plot(data_rd_cd_soft_fibre, time = 730)
+plot_rd_cd_soft_fibre_2y <- summon_rd_forest_plot(data_rd_cd_soft_fibre,
+  time = 730
+)
 
-plot_rd_cd_soft_pufa_2y <- summon_rd_forest_plot(data_rd_cd_soft_pufa, time = 730)
+plot_rd_cd_soft_pufa_2y <- summon_rd_forest_plot(data_rd_cd_soft_pufa,
+  time = 730
+)
 
-plot_rd_cd_soft_upf_2y <- summon_rd_forest_plot(data_rd_cd_soft_upf, time = 730)
-
+plot_rd_cd_soft_upf_2y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
+  time = 730
+)
 ```
 
 ```{r}
@@ -1337,14 +1396,14 @@ plot_rd_cd_soft_upf_2y <- summon_rd_forest_plot(data_rd_cd_soft_upf, time = 730)
 
 # 1-year risk difference
 plot_rd_cd_soft_meat_1y$plot + (plot_rd_cd_soft_meat_1y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_cd_soft_fibre_1y$plot + plot_rd_cd_soft_fibre_1y$rd +
   plot_rd_cd_soft_pufa_1y$plot + plot_rd_cd_soft_pufa_1y$rd +
   plot_rd_cd_soft_upf_1y$plot + plot_rd_cd_soft_upf_1y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
@@ -1352,20 +1411,19 @@ plot_rd_cd_soft_meat_1y$plot + (plot_rd_cd_soft_meat_1y$rd +
     subtitle = "Crohn's, patient reported flare."
   ) &
   coord_cartesian(xlim = c(-0.3, 0.6))
-                                  
 ```
 
 ```{r}
 # 2-year risk difference
 plot_rd_cd_soft_meat_2y$plot + (plot_rd_cd_soft_meat_2y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_cd_soft_fibre_2y$plot + plot_rd_cd_soft_fibre_2y$rd +
   plot_rd_cd_soft_pufa_2y$plot + plot_rd_cd_soft_pufa_2y$rd +
   plot_rd_cd_soft_upf_2y$plot + plot_rd_cd_soft_upf_2y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
@@ -1436,22 +1494,38 @@ data_rd_cd_hard_upf <- summon_population_risk_difference_boot(
 
 # Creating combined forest plot
 # 1-year risk difference
-plot_rd_cd_hard_meat_1y <- summon_rd_forest_plot(data_rd_cd_hard_meat, time = 365)
+plot_rd_cd_hard_meat_1y <- summon_rd_forest_plot(data_rd_cd_hard_meat,
+  time = 365
+)
 
-plot_rd_cd_hard_fibre_1y <- summon_rd_forest_plot(data_rd_cd_hard_fibre, time = 365)
+plot_rd_cd_hard_fibre_1y <- summon_rd_forest_plot(data_rd_cd_hard_fibre,
+  time = 365
+)
 
-plot_rd_cd_hard_pufa_1y <- summon_rd_forest_plot(data_rd_cd_hard_pufa, time = 365)
+plot_rd_cd_hard_pufa_1y <- summon_rd_forest_plot(data_rd_cd_hard_pufa,
+  time = 365
+)
 
-plot_rd_cd_hard_upf_1y <- summon_rd_forest_plot(data_rd_cd_hard_upf, time = 365)
+plot_rd_cd_hard_upf_1y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
+  time = 365
+)
 
 # 2-year risk difference
-plot_rd_cd_hard_meat_2y <- summon_rd_forest_plot(data_rd_cd_hard_meat, time = 730)
+plot_rd_cd_hard_meat_2y <- summon_rd_forest_plot(data_rd_cd_hard_meat,
+  time = 730
+)
 
-plot_rd_cd_hard_fibre_2y <- summon_rd_forest_plot(data_rd_cd_hard_fibre, time = 730)
+plot_rd_cd_hard_fibre_2y <- summon_rd_forest_plot(data_rd_cd_hard_fibre,
+  time = 730
+)
 
-plot_rd_cd_hard_pufa_2y <- summon_rd_forest_plot(data_rd_cd_hard_pufa, time = 730)
+plot_rd_cd_hard_pufa_2y <- summon_rd_forest_plot(data_rd_cd_hard_pufa,
+  time = 730
+)
 
-plot_rd_cd_hard_upf_2y <- summon_rd_forest_plot(data_rd_cd_hard_upf, time = 730)
+plot_rd_cd_hard_upf_2y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
+  time = 730
+)
 ```
 
 ```{r}
@@ -1460,14 +1534,14 @@ plot_rd_cd_hard_upf_2y <- summon_rd_forest_plot(data_rd_cd_hard_upf, time = 730)
 
 # 1-year risk difference
 plot_rd_cd_hard_meat_1y$plot + (plot_rd_cd_hard_meat_1y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_cd_hard_fibre_1y$plot + plot_rd_cd_hard_fibre_1y$rd +
   plot_rd_cd_hard_pufa_1y$plot + plot_rd_cd_hard_pufa_1y$rd +
   plot_rd_cd_hard_upf_1y$plot + plot_rd_cd_hard_upf_1y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
@@ -1480,14 +1554,14 @@ plot_rd_cd_hard_meat_1y$plot + (plot_rd_cd_hard_meat_1y$rd +
 ```{r}
 # 2-year risk difference
 plot_rd_cd_hard_meat_2y$plot + (plot_rd_cd_hard_meat_2y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_cd_hard_fibre_2y$plot + plot_rd_cd_hard_fibre_2y$rd +
   plot_rd_cd_hard_pufa_2y$plot + plot_rd_cd_hard_pufa_2y$rd +
   plot_rd_cd_hard_upf_2y$plot + plot_rd_cd_hard_upf_2y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
@@ -1502,15 +1576,30 @@ plot_rd_cd_hard_meat_2y$plot + (plot_rd_cd_hard_meat_2y$rd +
 #### Patient reported flare
 
 ```{r}
-
 # Values for calculation risk difference
-rd_values_meat_uc <- quantile(flare.uc.df$Meat_sum, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round()
+rd_values_meat_uc <- quantile(flare.uc.df$Meat_sum,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round()
 
-rd_values_fibre_uc <- quantile(flare.uc.df$fibre, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round()
+rd_values_fibre_uc <- quantile(flare.uc.df$fibre,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round()
 
-rd_values_pufa_uc <- quantile(flare.uc.df$PUFA_percEng, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round(digits = 1)
+rd_values_pufa_uc <- quantile(flare.uc.df$PUFA_percEng,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round(digits = 1)
 
-rd_values_upf_uc <- quantile(flare.uc.df$UPF_perc, probs = c(0, 0.25, 0.5, 0.75, 0.95), na.rm = TRUE) %>% round()
+rd_values_upf_uc <- quantile(flare.uc.df$UPF_perc,
+  probs = c(0, 0.25, 0.5, 0.75, 0.95),
+  na.rm = TRUE
+) %>%
+  round()
 
 # Calculate risk difference for these values
 data_rd_uc_soft_meat <- summon_population_risk_difference_boot(
@@ -1565,26 +1654,38 @@ data_rd_uc_soft_upf <- summon_population_risk_difference_boot(
     term_tidy = paste0("UPF (%): ", value)
   )
 
-
 # Creating combined forest plot
 # 1-year risk difference
-plot_rd_uc_soft_meat_1y <- summon_rd_forest_plot(data_rd_uc_soft_meat, time = 365)
+plot_rd_uc_soft_meat_1y <- summon_rd_forest_plot(data_rd_uc_soft_meat,
+  time = 365
+)
 
-plot_rd_uc_soft_fibre_1y <- summon_rd_forest_plot(data_rd_uc_soft_fibre, time = 365)
+plot_rd_uc_soft_fibre_1y <- summon_rd_forest_plot(data_rd_uc_soft_fibre,
+  time = 365
+)
 
-plot_rd_uc_soft_pufa_1y <- summon_rd_forest_plot(data_rd_uc_soft_pufa, time = 365)
+plot_rd_uc_soft_pufa_1y <- summon_rd_forest_plot(data_rd_uc_soft_pufa,
+  time = 365
+)
 
-plot_rd_uc_soft_upf_1y <- summon_rd_forest_plot(data_rd_uc_soft_upf, time = 365)
+plot_rd_uc_soft_upf_1y <- summon_rd_forest_plot(data_rd_uc_soft_upf,
+  time = 365
+)
 
 # 2-year risk difference
-plot_rd_uc_soft_meat_2y <- summon_rd_forest_plot(data_rd_uc_soft_meat, time = 730)
+plot_rd_uc_soft_meat_2y <- summon_rd_forest_plot(data_rd_uc_soft_meat,
+  time = 730
+)
 
-plot_rd_uc_soft_fibre_2y <- summon_rd_forest_plot(data_rd_uc_soft_fibre, time = 730)
+plot_rd_uc_soft_fibre_2y <- summon_rd_forest_plot(data_rd_uc_soft_fibre,
+  time = 730
+)
 
-plot_rd_uc_soft_pufa_2y <- summon_rd_forest_plot(data_rd_uc_soft_pufa, time = 730)
+plot_rd_uc_soft_pufa_2y <- summon_rd_forest_plot(data_rd_uc_soft_pufa,
+  time = 730
+)
 
 plot_rd_uc_soft_upf_2y <- summon_rd_forest_plot(data_rd_uc_soft_upf, time = 730)
-
 ```
 
 ```{r}
@@ -1593,14 +1694,14 @@ plot_rd_uc_soft_upf_2y <- summon_rd_forest_plot(data_rd_uc_soft_upf, time = 730)
 
 # 1-year risk difference
 plot_rd_uc_soft_meat_1y$plot + (plot_rd_uc_soft_meat_1y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_uc_soft_fibre_1y$plot + plot_rd_uc_soft_fibre_1y$rd +
   plot_rd_uc_soft_pufa_1y$plot + plot_rd_uc_soft_pufa_1y$rd +
   plot_rd_uc_soft_upf_1y$plot + plot_rd_uc_soft_upf_1y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
@@ -1608,20 +1709,19 @@ plot_rd_uc_soft_meat_1y$plot + (plot_rd_uc_soft_meat_1y$rd +
     subtitle = "Ulcerative colitis, patient reported flare."
   ) &
   coord_cartesian(xlim = c(-0.2, 0.3))
-                                  
 ```
 
 ```{r}
 # 2-year risk difference
 plot_rd_uc_soft_meat_2y$plot + (plot_rd_uc_soft_meat_2y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_uc_soft_fibre_2y$plot + plot_rd_uc_soft_fibre_2y$rd +
   plot_rd_uc_soft_pufa_2y$plot + plot_rd_uc_soft_pufa_2y$rd +
   plot_rd_uc_soft_upf_2y$plot + plot_rd_uc_soft_upf_2y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
@@ -1692,22 +1792,38 @@ data_rd_uc_hard_upf <- summon_population_risk_difference_boot(
 
 # Creating combined forest plot
 # 1-year risk difference
-plot_rd_uc_hard_meat_1y <- summon_rd_forest_plot(data_rd_uc_hard_meat, time = 365)
+plot_rd_uc_hard_meat_1y <- summon_rd_forest_plot(data_rd_uc_hard_meat,
+  time = 365
+)
 
-plot_rd_uc_hard_fibre_1y <- summon_rd_forest_plot(data_rd_uc_hard_fibre, time = 365)
+plot_rd_uc_hard_fibre_1y <- summon_rd_forest_plot(data_rd_uc_hard_fibre,
+  time = 365
+)
 
-plot_rd_uc_hard_pufa_1y <- summon_rd_forest_plot(data_rd_uc_hard_pufa, time = 365)
+plot_rd_uc_hard_pufa_1y <- summon_rd_forest_plot(data_rd_uc_hard_pufa,
+  time = 365
+)
 
-plot_rd_uc_hard_upf_1y <- summon_rd_forest_plot(data_rd_uc_hard_upf, time = 365)
+plot_rd_uc_hard_upf_1y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
+  time = 365
+)
 
 # 2-year risk difference
-plot_rd_uc_hard_meat_2y <- summon_rd_forest_plot(data_rd_uc_hard_meat, time = 730)
+plot_rd_uc_hard_meat_2y <- summon_rd_forest_plot(data_rd_uc_hard_meat,
+  time = 730
+)
 
-plot_rd_uc_hard_fibre_2y <- summon_rd_forest_plot(data_rd_uc_hard_fibre, time = 730)
+plot_rd_uc_hard_fibre_2y <- summon_rd_forest_plot(data_rd_uc_hard_fibre,
+  time = 730
+)
 
-plot_rd_uc_hard_pufa_2y <- summon_rd_forest_plot(data_rd_uc_hard_pufa, time = 730)
+plot_rd_uc_hard_pufa_2y <- summon_rd_forest_plot(data_rd_uc_hard_pufa,
+  time = 730
+)
 
-plot_rd_uc_hard_upf_2y <- summon_rd_forest_plot(data_rd_uc_hard_upf, time = 730)
+plot_rd_uc_hard_upf_2y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
+  time = 730
+)
 ```
 
 ```{r}
@@ -1716,14 +1832,14 @@ plot_rd_uc_hard_upf_2y <- summon_rd_forest_plot(data_rd_uc_hard_upf, time = 730)
 
 # 1-year risk difference
 plot_rd_uc_hard_meat_1y$plot + (plot_rd_uc_hard_meat_1y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_uc_hard_fibre_1y$plot + plot_rd_uc_hard_fibre_1y$rd +
   plot_rd_uc_hard_pufa_1y$plot + plot_rd_uc_hard_pufa_1y$rd +
   plot_rd_uc_hard_upf_1y$plot + plot_rd_uc_hard_upf_1y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
@@ -1736,14 +1852,14 @@ plot_rd_uc_hard_meat_1y$plot + (plot_rd_uc_hard_meat_1y$rd +
 ```{r}
 # 2-year risk difference
 plot_rd_uc_hard_meat_2y$plot + (plot_rd_uc_hard_meat_2y$rd +
-                                  labs(title = "Risk difference (95% CI)")) +
+  labs(title = "Risk difference (95% CI)")) +
   plot_rd_uc_hard_fibre_2y$plot + plot_rd_uc_hard_fibre_2y$rd +
   plot_rd_uc_hard_pufa_2y$plot + plot_rd_uc_hard_pufa_2y$rd +
   plot_rd_uc_hard_upf_2y$plot + plot_rd_uc_hard_upf_2y$rd +
   patchwork::plot_layout(
     ncol = 2,
-    guides = 'collect',
-    axes = 'collect',
+    guides = "collect",
+    axes = "collect",
     width = c(2, 1)
   ) +
   patchwork::plot_annotation(
