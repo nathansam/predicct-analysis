@@ -655,7 +655,7 @@ cox_uc_hard <- coxph(
 
 # Test for df = 3
 # FC
-summon_lrt(cox_uc_soft, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
+summon_lrt(cox_uc_hard, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 
 # df = 2 is sufficient for FC
 ```
@@ -663,21 +663,21 @@ summon_lrt(cox_uc_soft, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 ```{r}
 # Age
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_hard,
   variable = "age_decade"
 )
 
 # BMI
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_hard,
   variable = "BMI"
 )
 
 # FC
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_hard,
   variable = "FC"
 )
@@ -685,7 +685,7 @@ plot_continuous_hr(
 
 # DQI
 plot_continuous_hr(
-  data = flare.cd.df,
+  data = flare.uc.df,
   model = cox_uc_hard,
   variable = "dqi_tot"
 )
