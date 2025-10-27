@@ -564,7 +564,7 @@ UC_phq_hard <- UC_phq %>%
 
 ### Whole cohoort
 
-Soft flare
+Patient-reported flare
 
 * Significant at all levels in all analyses, here I report controlling for site, sex, smoking, IMD age and FC
   * Increase risk with mild somatisation (p-value = 8.2e-05, 95% CI 1.26-2.03)
@@ -595,7 +595,7 @@ p1 <- ggsurvplot(fit,
            ggtheme = theme_minimal(),
            palette = c("#0B1D51", "#1C77C3", "#39A9DB", "#A0ECD0"),
            xlab = "Time from study recrutiment (days)",
-           title = "All participants - Time to soft flare - Somatisation (PHQ15)"
+           title = "All participants - Time to patient-reported flare - Somatisation (PHQ15)"
            )
 p1
 
@@ -637,7 +637,7 @@ summary(cox_model)
 
 ### Survival analysis - Crohn's Disease
 
-Soft flare: 
+Patient-reported flare: 
 n= 807, number of events= 273 
 
 * controlling for site only, significant increase in risk at all levels of somatisation
@@ -683,7 +683,7 @@ soma.cd <- ggsurvplot(fit,
            ggtheme = theme_minimal(),
            palette = c("#0B1D51", "#1C77C3", "#39A9DB", "#A0ECD0"),
            xlab = "Time from study recrutiment (days)",
-           title = "Crohn's - Time to soft flare - Somatisation (PHQ15)",
+           title = "Crohn's - Time to patient-reported flare - Somatisation (PHQ15)",
            legend.title = "Somatisation",
            legend.labs = c("None", "Mild", "Moderate", "Severe")
            )
@@ -739,7 +739,7 @@ cox.summary(cox_model)
 ## UC/IBDU 
 
 
-Soft flares:
+Patient-reported flares:
 n= 794, number of events= 312 
 
 * significant controlling for site only at all somatisation levels
@@ -778,7 +778,7 @@ soma.uc <- ggsurvplot(fit,
            ggtheme = theme_minimal(),
            palette = c("#0B1D51", "#1C77C3", "#39A9DB", "#A0ECD0"),
            xlab = "Time from study recrutiment (days)",
-           title = "UC/IBDU - Time to soft flare - Somatisation (PHQ15)",
+           title = "UC/IBDU - Time to patient-reported flare - Somatisation (PHQ15)",
            legend.title = "Somatisation",
            legend.labs = c("None", "Mild", "Moderate", "Severe")
            )

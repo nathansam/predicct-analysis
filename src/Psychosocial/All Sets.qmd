@@ -276,7 +276,7 @@ p2 <- ggplot(hardflareplot, aes(x = Variable, y = HR, ymin = Lower95, ymax = Upp
   ) +
   theme_minimal()
 
-print(p3)
+print(p2)
 ```
 
 ```{R}
@@ -343,7 +343,7 @@ dev.off()
 
 
 
-
+```{r, study colors}
 #in case needed later
 study_colors <- c("HADS-A 8-10" = "#D64133", 
                   "HADS-A 11-21" = "#AB3428",
@@ -470,7 +470,7 @@ table1::table1( ~ Extent + Mayo + Smoke | diagnosis2,
 
 ```
 
-``` {r, testing differences between psychosocial and full predicct group}
+```{R testing differences between psychosocial and full predicct group}
 demo_analysis <- demo_IBD %>%
   mutate(group = ifelse(ParticipantNo %in% all_psychosocial$ParticipantNo, "psychosocial", "all_patients"))
 
@@ -487,7 +487,7 @@ print(wilcox_test_result)
 
 ```
 
-``` {r, all flares}
+```{R}
 
 all_soft <- all_psychosocial %>% 
   inner_join(flares_soft %>% select(ParticipantNo, softflare, softflare_time)) %>% 

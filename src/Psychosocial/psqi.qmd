@@ -850,13 +850,13 @@ cox.summary <- function(fit) {
     ) %>%
     print()
 
-  cat("\\newline
+  cat("
 
-Diagnostics: \\newline
+Diagnostics: 
 
 ")
 
-  cat("\\newline
+  cat("
 
 ::: {.panel-tabset}
 
@@ -864,7 +864,7 @@ Diagnostics: \\newline
 
   cat("
 
-###### Proportional hazards assumption test \\newline
+###### Proportional hazards assumption test 
 
   ")
   cox.zph(fit)$table %>%
@@ -879,23 +879,23 @@ Diagnostics: \\newline
     ) %>%
     print()
 
-  cat("\\newline
+  cat("
 
-###### DF betas \\newline
+###### DF betas 
 
   ")
 
   print(ggcoxdiagnostics(fit, type = "dfbeta"))
 
-  cat("\\newline
+  cat("
 
-###### Martingale residuals \\newline
+###### Martingale residuals 
 
       ")
 
   print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
 
-  cat("\\newline
+  cat("
 
 :::
 
@@ -940,7 +940,7 @@ psqi_UC_hard <- psqi_UC %>%
 
 n= 1569, number of events= 566 
 
-Whole cohort time to soft flare
+Whole cohort time to patient-reported flare
 
 * Significant controlling for site only (p-value = 0.000049, 95% CI 1.20-1.68)
 * Significant controlling for site, sex, smoking, IMD, Age group (p-value =
@@ -952,7 +952,7 @@ Whole cohort time to hard flare
 
 * Not statistically significant in any analyses
 
-#### Soft flares
+#### Patient-reported flares
 
 ```{r, whole cohort - time to flare}
 
@@ -966,14 +966,14 @@ pander(test_result)
 
 ```{R}
 #| label: fig-soft-all
-#| fig-cap: "Time to soft flare by presence of sleep disturbance (all participants)."
+#| fig-cap: "Time to patient-reported flare by presence of sleep disturbance (all participants)."
 p1 <- ggsurvplot(fit,
            data = psqi_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
-           title = "Time to soft flare"
+           title = "Time to patient-reported flare"
            )
 p1
 ```
@@ -1073,10 +1073,10 @@ invisible(cox.summary(cox_model))
 
 ### Crohn's disease
 
-Soft flares:
+Patient-reported flares:
 n= 795, number of events= 266 
 
-* Significant increase in risk in time to soft flare controlling for site only
+* Significant increase in risk in time to patient-reported flare controlling for site only
   (p-value = 7.4e-06, 95% CI 1.37-2.24)
 * Significant when controlling for site, sex, smoking, IMD, age (p-value =
   0.0004, 95% CI 1.22 - 2.04)
@@ -1089,7 +1089,7 @@ n= 771, number of events= 98
 
 * No significant increase in risk of time to flare in any analyses
 
-#### Soft flares
+#### Patient-reported flares
 
 ```{r, CD and sleep disturbance}
 # soft flares
@@ -1101,7 +1101,7 @@ pander(test_result)
 
 ```{R}
 #| label: fig-soft-uc
-#| fig-cap: "Time to soft flare by presence of Sleep Disturbance (CD patients)"
+#| fig-cap: "Time to patient-reported flare by presence of Sleep Disturbance (CD patients)"
 fit <- survfit(Surv(time, DiseaseFlareYN) ~ SleepDisturbance,
                data = psqi_CD_soft)
 p.cd.sleep.clin <- ggsurvplot(fit,
@@ -1110,7 +1110,7 @@ p.cd.sleep.clin <- ggsurvplot(fit,
            ggtheme = theme_minimal(),
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
-           title = "Time to soft flare",
+           title = "Time to patient-reported flare",
            legend.title = "Sleep distubance",
            legend.labs = c("PSQI ≤ 5", "PSQI > 5")
            )
@@ -1204,13 +1204,13 @@ invisible(cox.summary(fit.me))
 
 ### UC/IBDU 
 
-Soft flares:
+Patient-reported flares:
 n= 774, number of events= 300 
 
-* no significant increase in risk of time to soft flare in any analyses
+* no significant increase in risk of time to patient-reported flare in any analyses
 
 Hard flares: 
-* no significant increase in risk of time to soft flare in any analyses
+* no significant increase in risk of time to patient-reported flare in any analyses
 
 ```{r, UC/IBDU and fatigue}
 # soft flare 
@@ -1224,10 +1224,10 @@ p1 <- ggsurvplot(fit,
            data = psqi_UC_soft,
            conf.int = TRUE,
            ggtheme = theme_minimal(),
-           legend.title = "UC patients, time to soft flare by presence of Sleep Disturbance",
+           legend.title = "UC patients, time to patient-reported flare by presence of Sleep Disturbance",
            palette = c("#42213D", "#F51AA4"),
            xlab = "Time from study recrutiment (days)",
-           title = "Time to soft flare"
+           title = "Time to patient-reported flare"
            )
 p1
 ```

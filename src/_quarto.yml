@@ -1,27 +1,15 @@
 project:
   execute-dir: project
   type: website
-  pre-render: Scripts/makeplotdir.R
   render:
-    - "index.qmd"
-    - "Baseline/Introduction.qmd"
-    - "Baseline/Recruitment.qmd"
-    - "Baseline/Demographics.qmd"
-    - "Baseline/IBD.qmd"
-    - "Baseline/Biochemistry.qmd"
-    - "Baseline/Diet.qmd"
-    - "Baseline/Tables.qmd"
-    - "Survival/Introduction.qmd"
-    - "Survival/Soft-hard-flares.qmd"
-    - "Survival/Controlled.qmd"
-    - "Survival/Demographics.qmd"
-    - "Survival/IBD.qmd"
-    - "Survival/Biochemistry.qmd"
-    - "Survival/Diet.qmd"
-    - "documents.qmd"
-  post-render:
-    - "Scripts/arrangeplots.R"
-    - "Scripts/forest.R"
+    - "Psychosocial/Introduction.qmd"
+    - "Psychosocial/Exercise and ETOH.qmd"
+    - "Psychosocial/HADS Baseline.qmd"
+    - "Psychosocial/HADS Survival Analysis.qmd"
+    - "Psychosocial/LifeEvents.qmd"
+    - "Psychosocial/PHQ.qmd"
+    - "Psychosocial/psqi.qmd"
+    - "Psychosocial/QOL.qmd"
   output-dir: "../docs"
   resources:
     - "robots.txt"
