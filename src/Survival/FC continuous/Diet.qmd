@@ -693,7 +693,7 @@ plot_continuous_hr(
 
 ## Total meat protein
 
-### Crohns' disease
+### Crohn's disease
 
 #### Patient reported flare
 
