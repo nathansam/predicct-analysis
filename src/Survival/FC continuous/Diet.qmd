@@ -315,6 +315,54 @@ summon_population_risk_difference_boot <- function(data,
     )
     
 }
+
+
+summon_rd_forest_plot <- function(data, time) {
+  # Creating a forest plot of risk difference from the result of
+  # summon_population_risk_difference_boot
+  
+  # Mask time
+  time_point <- time
+  
+  data_plot <- data %>%
+    dplyr::filter(time == time_point)
+  
+  # Forest plot
+  plot <- data_plot %>%
+    ggplot(aes(
+      x = estimate,
+      y = forcats::as_factor(term_tidy),
+      xmin = conf.low,
+      xmax = conf.high
+    )) +
+    geom_point() +
+    geom_errorbarh() +
+    geom_vline(xintercept = 0, linetype = "dotted") +
+    theme_minimal() +
+    xlab("Risk Difference") +
+    theme(
+    # Title
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_text(size = 8),
+    # Axes
+    axis.title.y = element_blank()
+    )
+  
+  # RD values
+  rd <- data_plot %>%
+    ggplot() +
+    geom_text(aes(
+      x = 0,
+      y = forcats::as_factor(term_tidy),
+      label = conf.interval.tidy
+    )) +
+    theme_void() +
+    theme(plot.title = element_text(hjust = 0.5))
+  
+  return(list(plot = plot, rd = rd))
+  
+}
+
 ```
 
 # Survival Analysis
@@ -1261,58 +1309,7 @@ data_rd_cd_soft_upf <- summon_population_risk_difference_boot(
     term_tidy = paste0("UPF (%): ", value)
   )
 
-```
 
-```{r}
-# Plots
-
-summon_rd_forest_plot <- function(data, time) {
-  # Creating a forest plot of risk difference
-  
-  # Mask time
-  time_point <- time
-  
-  data_plot <- data %>%
-    dplyr::filter(time == time_point)
-  
-  # Forest plot
-  plot <- data_plot %>%
-    ggplot(aes(
-      x = estimate,
-      y = forcats::as_factor(term_tidy),
-      xmin = conf.low,
-      xmax = conf.high
-    )) +
-    geom_point() +
-    geom_errorbarh() +
-    geom_vline(xintercept = 0, linetype = "dotted") +
-    theme_minimal() +
-    xlab("Risk Difference") +
-    theme(
-    # Title
-    plot.title = element_text(size = 10),
-    plot.subtitle = element_text(size = 8),
-    # Axes
-    axis.title.y = element_blank()
-    )
-  
-  # RD values
-  rd <- data_plot %>%
-    ggplot() +
-    geom_text(aes(
-      x = 0,
-      y = forcats::as_factor(term_tidy),
-      label = conf.interval.tidy
-    )) +
-    theme_void() +
-    theme(plot.title = element_text(hjust = 0.5))
-  
-  return(list(plot = plot, rd = rd))
-  
-}
-```
-
-```{r}
 # Creating combined forest plot
 # 1-year risk difference
 plot_rd_cd_soft_meat_1y <- summon_rd_forest_plot(data_rd_cd_soft_meat, time = 365)
@@ -1436,9 +1433,7 @@ data_rd_cd_hard_upf <- summon_population_risk_difference_boot(
     term_tidy = paste0("UPF (%): ", value)
   )
 
-```
 
-```{r}
 # Creating combined forest plot
 # 1-year risk difference
 plot_rd_cd_hard_meat_1y <- summon_rd_forest_plot(data_rd_cd_hard_meat, time = 365)
@@ -1501,7 +1496,6 @@ plot_rd_cd_hard_meat_2y$plot + (plot_rd_cd_hard_meat_2y$rd +
   ) &
   coord_cartesian(xlim = c(-0.1, 0.3))
 ```
-
 
 ### Ulcerative colitis
 
@@ -1571,9 +1565,7 @@ data_rd_uc_soft_upf <- summon_population_risk_difference_boot(
     term_tidy = paste0("UPF (%): ", value)
   )
 
-```
 
-```{r}
 # Creating combined forest plot
 # 1-year risk difference
 plot_rd_uc_soft_meat_1y <- summon_rd_forest_plot(data_rd_uc_soft_meat, time = 365)
@@ -1697,9 +1689,7 @@ data_rd_uc_hard_upf <- summon_population_risk_difference_boot(
     term_tidy = paste0("UPF (%): ", value)
   )
 
-```
 
-```{r}
 # Creating combined forest plot
 # 1-year risk difference
 plot_rd_uc_hard_meat_1y <- summon_rd_forest_plot(data_rd_uc_hard_meat, time = 365)
