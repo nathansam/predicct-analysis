@@ -7,6 +7,13 @@ author:
     affiliations:
       - ref: CGEM
       - ref: HGU
+  - name: "Víctor Velasco-Pardo"
+    url: https://scholar.google.com/citations?user=cR3nbyAAAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: CGEM
+  - name: "Alexander Rudge"
+    affiliations:
+      - ref: CGEM
   - name: "Beatriz Gros"
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:

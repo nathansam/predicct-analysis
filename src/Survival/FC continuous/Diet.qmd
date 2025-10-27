@@ -1,5 +1,10 @@
 ---
 title: "Diet"
+Author: 
+  - name: "Alexander Rudge"
+    corresponding: true
+    affiliations:
+      - ref: CGEM
 format: 
   html:
     code-fold: true
