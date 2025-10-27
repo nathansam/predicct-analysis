@@ -41,7 +41,7 @@ flare.cd.df %<>%
 
 flare.uc.df %<>%
   dplyr::mutate(FC = exp(FC))
-# So now FC is the log of the FC measurement
+# So now FC is on the original measurement scale (log transformation reversed)
 
 # Transform age variable to decades
 flare.df %<>%
