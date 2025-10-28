@@ -100,6 +100,7 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE)
 
+
 summon_plot_broom_hr <- function(data){
   data %>%
     # Remove frailty
@@ -145,3 +146,15 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> Stashed changes

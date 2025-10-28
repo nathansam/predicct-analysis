@@ -318,8 +318,6 @@ mice_meat_cd_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_meat_cd_soft %>% plot()
 
 ```
 
@@ -390,8 +388,7 @@ mice_meat_cd_hard <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_meat_cd_hard %>% plot()
+
 
 ```
 
@@ -468,8 +465,6 @@ mice_meat_uc_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_meat_uc_soft %>% plot()
 
 ```
 
@@ -540,8 +535,6 @@ mice_meat_uc_hard <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_meat_uc_hard %>% plot()
 
 ```
 
@@ -620,8 +613,6 @@ mice_fibre_cd_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_fibre_cd_soft %>% plot()
 
 ```
 
@@ -692,8 +683,6 @@ mice_fibre_cd_hard <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_fibre_cd_hard %>% plot()
 
 ```
 
@@ -770,8 +759,6 @@ mice_fibre_uc_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_fibre_uc_soft %>% plot()
 
 ```
 
@@ -842,8 +829,6 @@ mice_fibre_uc_hard <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_fibre_uc_hard %>% plot()
 
 ```
 
@@ -922,9 +907,6 @@ mice_pufa_cd_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_pufa_cd_soft %>% plot()
-
 ```
 
 ```{r}
@@ -993,9 +975,6 @@ mice_pufa_cd_hard <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-# Check convergence
-mice_pufa_cd_hard %>% plot()
 
 ```
 
@@ -1072,9 +1051,6 @@ mice_pufa_uc_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_pufa_uc_soft %>% plot()
-
 ```
 
 ```{r}
@@ -1144,8 +1120,6 @@ mice_pufa_uc_hard <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_pufa_uc_hard %>% plot()
 
 ```
 
@@ -1224,8 +1198,6 @@ mice_upf_cd_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_upf_cd_soft %>% plot()
 
 ```
 
@@ -1296,8 +1268,6 @@ mice_upf_cd_hard <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_upf_cd_hard %>% plot()
 
 ```
 
@@ -1374,8 +1344,6 @@ mice_upf_uc_soft <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_upf_uc_soft %>% plot()
 
 ```
 
@@ -1446,8 +1414,6 @@ mice_upf_uc_hard <- mice::mice(
   print = FALSE
 )
 
-# Check convergence
-mice_upf_uc_hard %>% plot()
 
 ```
 
