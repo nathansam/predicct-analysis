@@ -3812,7 +3812,6 @@ invisible(cox_summary(fit.me))
 ## Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
-
 <summary>Session info</summary>
 
 ```{R Session info}
