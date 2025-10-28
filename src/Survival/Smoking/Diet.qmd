@@ -137,79 +137,6 @@ flare.uc.df %>%
 
 ```{r}
 
-summon_reference_values <- function(data, variables){
-  # Function that extracts the reference value for each variable in a data frame
-  # Reference is either the first factor level or the median
-  # Used for producing HR plots
-  
-  data %>%
-    dplyr::select(tidyselect::all_of(variables)) %>%
-    dplyr::summarise(across(
-      .cols = everything(),
-      .fns = function(x) {
-        if (is.factor(x)) {
-          levels(x) %>% dplyr::first()
-        } else if (is.numeric(x)) {
-          median(x, na.rm = TRUE)
-        } else {
-          NULL
-        }
-      }
-    ))
-  
-}
-
-
-plot_continuous_hr <- function(data, model, variable){
-  # Plotting continuous Hazard Ratio curves
-  
-  # model is a Cox model
-  # variable is the variable we are plotting
-  
-  # Range of the variable to plot
-  variable_range <- data %>%
-    dplyr::pull(variable) %>%
-    quantile(., probs = seq(0, 0.9, 0.01), na.rm = TRUE) %>%
-    unname() %>%
-    unique()
-  
-  # Reference variables
-  # Extract variables used in the Cox model
-  # Remove the variable we want to vary and the SiteNo
-  ref_variables <- all.vars(delete.response(terms(model))) %>%
-    tibble(x = .) %>%
-    dplyr::filter(
-      x != variable,
-      x != 'SiteNo'
-    ) %>%
-    dplyr::pull(x)
-  
-  # Create dummy data for plotting
-  # Reference levels
-  data %>%
-    summon_reference_values(
-      data = .,
-      variables = ref_variables
-    ) %>% {
-      # Creating dummy data
-      tibble(
-        .,
-        !!sym(variable) := variable_range
-      )
-    } %>% {
-      # Risk calculate HR relative to the default chosen by cox
-      pred = predict(model, newdata = ., type = "lp", se = TRUE)
-      
-      tibble(., p = pred$fit, se = pred$se)
-    } %>%
-    ggplot(aes(x = !!rlang::sym(variable), y = exp(p), ymin = exp(p - 1.96*se), ymax = exp(p + 1.96*se))) +
-    geom_point() +
-    geom_line() +
-    geom_ribbon(alpha = 0.2) +
-    ylab("HR")
-  
-}
-
 summon_plot_broom_hr <- function(data){
   data %>%
     # Remove frailty
@@ -235,34 +162,6 @@ summon_plot_broom_hr <- function(data){
     xlab("Hazard Ratio (95% CI)") +
     ylab("") +
     scale_colour_manual(values = c("TRUE" = "red", "FALSE" = "black"))
-}
-
-# Function to perform an LRT
-summon_lrt <- function(model, remove = NULL, add = NULL) {
-  # Function that removes a term and performs a
-  # Likelihood ratio test to determine its significance
-  
-  new_formula = "~ ."
-
-  if (!is.null(remove)){
-    new_formula = paste0(new_formula, " - ", remove)
-  } else {remove = NA}
-  
-  if (!is.null(add)){
-    new_formula = paste0(new_formula, " + ", add)
-  } else {add = NA}
-  
-  update(model, new_formula) %>%
-    anova(model, ., test = 'LRT') %>%
-    broom::tidy() %>%
-    dplyr::filter(!is.na(p.value)) %>%
-    dplyr::select(-term) %>%
-    dplyr::mutate(
-      removed = remove,
-      added = add) %>%
-    dplyr::mutate(test = 'LRT') %>%
-    dplyr::select(test, removed, added, tidyselect::everything())
-  
 }
 
 ```
