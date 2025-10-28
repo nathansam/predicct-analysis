@@ -161,7 +161,8 @@ summon_plot_broom_hr <- function(data){
     geom_vline(xintercept = 1, linetype = "dashed") +
     xlab("Hazard Ratio (95% CI)") +
     ylab("") +
-    scale_colour_manual(values = c("TRUE" = "red", "FALSE" = "black"))
+    scale_colour_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+    theme_minimal()
 }
 
 ```
