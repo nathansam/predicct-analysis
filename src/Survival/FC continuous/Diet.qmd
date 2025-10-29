@@ -865,7 +865,8 @@ plot_continuous_hr(
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
-  variable = "FC"
+  variable = "FC",
+  splineterm = "ns(FC, df = 2)"
 )
 ```
 
