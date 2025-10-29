@@ -390,7 +390,7 @@ summon_rd_forest_plot <- function(data, time) {
     geom_errorbarh() +
     geom_vline(xintercept = 0, linetype = "dotted") +
     theme_minimal() +
-    xlab("Risk Difference (%)") +
+    xlab("Risk Difference (%) and 95% CI") +
     theme(
       # Title
       plot.title = element_text(size = 10),
@@ -1311,6 +1311,10 @@ plot_continuous_hr(
 #### Patient reported flare
 
 ```{r}
+# How many bootstraps
+nboot <- 199
+
+
 # Values for calculation risk difference
 rd_values_meat_cd <- quantile(flare.cd.df$Meat_sum,
   probs = c(0, 0.25, 0.5, 0.75, 0.95),
@@ -1344,7 +1348,7 @@ data_rd_cd_soft_meat <- summon_population_risk_difference_boot(
   variable = "Meat_sum",
   values = rd_values_meat_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1357,7 +1361,7 @@ data_rd_cd_soft_fibre <- summon_population_risk_difference_boot(
   variable = "fibre",
   values = rd_values_fibre_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1370,7 +1374,7 @@ data_rd_cd_soft_pufa <- summon_population_risk_difference_boot(
   variable = "PUFA_percEng",
   values = rd_values_pufa_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1383,7 +1387,7 @@ data_rd_cd_soft_upf <- summon_population_risk_difference_boot(
   variable = "UPF_perc",
   values = rd_values_upf_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1415,8 +1419,7 @@ plot_rd_cd_soft_upf_1y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_cd_soft_meat_1y$plot + (plot_rd_cd_soft_meat_1y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
+plot_rd_cd_soft_meat_1y$plot + plot_rd_cd_soft_meat_1y$rd +
   plot_rd_cd_soft_fibre_1y$plot + plot_rd_cd_soft_fibre_1y$rd +
   plot_rd_cd_soft_pufa_1y$plot + plot_rd_cd_soft_pufa_1y$rd +
   plot_rd_cd_soft_upf_1y$plot + plot_rd_cd_soft_upf_1y$rd +
@@ -1446,7 +1449,7 @@ data_rd_cd_hard_meat <- summon_population_risk_difference_boot(
   variable = "Meat_sum",
   values = rd_values_meat_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1459,7 +1462,7 @@ data_rd_cd_hard_fibre <- summon_population_risk_difference_boot(
   variable = "fibre",
   values = rd_values_fibre_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1472,7 +1475,7 @@ data_rd_cd_hard_pufa <- summon_population_risk_difference_boot(
   variable = "PUFA_percEng",
   values = rd_values_pufa_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1485,7 +1488,7 @@ data_rd_cd_hard_upf <- summon_population_risk_difference_boot(
   variable = "UPF_perc",
   values = rd_values_upf_cd,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1517,8 +1520,7 @@ plot_rd_cd_hard_upf_1y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_cd_hard_meat_1y$plot + (plot_rd_cd_hard_meat_1y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
+plot_rd_cd_hard_meat_1y$plot + plot_rd_cd_hard_meat_1y$rd +
   plot_rd_cd_hard_fibre_1y$plot + plot_rd_cd_hard_fibre_1y$rd +
   plot_rd_cd_hard_pufa_1y$plot + plot_rd_cd_hard_pufa_1y$rd +
   plot_rd_cd_hard_upf_1y$plot + plot_rd_cd_hard_upf_1y$rd +
@@ -1573,7 +1575,7 @@ data_rd_uc_soft_meat <- summon_population_risk_difference_boot(
   variable = "Meat_sum",
   values = rd_values_meat_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1586,7 +1588,7 @@ data_rd_uc_soft_fibre <- summon_population_risk_difference_boot(
   variable = "fibre",
   values = rd_values_fibre_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1599,7 +1601,7 @@ data_rd_uc_soft_pufa <- summon_population_risk_difference_boot(
   variable = "PUFA_percEng",
   values = rd_values_pufa_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1612,7 +1614,7 @@ data_rd_uc_soft_upf <- summon_population_risk_difference_boot(
   variable = "UPF_perc",
   values = rd_values_upf_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1643,8 +1645,7 @@ plot_rd_uc_soft_upf_1y <- summon_rd_forest_plot(data_rd_uc_soft_upf,
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_uc_soft_meat_1y$plot + (plot_rd_uc_soft_meat_1y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
+plot_rd_uc_soft_meat_1y$plot + plot_rd_uc_soft_meat_1y$rd +
   plot_rd_uc_soft_fibre_1y$plot + plot_rd_uc_soft_fibre_1y$rd +
   plot_rd_uc_soft_pufa_1y$plot + plot_rd_uc_soft_pufa_1y$rd +
   plot_rd_uc_soft_upf_1y$plot + plot_rd_uc_soft_upf_1y$rd +
@@ -1674,7 +1675,7 @@ data_rd_uc_hard_meat <- summon_population_risk_difference_boot(
   variable = "Meat_sum",
   values = rd_values_meat_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1687,7 +1688,7 @@ data_rd_uc_hard_fibre <- summon_population_risk_difference_boot(
   variable = "fibre",
   values = rd_values_fibre_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1700,7 +1701,7 @@ data_rd_uc_hard_pufa <- summon_population_risk_difference_boot(
   variable = "PUFA_percEng",
   values = rd_values_pufa_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1713,7 +1714,7 @@ data_rd_uc_hard_upf <- summon_population_risk_difference_boot(
   variable = "UPF_perc",
   values = rd_values_upf_uc,
   ref_value = NULL,
-  nboot = 99
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1745,8 +1746,7 @@ plot_rd_uc_hard_upf_1y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_uc_hard_meat_1y$plot + (plot_rd_uc_hard_meat_1y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
+plot_rd_uc_hard_meat_1y$plot + plot_rd_uc_hard_meat_1y$rd +
   plot_rd_uc_hard_fibre_1y$plot + plot_rd_uc_hard_fibre_1y$rd +
   plot_rd_uc_hard_pufa_1y$plot + plot_rd_uc_hard_pufa_1y$rd +
   plot_rd_uc_hard_upf_1y$plot + plot_rd_uc_hard_upf_1y$rd +
