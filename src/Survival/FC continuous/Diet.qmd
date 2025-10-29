@@ -1408,22 +1408,6 @@ plot_rd_cd_soft_upf_1y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
   time = 365
 )
 
-# 2-year risk difference
-plot_rd_cd_soft_meat_2y <- summon_rd_forest_plot(data_rd_cd_soft_meat,
-  time = 730
-)
-
-plot_rd_cd_soft_fibre_2y <- summon_rd_forest_plot(data_rd_cd_soft_fibre,
-  time = 730
-)
-
-plot_rd_cd_soft_pufa_2y <- summon_rd_forest_plot(data_rd_cd_soft_pufa,
-  time = 730
-)
-
-plot_rd_cd_soft_upf_2y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
-  time = 730
-)
 ```
 
 ```{r}
@@ -1444,26 +1428,6 @@ plot_rd_cd_soft_meat_1y$plot + (plot_rd_cd_soft_meat_1y$rd +
   ) +
   patchwork::plot_annotation(
     title = "1-year risk difference",
-    subtitle = "Crohn's, patient reported flare."
-  ) &
-  coord_cartesian(xlim = c(-30, 60))
-```
-
-```{r}
-# 2-year risk difference
-plot_rd_cd_soft_meat_2y$plot + (plot_rd_cd_soft_meat_2y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
-  plot_rd_cd_soft_fibre_2y$plot + plot_rd_cd_soft_fibre_2y$rd +
-  plot_rd_cd_soft_pufa_2y$plot + plot_rd_cd_soft_pufa_2y$rd +
-  plot_rd_cd_soft_upf_2y$plot + plot_rd_cd_soft_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
     subtitle = "Crohn's, patient reported flare."
   ) &
   coord_cartesian(xlim = c(-30, 60))
@@ -1546,22 +1510,6 @@ plot_rd_cd_hard_upf_1y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
   time = 365
 )
 
-# 2-year risk difference
-plot_rd_cd_hard_meat_2y <- summon_rd_forest_plot(data_rd_cd_hard_meat,
-  time = 730
-)
-
-plot_rd_cd_hard_fibre_2y <- summon_rd_forest_plot(data_rd_cd_hard_fibre,
-  time = 730
-)
-
-plot_rd_cd_hard_pufa_2y <- summon_rd_forest_plot(data_rd_cd_hard_pufa,
-  time = 730
-)
-
-plot_rd_cd_hard_upf_2y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
-  time = 730
-)
 ```
 
 ```{r}
@@ -1585,26 +1533,6 @@ plot_rd_cd_hard_meat_1y$plot + (plot_rd_cd_hard_meat_1y$rd +
     subtitle = "Crohn's, objective flare."
   ) &
   coord_cartesian(xlim = c(-10, 20))
-```
-
-```{r}
-# 2-year risk difference
-plot_rd_cd_hard_meat_2y$plot + (plot_rd_cd_hard_meat_2y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
-  plot_rd_cd_hard_fibre_2y$plot + plot_rd_cd_hard_fibre_2y$rd +
-  plot_rd_cd_hard_pufa_2y$plot + plot_rd_cd_hard_pufa_2y$rd +
-  plot_rd_cd_hard_upf_2y$plot + plot_rd_cd_hard_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
-    subtitle = "Crohn's, objective flare."
-  ) &
-  coord_cartesian(xlim = c(-10, 30))
 ```
 
 ### Ulcerative colitis
@@ -1708,20 +1636,6 @@ plot_rd_uc_soft_upf_1y <- summon_rd_forest_plot(data_rd_uc_soft_upf,
   time = 365
 )
 
-# 2-year risk difference
-plot_rd_uc_soft_meat_2y <- summon_rd_forest_plot(data_rd_uc_soft_meat,
-  time = 730
-)
-
-plot_rd_uc_soft_fibre_2y <- summon_rd_forest_plot(data_rd_uc_soft_fibre,
-  time = 730
-)
-
-plot_rd_uc_soft_pufa_2y <- summon_rd_forest_plot(data_rd_uc_soft_pufa,
-  time = 730
-)
-
-plot_rd_uc_soft_upf_2y <- summon_rd_forest_plot(data_rd_uc_soft_upf, time = 730)
 ```
 
 ```{r}
@@ -1742,26 +1656,6 @@ plot_rd_uc_soft_meat_1y$plot + (plot_rd_uc_soft_meat_1y$rd +
   ) +
   patchwork::plot_annotation(
     title = "1-year risk difference",
-    subtitle = "Ulcerative colitis, patient reported flare."
-  ) &
-  coord_cartesian(xlim = c(-20, 40))
-```
-
-```{r}
-# 2-year risk difference
-plot_rd_uc_soft_meat_2y$plot + (plot_rd_uc_soft_meat_2y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
-  plot_rd_uc_soft_fibre_2y$plot + plot_rd_uc_soft_fibre_2y$rd +
-  plot_rd_uc_soft_pufa_2y$plot + plot_rd_uc_soft_pufa_2y$rd +
-  plot_rd_uc_soft_upf_2y$plot + plot_rd_uc_soft_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
     subtitle = "Ulcerative colitis, patient reported flare."
   ) &
   coord_cartesian(xlim = c(-20, 40))
@@ -1844,22 +1738,6 @@ plot_rd_uc_hard_upf_1y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
   time = 365
 )
 
-# 2-year risk difference
-plot_rd_uc_hard_meat_2y <- summon_rd_forest_plot(data_rd_uc_hard_meat,
-  time = 730
-)
-
-plot_rd_uc_hard_fibre_2y <- summon_rd_forest_plot(data_rd_uc_hard_fibre,
-  time = 730
-)
-
-plot_rd_uc_hard_pufa_2y <- summon_rd_forest_plot(data_rd_uc_hard_pufa,
-  time = 730
-)
-
-plot_rd_uc_hard_upf_2y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
-  time = 730
-)
 ```
 
 ```{r}
@@ -1883,24 +1761,4 @@ plot_rd_uc_hard_meat_1y$plot + (plot_rd_uc_hard_meat_1y$rd +
     subtitle = "Ulcerative colitis, objective flare."
   ) &
   coord_cartesian(xlim = c(-10, 20))
-```
-
-```{r}
-# 2-year risk difference
-plot_rd_uc_hard_meat_2y$plot + (plot_rd_uc_hard_meat_2y$rd +
-  labs(title = "Risk difference (%) (95% CI)")) +
-  plot_rd_uc_hard_fibre_2y$plot + plot_rd_uc_hard_fibre_2y$rd +
-  plot_rd_uc_hard_pufa_2y$plot + plot_rd_uc_hard_pufa_2y$rd +
-  plot_rd_uc_hard_upf_2y$plot + plot_rd_uc_hard_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
-    subtitle = "Ulcerative colitis, objective flare."
-  ) &
-  coord_cartesian(xlim = c(-10, 30))
 ```
