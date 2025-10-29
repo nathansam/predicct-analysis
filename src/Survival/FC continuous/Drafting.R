@@ -233,7 +233,7 @@ plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
   if (!is.null(splineterm)){
     
     # Recreate the spline
-    spline <- with(data, eval(parse(text = term)))
+    spline <- with(data, eval(parse(text = splineterm)))
     
     # Get the spline terms for the variable values we are plotting
     spline_values <- predict(spline, newx = variable_range)
@@ -262,9 +262,12 @@ plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
     # Method directly from predict.coxph from the survival package
     lp <- (X_new - X_ref)%*%coef(model) 
     
-    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref))
+    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref)) %>%
+      as.numeric() %>%
+      sqrt()
     
   } else {
+    # If there is no spline then it is easier
     
     # Get the reference values of the variables that were used to fit the Cox model
     X_ref <- model$means
@@ -289,7 +292,9 @@ plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
     # Method directly from predict.coxph from the survival package
     lp <- (X_new - X_ref)%*%coef(model) %>% as.numeric() 
     
-    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref)) %>% as.numeric() 
+    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref)) %>% 
+      as.numeric() %>%
+      sqrt()
     
   }
   
@@ -311,13 +316,8 @@ plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
     geom_point() +
     geom_line() +
     geom_ribbon(alpha = 0.2) +
-    ylab("HR")
-  
-  
-    
-}
-  
-  
-  
+    ylab("HR") + 
+    theme_minimal()
   
 }
+  
