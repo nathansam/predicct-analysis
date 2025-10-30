@@ -1,12 +1,20 @@
 library(tidyverse)
 library(magrittr)
 library(survival)
+library(splines)
 
 # Treating age and FC as continuous variables
 
-# Run HADS Baseline.qmd prior to the analysis to get the data
+# Run HADS.qmd prior to the analysis to get the data
 # Called hads_for_analysis, rename to data_baseline
 data_baseline <- hads_for_analysis
+
+# Age in decades
+data_baseline %<>%
+  dplyr::mutate(
+    age_decade = age/10
+  )
+
 
 # FC maximum detectable value is 1250
 data_baseline %<>%
@@ -15,14 +23,20 @@ data_baseline %<>%
       FC > 1250 ~ 1250,
       .default = FC
     )
-)
+  )
+
+# Log transform FC due to extreme positive skew
+data_baseline %<>%
+  dplyr::mutate(
+    FC = log(FC)
+  )
 
 # Anxiety
 data_baseline_anxiety <- data_baseline %>% 
   dplyr::filter(hads_type == 'anxiety_hads')
 
 # Patient reported flares
-data_survival_anxiety_soft <- hads_for_analysis %>%
+data_survival_anxiety_soft <- data_baseline %>%
   dplyr::filter(hads_type == 'anxiety_hads') %>%
   dplyr::inner_join(
     flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
@@ -32,116 +46,75 @@ data_survival_anxiety_soft <- hads_for_analysis %>%
 
 
 # Baseline
-
-# Age
 data_baseline_anxiety %>%
-  ggplot(aes(x = age, colour = score_group)) +
+  ggplot(aes(x = age_decade, colour = score_group)) +
   geom_density()
 
-# FC
-
-# Log transform due to extreme positive skew
 data_baseline_anxiety %>%
-  ggplot(aes(x = log(FC), colour = score_group)) +
+  ggplot(aes(x = FC, colour = score_group)) +
   geom_density()
-
 
 # Visualise the continuous variables effects of survival
-
 # Age 
 cox_anxiety_soft_age <- coxph(
-  Surv(time, DiseaseFlareYN) ~ pspline(age, df = 2),
+  Surv(time, DiseaseFlareYN) ~ age_decade,
   data = data_survival_anxiety_soft
 )
 
-# Predictions from a cox at certain times at certain ages
-data_plot_survival_age <- tidyr::expand_grid(
-  age = seq(from = 20, to = 80, by = 1),
-  time = seq(from = 100, to = 600, by = 100)
-  ) %>%
-  dplyr::mutate(DiseaseFlareYN = 1)
+# Do we need a spline?
+summon_lrt(cox_anxiety_soft_age, remove = 'age_decade', add = 'ns(age_decade, df = 2)')
+# No
 
-# Predictions
-cox_anxiety_soft_age_predict <- predict(
-  cox_anxiety_soft_age, 
-  type = 'expected',
-  se = TRUE,
-  newdata = data_plot_survival_age)
-
-# Plot
-data_plot_survival_age %>%
-  dplyr::mutate(
-    expected = cox_anxiety_soft_age_predict$fit,
-    se = cox_anxiety_soft_age_predict$se.fit,
-  ) %>% 
-  dplyr::mutate(
-    conf.low = expected - 1.96*se,
-    conf.high = expected + 1.96*se
-  ) %>%
-  dplyr::mutate(
-    survival = exp(-expected),
-    conf.low = exp(-conf.low),
-    conf.high = exp(-conf.high)
-  ) %>%
-  ggplot(aes(x = age, y = survival, ymin = conf.low, ymax = conf.high, colour = forcats::as_factor(time))) +
-  geom_point() +
-  geom_line() +
-  geom_ribbon(aes(fill = forcats::as_factor(time)), alpha = 0.5)
+plot_continuous_hr(
+  data = data_survival_anxiety_soft,
+  model = cox_anxiety_soft_age,
+  variable = 'age_decade')
 
 # FC
 cox_anxiety_soft_fc <- coxph(
-  Surv(time, DiseaseFlareYN) ~ pspline(log(FC), df = 2),
+  Surv(time, DiseaseFlareYN) ~ FC,
   data = data_survival_anxiety_soft
 )
 
-# Predictions from a cox at certain times at certain ages
-data_plot_survival_fc <- tidyr::expand_grid(
-  FC = seq(from = 20, to = 1000, by = 25),
-  time = seq(from = 100, to = 600, by = 100)
-) %>%
-  dplyr::mutate(DiseaseFlareYN = 1)
+# Do we need a spline?
+summon_lrt(cox_anxiety_soft_fc, remove = 'FC', add = 'ns(FC, df = 2)')
+# No
 
-# Predictions
-cox_anxiety_soft_fc_predict <- predict(
-  cox_anxiety_soft_fc, 
-  type = 'expected',
-  se = TRUE,
-  newdata = data_plot_survival_fc)
-
-# Plot
-data_plot_survival_fc %>%
-  dplyr::mutate(
-    expected = cox_anxiety_soft_fc_predict$fit,
-    se = cox_anxiety_soft_fc_predict$se.fit,
-  ) %>% 
-  dplyr::mutate(
-    conf.low = expected - 1.96*se,
-    conf.high = expected + 1.96*se
-  ) %>%
-  dplyr::mutate(
-    survival = exp(-expected),
-    conf.low = exp(-conf.low),
-    conf.high = exp(-conf.high)
-  ) %>%
-  ggplot(aes(x = FC, y = survival, ymin = conf.low, ymax = conf.high, colour = forcats::as_factor(time))) +
-  geom_point() +
-  geom_line() +
-  geom_ribbon(aes(fill = forcats::as_factor(time)), alpha = 0.5)
+plot_continuous_hr(
+  data = data_survival_anxiety_soft,
+  model = cox_anxiety_soft_fc,
+  variable = 'FC')
 
 
+# MICE
+data_survival_anxiety_soft %<>%
+  dplyr::select(time, DiseaseFlareYN, score_group, Sex, age_decade, FC, SiteNo) %>%
+  dplyr::mutate(cumhaz = mice::nelsonaalen(data = ., timevar = time, statusvar = DiseaseFlareYN))
 
-# Survival analysis
-cox_anxiety_soft <- coxph(
+# Predictor matrix - need to exclude time from the model
+pred_matrix <- mice::make.predictorMatrix(data_survival_anxiety_soft)
+
+pred_matrix[, 'time'] <- 0
+pred_matrix[, 'SiteNo'] <- 0
+
+data_survival_anxiety_soft_imputed <- data_survival_anxiety_soft %>% 
+  mice::mice(m = 5, predictorMatrix = pred_matrix)
+
+# Completed data
+data_survival_anxiety_soft_all <- mice::complete(data_survival_anxiety_soft_imputed, action = 'all')
+
+
+cox_anxiety_soft_results <- with(data_survival_anxiety_soft_imputed, coxph(
   Surv(time, DiseaseFlareYN) ~
     score_group +
     Sex +
-    pspline(age, df = 2) +
-    pspline(log(FC), df = 2) +
-    frailty(SiteNo),
-  data = data_survival_anxiety_soft
-)
+    age_decade +
+    FC +
+    frailty(SiteNo))) %>%
+  mice::pool() %>%
+  summary(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE)
 
-cox_anxiety_soft %>%
-  broom::tidy(conf.int = TRUE, exp = TRUE)
-
-# Looking at the HR there is little to no difference in the effects of our primary exposures.
+cox_anxiety_soft_results
