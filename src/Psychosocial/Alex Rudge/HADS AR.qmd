@@ -303,7 +303,7 @@ hads_with_demographics %<>%
     !dplyr::if_any(.cols = 7:20, .fns = is.na)
   )
 
-# Recale
+# Rescale
 hads_with_demographics %<>%
   dplyr::mutate(
     dplyr::across(
@@ -368,9 +368,9 @@ hads_with_demographics <- hads_with_demographics %>%
     demo %>% dplyr::select(ParticipantNo, FC, cat, IMD, Smoke), 
     by = "ParticipantNo")
 
-n_missing_fc <- hads_with_demographics %>% 
-  filter(is.na(cat)) %>%
-  nrow()
+# n_missing_fc <- hads_with_demographics %>% 
+#   filter(is.na(cat)) %>%
+#   nrow()
 # 209 removed with no FC
 
 # hads_with_demographics <- hads_with_demographics %>%
@@ -394,8 +394,8 @@ hads_with_demographics %<>%
   dplyr::mutate(flare_group = factor(flare_group, levels = c("No flares", "1 or More Flares")))
 
 # Remove subjects with missing flare group data - 3 subjects
-hads_with_demographics <- hads_with_demographics %>% 
-  filter(!is.na(flare_group))
+# hads_with_demographics <- hads_with_demographics %>% 
+#   filter(!is.na(flare_group))
 
 #create hads_for_analysis which has new variable 'hads_type' for anxiety and depression hads
 hads_for_analysis <- hads_with_demographics %>%
