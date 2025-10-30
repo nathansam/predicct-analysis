@@ -462,7 +462,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
   variable = "age_decade"
-)
+) +
+  xlab("Age (decades)")
 
 # BMI
 plot_continuous_hr(
@@ -478,13 +479,13 @@ plot_continuous_hr(
   variable = "FC"
 )
 
-
 # DQI
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
   variable = "dqi_tot"
-)
+) +
+  xlab("Diet quality index")
 ```
 
 #### Objective flare
@@ -527,7 +528,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
   variable = "age_decade"
-)
+) +
+  xlab("Age (decades)")
 
 # BMI
 plot_continuous_hr(
@@ -549,7 +551,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
   variable = "dqi_tot"
-)
+) +
+  xlab("Diet quality index")
 ```
 
 ### Ulcerative colitis
@@ -615,7 +618,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_soft,
   variable = "age_decade"
-)
+) +
+  xlab("Age (decades)")
 
 # BMI
 plot_continuous_hr(
@@ -639,7 +643,8 @@ plot_continuous_hr(
   model = cox_uc_soft,
   variable = "dqi_tot",
   splineterm = "ns(dqi_tot, df = 2)"
-)
+) +
+  xlab("Diet quality index")
 ```
 
 #### Objective flare
@@ -699,7 +704,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_hard,
   variable = "age_decade"
-)
+) +
+  xlab("Age (decades)")
 
 # BMI
 plot_continuous_hr(
@@ -722,7 +728,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_hard,
   variable = "dqi_tot"
-)
+) +
+  xlab("Diet quality index")
 ```
 
 ## Total meat protein
@@ -759,7 +766,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_meat_cd_soft,
   variable = "Meat_sum"
-)
+) +
+  xlab("Total meat protein (grams)")
 ```
 
 #### Objective flare
@@ -792,7 +800,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_meat_cd_hard,
   variable = "Meat_sum"
-)
+) +
+  xlab("Total meat protein (grams)")
 ```
 
 ### Ulcerative colitis
@@ -827,7 +836,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_soft,
   variable = "Meat_sum"
-)
+) +
+  xlab("Total meat protein (grams)")
 ```
 
 #### Objective flare
@@ -860,7 +870,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
   variable = "Meat_sum"
-)
+) +
+  xlab("Total meat protein (grams)")
 
 plot_continuous_hr(
   data = flare.uc.df,
@@ -903,7 +914,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_fibre_cd_soft,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre")
 ```
 
 #### Objective Flare
@@ -933,7 +945,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_fibre_cd_hard,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre (grams)")
 ```
 
 ### Ulcerative colitis
@@ -966,7 +979,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_fibre_uc_soft,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre (grams)")
 ```
 
 #### Objective Flare
@@ -996,7 +1010,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_fibre_uc_hard,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre (grams)")
 ```
 
 ## Polyunsaturated fatty acids
@@ -1058,7 +1073,8 @@ plot_continuous_hr(
   model = cox_pufa_cd_soft,
   variable = "PUFA_percEng",
   splineterm = "ns(PUFA_percEng, df = 2)"
-)
+) +
+  xlab("PUFA")
 ```
 
 #### Objective Flare
@@ -1093,7 +1109,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_pufa_cd_hard,
   variable = "PUFA_percEng"
-)
+) +
+  xlab("PUFA")
 ```
 
 ### Ulcerative colitis
@@ -1130,7 +1147,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_pufa_uc_soft,
   variable = "PUFA_percEng"
-)
+) +
+  xlab("PUFA")
 ```
 
 #### Objective Flare
@@ -1165,7 +1183,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_pufa_uc_hard,
   variable = "PUFA_percEng"
-)
+) +
+  xlab("PUFA")
 ```
 
 ## Ultra-processed food
@@ -1201,7 +1220,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_upf_cd_soft,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 #### Objective Flare
@@ -1233,7 +1253,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_upf_cd_hard,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 ### Ulcerative colitis
@@ -1267,7 +1288,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_upf_uc_soft,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 #### Objective Flare
@@ -1299,7 +1321,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_upf_uc_hard,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 # Results
