@@ -1344,7 +1344,7 @@ rd_values_upf_cd <- quantile(flare.cd.df$UPF_perc,
 data_rd_cd_soft_meat <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_meat_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_cd,
   ref_value = NULL,
@@ -1357,7 +1357,7 @@ data_rd_cd_soft_meat <- summon_population_risk_difference_boot(
 data_rd_cd_soft_fibre <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_fibre_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_cd,
   ref_value = NULL,
@@ -1370,7 +1370,7 @@ data_rd_cd_soft_fibre <- summon_population_risk_difference_boot(
 data_rd_cd_soft_pufa <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_pufa_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_cd,
   ref_value = NULL,
@@ -1383,7 +1383,7 @@ data_rd_cd_soft_pufa <- summon_population_risk_difference_boot(
 data_rd_cd_soft_upf <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_upf_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_cd,
   ref_value = NULL,
@@ -1445,7 +1445,7 @@ plot_rd_cd_soft_meat_1y$plot + plot_rd_cd_soft_meat_1y$rd +
 data_rd_cd_hard_meat <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_meat_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_cd,
   ref_value = NULL,
@@ -1458,7 +1458,7 @@ data_rd_cd_hard_meat <- summon_population_risk_difference_boot(
 data_rd_cd_hard_fibre <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_fibre_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_cd,
   ref_value = NULL,
@@ -1471,7 +1471,7 @@ data_rd_cd_hard_fibre <- summon_population_risk_difference_boot(
 data_rd_cd_hard_pufa <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_pufa_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_cd,
   ref_value = NULL,
@@ -1484,7 +1484,7 @@ data_rd_cd_hard_pufa <- summon_population_risk_difference_boot(
 data_rd_cd_hard_upf <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_upf_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_cd,
   ref_value = NULL,
@@ -1571,7 +1571,7 @@ rd_values_upf_uc <- quantile(flare.uc.df$UPF_perc,
 data_rd_uc_soft_meat <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_meat_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_uc,
   ref_value = NULL,
@@ -1584,7 +1584,7 @@ data_rd_uc_soft_meat <- summon_population_risk_difference_boot(
 data_rd_uc_soft_fibre <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_fibre_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_uc,
   ref_value = NULL,
@@ -1597,7 +1597,7 @@ data_rd_uc_soft_fibre <- summon_population_risk_difference_boot(
 data_rd_uc_soft_pufa <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_pufa_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_uc,
   ref_value = NULL,
@@ -1610,7 +1610,7 @@ data_rd_uc_soft_pufa <- summon_population_risk_difference_boot(
 data_rd_uc_soft_upf <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_upf_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_uc,
   ref_value = NULL,
@@ -1671,7 +1671,7 @@ plot_rd_uc_soft_meat_1y$plot + plot_rd_uc_soft_meat_1y$rd +
 data_rd_uc_hard_meat <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_uc,
   ref_value = NULL,
@@ -1684,7 +1684,7 @@ data_rd_uc_hard_meat <- summon_population_risk_difference_boot(
 data_rd_uc_hard_fibre <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_fibre_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_uc,
   ref_value = NULL,
@@ -1697,7 +1697,7 @@ data_rd_uc_hard_fibre <- summon_population_risk_difference_boot(
 data_rd_uc_hard_pufa <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_pufa_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_uc,
   ref_value = NULL,
@@ -1710,7 +1710,7 @@ data_rd_uc_hard_pufa <- summon_population_risk_difference_boot(
 data_rd_uc_hard_upf <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_upf_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_uc,
   ref_value = NULL,
