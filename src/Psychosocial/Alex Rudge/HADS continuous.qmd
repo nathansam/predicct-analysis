@@ -458,25 +458,51 @@ independent = c('diagnosis2',
 
 # Dependent variable is score_group
 
-# Chi-squared tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm method.
-summon_statistical_test(
+# Statistical tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm correction.
+statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety, 
   dependent = 'score_group', 
   independent = independent)
 
-# Plots
-baseline_plots_anxiety <- summon_baseline_plots2(
-  data = data_baseline_anxiety, 
-  dependent = 'score_group',
-  independent = independent
-  )
+statistical_tests
 
-baseline_plots_anxiety$diagnosis2
-baseline_plots_anxiety$age
-baseline_plots_anxiety$Sex
-baseline_plots_anxiety$flare_group
-baseline_plots_anxiety$FC
+# Plots
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'diagnosis2'
+)
+
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'Sex'
+)
+
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'flare_group'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'age'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'FC'
+)
+
 ```
 
 #### Ulcerative Colitis/IBD Unclassified
@@ -488,32 +514,50 @@ data_baseline_anxiety_uc <- hads_for_analysis %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
 # Independent variables
-independent = c('AgeGroup',
+independent = c('age',
                 'Sex',
                 'flare_group',
-                'cat')
+                'FC')
 
 # Dependent variable is score_group
 
-# Chi-squared tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm method.
-summon_chisq_test(
+# Statistical tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm correction.
+statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety_uc, 
   dependent = 'score_group', 
-  independent = independent) %>%
-  print_chisq()
+  independent = independent)
+
+statistical_tests
 
 # Plots
-baseline_plots_anxiety_uc <- summon_baseline_plots(
-  data = data_baseline_anxiety_uc, 
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety_uc,
+  stat_tests = statistical_tests,
   dependent = 'score_group',
-  independent = independent
-  ) 
+  independent = 'Sex'
+)
 
-baseline_plots_anxiety_uc$AgeGroup
-baseline_plots_anxiety_uc$Sex
-baseline_plots_anxiety_uc$flare_group
-baseline_plots_anxiety_uc$cat
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'flare_group'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'age'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'FC'
+)
 ```
 
 #### Crohn's Disease
@@ -525,32 +569,50 @@ data_baseline_anxiety_cd <- hads_for_analysis %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Independent variables
-independent = c('AgeGroup',
+independent = c('age',
                 'Sex',
                 'flare_group',
-                'cat')
+                'FC')
 
 # Dependent variable is score_group
 
-# Chi-squared tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm method.
-summon_chisq_test(
+# Statistical tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm correction.
+statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety_cd, 
   dependent = 'score_group', 
-  independent = independent) %>%
-  print_chisq()
+  independent = independent)
+
+statistical_tests
 
 # Plots
-baseline_plots_anxiety_cd <- summon_baseline_plots(
-  data = data_baseline_anxiety_cd, 
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety_cd,
+  stat_tests = statistical_tests,
   dependent = 'score_group',
-  independent = independent
-  )
+  independent = 'Sex'
+)
 
-baseline_plots_anxiety_cd$AgeGroup
-baseline_plots_anxiety_cd$Sex
-baseline_plots_anxiety_cd$flare_group
-baseline_plots_anxiety_cd$cat
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'flare_group'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'age'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'FC'
+)
 ```
 
 ### Depression
@@ -563,34 +625,50 @@ data_baseline_depression <- hads_for_analysis %>%
   dplyr::filter(hads_type == 'depression_hads')
 
 # Independent variables
-independent = c('diagnosis2',
-                'AgeGroup',
+independent = c('age',
                 'Sex',
                 'flare_group',
-                'cat')
+                'FC')
 
 # Dependent variable is score_group
 
-# Chi-squared tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm method.
-summon_chisq_test(
+# Statistical tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm correction.
+statistical_tests <- summon_statistical_test(
   data = data_baseline_depression, 
   dependent = 'score_group', 
-  independent = independent) %>%
-  print_chisq()
+  independent = independent)
+
+statistical_tests
 
 # Plots
-baseline_plots_depression <- summon_baseline_plots(
-  data = data_baseline_depression, 
+summon_baseline_plot_discrete(
+  data = data_baseline_depression,
+  stat_tests = statistical_tests,
   dependent = 'score_group',
-  independent = independent
-  )
+  independent = 'Sex'
+)
 
-baseline_plots_depression$diagnosis2
-baseline_plots_depression$AgeGroup
-baseline_plots_depression$Sex
-baseline_plots_depression$flare_group
-baseline_plots_depression$cat
+summon_baseline_plot_discrete(
+  data = data_baseline_depression,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'flare_group'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'age'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'FC'
+)
 ```
 
 #### Ulcerative Colitis/IBD Unclassified
@@ -602,32 +680,50 @@ data_baseline_depression_uc <- hads_for_analysis %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
 # Independent variables
-independent = c('AgeGroup',
+independent = c('age',
                 'Sex',
                 'flare_group',
-                'cat')
+                'FC')
 
 # Dependent variable is score_group
 
-# Chi-squared tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm method.
-summon_chisq_test(
+# Statistical tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm correction.
+statistical_tests <- summon_statistical_test(
   data = data_baseline_depression_uc, 
   dependent = 'score_group', 
-  independent = independent) %>%
-  print_chisq()
+  independent = independent)
+
+statistical_tests
 
 # Plots
-baseline_plots_depression_uc <- summon_baseline_plots(
-  data = data_baseline_depression_uc, 
+summon_baseline_plot_discrete(
+  data = data_baseline_depression_uc,
+  stat_tests = statistical_tests,
   dependent = 'score_group',
-  independent = independent
-  )
+  independent = 'Sex'
+)
 
-baseline_plots_depression_uc$AgeGroup
-baseline_plots_depression_uc$Sex
-baseline_plots_depression_uc$flare_group
-baseline_plots_depression_uc$cat
+summon_baseline_plot_discrete(
+  data = data_baseline_depression_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'flare_group'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'age'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'FC'
+)
 ```
 
 #### Crohn's Disease
@@ -639,32 +735,50 @@ data_baseline_depression_cd <- hads_for_analysis %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Independent variables
-independent = c('AgeGroup',
+independent = c('age',
                 'Sex',
                 'flare_group',
-                'cat')
+                'FC')
 
 # Dependent variable is score_group
 
-# Chi-squared tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm method.
-summon_chisq_test(
+# Statistical tests for each independent variable with score_group
+# With p-values adjusted for multiple testing using holm correction.
+statistical_tests <- summon_statistical_test(
   data = data_baseline_depression_cd, 
   dependent = 'score_group', 
-  independent = independent) %>%
-  print_chisq()
+  independent = independent)
+
+statistical_tests
 
 # Plots
-baseline_plots_depression_cd <- summon_baseline_plots(
-  data = data_baseline_depression_cd, 
+summon_baseline_plot_discrete(
+  data = data_baseline_depression_cd,
+  stat_tests = statistical_tests,
   dependent = 'score_group',
-  independent = independent
-  )
+  independent = 'Sex'
+)
 
-baseline_plots_depression_cd$AgeGroup
-baseline_plots_depression_cd$Sex
-baseline_plots_depression_cd$flare_group
-baseline_plots_depression_cd$cat
+summon_baseline_plot_discrete(
+  data = data_baseline_depression_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'flare_group'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'age'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'FC'
+)
 ```
 
 ## Survival Analysis
@@ -719,10 +833,10 @@ data_survival_anxiety_soft %>%
 cox_anxiety_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     score_group +
-   # IMD +
+    IMD +
     Sex +
-    AgeGroup +
-    cat +
+    age +
+    FC +
     frailty(SiteNo),
   data = data_survival_anxiety_soft
 )
