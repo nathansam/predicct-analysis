@@ -81,75 +81,100 @@ flare.uc.df %<>%
 ## Helper functions
 
 ```{R}
-summon_reference_values <- function(data, variables) {
-  # Function that extracts the reference value for each variable in a data frame
-  # Reference is either the first factor level or the median
-  # Used for producing HR plots
 
-  data %>%
-    dplyr::select(tidyselect::all_of(variables)) %>%
-    dplyr::summarise(across(
-      .cols = everything(),
-      .fns = function(x) {
-        if (is.factor(x)) {
-          levels(x) %>% dplyr::first()
-        } else if (is.numeric(x)) {
-          median(x, na.rm = TRUE)
-        } else {
-          NULL
-        }
-      }
-    ))
-}
-
-
-plot_continuous_hr <- function(data, model, variable, xlab = NULL) {
-  if (is.null(xlab)) {
-    xlab <- variable
-  }
+plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
+  
   # Plotting continuous Hazard Ratio curves
-
+  # Data is the same data used to fit the Cox model
   # model is a Cox model
   # variable is the variable we are plotting
-
+  # splineterm is the spline used in the model, if there is one
+  
   # Range of the variable to plot
   variable_range <- data %>%
     dplyr::pull(variable) %>%
     quantile(., probs = seq(0, 0.9, 0.01), na.rm = TRUE) %>%
     unname() %>%
     unique()
-
-  # Reference variables
-  # Extract variables used in the Cox model
-  # Remove the variable we want to vary and the SiteNo
-  ref_variables <- all.vars(delete.response(terms(model))) %>%
-    tibble(x = .) %>%
-    dplyr::filter(
-      x != variable,
-      x != "SiteNo"
-    ) %>%
-    dplyr::pull(x)
-
-  # Create dummy data for plotting
-  # Reference levels
-  data %>%
-    summon_reference_values(
-      data = .,
-      variables = ref_variables
-    ) %>%
-    {
-      # Creating dummy data
-      tibble(
-        .,
-        !!sym(variable) := variable_range
-      )
-    } %>%
-    {
-      # Predict uses the mean as the reference level by default
-      pred <- predict(model, newdata = ., type = "lp", se = TRUE)
-
-      tibble(., p = pred$fit, se = pred$se)
-    } %>%
+  
+  # If there is a spline
+  if (!is.null(splineterm)){
+    
+    # Recreate the spline
+    spline <- with(data, eval(parse(text = splineterm)))
+    
+    # Get the spline terms for the variable values we are plotting
+    spline_values <- predict(spline, newx = variable_range)
+    
+    # Get the reference values of the variables that were used to fit the Cox model
+    X_ref <- model$means
+    
+    # New values to calculate the HR at 
+    # Take the ref values and vary our variable of interest
+    
+    # Number of values
+    n_values <- variable_range %>% length()
+    
+    X_ref <- matrix(rep(X_ref, n_values), nrow = n_values, byrow = TRUE)
+    # Fix the column names
+    colnames(X_ref) <- names(model$means)
+    
+    # Now add our new variable values
+    X_new <- X_ref
+    # Identify the correct columns
+    column_pos <- stringr::str_detect(colnames(X_new), variable)
+    # Add the values - ordering of columns and model term names should be preserved
+    X_new[,column_pos] <- spline_values
+    
+    # Calculate the linear predictor and se
+    # Method directly from predict.coxph from the survival package
+    lp <- (X_new - X_ref)%*%coef(model) 
+    
+    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref)) %>%
+      as.numeric() %>%
+      sqrt()
+    
+  } else {
+    # If there is no spline then it is easier
+    
+    # Get the reference values of the variables that were used to fit the Cox model
+    X_ref <- model$means
+    
+    # New values to calculate the HR at 
+    # Take the ref values and vary our variable of interest
+    
+    # Number of values
+    n_values <- variable_range %>% length()
+    
+    X_ref <- matrix(rep(X_ref, n_values), nrow = n_values, byrow = TRUE)
+    # Fix the column names
+    colnames(X_ref) <- names(model$means)
+    
+    # Now add our new variable values
+    X_new <- X_ref
+    
+    # Add the values
+    X_new[,variable] <- variable_range
+    
+    # Calculate the linear predictor and se
+    # Method directly from predict.coxph from the survival package
+    lp <- (X_new - X_ref)%*%coef(model) %>% as.numeric() 
+    
+    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref)) %>% 
+      as.numeric() %>%
+      sqrt()
+    
+  }
+  
+  # Store results in a tibble
+  data_pred <- tibble(
+    !!sym(variable) := variable_range,
+    p = lp,
+    se = lp_se
+  )
+  
+  # Plot
+  data_pred %>%
     ggplot(aes(
       x = !!rlang::sym(variable),
       y = exp(p),
@@ -159,8 +184,7 @@ plot_continuous_hr <- function(data, model, variable, xlab = NULL) {
     geom_point() +
     geom_line() +
     geom_ribbon(alpha = 0.2) +
-    ylab("HR") +
-    xlab(xlab) +
+    ylab("HR") + 
     theme_minimal()
 }
 
@@ -195,12 +219,12 @@ summon_lrt <- function(model, remove = NULL, add = NULL) {
     dplyr::mutate(test = "LRT") %>%
     dplyr::select(test, removed, added, tidyselect::everything()) %>%
     knitr::kable(col.names = c("Test",
-                               "Removed",
+                               "Remolved",
                                "Added",
                                "Log-likelihood",
                                "Statistic",
                                "DF",
-                               "p-value"),
+                               "p-vaue"),
                  digits = 3)
 }
 
@@ -262,7 +286,7 @@ summon_population_risk_difference <- function(data,
 
       df %>%
         dplyr::left_join(cum_incidence_ref, by = "time") %>%
-        dplyr::mutate(rd = cum_incidence - cum_incidence_ref, .keep = "unused")
+        dplyr::mutate(rd = (cum_incidence - cum_incidence_ref)*100, .keep = "unused")
     }
 }
 
@@ -390,7 +414,7 @@ summon_rd_forest_plot <- function(data, time) {
     geom_errorbarh() +
     geom_vline(xintercept = 0, linetype = "dotted") +
     theme_minimal() +
-    xlab("Risk Difference") +
+    xlab("Risk Difference (%) and 95% CI") +
     theme(
       # Title
       plot.title = element_text(size = 10),
@@ -425,6 +449,12 @@ broom.cols <- c("Term",
 # Survival Analysis
 
 ## Shapes of continuous variables
+
+Using splines for the continuous variables. Testing the splines significance using a likelihood ratio test.
+
+### Crohn's disease
+
+#### Patient reported flare
 
 Before examining dietary exposures, we first assess whether continuous covariates (age, BMI, FC, and diet quality index) exhibit non-linear relationships with flare risk. Natural splines with 2 degrees of freedom are tested using likelihood ratio tests (LRT). Where significant, spline terms are retained in subsequent dietary models to improve model fit and reduce confounding.
 
@@ -472,9 +502,9 @@ summon_lrt(cox_cd_soft,
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
-  variable = "age_decade",
-  xlab = "Age (decades)"
-)
+  variable = "age_decade"
+) +
+  xlab("Age (decades)")
 
 # BMI
 plot_continuous_hr(
@@ -490,14 +520,13 @@ plot_continuous_hr(
   variable = "FC"
 )
 
-
 # DQI
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
-  variable = "dqi_tot",
-   xlab = "Diet quality index"
-)
+  variable = "dqi_tot"
+) +
+  xlab("Diet quality index")
 ```
 
 #### Objective flare
@@ -539,9 +568,9 @@ summon_lrt(cox_cd_hard, remove = "dqi_tot", add = "ns(dqi_tot, df = 2)")
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
-  variable = "age_decade",
-  xlab = "Age (decades)"
-)
+  variable = "age_decade"
+) +
+  xlab("Age (decades)")
 
 # BMI
 plot_continuous_hr(
@@ -562,9 +591,9 @@ plot_continuous_hr(
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
-  variable = "dqi_tot",
-  xlab = "Diet quality index"
-)
+  variable = "dqi_tot"
+) +
+  xlab("Diet quality index")
 ```
 
 ### Ulcerative colitis
@@ -629,9 +658,10 @@ summon_lrt(cox_uc_soft,
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_soft,
-  variable = "age_decade",
-  xlab = "Age (decades)"
-)
+  variable = "age_decade"
+) +
+  xlab("Age (decades)")
+
 
 # BMI
 plot_continuous_hr(
@@ -644,7 +674,8 @@ plot_continuous_hr(
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_soft,
-  variable = "FC"
+  variable = "FC",
+  splineterm = "ns(FC, df = 2)"
 )
 
 
@@ -653,9 +684,9 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_soft,
   variable = "dqi_tot",
-  xlab = "Diet quality index"
-)
-```
+  splineterm = "ns(dqi_tot, df = 2)"
+) +
+  xlab("Diet quality index")
 
 #### Objective flare
 
@@ -701,19 +732,25 @@ cox_uc_hard <- coxph(
   data = flare.uc.df
 )
 
-# Test for df = 3. df = 2 is sufficient for FC
+
 # FC
 summon_lrt(cox_uc_hard, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 
+
+# Test for df = 3. df = 2 is sufficient for FC
+# FC
+summon_lrt(cox_uc_hard, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 ```
 
 ```{R}
+
 # Age
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_hard,
   variable = "age_decade"
-)
+) +
+  xlab("Age (decades)")
 
 # BMI
 plot_continuous_hr(
@@ -726,16 +763,19 @@ plot_continuous_hr(
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_hard,
-  variable = "FC"
+  variable = "FC",
+  splineterm = "ns(FC, df = 2)"
 )
 
 
 # DQI
-plot_continuous_hr(
+plot_continuous_hr( 
   data = flare.uc.df,
   model = cox_uc_hard,
   variable = "dqi_tot"
-)
+
+) +
+  xlab("Diet quality index")
 ```
 
 ## Total meat protein
@@ -744,7 +784,7 @@ This section examines the association between total meat protein intake (grams p
 
 ### Crohn's disease
 
-#### Patient-reported flare
+#### Patient reported flare
 
 ```{R}
 cox_meat_cd_soft <- coxph(
@@ -776,7 +816,9 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_meat_cd_soft,
   variable = "Meat_sum"
-)
+
+) +
+  xlab("Total meat protein (grams)")
 ```
 
 #### Objective flare
@@ -812,12 +854,13 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_meat_cd_hard,
   variable = "Meat_sum"
-)
+) +
+  xlab("Total meat protein (grams)")
 ```
 
 ### Ulcerative colitis
 
-#### Patient-reported flare
+#### Patient reported flare
 
 ```{R}
 cox_meat_uc_soft <- coxph(
@@ -849,7 +892,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_soft,
   variable = "Meat_sum"
-)
+) +
+  xlab("Total meat protein (grams)")
 ```
 
 #### Objective flare
@@ -884,14 +928,14 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
   variable = "Meat_sum"
-)
-```
+) +
+  xlab("Total meat protein (grams)")
 
-```{R}
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
-  variable = "FC"
+  variable = "FC",
+  splineterm = "ns(FC, df = 2)"
 )
 ```
 
@@ -932,7 +976,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_fibre_cd_soft,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre")
 ```
 
 #### Objective Flare
@@ -965,7 +1010,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_fibre_cd_hard,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre (grams)")
 ```
 
 ### Ulcerative colitis
@@ -1000,7 +1046,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_fibre_uc_soft,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre (grams)")
 ```
 
 #### Objective Flare
@@ -1033,7 +1080,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_fibre_uc_hard,
   variable = "fibre"
-)
+) +
+  xlab("Dietary fibre (grams)")
 ```
 
 ## Polyunsaturated fatty acids
@@ -1100,8 +1148,11 @@ summon_lrt(cox_pufa_cd_soft, remove = "ns(PUFA_percEng, df = 2)")
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_pufa_cd_soft,
-  variable = "PUFA_percEng"
-)
+  variable = "PUFA_percEng",
+  splineterm = "ns(PUFA_percEng, df = 2)"
+) +
+  xlab("PUFA")
+
 ```
 
 #### Objective Flare
@@ -1138,7 +1189,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_pufa_cd_hard,
   variable = "PUFA_percEng"
-)
+) +
+  xlab("PUFA")
 ```
 
 ### Ulcerative colitis
@@ -1177,7 +1229,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_pufa_uc_soft,
   variable = "PUFA_percEng"
-)
+) +
+  xlab("PUFA")
 ```
 
 #### Objective Flare
@@ -1254,7 +1307,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_upf_cd_soft,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 #### Objective Flare
@@ -1288,7 +1342,8 @@ plot_continuous_hr(
   data = flare.cd.df,
   model = cox_upf_cd_hard,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 ### Ulcerative colitis
@@ -1324,7 +1379,8 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_upf_uc_soft,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 #### Objective Flare
@@ -1356,14 +1412,20 @@ plot_continuous_hr(
   data = flare.uc.df,
   model = cox_upf_uc_hard,
   variable = "UPF_perc"
-)
+) +
+  xlab("UPF (%)")
 ```
 
 # Results
 
 ## Risk difference
 
-Risk differences quantify the absolute change in cumulative incidence of flare at specific time points (1 and 2 years) associated with different levels of each dietary exposure. These are population-averaged estimates obtained by:
+```{R}
+# How many bootstraps
+nboot <- 199
+```
+
+Risk differences quantify the absolute change in cumulative incidence of flare at a specific time point (1 year) associated with different levels of each dietary exposure. These are population-averaged estimates obtained by:
 
 1. Predicting individual-level survival for each participant at specified dietary exposure values
 2. Averaging across the population to obtain mean cumulative incidence
@@ -1412,11 +1474,11 @@ rd_values_upf_cd <- quantile(
 data_rd_cd_soft_meat <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_meat_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1425,11 +1487,11 @@ data_rd_cd_soft_meat <- summon_population_risk_difference_boot(
 data_rd_cd_soft_fibre <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_fibre_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1438,11 +1500,11 @@ data_rd_cd_soft_fibre <- summon_population_risk_difference_boot(
 data_rd_cd_soft_pufa <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_pufa_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1451,11 +1513,11 @@ data_rd_cd_soft_pufa <- summon_population_risk_difference_boot(
 data_rd_cd_soft_upf <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_upf_cd_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1479,32 +1541,14 @@ plot_rd_cd_soft_pufa_1y <- summon_rd_forest_plot(data_rd_cd_soft_pufa,
 plot_rd_cd_soft_upf_1y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
   time = 365
 )
-
-# 2-year risk difference
-plot_rd_cd_soft_meat_2y <- summon_rd_forest_plot(data_rd_cd_soft_meat,
-  time = 730
-)
-
-plot_rd_cd_soft_fibre_2y <- summon_rd_forest_plot(data_rd_cd_soft_fibre,
-  time = 730
-)
-
-plot_rd_cd_soft_pufa_2y <- summon_rd_forest_plot(data_rd_cd_soft_pufa,
-  time = 730
-)
-
-plot_rd_cd_soft_upf_2y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
-  time = 730
-)
 ```
 
-```{R}
+```{r}
 #| warning: false
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_cd_soft_meat_1y$plot + (plot_rd_cd_soft_meat_1y$rd +
-  labs(title = "Risk difference (95% CI)")) +
+plot_rd_cd_soft_meat_1y$plot + plot_rd_cd_soft_meat_1y$rd +
   plot_rd_cd_soft_fibre_1y$plot + plot_rd_cd_soft_fibre_1y$rd +
   plot_rd_cd_soft_pufa_1y$plot + plot_rd_cd_soft_pufa_1y$rd +
   plot_rd_cd_soft_upf_1y$plot + plot_rd_cd_soft_upf_1y$rd +
@@ -1518,28 +1562,7 @@ plot_rd_cd_soft_meat_1y$plot + (plot_rd_cd_soft_meat_1y$rd +
     title = "1-year risk difference",
     subtitle = "Crohn's, patient reported flare."
   ) &
-  coord_cartesian(xlim = c(-0.3, 0.6))
-```
-
-```{R}
-#| warning: false
-# 2-year risk difference
-plot_rd_cd_soft_meat_2y$plot + (plot_rd_cd_soft_meat_2y$rd +
-  labs(title = "Risk difference (95% CI)")) +
-  plot_rd_cd_soft_fibre_2y$plot + plot_rd_cd_soft_fibre_2y$rd +
-  plot_rd_cd_soft_pufa_2y$plot + plot_rd_cd_soft_pufa_2y$rd +
-  plot_rd_cd_soft_upf_2y$plot + plot_rd_cd_soft_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
-    subtitle = "Crohn's, patient reported flare."
-  ) &
-  coord_cartesian(xlim = c(-0.3, 0.6))
+  coord_cartesian(xlim = c(-30, 60))
 ```
 
 #### Objective Flare
@@ -1551,11 +1574,11 @@ plot_rd_cd_soft_meat_2y$plot + (plot_rd_cd_soft_meat_2y$rd +
 data_rd_cd_hard_meat <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_meat_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1564,11 +1587,11 @@ data_rd_cd_hard_meat <- summon_population_risk_difference_boot(
 data_rd_cd_hard_fibre <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_fibre_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1577,11 +1600,11 @@ data_rd_cd_hard_fibre <- summon_population_risk_difference_boot(
 data_rd_cd_hard_pufa <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_pufa_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1590,11 +1613,11 @@ data_rd_cd_hard_pufa <- summon_population_risk_difference_boot(
 data_rd_cd_hard_upf <- summon_population_risk_difference_boot(
   data = flare.cd.df,
   model = cox_upf_cd_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_cd,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1618,32 +1641,14 @@ plot_rd_cd_hard_pufa_1y <- summon_rd_forest_plot(data_rd_cd_hard_pufa,
 plot_rd_cd_hard_upf_1y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
   time = 365
 )
-
-# 2-year risk difference
-plot_rd_cd_hard_meat_2y <- summon_rd_forest_plot(data_rd_cd_hard_meat,
-  time = 730
-)
-
-plot_rd_cd_hard_fibre_2y <- summon_rd_forest_plot(data_rd_cd_hard_fibre,
-  time = 730
-)
-
-plot_rd_cd_hard_pufa_2y <- summon_rd_forest_plot(data_rd_cd_hard_pufa,
-  time = 730
-)
-
-plot_rd_cd_hard_upf_2y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
-  time = 730
-)
 ```
 
-```{R}
+```{r}
 #| warning: false
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_cd_hard_meat_1y$plot + (plot_rd_cd_hard_meat_1y$rd +
-  labs(title = "Risk difference (95% CI)")) +
+plot_rd_cd_hard_meat_1y$plot + plot_rd_cd_hard_meat_1y$rd +
   plot_rd_cd_hard_fibre_1y$plot + plot_rd_cd_hard_fibre_1y$rd +
   plot_rd_cd_hard_pufa_1y$plot + plot_rd_cd_hard_pufa_1y$rd +
   plot_rd_cd_hard_upf_1y$plot + plot_rd_cd_hard_upf_1y$rd +
@@ -1657,28 +1662,7 @@ plot_rd_cd_hard_meat_1y$plot + (plot_rd_cd_hard_meat_1y$rd +
     title = "1-year risk difference",
     subtitle = "Crohn's, objective flare."
   ) &
-  coord_cartesian(xlim = c(-0.1, 0.2))
-```
-
-```{R}
-#| warning: false
-# 2-year risk difference
-plot_rd_cd_hard_meat_2y$plot + (plot_rd_cd_hard_meat_2y$rd +
-  labs(title = "Risk difference (95% CI)")) +
-  plot_rd_cd_hard_fibre_2y$plot + plot_rd_cd_hard_fibre_2y$rd +
-  plot_rd_cd_hard_pufa_2y$plot + plot_rd_cd_hard_pufa_2y$rd +
-  plot_rd_cd_hard_upf_2y$plot + plot_rd_cd_hard_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
-    subtitle = "Crohn's, objective flare."
-  ) &
-  coord_cartesian(xlim = c(-0.1, 0.3))
+  coord_cartesian(xlim = c(-10, 20))
 ```
 
 ### Ulcerative colitis
@@ -1716,11 +1700,11 @@ rd_values_upf_uc <- quantile(flare.uc.df$UPF_perc,
 data_rd_uc_soft_meat <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_meat_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1729,11 +1713,11 @@ data_rd_uc_soft_meat <- summon_population_risk_difference_boot(
 data_rd_uc_soft_fibre <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_fibre_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1742,11 +1726,11 @@ data_rd_uc_soft_fibre <- summon_population_risk_difference_boot(
 data_rd_uc_soft_pufa <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_pufa_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1755,11 +1739,11 @@ data_rd_uc_soft_pufa <- summon_population_risk_difference_boot(
 data_rd_uc_soft_upf <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_upf_uc_soft,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1782,21 +1766,6 @@ plot_rd_uc_soft_pufa_1y <- summon_rd_forest_plot(data_rd_uc_soft_pufa,
 plot_rd_uc_soft_upf_1y <- summon_rd_forest_plot(data_rd_uc_soft_upf,
   time = 365
 )
-
-# 2-year risk difference
-plot_rd_uc_soft_meat_2y <- summon_rd_forest_plot(data_rd_uc_soft_meat,
-  time = 730
-)
-
-plot_rd_uc_soft_fibre_2y <- summon_rd_forest_plot(data_rd_uc_soft_fibre,
-  time = 730
-)
-
-plot_rd_uc_soft_pufa_2y <- summon_rd_forest_plot(data_rd_uc_soft_pufa,
-  time = 730
-)
-
-plot_rd_uc_soft_upf_2y <- summon_rd_forest_plot(data_rd_uc_soft_upf, time = 730)
 ```
 
 ```{R}
@@ -1804,8 +1773,7 @@ plot_rd_uc_soft_upf_2y <- summon_rd_forest_plot(data_rd_uc_soft_upf, time = 730)
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_uc_soft_meat_1y$plot + (plot_rd_uc_soft_meat_1y$rd +
-  labs(title = "Risk difference (95% CI)")) +
+plot_rd_uc_soft_meat_1y$plot + plot_rd_uc_soft_meat_1y$rd +
   plot_rd_uc_soft_fibre_1y$plot + plot_rd_uc_soft_fibre_1y$rd +
   plot_rd_uc_soft_pufa_1y$plot + plot_rd_uc_soft_pufa_1y$rd +
   plot_rd_uc_soft_upf_1y$plot + plot_rd_uc_soft_upf_1y$rd +
@@ -1819,28 +1787,7 @@ plot_rd_uc_soft_meat_1y$plot + (plot_rd_uc_soft_meat_1y$rd +
     title = "1-year risk difference",
     subtitle = "Ulcerative colitis, patient reported flare."
   ) &
-  coord_cartesian(xlim = c(-0.2, 0.3))
-```
-
-```{R}
-#| warning: false
-# 2-year risk difference
-plot_rd_uc_soft_meat_2y$plot + (plot_rd_uc_soft_meat_2y$rd +
-  labs(title = "Risk difference (95% CI)")) +
-  plot_rd_uc_soft_fibre_2y$plot + plot_rd_uc_soft_fibre_2y$rd +
-  plot_rd_uc_soft_pufa_2y$plot + plot_rd_uc_soft_pufa_2y$rd +
-  plot_rd_uc_soft_upf_2y$plot + plot_rd_uc_soft_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
-    subtitle = "Ulcerative colitis, patient reported flare."
-  ) &
-  coord_cartesian(xlim = c(-0.2, 0.3))
+  coord_cartesian(xlim = c(-20, 40))
 ```
 
 #### Objective Flare
@@ -1852,11 +1799,11 @@ plot_rd_uc_soft_meat_2y$plot + (plot_rd_uc_soft_meat_2y$rd +
 data_rd_uc_hard_meat <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_meat_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "Meat_sum",
   values = rd_values_meat_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Total meat protein: ", value)
@@ -1865,11 +1812,11 @@ data_rd_uc_hard_meat <- summon_population_risk_difference_boot(
 data_rd_uc_hard_fibre <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_fibre_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "fibre",
   values = rd_values_fibre_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("Dietary fibre: ", value)
@@ -1878,11 +1825,11 @@ data_rd_uc_hard_fibre <- summon_population_risk_difference_boot(
 data_rd_uc_hard_pufa <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_pufa_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "PUFA_percEng",
   values = rd_values_pufa_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("PUFA: ", value)
@@ -1891,11 +1838,11 @@ data_rd_uc_hard_pufa <- summon_population_risk_difference_boot(
 data_rd_uc_hard_upf <- summon_population_risk_difference_boot(
   data = flare.uc.df,
   model = cox_upf_uc_hard,
-  times = c(365, 730),
+  times = c(365),
   variable = "UPF_perc",
   values = rd_values_upf_uc,
   ref_value = NULL,
-  nboot = 9
+  nboot = nboot
 ) %>%
   dplyr::mutate(
     term_tidy = paste0("UPF (%): ", value)
@@ -1919,32 +1866,14 @@ plot_rd_uc_hard_pufa_1y <- summon_rd_forest_plot(data_rd_uc_hard_pufa,
 plot_rd_uc_hard_upf_1y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
   time = 365
 )
-
-# 2-year risk difference
-plot_rd_uc_hard_meat_2y <- summon_rd_forest_plot(data_rd_uc_hard_meat,
-  time = 730
-)
-
-plot_rd_uc_hard_fibre_2y <- summon_rd_forest_plot(data_rd_uc_hard_fibre,
-  time = 730
-)
-
-plot_rd_uc_hard_pufa_2y <- summon_rd_forest_plot(data_rd_uc_hard_pufa,
-  time = 730
-)
-
-plot_rd_uc_hard_upf_2y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
-  time = 730
-)
 ```
 
-```{R}
+```{r}
 #| warning: false
 # Final plots using patchwork
 
 # 1-year risk difference
-plot_rd_uc_hard_meat_1y$plot + (plot_rd_uc_hard_meat_1y$rd +
-  labs(title = "Risk difference (95% CI)")) +
+plot_rd_uc_hard_meat_1y$plot + plot_rd_uc_hard_meat_1y$rd +
   plot_rd_uc_hard_fibre_1y$plot + plot_rd_uc_hard_fibre_1y$rd +
   plot_rd_uc_hard_pufa_1y$plot + plot_rd_uc_hard_pufa_1y$rd +
   plot_rd_uc_hard_upf_1y$plot + plot_rd_uc_hard_upf_1y$rd +
@@ -1958,26 +1887,5 @@ plot_rd_uc_hard_meat_1y$plot + (plot_rd_uc_hard_meat_1y$rd +
     title = "1-year risk difference",
     subtitle = "Ulcerative colitis, objective flare."
   ) &
-  coord_cartesian(xlim = c(-0.1, 0.2))
-```
-
-```{R}
-#| warning: false
-# 2-year risk difference
-plot_rd_uc_hard_meat_2y$plot + (plot_rd_uc_hard_meat_2y$rd +
-  labs(title = "Risk difference (95% CI)")) +
-  plot_rd_uc_hard_fibre_2y$plot + plot_rd_uc_hard_fibre_2y$rd +
-  plot_rd_uc_hard_pufa_2y$plot + plot_rd_uc_hard_pufa_2y$rd +
-  plot_rd_uc_hard_upf_2y$plot + plot_rd_uc_hard_upf_2y$rd +
-  patchwork::plot_layout(
-    ncol = 2,
-    guides = "collect",
-    axes = "collect",
-    width = c(2, 1)
-  ) +
-  patchwork::plot_annotation(
-    title = "2-year risk difference",
-    subtitle = "Ulcerative colitis, objective flare."
-  ) &
-  coord_cartesian(xlim = c(-0.1, 0.3))
+  coord_cartesian(xlim = c(-10, 20))
 ```
