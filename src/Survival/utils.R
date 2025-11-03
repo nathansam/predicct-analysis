@@ -118,13 +118,49 @@ generate_survival_plot <- function(
     title = title,
     break.time.by = break_time_by
   )
-  cairo_pdf(paste0(plot_path, ".pdf"))
-  print(p, newpage = FALSE)
-  dev.off()
+  
+  # Close any existing graphics devices first
+  while (dev.cur() > 1) {
+    dev.off()
+  }
+  
+  # Save PDF with error handling
+  tryCatch(
+    {
+      cairo_pdf(paste0(plot_path, ".pdf"))
+      print(p, newpage = FALSE)
+      dev.off()
+    },
+    error = function(e) {
+      if (dev.cur() > 1) dev.off()
+      pdf(paste0(plot_path, ".pdf"))
+      print(p, newpage = FALSE)
+      dev.off()
+      warning(paste("cairo_pdf failed, used pdf() instead:", e$message))
+    }
+  )
+  
+  # Ensure device is closed
+  while (dev.cur() > 1) {
+    dev.off()
+  }
 
-  png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
-  print(p, newpage = FALSE)
-  dev.off()
+  # Save PNG with error handling
+  tryCatch(
+    {
+      png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+      print(p, newpage = FALSE)
+      dev.off()
+    },
+    error = function(e) {
+      if (dev.cur() > 1) dev.off()
+      warning(paste("Failed to save PNG:", e$message))
+    }
+  )
+  
+  # Set proper file permissions
+  Sys.chmod(paste0(plot_path, ".pdf"), mode = "0644", use_umask = FALSE)
+  Sys.chmod(paste0(plot_path, ".png"), mode = "0644", use_umask = FALSE)
 
   return(p)
 }
@@ -304,20 +340,56 @@ run_survival_analysis <- function(
     break.time.by = break_time_by
   )
 
-  # Save plots
-  cairo_pdf(paste0(plot_base_path, ".pdf"))
-  print(p)
-  invisible(dev.off())
-
-  png(
-    paste0(plot_base_path, ".png"),
-    width = 7,
-    height = 7,
-    units = "in",
-    res = 300
+  # Save plots with error handling
+  # Close any existing graphics devices first
+  while (dev.cur() > 1) {
+    dev.off()
+  }
+  
+  # Save PDF
+  tryCatch(
+    {
+      cairo_pdf(paste0(plot_base_path, ".pdf"))
+      print(p)
+      dev.off()
+    },
+    error = function(e) {
+      # Fallback to regular pdf() if cairo_pdf fails
+      if (dev.cur() > 1) dev.off()
+      pdf(paste0(plot_base_path, ".pdf"))
+      print(p)
+      dev.off()
+      warning(paste("cairo_pdf failed, used pdf() instead:", e$message))
+    }
   )
-  print(p)
-  invisible(dev.off())
+  
+  # Ensure device is closed before next save
+  while (dev.cur() > 1) {
+    dev.off()
+  }
+
+  # Save PNG
+  tryCatch(
+    {
+      png(
+        paste0(plot_base_path, ".png"),
+        width = 7,
+        height = 7,
+        units = "in",
+        res = 300
+      )
+      print(p)
+      dev.off()
+    },
+    error = function(e) {
+      if (dev.cur() > 1) dev.off()
+      warning(paste("Failed to save PNG:", e$message))
+    }
+  )
+  
+  # Set proper file permissions (readable by all)
+  Sys.chmod(paste0(plot_base_path, ".pdf"), mode = "0644", use_umask = FALSE)
+  Sys.chmod(paste0(plot_base_path, ".png"), mode = "0644", use_umask = FALSE)
 
   # Run Cox model
   fit.me <- coxph(

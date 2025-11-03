@@ -25,6 +25,8 @@ bibliography: Baseline.bib
 ```{R Setup}
 set.seed(123)
 
+source("Baseline/utils.R")
+
 ##############
 ## Packages ##
 ##############
@@ -1334,6 +1336,36 @@ p <- ggplot(
 ggsave("plots/baseline/diet.png", p, width = 12 * 0.8, height = 7 * 0.8)
 ggsave("plots/baseline/diet.pdf", p, width = 12 * 0.8, height = 7 * 0.8)
 p
+```
+
+## Missingness
+
+```{R}
+demo %>%
+  filter(ParticipantNo %in% FFQ$ParticipantNo) %>%
+  select(
+  Meat_sum,
+  meat_overall,
+  fish_overall,
+  fibre,
+  PUFA_percEng,
+  NOVAScore_cat,
+  dqi_tot,
+  breadIntake,
+  sweetIntake,
+  drinkIntake,
+  processedMeatIntake,
+  processedPlantIntake,
+  fruitIntake,
+  vegIntake,
+  redMeatIntake,
+  whiteMeatIntake,
+  whiteFishIntake,
+  UPF_perc,
+  Alcohol_percEng, 
+  SiteName
+  ) %>%
+missing_plot2(title = "Disease phenotyping missingness")
 ```
 
 ## Reproduction and reproducibility {.appendix}

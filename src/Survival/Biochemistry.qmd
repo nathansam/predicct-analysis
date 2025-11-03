@@ -29,7 +29,6 @@ cd.clin.forest <- readRDS(paste0(paths$outdir, "cd-clin-IBD.RDS"))
 cd.hard.forest <- readRDS(paste0(paths$outdir, "cd-hard-IBD.RDS"))
 uc.clin.forest <- readRDS(paste0(paths$outdir, "uc-clin-IBD.RDS"))
 uc.hard.forest <- readRDS(paste0(paths$outdir, "uc-hard-IBD.RDS"))
-
 ```
 
 ## C-reactive protein
@@ -887,6 +886,523 @@ invisible(cox_summary(fit.me))
 
 :::
 
+<details class = "appendix">
+  <summary> Control for additional covariates </summary>
+  
+<h3> Crohn's disease </h3>
+
+<h4> Patient-reported flare </h4>
+
+<h5> C-reactive protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Haemoglobin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Haemoglobin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White cell count </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    WCC +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Platelets </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Platelets +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Albumin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Albumin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+<h5> C-reactive protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Haemoglobin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Haemoglobin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White cell count </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    WCC +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Platelets </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Platelets +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Albumin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Albumin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h3> Ulcerative colitis </h3>
+
+<h4> Patient-reported flare </h4>
+
+<h5> C-reactive protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Haemoglobin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Haemoglobin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White cell count </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    WCC +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Platelets </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Platelets +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Albumin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Albumin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h4> Objective flare </h4>
+
+<h5> C-reactive protein </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    CReactiveProtein +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Haemoglobin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Haemoglobin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> White cell count </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    WCC +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Platelets </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Platelets +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+<h5> Albumin </h5>
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex +
+    IMD +
+    cat +
+    `IBD Duration` +
+    BMI +
+    Treatment +
+    Age +
+    Albumin +
+    frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me))
+```
+
+</details>
+  
 ## Reproduction and reproducibility {.appendix}
 
 <details class = "appendix">

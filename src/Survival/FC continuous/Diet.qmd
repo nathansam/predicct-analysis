@@ -1,5 +1,10 @@
 ---
 title: "Diet"
+Author: 
+  - name: "Alexander Rudge"
+    corresponding: true
+    affiliations:
+      - ref: CGEM
 format: 
   html:
     code-fold: true
@@ -9,11 +14,24 @@ toc: true
 toc-expand: true
 ---
 
+## Overview
+
+This report presents a sensitivity analysis examining the association between dietary factors and disease flare risk in inflammatory bowel disease (IBD) patients. Unlike the primary analysis which categorizes fecal calprotectin (FC) into quantiles, this analysis treats FC as a continuous variable in Cox proportional hazards models.
+
+The key methodological differences from the primary analysis are:
+
+1. **Continuous FC**: FC is included as a continuous predictor rather than categorical
+2. **Spline modeling**: Natural splines are tested to assess non-linear relationships
+3. **Hazard ratio curves**: Continuous hazard ratios are plotted across the range of each dietary variable
+4. **Risk difference estimation**: Population-average risk differences are calculated using bootstrapping
+
+Dietary variables examined include total meat protein, dietary fibre, polyunsaturated fatty acids (PUFA), and ultra-processed food (UPF) intake. Analyses are stratified by disease type (Crohn's disease vs. ulcerative colitis) and flare definition (patient-reported vs. objective).
+
 # Setting up in R
 
 ## Load the data
 
-```{r}
+```{R}
 library(splines)
 library(patchwork)
 
@@ -31,7 +49,7 @@ flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
 
 ## Data cleaning
 
-```{r}
+```{R}
 # FC has been logged twice - reverse
 flare.df %<>%
   dplyr::mutate(FC = exp(FC))
@@ -62,7 +80,7 @@ flare.uc.df %<>%
 
 ## Helper functions
 
-```{r}
+```{R}
 
 plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
   
@@ -71,7 +89,6 @@ plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
   # model is a Cox model
   # variable is the variable we are plotting
   # splineterm is the spline used in the model, if there is one
-  
   
   # Range of the variable to plot
   variable_range <- data %>%
@@ -169,7 +186,6 @@ plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
     geom_ribbon(alpha = 0.2) +
     ylab("HR") + 
     theme_minimal()
-  
 }
 
 # Function to perform an LRT
@@ -201,7 +217,15 @@ summon_lrt <- function(model, remove = NULL, add = NULL) {
       added = add
     ) %>%
     dplyr::mutate(test = "LRT") %>%
-    dplyr::select(test, removed, added, tidyselect::everything())
+    dplyr::select(test, removed, added, tidyselect::everything()) %>%
+    knitr::kable(col.names = c("Test",
+                               "Remolved",
+                               "Added",
+                               "Log-likelihood",
+                               "Statistic",
+                               "DF",
+                               "p-vaue"),
+                 digits = 3)
 }
 
 
@@ -412,6 +436,14 @@ summon_rd_forest_plot <- function(data, time) {
 
   return(list(plot = plot, rd = rd))
 }
+
+broom.cols <- c("Term",
+                "Estimate",
+                "Std error",
+                "Statistic",
+                "p-value",
+                "Lower",
+                "Upper")
 ```
 
 # Survival Analysis
@@ -424,9 +456,14 @@ Using splines for the continuous variables. Testing the splines significance usi
 
 #### Patient reported flare
 
-```{r}
-# Just the continuous variables
+Before examining dietary exposures, we first assess whether continuous covariates (age, BMI, FC, and diet quality index) exhibit non-linear relationships with flare risk. Natural splines with 2 degrees of freedom are tested using likelihood ratio tests (LRT). Where significant, spline terms are retained in subsequent dietary models to improve model fit and reduce confounding.
 
+### Crohn's disease
+
+#### Patient-reported flare
+
+```{R}
+# Just the continuous variables
 cox_cd_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -442,7 +479,9 @@ cox_cd_soft <- coxph(
 # Is there any benefit to using spline for:
 
 # age
-summon_lrt(cox_cd_soft, remove = "age_decade", add = "ns(age_decade, df = 2)")
+summon_lrt(cox_cd_soft,
+           remove = "age_decade",
+           add = "ns(age_decade, df = 2)")
 
 # BMI
 summon_lrt(cox_cd_soft, remove = "BMI", add = "ns(BMI, df = 2)")
@@ -451,12 +490,14 @@ summon_lrt(cox_cd_soft, remove = "BMI", add = "ns(BMI, df = 2)")
 summon_lrt(cox_cd_soft, remove = "FC", add = "ns(FC, df = 2)")
 
 # dqi_tot
-summon_lrt(cox_cd_soft, remove = "dqi_tot", add = "ns(dqi_tot, df = 2)")
+summon_lrt(cox_cd_soft,
+           remove = "dqi_tot",
+           add = "ns(dqi_tot, df = 2)")
 
 # None of the continuous variables benefit from a spline term
 ```
 
-```{r}
+```{R}
 # Age
 plot_continuous_hr(
   data = flare.cd.df,
@@ -490,7 +531,7 @@ plot_continuous_hr(
 
 #### Objective flare
 
-```{r}
+```{R}
 # Just the continuous variables
 
 cox_cd_hard <- coxph(
@@ -522,7 +563,7 @@ summon_lrt(cox_cd_hard, remove = "dqi_tot", add = "ns(dqi_tot, df = 2)")
 # None of the continuous variables benefit from a spline term
 ```
 
-```{r}
+```{R}
 # Age
 plot_continuous_hr(
   data = flare.cd.df,
@@ -557,9 +598,9 @@ plot_continuous_hr(
 
 ### Ulcerative colitis
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
 # Just the continuous variables
 
 cox_uc_soft <- coxph(
@@ -612,7 +653,7 @@ summon_lrt(cox_uc_soft,
 )
 ```
 
-```{r}
+```{R}
 # Age
 plot_continuous_hr(
   data = flare.uc.df,
@@ -620,6 +661,7 @@ plot_continuous_hr(
   variable = "age_decade"
 ) +
   xlab("Age (decades)")
+
 
 # BMI
 plot_continuous_hr(
@@ -645,11 +687,10 @@ plot_continuous_hr(
   splineterm = "ns(dqi_tot, df = 2)"
 ) +
   xlab("Diet quality index")
-```
 
 #### Objective flare
 
-```{r}
+```{R}
 # Just the continuous variables
 
 cox_uc_hard <- coxph(
@@ -691,14 +732,18 @@ cox_uc_hard <- coxph(
   data = flare.uc.df
 )
 
-# Test for df = 3
+
 # FC
 summon_lrt(cox_uc_hard, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 
-# df = 2 is sufficient for FC
+
+# Test for df = 3. df = 2 is sufficient for FC
+# FC
+summon_lrt(cox_uc_hard, remove = "ns(FC, df = 2)", add = "ns(FC, df = 3)")
 ```
 
-```{r}
+```{R}
+
 # Age
 plot_continuous_hr(
   data = flare.uc.df,
@@ -724,21 +769,24 @@ plot_continuous_hr(
 
 
 # DQI
-plot_continuous_hr(
+plot_continuous_hr( 
   data = flare.uc.df,
   model = cox_uc_hard,
   variable = "dqi_tot"
+
 ) +
   xlab("Diet quality index")
 ```
 
 ## Total meat protein
 
+This section examines the association between total meat protein intake (grams per day) and time to flare. Cox models are adjusted for sex, Index of Multiple Deprivation (IMD), age, BMI, FC (continuous), and diet quality index, with a frailty term for study site. We first test whether the relationship is non-linear using splines, then present hazard ratios and continuous HR curves.
+
 ### Crohn's disease
 
 #### Patient reported flare
 
-```{r}
+```{R}
 cox_meat_cd_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -752,27 +800,30 @@ cox_meat_cd_soft <- coxph(
   data = flare.cd.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_meat_cd_soft, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
-# No
-
-cox_meat_cd_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_meat_cd_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 # Meat sum
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_meat_cd_soft,
   variable = "Meat_sum"
+
 ) +
   xlab("Total meat protein (grams)")
 ```
 
 #### Objective flare
 
-```{r}
+```{R}
 cox_meat_cd_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -786,15 +837,18 @@ cox_meat_cd_hard <- coxph(
   data = flare.cd.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_meat_cd_hard, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
-# No
-
-cox_meat_cd_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+
+```{R}
+cox_meat_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 # Meat sum
 plot_continuous_hr(
   data = flare.cd.df,
@@ -808,7 +862,7 @@ plot_continuous_hr(
 
 #### Patient reported flare
 
-```{r}
+```{R}
 cox_meat_uc_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -822,15 +876,17 @@ cox_meat_uc_soft <- coxph(
   data = flare.uc.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_meat_uc_soft, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
-# No
-
-cox_meat_uc_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_meat_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 # Meat sum
 plot_continuous_hr(
   data = flare.uc.df,
@@ -842,7 +898,7 @@ plot_continuous_hr(
 
 #### Objective flare
 
-```{r}
+```{R}
 cox_meat_uc_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -856,15 +912,17 @@ cox_meat_uc_hard <- coxph(
   data = flare.uc.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_meat_uc_hard, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
-# No
-
-cox_meat_uc_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_meat_uc_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 # Meat sum
 plot_continuous_hr(
   data = flare.uc.df,
@@ -883,11 +941,13 @@ plot_continuous_hr(
 
 ## Dietary Fibre
 
+This section examines the association between dietary fibre intake (grams per day) and time to flare, using the same covariate adjustment strategy as the meat protein analysis.
+
 ### Crohn's disease
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
 cox_fibre_cd_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -901,15 +961,17 @@ cox_fibre_cd_soft <- coxph(
   data = flare.cd.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_fibre_cd_soft, remove = "fibre", add = "ns(fibre, df = 2)")
-# No
-
-cox_fibre_cd_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_fibre_cd_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_fibre_cd_soft,
@@ -920,7 +982,7 @@ plot_continuous_hr(
 
 #### Objective Flare
 
-```{r}
+```{R}
 cox_fibre_cd_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -935,12 +997,15 @@ cox_fibre_cd_hard <- coxph(
 )
 
 summon_lrt(cox_fibre_cd_hard, remove = "fibre", add = "ns(fibre, df = 2)")
-
-cox_fibre_cd_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_fibre_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_fibre_cd_hard,
@@ -951,9 +1016,9 @@ plot_continuous_hr(
 
 ### Ulcerative colitis
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
 cox_fibre_uc_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -968,13 +1033,15 @@ cox_fibre_uc_soft <- coxph(
 )
 
 summon_lrt(cox_fibre_uc_soft, remove = "fibre", add = "ns(fibre, df = 2)")
-
-
-cox_fibre_uc_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_fibre_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_fibre_uc_soft,
@@ -985,7 +1052,7 @@ plot_continuous_hr(
 
 #### Objective Flare
 
-```{r}
+```{R}
 cox_fibre_uc_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -1000,12 +1067,15 @@ cox_fibre_uc_hard <- coxph(
 )
 
 summon_lrt(cox_fibre_uc_hard, remove = "fibre", add = "ns(fibre, df = 2)")
-
-cox_fibre_uc_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_fibre_uc_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_fibre_uc_hard,
@@ -1016,11 +1086,13 @@ plot_continuous_hr(
 
 ## Polyunsaturated fatty acids
 
+This section examines the association between PUFA intake (as percentage of total energy) and time to flare. Note that while the study protocol specified n-6 PUFAs, the available FFQ data captures total PUFA (both n-3 and n-6).
+
 ### Crohn's disease
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
 cox_pufa_cd_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -1034,12 +1106,11 @@ cox_pufa_cd_soft <- coxph(
   data = flare.cd.df
 )
 
-# Do we need a spline?
+# Do we need a spline? Close to 0.05, lets add one
 summon_lrt(cox_pufa_cd_soft,
   remove = "PUFA_percEng",
   add = "ns(PUFA_percEng, df = 2)"
 )
-# Close to 0.05, lets add one
 
 cox_pufa_cd_soft <- coxph(
   Surv(softflare_time, softflare) ~
@@ -1054,20 +1125,26 @@ cox_pufa_cd_soft <- coxph(
   data = flare.cd.df
 )
 
+# df = 2 is sufficient
 summon_lrt(cox_pufa_cd_soft,
   remove = "ns(PUFA_percEng, df = 2)",
   add = "ns(PUFA_percEng, df = 3)"
 )
-# df = 2 is sufficient
+```
 
+
+```{R}
 cox_pufa_cd_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
 
+```{R}
 # Significance - need to use LRT
 summon_lrt(cox_pufa_cd_soft, remove = "ns(PUFA_percEng, df = 2)")
 ```
 
-```{r}
+```{R}
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_pufa_cd_soft,
@@ -1075,11 +1152,12 @@ plot_continuous_hr(
   splineterm = "ns(PUFA_percEng, df = 2)"
 ) +
   xlab("PUFA")
+
 ```
 
 #### Objective Flare
 
-```{r}
+```{R}
 cox_pufa_cd_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -1093,18 +1171,20 @@ cox_pufa_cd_hard <- coxph(
   data = flare.cd.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_pufa_cd_hard,
   remove = "PUFA_percEng",
   add = "ns(PUFA_percEng, df = 2)"
 )
-# No
-
-cox_pufa_cd_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_pufa_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_pufa_cd_hard,
@@ -1115,9 +1195,9 @@ plot_continuous_hr(
 
 ### Ulcerative colitis
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
 cox_pufa_uc_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -1131,18 +1211,20 @@ cox_pufa_uc_soft <- coxph(
   data = flare.uc.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_pufa_uc_soft,
   remove = "PUFA_percEng",
   add = "ns(PUFA_percEng, df = 2)"
 )
-# No
-
-cox_pufa_uc_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_pufa_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_pufa_uc_soft,
@@ -1153,7 +1235,7 @@ plot_continuous_hr(
 
 #### Objective Flare
 
-```{r}
+```{R}
 cox_pufa_uc_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -1167,33 +1249,36 @@ cox_pufa_uc_hard <- coxph(
   data = flare.uc.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_pufa_uc_hard,
   remove = "PUFA_percEng",
   add = "ns(PUFA_percEng, df = 2)"
 )
-# No
-
-cox_pufa_uc_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_pufa_uc_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE)  %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_pufa_uc_hard,
   variable = "PUFA_percEng"
-) +
-  xlab("PUFA")
+)
 ```
 
 ## Ultra-processed food
 
+This section examines the association between ultra-processed food consumption (percentage of daily energy intake from UPF) and time to flare. UPF is defined according to the NOVA classification system as foods that have undergone substantial industrial processing.
+
 ### Crohn's disease
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
 cox_upf_cd_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -1207,15 +1292,17 @@ cox_upf_cd_soft <- coxph(
   data = flare.cd.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No 
 summon_lrt(cox_upf_cd_soft, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
-# No
-
-cox_upf_cd_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_upf_cd_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_upf_cd_soft,
@@ -1226,7 +1313,7 @@ plot_continuous_hr(
 
 #### Objective Flare
 
-```{r}
+```{R}
 cox_upf_cd_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -1240,15 +1327,17 @@ cox_upf_cd_hard <- coxph(
   data = flare.cd.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_upf_cd_hard, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
-# No
-
-cox_upf_cd_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_upf_cd_hard %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.cd.df,
   model = cox_upf_cd_hard,
@@ -1259,9 +1348,9 @@ plot_continuous_hr(
 
 ### Ulcerative colitis
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
 cox_upf_uc_soft <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
@@ -1275,15 +1364,17 @@ cox_upf_uc_soft <- coxph(
   data = flare.uc.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_upf_uc_soft, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
-# Nop
-
-cox_upf_uc_soft %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
 ```
 
-```{r}
+```{R}
+cox_upf_uc_soft %>%
+  broom::tidy(exp = TRUE, conf.int = TRUE) %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
+```
+
+```{R}
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_upf_uc_soft,
@@ -1294,7 +1385,7 @@ plot_continuous_hr(
 
 #### Objective Flare
 
-```{r}
+```{R}
 cox_upf_uc_hard <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
@@ -1308,15 +1399,15 @@ cox_upf_uc_hard <- coxph(
   data = flare.uc.df
 )
 
-# Do we need a spline?
+# Do we need a spline? No
 summon_lrt(cox_upf_uc_hard, remove = "UPF_perc", add = "ns(UPF_perc, df = 2)")
-# No
 
 cox_upf_uc_hard %>%
-  broom::tidy(exp = TRUE, conf.int = TRUE)
+  broom::tidy(exp = TRUE, conf.int = TRUE)  %>%
+  knitr::kable(col.names = broom.cols, digits = 3)
 ```
 
-```{r}
+```{R}
 plot_continuous_hr(
   data = flare.uc.df,
   model = cox_upf_uc_hard,
@@ -1329,38 +1420,54 @@ plot_continuous_hr(
 
 ## Risk difference
 
-### Crohn's disease
-
-#### Patient reported flare
-
-```{r}
+```{R}
 # How many bootstraps
 nboot <- 199
+```
 
+Risk differences quantify the absolute change in cumulative incidence of flare at a specific time point (1 year) associated with different levels of each dietary exposure. These are population-averaged estimates obtained by:
 
+1. Predicting individual-level survival for each participant at specified dietary exposure values
+2. Averaging across the population to obtain mean cumulative incidence
+3. Calculating differences relative to a reference value (median)
+4. Bootstrapping to obtain 95% confidence intervals
+
+Results are presented as forest plots with corresponding risk difference values and confidence intervals.
+
+### Crohn's disease
+
+#### Patient-reported flare
+
+```{R}
+#| message: false
+#| warning: false
 # Values for calculation risk difference
-rd_values_meat_cd <- quantile(flare.cd.df$Meat_sum,
+rd_values_meat_cd <- quantile(
+  flare.cd.df$Meat_sum,
   probs = c(0, 0.25, 0.5, 0.75, 0.95),
   na.rm = TRUE
-) %>%
+  ) %>%
   round()
 
-rd_values_fibre_cd <- quantile(flare.cd.df$fibre,
+rd_values_fibre_cd <- quantile(
+  flare.cd.df$fibre,
   probs = c(0, 0.25, 0.5, 0.75, 0.95),
   na.rm = TRUE
-) %>%
+  ) %>%
   round()
 
-rd_values_pufa_cd <- quantile(flare.cd.df$PUFA_percEng,
+rd_values_pufa_cd <- quantile(
+  flare.cd.df$PUFA_percEng,
   probs = c(0, 0.25, 0.5, 0.75, 0.95),
   na.rm = TRUE
-) %>%
+  ) %>%
   round(digits = 1)
 
-rd_values_upf_cd <- quantile(flare.cd.df$UPF_perc,
+rd_values_upf_cd <- quantile(
+  flare.cd.df$UPF_perc,
   probs = c(0, 0.25, 0.5, 0.75, 0.95),
   na.rm = TRUE
-) %>%
+  ) %>%
   round()
 
 # Calculate risk difference for these values
@@ -1434,7 +1541,6 @@ plot_rd_cd_soft_pufa_1y <- summon_rd_forest_plot(data_rd_cd_soft_pufa,
 plot_rd_cd_soft_upf_1y <- summon_rd_forest_plot(data_rd_cd_soft_upf,
   time = 365
 )
-
 ```
 
 ```{r}
@@ -1461,7 +1567,7 @@ plot_rd_cd_soft_meat_1y$plot + plot_rd_cd_soft_meat_1y$rd +
 
 #### Objective Flare
 
-```{r}
+```{R}
 #| warning: false
 
 # Calculate risk difference for these values
@@ -1535,7 +1641,6 @@ plot_rd_cd_hard_pufa_1y <- summon_rd_forest_plot(data_rd_cd_hard_pufa,
 plot_rd_cd_hard_upf_1y <- summon_rd_forest_plot(data_rd_cd_hard_upf,
   time = 365
 )
-
 ```
 
 ```{r}
@@ -1562,9 +1667,10 @@ plot_rd_cd_hard_meat_1y$plot + plot_rd_cd_hard_meat_1y$rd +
 
 ### Ulcerative colitis
 
-#### Patient reported flare
+#### Patient-reported flare
 
-```{r}
+```{R}
+#| message: false
 # Values for calculation risk difference
 rd_values_meat_uc <- quantile(flare.uc.df$Meat_sum,
   probs = c(0, 0.25, 0.5, 0.75, 0.95),
@@ -1660,10 +1766,9 @@ plot_rd_uc_soft_pufa_1y <- summon_rd_forest_plot(data_rd_uc_soft_pufa,
 plot_rd_uc_soft_upf_1y <- summon_rd_forest_plot(data_rd_uc_soft_upf,
   time = 365
 )
-
 ```
 
-```{r}
+```{R}
 #| warning: false
 # Final plots using patchwork
 
@@ -1687,7 +1792,7 @@ plot_rd_uc_soft_meat_1y$plot + plot_rd_uc_soft_meat_1y$rd +
 
 #### Objective Flare
 
-```{r}
+```{R}
 #| warning: false
 
 # Calculate risk difference for these values
@@ -1761,7 +1866,6 @@ plot_rd_uc_hard_pufa_1y <- summon_rd_forest_plot(data_rd_uc_hard_pufa,
 plot_rd_uc_hard_upf_1y <- summon_rd_forest_plot(data_rd_uc_hard_upf,
   time = 365
 )
-
 ```
 
 ```{r}
