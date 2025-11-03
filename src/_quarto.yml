@@ -18,6 +18,7 @@ project:
     - "Survival/IBD.qmd"
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
+    - "Survival/Smoking/Diet.qmd"
     - "documents.qmd"
   post-render:
     - "Scripts/arrangeplots.R"

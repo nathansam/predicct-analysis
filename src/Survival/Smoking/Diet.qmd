@@ -27,6 +27,34 @@ demo <- analysis_setup$demo
 flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
 flare.cd.df <- readRDS(paste0(paths$outdir, "flares-biochem-cd.RDS"))
 flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
+
+summon_plot_broom_hr <- function(data){
+  data %>%
+    # Remove frailty
+    dplyr::filter(!stringr::str_detect(term, "frailty")) %>%
+    # Rename the confidence intervals
+    dplyr::rename(
+      conf.low = `2.5 %`,
+      conf.high = `97.5 %`
+    ) %>%
+    # Significance flag
+    dplyr::mutate(
+      significant = (p.value <= 0.05)
+    ) %>%
+    ggplot(aes(
+      y = forcats::as_factor(term), 
+      x = estimate, 
+      xmin = conf.low, 
+      xmax = conf.high,
+      colour = significant)) +
+    geom_point() +
+    geom_errorbarh() +
+    geom_vline(xintercept = 1, linetype = "dashed") +
+    xlab("Hazard Ratio (95% CI)") +
+    ylab("") +
+    scale_colour_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
+    theme_minimal()
+}
 ```
 
 ## Data cleaning
@@ -91,7 +119,9 @@ flare.uc.df %<>%
   dplyr::mutate(
     Smoke = forcats::fct_relevel(Smoke, "Never", "Previous", "Current")
   )
+```
 
+```{R}
 # Missingness in smoking
 # CD
 flare.cd.df %>%
@@ -111,7 +141,9 @@ flare.cd.df %>%
   )) %>%
   dplyr::pull(Smoke) %>%
   forcats::fct_count(prop = TRUE)
+```
 
+```{R}
 # UC
 flare.uc.df %>%
   dplyr::select(hardflare_time,
@@ -130,41 +162,6 @@ flare.uc.df %>%
   )) %>%
   dplyr::pull(Smoke) %>%
   forcats::fct_count(prop = TRUE)
-
-```
-
-## Helper functions
-
-```{r}
-
-summon_plot_broom_hr <- function(data){
-  data %>%
-    # Remove frailty
-    dplyr::filter(!stringr::str_detect(term, "frailty")) %>%
-    # Rename the confidence intervals
-    dplyr::rename(
-      conf.low = `2.5 %`,
-      conf.high = `97.5 %`
-    ) %>%
-    # Significance flag
-    dplyr::mutate(
-      significant = (p.value <= 0.05)
-    ) %>%
-    ggplot(aes(
-      y = forcats::as_factor(term), 
-      x = estimate, 
-      xmin = conf.low, 
-      xmax = conf.high,
-      colour = significant)) +
-    geom_point() +
-    geom_errorbarh() +
-    geom_vline(xintercept = 1, linetype = "dashed") +
-    xlab("Hazard Ratio (95% CI)") +
-    ylab("") +
-    scale_colour_manual(values = c("TRUE" = "red", "FALSE" = "black")) +
-    theme_minimal()
-}
-
 ```
 
 ## Total meat protein
