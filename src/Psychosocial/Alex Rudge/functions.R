@@ -1,3 +1,9 @@
+library(tidyverse)
+library(magrittr)
+library(survival)
+library(mice)
+library(splines)
+
 
 # Functions for the analysis
 
@@ -191,10 +197,38 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
 
 
 # Function to perform coxph with mice for missing data
-
-
-
-
+coxph_mice <- function(formula, data, ...){
+  
+  # Variables
+  variables <- all.vars(formula)
+  
+  # Extract time and status variable names
+  timevar <- variables[1]
+  statusvar <- variables[2]
+  
+  # Select variables in the data
+  data %<>%
+    dplyr::select(tidyselect::all_of(variables)) %>%
+    # Calculate the cumulative hazard
+    dplyr::mutate(cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = !!sym(timevar),
+      statusvar = !!sym(statusvar)
+    ))
+  
+  # Predictor matrix - need to exclude time from the model
+  pred_matrix <- mice::make.predictorMatrix(data)
+  
+  pred_matrix[, timevar] <- 0
+  
+  data_imp <- mice::mice(
+    data = data,
+    predictorMatrix = pred_matrix, ...)
+  
+  # Return the imputation
+  return(data_imp)
+  
+}
 
 
 # Extract levels from the data
