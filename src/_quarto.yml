@@ -19,10 +19,12 @@ project:
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
     - "Survival/Smoking/Diet.qmd"
+    - "Survival/FC\ continuous/Diet.qmd"
     - "documents.qmd"
   post-render:
     - "Scripts/arrangeplots.R"
     - "Scripts/forest.R"
+    - "Scripts/generate_tables.R"
   output-dir: "../docs"
   resources:
     - "robots.txt"

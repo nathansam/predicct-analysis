@@ -1,34 +1,4 @@
----
-title: "Diet"
-author:
-  - name: "Nathan Constantine-Cooke"
-    corresponding: true
-    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
-    affiliations:
-      - ref: CGEM
-      - ref: HGU
-  - name: "Víctor Velasco-Pardo"
-    url: https://scholar.google.com/citations?user=cR3nbyAAAAAJ&hl=en&oi=ao
-    affiliations:
-      - ref: CGEM
-  - name: "Alexander Rudge"
-    affiliations:
-      - ref: CGEM
-  - name: "Beatriz Gros"
-    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
-    affiliations:
-      - ref: Spain
-      - ref: IBD
-  - name: "Maiara Brusco De Freitas"
-    url: "https://scholar.google.com/citations?user=RfXbXL8AAAAJ&hl=en&oi=ao"
-    affiliations:
-      - ref: PREDICT
-bibliography: Survival.bib
----
-
-## Introduction
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| message: false
 source("Survival/utils.R")
 
@@ -37,27 +7,24 @@ analysis_setup <- setup_analysis()
 paths <- analysis_setup$paths
 demo <- analysis_setup$demo
 
+demo$FC <- log(demo$FC)
+
 flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
 flare.cd.df <- readRDS(paste0(paths$outdir, "flares-biochem-cd.RDS"))
 flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
-```
 
-## Total meat protein
 
-Protein intake from animal sources is not found to be significantly associated with flares in CD. However, there is evidence of an association for UC. At present, it is difficult to explore this in more detail (e.g. by meat type).
-
-### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize meat protein by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "Meat_sum", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "Meat_sum",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -81,20 +48,18 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- broom::tidy(fit.me) |> 
+hrs <- broom::tidy(fit.me) |>
   filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
+  mutate(diagnosis = "CD", flare = "Soft") |>
   relocate(diagnosis, flare)
-  
+
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -121,30 +86,30 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-   )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize meat protein by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "Meat_sum", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "Meat_sum",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -168,20 +133,20 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-   )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -208,30 +173,30 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize meat protein by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "Meat_sum", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "Meat_sum",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -252,21 +217,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -290,32 +255,30 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## Overall meat intake
 
-### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize overall meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "meat_overall", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "meat_overall",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -339,20 +302,20 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -379,31 +342,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize overall meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "meat_overall", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "meat_overall",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -427,20 +390,20 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -467,31 +430,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize overall meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "meat_overall", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "meat_overall",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -512,21 +475,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -550,33 +513,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## Overall fish intake
 
-### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize overall fish intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fish_overall", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "fish_overall",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -600,21 +561,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -641,30 +602,30 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize overall fish intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fish_overall", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "fish_overall",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -688,20 +649,20 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -727,31 +688,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize overall fish intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "fish_overall", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "fish_overall",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -772,21 +733,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -810,33 +771,30 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## Dietary fibre
 
-### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
-
 # Categorize dietary fibre by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fibre", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "fibre",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -860,21 +818,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -901,31 +859,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize fibre by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fibre", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "fibre",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -949,20 +907,20 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -989,31 +947,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize dietary fibre by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "fibre", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "fibre",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1034,21 +992,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1072,35 +1030,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## Polyunsaturated fatty acids
 
-The SAP states n-6 PUFAs will be investigated. However, the FFQ data extract lists PUFA collectively, presumably describing both n-3 and n-6 PUFAs. For now, these data will be used.
-
-### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize PUFA by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "PUFA_percEng", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "PUFA_percEng",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1124,20 +1078,20 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1164,30 +1118,30 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize PUFA by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "PUFA_percEng", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "PUFA_percEng",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1206,26 +1160,25 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "pufa-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + PUFA_percEng_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1252,31 +1205,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize PUFA by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "PUFA_percEng", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "PUFA_percEng",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1297,21 +1250,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1335,29 +1288,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## NOVA score
 
-The SAP states emulsifiers (specifically lecithin) will be investigated. However, data on emulsifiers are not available in the FFQ data extract. As a proxy for emulsifiers, this report will look at ultra-processed foods via Nova scores [@Monteiro_2017].
-
-### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1384,21 +1329,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1425,24 +1370,20 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1469,21 +1410,21 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1510,25 +1451,21 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1552,21 +1489,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1590,35 +1527,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## UPF intake
 
-As an alternative approach to characterising ultra-processed food, we considered the percentage of daily energy intake sourced from ultra-processed food and drink (Nova 4).
-
-### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize UPF percentage by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "UPF_perc", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "UPF_perc",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1642,21 +1575,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1683,31 +1616,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize UPF percentage by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "UPF_perc", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "UPF_perc",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1726,27 +1659,26 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "upf-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + UPF_perc_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1773,31 +1705,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-#### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize UPF percentage by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "UPF_perc", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "UPF_perc",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1818,21 +1750,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-#### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1856,35 +1788,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## Processed food subgroups
 
-### Breads and cereals
-
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize bread intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "breadIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "breadIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1908,21 +1836,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -1949,31 +1877,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize bread intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "breadIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "breadIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -1992,27 +1920,26 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "breadIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + breadIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2039,31 +1966,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize bread intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "breadIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "breadIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2084,21 +2011,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2122,33 +2049,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Sweets and desserts/snack foods
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize sweet intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "sweetIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "sweetIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2172,21 +2097,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2213,31 +2138,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize sweet intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "sweetIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "sweetIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2256,27 +2181,26 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "sweetIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + sweetIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2303,31 +2227,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize sweet intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "sweetIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "sweetIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2348,20 +2272,20 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2385,33 +2309,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Artificially and sugar-sweetened beverages
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize drink intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "drinkIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "drinkIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2435,20 +2357,20 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2475,31 +2397,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize drink intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "drinkIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "drinkIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2518,27 +2440,26 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "drinkIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + drinkIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2565,31 +2486,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize drink intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "drinkIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "drinkIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2610,21 +2531,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2648,32 +2569,30 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Animal-based products (processed meat)
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize processed meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "processedMeatIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "processedMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2687,7 +2606,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -2697,21 +2619,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2728,7 +2650,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -2738,31 +2663,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize processed meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "processedMeatIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "processedMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2776,32 +2701,34 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + processedMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2818,7 +2745,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedMeatIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedMeatIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -2828,30 +2758,30 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize processed meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "processedMeatIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "processedMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2872,21 +2802,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2910,33 +2840,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Plant-based alternatives
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize processed plant intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "processedPlantIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "processedPlantIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -2950,31 +2878,40 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -2991,40 +2928,49 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize processed plant intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "processedPlantIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "processedPlantIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3038,31 +2984,39 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat +
-    frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3079,41 +3033,50 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "processedPlantIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "processedPlantIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize processed plant intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "processedPlantIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "processedPlantIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3129,26 +3092,32 @@ analysis_result <- run_survival_analysis(
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3167,39 +3136,41 @@ analysis_result <- run_survival_analysis(
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + processedPlantIntake_cat + frailty(SiteNo),
+    Sex +
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## Un-processed/minimally processed food subgroups
 
-### Fruit
-
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize fruit intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fruitIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "fruitIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3223,21 +3194,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3264,30 +3235,30 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize fruit intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fruitIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "fruitIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3306,27 +3277,26 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "fruitIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + fruitIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + fruitIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3353,31 +3323,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize fruit intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "fruitIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "fruitIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3398,21 +3368,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3436,33 +3406,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Vegetable and legumes
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize vegetable intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "vegIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "vegIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3486,21 +3454,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3527,31 +3495,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize vegetable intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "vegIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "vegIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3570,27 +3538,26 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "vegIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + vegIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3617,31 +3584,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize vegetable intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "vegIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "vegIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3662,21 +3629,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3700,32 +3667,30 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Red meat
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize red meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "redMeatIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "redMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3749,20 +3714,20 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3789,31 +3754,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize red meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "redMeatIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "redMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3832,27 +3797,26 @@ saveRDS(analysis_result$plot, paste0(paths$outdir, "redMeatIntake-uc-soft.RDS"))
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + redMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3879,31 +3843,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize red meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "redMeatIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "redMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -3924,21 +3888,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -3962,32 +3926,30 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### White meat
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize white meat intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "whiteMeatIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "whiteMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -4001,7 +3963,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -4011,21 +3976,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4042,7 +4007,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -4052,31 +4020,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize white meat intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "whiteMeatIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "whiteMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -4090,31 +4058,33 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteMeatIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4131,7 +4101,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteMeatIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteMeatIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -4141,31 +4114,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize white meat intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "whiteMeatIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "whiteMeatIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -4186,21 +4159,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4224,33 +4197,31 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-### Fish (white and oily)
 
-#### Crohn's disease
-
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize white fish intake by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "whiteFishIntake", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(
+  flare.cd.df,
+  "whiteFishIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -4264,7 +4235,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-cd-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -4274,21 +4248,21 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4305,7 +4279,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-cd-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-cd-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -4315,31 +4292,31 @@ fit.me <- coxph(
   data = flare.cd.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "CD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "CD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Ulcerative colitis
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize white fish intake by quantiles
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "whiteFishIntake", reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(
+  flare.uc.df,
+  "whiteFishIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -4353,31 +4330,33 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-soft.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-uc-soft.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
-    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat +
-    frailty(SiteNo),
+    Sex + cat + IMD + dqi_tot + BMI + whiteFishIntake_cat + frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4394,7 +4373,10 @@ analysis_result <- run_survival_analysis(
 )
 
 # Save plot as RDS
-saveRDS(analysis_result$plot, paste0(paths$outdir, "whiteFishIntake-uc-hard.RDS"))
+saveRDS(
+  analysis_result$plot,
+  paste0(paths$outdir, "whiteFishIntake-uc-hard.RDS")
+)
 
 # Run Cox model with categorical variable
 fit.me <- coxph(
@@ -4404,31 +4386,31 @@ fit.me <- coxph(
   data = flare.uc.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "UC", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "UC", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-#### Inflammatory bowel disease
 
-::: {.panel-tabset group="followup"}
-##### Patient-reported flare
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
 
 # Categorize white fish intake by quantiles
-flare.df <- categorize_by_quantiles(flare.df, "whiteFishIntake", reference_data = flare.df)
+flare.df <- categorize_by_quantiles(
+  flare.df,
+  "whiteFishIntake",
+  reference_data = flare.df
+)
 
 # Run survival analysis using utility function
 analysis_result <- run_survival_analysis(
@@ -4449,21 +4431,21 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Soft") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Soft") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
 
-##### Objective flare
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4487,26 +4469,27 @@ fit.me <- coxph(
   data = flare.df
 )
 
-hrs <- rbind(hrs, broom::tidy(fit.me) |> 
-  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
-  mutate(diagnosis = "IBD", flare ="Hard") |>
-  relocate(diagnosis, flare)
-  )
+hrs <- rbind(
+  hrs,
+  broom::tidy(fit.me) |>
+    filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+    mutate(diagnosis = "IBD", flare = "Hard") |>
+    relocate(diagnosis, flare)
+)
 
 
 # Display plot and model summary
 analysis_result$plot
 invisible(cox_summary(fit.me))
-```
-:::
 
-## Save tables with p-values and hazard ratios
-```{r}
 
-pvalues <- hrs |> 
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+pvalues <- hrs |>
   select(diagnosis, flare, term, p.value)
 
-pvalues$term <- c(rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
+pvalues$term <- c(
+  rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Overall meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Overall fish intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Dietary fibre", c("2nd", "3rd", "4th"), "quartile"), 6),
@@ -4525,30 +4508,24 @@ pvalues$term <- c(rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"),
 )
 
 pvalues <- pvalues |>
-  mutate(adjusted.p.value = ifelse(
-    grepl(
-      "^Meat|^%UP|^PUFA|^Dietary", term), 
+  mutate(
+    adjusted.p.value = ifelse(
+      grepl(
+        "^Meat|^%UP|^PUFA|^Dietary",
+        term
+      ),
       NA,
-      p.value*216
+      p.value * 216
     )
   )
 pvalues$adjusted.p.value <- ifelse(
-  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value>1, 
-  1, 
+  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value > 1,
+  1,
   pvalues$adjusted.p.value
 )
-```
 
-<details class = "appendix">
-  <summary> Control for additional covariates </summary>
-  
-<h3> Crohn's disease </h3>
 
-<h4> Patient-reported flare </h4>
-
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4556,25 +4533,23 @@ pvalues$adjusted.p.value <- ifelse(
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4582,25 +4557,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4608,25 +4581,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4634,25 +4605,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4660,25 +4629,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4686,25 +4653,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4712,25 +4677,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4738,25 +4701,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4764,25 +4725,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4790,25 +4749,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4816,25 +4773,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4842,25 +4797,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Fruit intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4868,25 +4821,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fruitIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fruitIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Vegetable and legumes intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4894,25 +4845,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    vegIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      vegIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Red meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4920,25 +4869,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    redMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      redMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> White meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4946,27 +4893,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    whiteMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      whiteMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h4> Objective flare </h4>
 
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -4974,25 +4917,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5000,25 +4941,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5026,25 +4965,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5052,25 +4989,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5078,25 +5013,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5104,25 +5037,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5130,25 +5061,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5156,25 +5085,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5182,25 +5109,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5208,25 +5133,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5234,25 +5157,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5260,29 +5181,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h3> Ulcerative colitis </h3>
 
-<h4> Patient-reported flare </h4>
-
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5290,25 +5205,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5316,25 +5229,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5342,25 +5253,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5368,25 +5277,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5394,25 +5301,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5420,25 +5325,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5446,25 +5349,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5472,25 +5373,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5498,25 +5397,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5524,25 +5421,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5550,25 +5445,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5576,25 +5469,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Fruit intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5602,25 +5493,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fruitIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fruitIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Vegetable and legumes intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5628,25 +5517,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    vegIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      vegIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Red meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5654,25 +5541,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    redMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      redMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> White meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5680,27 +5565,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    whiteMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      whiteMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h4> Objective flare </h4>
 
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5708,25 +5589,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5734,25 +5613,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5760,25 +5637,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5786,25 +5661,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5812,25 +5685,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5838,25 +5709,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5864,25 +5733,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5890,25 +5757,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5916,25 +5781,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5942,25 +5805,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5968,25 +5829,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -5994,25 +5853,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Fruit intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6020,25 +5877,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fruitIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fruitIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Vegetable and legumes intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6046,25 +5901,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    vegIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      vegIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Red meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6072,25 +5925,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    redMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      redMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> White meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6098,32 +5949,29 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    whiteMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      whiteMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
-
-</details>
 
 
-## Save tables with p-values and hazard ratios
-```{r}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-pvalues <- hrs |> 
+pvalues <- hrs |>
   select(diagnosis, flare, term, p.value)
 
-pvalues$term <- c(rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
+pvalues$term <- c(
+  rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Overall meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Overall fish intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Dietary fibre", c("2nd", "3rd", "4th"), "quartile"), 6),
@@ -6142,30 +5990,24 @@ pvalues$term <- c(rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"),
 )
 
 pvalues <- pvalues |>
-  mutate(adjusted.p.value = ifelse(
-    grepl(
-      "^Meat|^%UP|^PUFA|^Dietary", term), 
+  mutate(
+    adjusted.p.value = ifelse(
+      grepl(
+        "^Meat|^%UP|^PUFA|^Dietary",
+        term
+      ),
       NA,
-      p.value*216
+      p.value * 216
     )
   )
 pvalues$adjusted.p.value <- ifelse(
-  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value>1, 
-  1, 
+  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value > 1,
+  1,
   pvalues$adjusted.p.value
 )
-```
 
-<details class = "appendix">
-  <summary> Control for additional covariates </summary>
-  
-<h3> Crohn's disease </h3>
 
-<h4> Patient-reported flare </h4>
-
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6173,25 +6015,23 @@ pvalues$adjusted.p.value <- ifelse(
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6199,25 +6039,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6225,25 +6063,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6251,25 +6087,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6277,25 +6111,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6303,25 +6135,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6329,25 +6159,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6355,25 +6183,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6381,25 +6207,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6407,25 +6231,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6433,25 +6255,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6459,25 +6279,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Fruit intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6485,25 +6303,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fruitIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fruitIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Vegetable and legumes intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6511,25 +6327,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    vegIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      vegIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Red meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6537,25 +6351,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    redMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      redMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> White meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6563,27 +6375,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    whiteMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      whiteMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h4> Objective flare </h4>
 
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6591,25 +6399,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6617,25 +6423,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6643,25 +6447,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6669,25 +6471,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6695,25 +6495,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6721,25 +6519,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6747,25 +6543,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6773,25 +6567,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6799,25 +6591,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6825,25 +6615,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6851,25 +6639,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6877,29 +6663,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h3> Ulcerative colitis </h3>
 
-<h4> Patient-reported flare </h4>
-
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6907,25 +6687,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6933,25 +6711,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6959,25 +6735,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -6985,25 +6759,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7011,25 +6783,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7037,25 +6807,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7063,25 +6831,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7089,25 +6855,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7115,25 +6879,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7141,25 +6903,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7167,25 +6927,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7193,25 +6951,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Fruit intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7219,25 +6975,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fruitIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fruitIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Vegetable and legumes intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7245,25 +6999,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    vegIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      vegIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Red meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7271,25 +7023,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    redMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      redMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> White meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7297,27 +7047,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    whiteMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      whiteMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h4> Objective flare </h4>
 
-<h5> Total meat protein </h5>
-
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7325,25 +7071,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    Meat_sum_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      Meat_sum_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7351,25 +7095,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    meat_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      meat_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Overall fish intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7377,25 +7119,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fish_overall_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fish_overall_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Dietary fibre </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7403,25 +7143,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fibre_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fibre_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Polyunsaturated fatty acids </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7429,25 +7167,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    PUFA_percEng_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      PUFA_percEng_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> NOVA score </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7455,25 +7191,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    NOVAScore_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      NOVAScore_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> UPF intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7481,25 +7215,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    UPF_perc_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      UPF_perc_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Bread intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7507,25 +7239,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    breadIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      breadIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Sweet intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7533,25 +7263,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    sweetIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      sweetIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Drink intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7559,25 +7287,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    drinkIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      drinkIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7585,25 +7311,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Processed plant intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7611,25 +7335,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    processedPlantIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      processedPlantIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Fruit intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7637,25 +7359,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    fruitIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      fruitIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Vegetable and legumes intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7663,25 +7383,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    vegIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      vegIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> Red meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7689,25 +7407,23 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    redMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      redMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
 
-<h5> White meat intake </h5>
 
-```{R}
+## ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| results: "hold"
 #| output: "asis"
 #| fig-height: 6
@@ -7715,35 +7431,22 @@ invisible(cox_summary(fit.me))
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
     Sex +
-    cat +
-    IMD +
-    dqi_tot +
-    BMI +
-    `IBD Duration` +
-    Treatment +
-    Age +
-    whiteMeatIntake_cat +
-    frailty(SiteNo),
+      cat +
+      IMD +
+      dqi_tot +
+      BMI +
+      `IBD Duration` +
+      Treatment +
+      Age +
+      whiteMeatIntake_cat +
+      frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.uc.df
 )
 
 invisible(cox_summary(fit.me))
-```
-
-</details>
 
 
-## Reproduction and reproducibility {.appendix}
-
-<details class="appendix">
-<summary>Session info</summary>
-
-```{R Session info}
+## ----Session info------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #| echo: false
 pander::pander(sessionInfo())
-```
-
-</details>
-
-Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.
