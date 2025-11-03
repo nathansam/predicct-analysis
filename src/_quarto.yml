@@ -18,6 +18,7 @@ project:
     - "Survival/IBD.qmd"
     - "Survival/Biochemistry.qmd"
     - "Survival/Diet.qmd"
+    - "Survival/Smoking/Diet.qmd"
     - "Survival/FC\ continuous/Diet.qmd"
     - "documents.qmd"
   post-render:

@@ -44,14 +44,11 @@ flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
 
 ## Total meat protein
 
-Protein intake from animal sources is not found to be significantly associated
-with flares in CD. However, there is evidence of an association for UC. At
-present, it is difficult to explore this in more detail (e.g. by meat type).
+Protein intake from animal sources is not found to be significantly associated with flares in CD. However, there is evidence of an association for UC. At present, it is difficult to explore this in more detail (e.g. by meat type).
 
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -134,13 +131,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -223,13 +218,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -307,7 +300,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ## Overall meat intake
@@ -315,7 +307,6 @@ invisible(cox_summary(fit.me))
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -399,13 +390,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -489,13 +478,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -574,7 +561,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ## Overall fish intake
@@ -582,7 +568,6 @@ invisible(cox_summary(fit.me))
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -666,13 +651,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -755,13 +738,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -839,16 +820,13 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
-
 
 ## Dietary fibre
 
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -934,13 +912,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1024,13 +1000,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1109,19 +1083,15 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ## Polyunsaturated fatty acids
 
-The SAP states n-6 PUFAs will be investigated. However, the FFQ data extract
-lists PUFA collectively, presumably describing both n-3 and n-6 PUFAs. For
-now, these data will be used. 
+The SAP states n-6 PUFAs will be investigated. However, the FFQ data extract lists PUFA collectively, presumably describing both n-3 and n-6 PUFAs. For now, these data will be used.
 
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1204,13 +1174,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1295,13 +1263,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1380,20 +1346,15 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ## NOVA score
 
-The SAP states emulsifiers (specifically lecithin) will be investigated.
-However, data on emulsifiers are not available in the FFQ data extract. As a
-proxy for emulsifiers, this report will look at ultra-processed foods via Nova
-scores [@Monteiro_2017]. 
+The SAP states emulsifiers (specifically lecithin) will be investigated. However, data on emulsifiers are not available in the FFQ data extract. As a proxy for emulsifiers, this report will look at ultra-processed foods via Nova scores [@Monteiro_2017].
 
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1474,13 +1435,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1562,13 +1521,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1644,19 +1601,15 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ## UPF intake
 
-As an alternative approach to characterising ultra-processed food, we considered
-the percentage of daily energy intake sourced from ultra-processed food and
-drink (Nova 4).
+As an alternative approach to characterising ultra-processed food, we considered the percentage of daily energy intake sourced from ultra-processed food and drink (Nova 4).
 
 ### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1741,13 +1694,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1833,13 +1784,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 #### Patient-reported flare
 
 ```{R}
@@ -1918,9 +1867,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
-
 
 ## Processed food subgroups
 
@@ -1929,7 +1876,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2014,13 +1960,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2106,13 +2050,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2191,7 +2133,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Sweets and desserts/snack foods
@@ -2199,7 +2140,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2284,13 +2224,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2376,13 +2314,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2460,7 +2396,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Artificially and sugar-sweetened beverages
@@ -2468,7 +2403,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2552,13 +2486,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2644,13 +2576,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2728,7 +2658,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Animal-based products (processed meat)
@@ -2736,7 +2665,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2821,13 +2749,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2912,13 +2838,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -2997,7 +2921,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Plant-based alternatives
@@ -3005,7 +2928,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3089,13 +3011,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3180,13 +3100,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3264,7 +3182,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ## Un-processed/minimally processed food subgroups
@@ -3274,7 +3191,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3358,13 +3274,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3450,13 +3364,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3535,7 +3447,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Vegetable and legumes
@@ -3543,7 +3454,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3628,13 +3538,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3720,13 +3628,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3804,7 +3710,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Red meat
@@ -3812,7 +3717,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3896,13 +3800,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -3988,13 +3890,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -4072,7 +3972,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### White meat
@@ -4080,7 +3979,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -4165,13 +4063,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -4256,13 +4152,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -4341,7 +4235,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ### Fish (white and oily)
@@ -4349,7 +4242,6 @@ invisible(cox_summary(fit.me))
 #### Crohn's disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -4434,13 +4326,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Ulcerative colitis
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -4525,13 +4415,11 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 #### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
-
 ##### Patient-reported flare
 
 ```{R}
@@ -4610,7 +4498,6 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 analysis_result$plot
 invisible(cox_summary(fit.me))
 ```
-
 :::
 
 ## Save tables with p-values and hazard ratios
@@ -7849,8 +7736,8 @@ invisible(cox_summary(fit.me))
 
 ## Reproduction and reproducibility {.appendix}
 
-<details class = "appendix">
-  <summary> Session info </summary>
+<details class="appendix">
+<summary>Session info</summary>
 
 ```{R Session info}
 #| echo: false
@@ -7859,6 +7746,4 @@ pander::pander(sessionInfo())
 
 </details>
 
-Licensed by 
-<a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>
- unless otherwise stated.
+Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.
