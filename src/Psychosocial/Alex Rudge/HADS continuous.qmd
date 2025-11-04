@@ -58,42 +58,69 @@ library(finalfit)
 Helper functions
 
 ```{r}
-# Chi squared tests
-summon_chisq_test <- function(data, dependent, independent) {
+
+summon_statistical_test <- function(data, dependent, independent) {
   
-  # Chi square tests/Fisher's exact test for the dependent variable vs each independent variable
+  # Chi square tests/Fisher's exact test/Wilcox or Mann Whitney
+  # for the dependent variable vs each independent variable
+  # Dependent variables must be discrete
   
   purrr::map2_df(
-    .x = dependent,
-    .y = independent,
+    .x = independent,
+    .y = dependent,
     .f = function(.x, .y) {
+      
+      # Remove NA
+      data %<>%
+        dplyr::filter(
+          !is.na(.x),
+          !is.na(.y)
+        )
+      
       x <- data %>%
         dplyr::pull(.x)
       
       y <- data %>%
         dplyr::pull(.y)
       
-      # Check whether we need a Fisher test
-      fisher_flag <- data %>%
-        # Count combinations of x and y
-        dplyr::count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
-        # Pull the count
-        dplyr::pull(n) %>%
-        # Check if any counts are < 5
-        min() < 5
+      # Check if x is continuous (numeric) or not
+      continuous_flag <- is.numeric(x)
+      
+      # If continuous, use a Wilcox/Mann Whitney
+      if (continuous_flag) {
+        # Formula as score ~ group
+        test_formula <- as.formula(paste0(.x, " ~ ", .y))
         
-      if (fisher_flag){
-        # If one of the counts is < 5 use Fisher exact test
-        fisher_test(table(x, y), simulate.p.value = TRUE, B = 1e5) %>%
-          dplyr::mutate(
-            dependent = .x, 
-            independent = .y,
-            method = 'Fisher\'s exact test')
+        wilcox_test(data, formula = test_formula) %>%
+          # Don't need the adjusted p values as we adjust ourselves in a second
+          dplyr::select(-.y., -p.adj, -p.adj.signif) %>%
+          dplyr::mutate(independent = .x,
+                        dependent = .y,
+                        method = 'Wilcox test')
         
-      } else {    
-        # Otherwise use chi square
-        chisq_test(x = x, y = y) %>%
-          dplyr::mutate(dependent = .x, independent = .y)
+      } else { # Otherwise use categorical tests
+        
+        # Check whether we need a Fisher test
+        fisher_flag <- data %>%
+          # Count combinations of x and y
+          dplyr::count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
+          # Pull the count
+          dplyr::pull(n) %>%
+          # Check if any counts are < 5
+          min() < 5
+        
+        if (fisher_flag) {
+          # If one of the counts is < 5 use Fisher exact test
+          fisher_test(table(x, y), simulate.p.value = TRUE, B = 1e5) %>%
+            dplyr::mutate(independent = .x,
+                          dependent = .y,
+                          method = 'Fisher\'s exact test')
+          
+        } else {
+          # Otherwise use chi square
+          chisq_test(x = x, y = y) %>%
+            dplyr::mutate(independent = .x, dependent = .y)
+        }
       }
     }
   ) %>%
@@ -109,8 +136,120 @@ summon_chisq_test <- function(data, dependent, independent) {
         .default = 'ns'
       )
     )
+  
 }
 
+
+# Function to create plots for baseline associations
+
+summon_baseline_plot_discrete <- function(data, stat_tests, dependent, independent) {
+  # Creating plot for baseline variables with the dependent variable
+  # Discrete variables
+  
+  # Stat_tests is a dataframe from summon_statistical_test to get p-value info
+  
+  # Rename independent for filtering
+  indep <- independent
+  
+  label <- stat_tests %>%
+    dplyr::filter(independent == indep) %>%
+    dplyr::pull(p.adjust) %>%
+    {paste0("Adjusted p-value: ", .)}
+  
+  data %>%
+    dplyr::filter(!is.na(!!sym(dependent)), !is.na(!!sym(independent))) %>%
+    dplyr::group_by(!!rlang::sym(independent), !!rlang::sym(dependent)) %>%
+    dplyr::count() %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(!!rlang::sym(independent)) %>%
+    dplyr::mutate(p = n/sum(n)) %>%
+    dplyr::ungroup() %>%
+    ggplot(aes(x = !!sym(dependent), y = p, fill = !!sym(independent))) +
+    geom_col(position = 'dodge') +
+    annotate(
+      "text",
+      label = label,
+      x = Inf,
+      y = Inf,
+      vjust = 2,
+      hjust = 1.3
+    ) +
+    theme_minimal()
+  
+}
+
+
+summon_baseline_plot_continuous <- function(data, stat_tests, dependent, independent) {
+  # Creating plot for baseline variables with the dependent variable
+  # Continuous independent variable
+  
+  # Stat_tests is a dataframe from summon_statistical_test to get p-value info
+  
+  # Label for the plot needs multiple tests on it
+  # Rename independent for filtering
+  indep <- independent
+
+  label <- stat_tests %>%
+    dplyr::filter(independent == indep) %>%
+    dplyr::mutate(label = paste0(group1, " vs ", group2, ": ", p.adjust)) %>%
+    dplyr::pull(label) %>%
+    paste0(., collapse="\n") %>%
+    {paste0("Adjusted p-values:\n", .)}
+  
+  # Plot
+  data %>%
+    dplyr::filter(
+      !is.na(!!sym(dependent)),
+      !is.na(!!sym(independent))
+    ) %>%
+    ggplot(aes(x = !!sym(independent), colour = !!sym(dependent))) +
+    geom_density() +
+    annotate(
+      "text",
+      label = label,
+      x = Inf,
+      y = Inf,
+      vjust = 1.1,
+      hjust = 1.3
+    ) +
+    ylab("") +
+    theme_minimal()
+  
+}
+
+# Function to perform coxph with mice for missing data
+coxph_mice <- function(formula, data, ...){
+  
+  # Variables
+  variables <- all.vars(formula)
+  
+  # Extract time and status variable names
+  timevar <- variables[1]
+  statusvar <- variables[2]
+  
+  # Select variables in the data
+  data %<>%
+    dplyr::select(tidyselect::all_of(variables)) %>%
+    # Calculate the cumulative hazard
+    dplyr::mutate(cumhaz = mice::nelsonaalen(
+      data = .,
+      timevar = !!sym(timevar),
+      statusvar = !!sym(statusvar)
+    ))
+  
+  # Predictor matrix - need to exclude time from the model
+  pred_matrix <- mice::make.predictorMatrix(data)
+  
+  pred_matrix[, timevar] <- 0
+  
+  data_imp <- mice::mice(
+    data = data,
+    predictorMatrix = pred_matrix, ...)
+  
+  # Return the imputation
+  return(data_imp)
+  
+}
 
 print_chisq <- function(data) {
   data %>%
@@ -141,59 +280,146 @@ print_survival <- function(data) {
                  )
 }
 
-
-# Creating proportions for plotting baseline data
-calc_proportion <- function(data, dependent, independent){
+plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
   
-  data %>%
-    dplyr::group_by(!!rlang::sym(independent), !!rlang::sym(dependent)) %>%
-    dplyr::count() %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(!!rlang::sym(independent)) %>%
-    dplyr::mutate(p = n/sum(n)) 
+  # Plotting continuous Hazard Ratio curves
+  # Data is the same data used to fit the Cox model
+  # model is a Cox model
+  # variable is the variable we are plotting
+  # splineterm is the spline used in the model, if there is one
   
-}
-
-summon_baseline_plots <- function(data, dependent, independent) {
   
-  # Chi squared tests
-  chisq_results <- summon_chisq_test(
-    data = data,
-    dependent = dependent,
-    independent = independent
-  ) %>%
-    dplyr::transmute(independent, p.adjust) %>%
-    {setNames(as.list(.$p.adjust), .$independent)}
-
+  # Range of the variable to plot
+  variable_range <- data %>%
+    dplyr::pull(variable) %>%
+    quantile(., probs = seq(0, 0.9, 0.01), na.rm = TRUE) %>%
+    unname() %>%
+    unique()
   
-  # Creating plots for baseline variables with the dependent variable
-  
-  plot_list <- list()
-  
-  for (y in independent) {
+  # If there is a spline
+  if (!is.null(splineterm)){
     
-    # Create a plot for each independent variable
+    # Recreate the spline
+    spline <- with(data, eval(parse(text = splineterm)))
     
-    plot <- data %>%
-      calc_proportion(., dependent = dependent, independent = y) %>%
-      ggplot(aes(x = .data[[dependent]], y = p, fill = .data[[y]])) +
-      geom_col(position = 'dodge') +
-      annotate(
-        "text",
-        label = paste0("Adjusted p-value: ", chisq_results[[y]]),
-        x = Inf,
-        y = Inf,
-        vjust = 2,
-        hjust = 1.3
-      ) +
-      theme_minimal()
+    # Get the spline terms for the variable values we are plotting
+    spline_values <- predict(spline, newx = variable_range)
     
-    plot_list[[y]] <- plot
+    # Get the reference values of the variables that were used to fit the Cox model
+    X_ref <- model$means
+    
+    # New values to calculate the HR at 
+    # Take the ref values and vary our variable of interest
+    
+    # Number of values
+    n_values <- variable_range %>% length()
+    
+    X_ref <- matrix(rep(X_ref, n_values), nrow = n_values, byrow = TRUE)
+    # Fix the column names
+    colnames(X_ref) <- names(model$means)
+    
+    # Now add our new variable values
+    X_new <- X_ref
+    # Identify the correct columns
+    column_pos <- stringr::str_detect(colnames(X_new), variable)
+    # Add the values - ordering of columns and model term names should be preserved
+    X_new[,column_pos] <- spline_values
+    
+    # Calculate the linear predictor and se
+    # Method directly from predict.coxph from the survival package
+    lp <- (X_new - X_ref)%*%coef(model) 
+    
+    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref)) %>%
+      as.numeric() %>%
+      sqrt()
+    
+  } else {
+    # If there is no spline then it is easier
+    
+    # Get the reference values of the variables that were used to fit the Cox model
+    X_ref <- model$means
+    
+    # New values to calculate the HR at 
+    # Take the ref values and vary our variable of interest
+    
+    # Number of values
+    n_values <- variable_range %>% length()
+    
+    X_ref <- matrix(rep(X_ref, n_values), nrow = n_values, byrow = TRUE)
+    # Fix the column names
+    colnames(X_ref) <- names(model$means)
+    
+    # Now add our new variable values
+    X_new <- X_ref
+    
+    # Add the values
+    X_new[,variable] <- variable_range
+    
+    # Calculate the linear predictor and se
+    # Method directly from predict.coxph from the survival package
+    lp <- (X_new - X_ref)%*%coef(model) %>% as.numeric() 
+    
+    lp_se <- rowSums((X_new - X_ref)%*%vcov(model)*(X_new - X_ref)) %>% 
+      as.numeric() %>%
+      sqrt()
     
   }
-  # Return the plots
-  plot_list
+  
+  # Store results in a tibble
+  data_pred <- tibble(
+    !!sym(variable) := variable_range,
+    p = lp,
+    se = lp_se
+  )
+  
+  # Plot
+  data_pred %>%
+    ggplot(aes(
+      x = !!rlang::sym(variable),
+      y = exp(p),
+      ymin = exp(p - 1.96 * se),
+      ymax = exp(p + 1.96 * se)
+    )) +
+    geom_point() +
+    geom_line() +
+    geom_ribbon(alpha = 0.2) +
+    ylab("HR") + 
+    theme_minimal()
+  
 }
+
+# Function to perform an LRT
+summon_lrt <- function(model, remove = NULL, add = NULL) {
+  # Function that removes a term and performs a
+  # Likelihood ratio test to determine its significance
+  
+  new_formula <- "~ ."
+  
+  if (!is.null(remove)) {
+    new_formula <- paste0(new_formula, " - ", remove)
+  } else {
+    remove <- NA
+  }
+  
+  if (!is.null(add)) {
+    new_formula <- paste0(new_formula, " + ", add)
+  } else {
+    add <- NA
+  }
+  
+  update(model, new_formula) %>%
+    anova(model, ., test = "LRT") %>%
+    broom::tidy() %>%
+    dplyr::filter(!is.na(p.value)) %>%
+    dplyr::select(-term) %>%
+    dplyr::mutate(
+      removed = remove,
+      added = add
+    ) %>%
+    dplyr::mutate(test = "LRT") %>%
+    dplyr::select(test, removed, added, tidyselect::everything())
+}
+
 ```
 
 Load data
