@@ -609,13 +609,11 @@ hads_with_demographics <- hads_with_demographics %>%
     demo %>% dplyr::select(ParticipantNo, FC, cat, IMD, Smoke), 
     by = "ParticipantNo")
 
-# n_missing_fc <- hads_with_demographics %>% 
-#   filter(is.na(cat)) %>%
-#   nrow()
-# 209 removed with no FC
+# Smoke as a factor
+hads_with_demographics %<>%
+  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
+  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
 
-# hads_with_demographics <- hads_with_demographics %>%
-#   filter(!is.na(cat))
 
 #Join flare data
 hads_with_demographics <- hads_with_demographics %>% 
