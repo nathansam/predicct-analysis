@@ -108,9 +108,17 @@ flare.cd.df %<>%
 # Kaplan-Meier
 flare.cd.df %>%
   survfit(Surv(softflare_time, softflare) ~ weekly_units, data = .) %>%
-  ggsurvplot(data = flare.cd.df,
-             conf.int = TRUE,
-             ggtheme = theme_minimal())
+  ggsurvplot(
+    ., 
+    data = flare.cd.df, 
+    conf.int = TRUE, 
+    risk.table = TRUE,
+    pval = TRUE,
+    pval.method = TRUE,
+    legend.title = 'Alcohol units per week',
+    legend.labs = c('0', '0.1 - 14', 'Over 14'),
+    xlab = "Time from study recruitment (days)",
+    ggtheme = theme_minimal())
 
 # Cox model
 cox_soft_cd <- coxph(
@@ -130,9 +138,17 @@ cox_soft_cd %>%
 # Kaplan-Meier
 flare.cd.df %>%
   survfit(Surv(hardflare_time, hardflare) ~ weekly_units, data = .) %>%
-  ggsurvplot(data = flare.cd.df,
-             conf.int = TRUE,
-             ggtheme = theme_minimal())
+  ggsurvplot(
+    ., 
+    data = flare.cd.df, 
+    conf.int = TRUE, 
+    risk.table = TRUE,
+    pval = TRUE,
+    pval.method = TRUE,
+    legend.title = 'Alcohol units per week',
+    legend.labs = c('0', '0.1 - 14', 'Over 14'),
+    xlab = "Time from study recruitment (days)",
+    ggtheme = theme_minimal())
 
 # Cox model
 cox_hard_cd <- coxph(
@@ -154,9 +170,18 @@ cox_hard_cd %>%
 # Kaplan-Meier
 flare.uc.df %>%
   survfit(Surv(softflare_time, softflare) ~ weekly_units, data = .) %>%
-  ggsurvplot(data = flare.uc.df,
-             conf.int = TRUE,
-             ggtheme = theme_minimal())
+  ggsurvplot(
+    .,
+    data = flare.uc.df,
+    conf.int = TRUE,
+    risk.table = TRUE,
+    pval = TRUE,
+    pval.method = TRUE,
+    legend.title = 'Alcohol units per week',
+    legend.labs = c('0', '0.1 - 14', 'Over 14'),
+    xlab = "Time from study recruitment (days)",
+    ggtheme = theme_minimal()
+  )
 
 # Cox model
 cox_soft_uc <- coxph(
@@ -168,7 +193,6 @@ cox_soft_uc <- coxph(
 cox_soft_uc %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
-
 ```
 
 #### Objective flare
@@ -177,9 +201,18 @@ cox_soft_uc %>%
 # Kaplan-Meier
 flare.uc.df %>%
   survfit(Surv(hardflare_time, hardflare) ~ weekly_units, data = .) %>%
-  ggsurvplot(data = flare.uc.df,
-             conf.int = TRUE,
-             ggtheme = theme_minimal())
+  ggsurvplot(
+    .,
+    data = flare.uc.df,
+    conf.int = TRUE,
+    risk.table = TRUE,
+    pval = TRUE,
+    pval.method = TRUE,
+    legend.title = 'Alcohol units per week',
+    legend.labs = c('0', '0.1 - 14', 'Over 14'),
+    xlab = "Time from study recruitment (days)",
+    ggtheme = theme_minimal()
+  )
 
 # Cox model
 cox_hard_uc <- coxph(
@@ -190,6 +223,5 @@ cox_hard_uc <- coxph(
 
 cox_hard_uc %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
-
 
 ```
