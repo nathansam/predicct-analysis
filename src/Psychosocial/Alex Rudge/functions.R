@@ -76,13 +76,25 @@ summon_statistical_test <- function(data, dependent, independent) {
     dplyr::mutate(p.adjust = signif(p.adjust, 3)) %>%
     dplyr::select(-p.signif) %>%
     dplyr::mutate(
-      p.signif = dplyr::case_when(
+      p.adjust.signif = dplyr::case_when(
         p.adjust < 0.0001 ~ "****",
         p.adjust < 0.001 ~ "***",
         p.adjust < 0.01  ~ "**",
         p.adjust < 0.05  ~ "*",
         .default = 'ns'
       )
+    ) %>%
+    # Calculate n for Wilcox tests
+    dplyr::mutate(n = dplyr::coalesce(n, n1 + n2)) %>%
+    # Rename group 1 and group2
+    dplyr::rename(
+      independent_group1 = group1, 
+      independent_group2 = group2,
+      n_group1 = n1,
+      n_group2 = n2) %>%
+    # Reorder columns
+    dplyr::select(
+      dependent, independent, method, independent_group1, independent_group2, n, n_group1, n_group2, statistic, df, p, p.adjust, p.adjust.signif
     )
   
 }
