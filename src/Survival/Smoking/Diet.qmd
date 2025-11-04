@@ -32,11 +32,8 @@ summon_plot_broom_hr <- function(data){
   data %>%
     # Remove frailty
     dplyr::filter(!stringr::str_detect(term, "frailty")) %>%
-    # Rename the confidence intervals
-    dplyr::rename(
-      conf.low = `2.5 %`,
-      conf.high = `97.5 %`
-    ) %>%
+    # Rename confidence intervals only if they don't already exist
+    {if(!"conf.low" %in% names(.)) dplyr::rename(., conf.low = `2.5 %`, conf.high = `97.5 %`) else .} %>%
     # Significance flag
     dplyr::mutate(
       significant = (p.value <= 0.05)

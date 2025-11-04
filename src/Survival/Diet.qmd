@@ -28,6 +28,7 @@ bibliography: Survival.bib
 
 ## Introduction
 
+
 ```{R}
 #| message: false
 source("Survival/utils.R")
@@ -41,6 +42,12 @@ flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
 flare.cd.df <- readRDS(paste0(paths$outdir, "flares-biochem-cd.RDS"))
 flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
 ```
+
+Sensitivity analyses are available which
+[control for smoking status](Survival/Smoking/Diet.qmd) by imputing missing
+smoking data and
+[control for FC as a continuous variable](Survival/FC\ continuous/Diet.qmd) via
+splines. 
 
 ## Total meat protein
 
