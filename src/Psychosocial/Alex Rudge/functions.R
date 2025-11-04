@@ -160,7 +160,7 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
 
   label <- stat_tests %>%
     dplyr::filter(independent == indep) %>%
-    dplyr::mutate(label = paste0(group1, " vs ", group2, ": ", p.adjust)) %>%
+    dplyr::mutate(label = paste0(independent_group1, " vs ", independent_group2, ": ", p.adjust)) %>%
     dplyr::pull(label) %>%
     paste0(., collapse="\n") %>%
     {paste0("Adjusted p-values:\n", .)}

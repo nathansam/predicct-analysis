@@ -5,7 +5,7 @@ author:
     url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
     affiliations:
       - ref: Lothian
-  - name: "Alex Rudge"
+  - name: "Alexander Rudge"
     affiliations:
       - ref: CGEM
   - name: "Nathan Constantine-Cooke"
@@ -206,7 +206,7 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
 
   label <- stat_tests %>%
     dplyr::filter(independent == indep) %>%
-    dplyr::mutate(label = paste0(group1, " vs ", group2, ": ", p.adjust)) %>%
+    dplyr::mutate(label = paste0(independent_group1, " vs ", independent_group2, ": ", p.adjust)) %>%
     dplyr::pull(label) %>%
     paste0(., collapse="\n") %>%
     {paste0("Adjusted p-values:\n", .)}
@@ -718,6 +718,7 @@ independent = c('diagnosis2',
                 'Sex',
                 'flare_group',
                 'FC',
+                'Smoke',
                 'OverallControl')
 
 # Dependent variable is score_group
@@ -751,6 +752,13 @@ summon_baseline_plot_discrete(
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'flare_group'
+)
+
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
@@ -788,6 +796,7 @@ independent = c('age',
                 'Sex',
                 'flare_group',
                 'FC',
+                'Smoke',
                 'OverallControl')
 
 # Dependent variable is score_group
@@ -814,6 +823,13 @@ summon_baseline_plot_discrete(
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'flare_group'
+)
+
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
@@ -872,6 +888,13 @@ summon_baseline_plot_discrete(
   independent = 'flare_group'
 )
 
+summon_baseline_plot_discrete(
+  data = data_baseline_anxiety_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'Smoke'
+)
+
 summon_baseline_plot_continuous(
   data = data_baseline_anxiety_cd,
   stat_tests = statistical_tests,
@@ -909,6 +932,7 @@ independent = c('diagnosis2',
                 'Sex',
                 'flare_group',
                 'FC',
+                'Smoke',
                 'OverallControl')
 
 # Dependent variable is score_group
@@ -935,6 +959,13 @@ summon_baseline_plot_discrete(
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'flare_group'
+)
+
+summon_baseline_plot_discrete(
+  data = data_baseline_depression,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
