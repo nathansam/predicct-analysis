@@ -455,6 +455,18 @@ hads_for_analysis %<>%
 
 ## Baseline Analysis
 
+```{r}
+# Independent variables we wish to use for the Baseline analysis
+
+independent = c('diagnosis2',
+                'age',
+                'Sex',
+                'flare_group',
+                'FC')
+
+```
+
+
 ### Anxiety
 
 #### Full Cohort
@@ -532,7 +544,8 @@ data_baseline_anxiety_uc <- hads_for_analysis %>%
 independent = c('age',
                 'Sex',
                 'flare_group',
-                'FC')
+                'FC',
+                'OverallControl')
 
 # Dependent variable is score_group
 
@@ -572,6 +585,13 @@ summon_baseline_plot_continuous(
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'FC'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'OverallControl'
 )
 ```
 
@@ -904,6 +924,42 @@ cox_fc_soft <- coxph(
 summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
+# OverallControl
+cox_control_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    OverallControl +
+    frailty(SiteNo),
+  data = data_survival_anxiety_soft
+)
+
+# Spline for control
+summon_lrt(cox_control_soft, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# Yes
+
+# OverallControl
+cox_control_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    ns(OverallControl, df = 2) +
+    frailty(SiteNo),
+  data = data_survival_anxiety_soft
+)
+
+# Spline for control
+summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+# Yes
+
+# OverallControl
+cox_control_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    ns(OverallControl, df = 3) +
+    frailty(SiteNo),
+  data = data_survival_anxiety_soft
+)
+
+# Spline for control
+summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 3)', add = 'ns(OverallControl, df = 4)')
+# No, df = 3 is sufficient
+
 ```
 
 ```{r}
@@ -919,6 +975,13 @@ plot_continuous_hr(
   data = data_survival_anxiety_soft, 
   model = cox_fc_soft, 
   variable = 'FC')
+
+# Control
+plot_continuous_hr(
+  data = data_survival_anxiety_soft, 
+  model = cox_control_soft, 
+  variable = 'OverallControl',
+  splineterm = 'ns(OverallControl, df = 3)')
 ```
 
 
@@ -949,6 +1012,18 @@ cox_fc_hard <- coxph(
 # Spline for FC
 summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
+
+# OverallControl
+cox_control_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    OverallControl +
+    frailty(SiteNo),
+  data = data_survival_anxiety_hard
+)
+
+# Spline for control
+summon_lrt(cox_control_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# No
 ```
 
 ```{r}
@@ -964,6 +1039,12 @@ plot_continuous_hr(
   data = data_survival_anxiety_hard, 
   model = cox_fc_hard, 
   variable = 'FC')
+
+# Control
+plot_continuous_hr(
+  data = data_survival_anxiety_soft, 
+  model = cox_control_hard, 
+  variable = 'OverallControl')
 ```
 
 #### Ulcerative Colitis
@@ -995,6 +1076,29 @@ cox_fc_soft_uc <- coxph(
 summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
+# OverallControl
+cox_control_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    OverallControl +
+    frailty(SiteNo),
+  data = data_survival_anxiety_soft_uc
+)
+
+# Spline for control
+summon_lrt(cox_control_soft_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# Yes
+
+# OverallControl
+cox_control_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    ns(OverallControl, df = 2) +
+    frailty(SiteNo),
+  data = data_survival_anxiety_soft_uc
+)
+
+summon_lrt(cox_control_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+# No, df = 2 is sufficient
+
 ```
 
 ```{r}
@@ -1010,6 +1114,13 @@ plot_continuous_hr(
   data = data_survival_anxiety_soft_uc, 
   model = cox_fc_soft_uc, 
   variable = 'FC')
+
+# Control
+plot_continuous_hr(
+  data = data_survival_anxiety_soft_uc, 
+  model = cox_control_soft_uc, 
+  variable = 'OverallControl',
+  splineterm = 'ns(OverallControl, df = 2)')
 ```
 
 
@@ -1088,6 +1199,20 @@ cox_fc_hard_uc <- coxph(
 # Test for df = 3
 summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 # No, stay with df = 2
+
+
+# OverallControl
+cox_control_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    OverallControl +
+    frailty(SiteNo),
+  data = data_survival_anxiety_hard_uc
+)
+
+# Spline for control
+summon_lrt(cox_control_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# No
+
 ```
 
 ```{r}
@@ -1105,6 +1230,12 @@ plot_continuous_hr(
   model = cox_fc_hard_uc, 
   variable = 'FC',
   splineterm = 'ns(FC, df = 2)')
+
+# Control
+plot_continuous_hr(
+  data = data_survival_anxiety_hard_uc, 
+  model = cox_control_hard_uc, 
+  variable = 'OverallControl')
 ```
 
 #### Crohn's Disease
@@ -1137,6 +1268,29 @@ cox_fc_soft_cd <- coxph(
 summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
+# OverallControl
+cox_control_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    OverallControl +
+    frailty(SiteNo),
+  data = data_survival_anxiety_soft_cd
+)
+
+# Spline for control
+summon_lrt(cox_control_soft_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# Yes
+
+# OverallControl
+cox_control_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    ns(OverallControl, df = 2) +
+    frailty(SiteNo),
+  data = data_survival_anxiety_soft_cd
+)
+
+summon_lrt(cox_control_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+# No, df = 2 is sufficient
+
 ```
 
 ```{r}
@@ -1152,6 +1306,13 @@ plot_continuous_hr(
   data = data_survival_anxiety_soft_cd, 
   model = cox_fc_soft_cd, 
   variable = 'FC')
+
+# Control
+plot_continuous_hr(
+  data = data_survival_anxiety_soft_cd, 
+  model = cox_control_soft_cd, 
+  variable = 'OverallControl',
+  splineterm = 'ns(OverallControl, df = 2)')
 ```
 
 ##### Objective flare
@@ -1181,6 +1342,18 @@ cox_fc_hard_cd <- coxph(
 # Spline for FC
 summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
+
+# OverallControl
+cox_control_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    OverallControl +
+    frailty(SiteNo),
+  data = data_survival_anxiety_hard_cd
+)
+
+# Spline for control
+summon_lrt(cox_control_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# No
 ```
 
 ```{r}
@@ -1196,16 +1369,22 @@ plot_continuous_hr(
   data = data_survival_anxiety_hard_cd, 
   model = cox_fc_hard_cd, 
   variable = 'FC')
+
+# Control
+plot_continuous_hr(
+  data = data_survival_anxiety_hard_cd, 
+  model = cox_control_hard_cd, 
+  variable = 'OverallControl')
 ```
 
 
 Summary:
 
-Full cohort, no splines.
+Full cohort, soft, control df = 3, hard, no.
 
-UC, soft, no splines. Hard, age df = 4, FC df = 2.
+UC, soft, control df = 2. Hard, age df = 4, FC df = 2.
 
-CD, soft, no splines. Hard, no splines.
+CD, soft, control df = 2. Hard, no splines.
 
 ### Anxiety
 
