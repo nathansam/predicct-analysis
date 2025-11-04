@@ -455,18 +455,6 @@ hads_for_analysis %<>%
 
 ## Baseline Analysis
 
-```{r}
-# Independent variables we wish to use for the Baseline analysis
-
-independent = c('diagnosis2',
-                'age',
-                'Sex',
-                'flare_group',
-                'FC')
-
-```
-
-
 ### Anxiety
 
 #### Full Cohort
@@ -481,7 +469,8 @@ independent = c('diagnosis2',
                 'age',
                 'Sex',
                 'flare_group',
-                'FC')
+                'FC',
+                'OverallControl')
 
 # Dependent variable is score_group
 
@@ -530,6 +519,12 @@ summon_baseline_plot_continuous(
   independent = 'FC'
 )
 
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'OverallControl'
+)
 ```
 
 #### Ulcerative Colitis/IBD Unclassified
@@ -603,12 +598,6 @@ data_baseline_anxiety_cd <- hads_for_analysis %>%
   dplyr::filter(hads_type == 'anxiety_hads') %>%
   dplyr::filter(diagnosis2 == 'CD')
 
-# Independent variables
-independent = c('age',
-                'Sex',
-                'flare_group',
-                'FC')
-
 # Dependent variable is score_group
 
 # Statistical tests for each independent variable with score_group
@@ -648,6 +637,13 @@ summon_baseline_plot_continuous(
   dependent = 'score_group',
   independent = 'FC'
 )
+
+summon_baseline_plot_continuous(
+  data = data_baseline_anxiety_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'OverallControl'
+)
 ```
 
 ### Depression
@@ -660,10 +656,12 @@ data_baseline_depression <- hads_for_analysis %>%
   dplyr::filter(hads_type == 'depression_hads')
 
 # Independent variables
-independent = c('age',
+independent = c('diagnosis2',
+                'age',
                 'Sex',
                 'flare_group',
-                'FC')
+                'FC',
+                'OverallControl')
 
 # Dependent variable is score_group
 
@@ -704,6 +702,13 @@ summon_baseline_plot_continuous(
   dependent = 'score_group',
   independent = 'FC'
 )
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'OverallControl'
+)
 ```
 
 #### Ulcerative Colitis/IBD Unclassified
@@ -718,7 +723,8 @@ data_baseline_depression_uc <- hads_for_analysis %>%
 independent = c('age',
                 'Sex',
                 'flare_group',
-                'FC')
+                'FC',
+                'OverallControl')
 
 # Dependent variable is score_group
 
@@ -759,6 +765,13 @@ summon_baseline_plot_continuous(
   dependent = 'score_group',
   independent = 'FC'
 )
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'OverallControl'
+)
 ```
 
 #### Crohn's Disease
@@ -768,12 +781,6 @@ summon_baseline_plot_continuous(
 data_baseline_depression_cd <- hads_for_analysis %>%
   dplyr::filter(hads_type == 'depression_hads') %>%
   dplyr::filter(diagnosis2 == 'CD')
-
-# Independent variables
-independent = c('age',
-                'Sex',
-                'flare_group',
-                'FC')
 
 # Dependent variable is score_group
 
@@ -813,6 +820,13 @@ summon_baseline_plot_continuous(
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'FC'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_depression_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'OverallControl'
 )
 ```
 
@@ -887,7 +901,6 @@ data_survival_depression_hard_uc <- data_survival_depression_hard %>%
 # CD
 data_survival_depression_hard_cd <- data_survival_depression_hard %>%
   dplyr::filter(diagnosis2 == 'CD')
-
 
 ```
 
