@@ -414,6 +414,21 @@ hads_for_analysis <- hads_for_analysis %>%
       include.lowest = TRUE)
   )
 
+# IBD control scores
+hads_for_analysis %<>%
+  dplyr::left_join(
+    IBD_C %>% dplyr::select(
+      ParticipantNo,
+      control_score,
+      OverallControl,
+      control_8,
+      control_grouped,
+      vas_control
+    ),
+    by = "ParticipantNo"
+  )
+
+
 # Age in decades
 hads_for_analysis %<>%
   dplyr::mutate(
@@ -891,6 +906,22 @@ summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 
 ```
 
+```{r}
+# Plot shapes
+# Age
+plot_continuous_hr(
+  data = data_survival_anxiety_soft, 
+  model = cox_age_soft, 
+  variable = 'age_decade')
+
+# FC
+plot_continuous_hr(
+  data = data_survival_anxiety_soft, 
+  model = cox_fc_soft, 
+  variable = 'FC')
+```
+
+
 ##### Objective flare
 
 ```{r}
@@ -918,6 +949,21 @@ cox_fc_hard <- coxph(
 # Spline for FC
 summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
+```
+
+```{r}
+# Plot shapes
+# Age
+plot_continuous_hr(
+  data = data_survival_anxiety_hard, 
+  model = cox_age_hard, 
+  variable = 'age_decade')
+
+# FC
+plot_continuous_hr(
+  data = data_survival_anxiety_hard, 
+  model = cox_fc_hard, 
+  variable = 'FC')
 ```
 
 #### Ulcerative Colitis
@@ -950,6 +996,22 @@ summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
+
+```{r}
+# Plot shapes
+# Age
+plot_continuous_hr(
+  data = data_survival_anxiety_soft_uc, 
+  model = cox_age_soft_uc, 
+  variable = 'age_decade')
+
+# FC
+plot_continuous_hr(
+  data = data_survival_anxiety_soft_uc, 
+  model = cox_fc_soft_uc, 
+  variable = 'FC')
+```
+
 
 ##### Objective flare
 
@@ -1077,6 +1139,21 @@ summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 
 ```
 
+```{r}
+# Plot shapes
+# Age
+plot_continuous_hr(
+  data = data_survival_anxiety_soft_cd, 
+  model = cox_age_soft_cd, 
+  variable = 'age_decade')
+
+# FC
+plot_continuous_hr(
+  data = data_survival_anxiety_soft_cd, 
+  model = cox_fc_soft_cd, 
+  variable = 'FC')
+```
+
 ##### Objective flare
 
 ```{r}
@@ -1105,6 +1182,22 @@ cox_fc_hard_cd <- coxph(
 summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 ```
+
+```{r}
+# Plot shapes
+# Age
+plot_continuous_hr(
+  data = data_survival_anxiety_hard_cd, 
+  model = cox_age_hard_cd, 
+  variable = 'age_decade')
+
+# FC
+plot_continuous_hr(
+  data = data_survival_anxiety_hard_cd, 
+  model = cox_fc_hard_cd, 
+  variable = 'FC')
+```
+
 
 Summary:
 
@@ -1144,6 +1237,9 @@ cox_anxiety_soft <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    OverallControl +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft
 )
@@ -1163,6 +1259,8 @@ cox_anxiety_soft_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft,
   m = 10,
@@ -1170,16 +1268,20 @@ cox_anxiety_soft_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_soft <- with(cox_anxiety_soft_mice,
-     coxph(
-       Surv(time, DiseaseFlareYN) ~
-         score_group +
-         IMD +
-         Sex +
-         age_decade +
-         FC +
-         frailty(SiteNo)
-     )) %>%
+cox_anxiety_soft <- with(
+  cox_anxiety_soft_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      score_group +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_anxiety_soft %>% 
@@ -1215,6 +1317,8 @@ cox_anxiety_hard <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard
 )
@@ -1233,6 +1337,8 @@ cox_anxiety_hard_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard,
   m = 10,
@@ -1240,16 +1346,20 @@ cox_anxiety_hard_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_hard <- with(cox_anxiety_hard_mice,
-     coxph(
-       Surv(time, DiseaseFlareYN) ~
-         score_group +
-         IMD +
-         Sex +
-         age_decade +
-         FC +
-         frailty(SiteNo)
-     )) %>%
+cox_anxiety_hard <- with(
+  cox_anxiety_hard_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      score_group +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_anxiety_hard %>% 
@@ -1286,6 +1396,8 @@ cox_anxiety_soft_uc <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_uc
 )
@@ -1305,6 +1417,8 @@ cox_anxiety_soft_uc_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_uc,
   m = 10,
@@ -1320,6 +1434,8 @@ cox_anxiety_soft_uc <- with(cox_anxiety_soft_uc_mice,
          Sex +
          age_decade +
          FC +
+         flare_group +
+         Smoke +
          frailty(SiteNo)
      )) %>%
   mice::pool()
@@ -1357,6 +1473,8 @@ cox_anxiety_hard_uc <- coxph(
     Sex +
     ns(age_decade, df = 4) +
     ns(FC, df = 2) +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard_uc
 )
@@ -1376,6 +1494,8 @@ cox_anxiety_hard_uc_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard_uc,
   m = 10,
@@ -1391,6 +1511,8 @@ cox_anxiety_hard_uc <- with(cox_anxiety_hard_uc_mice,
          Sex +
          ns(age_decade, df = 4) +
          ns(FC, df = 2) +
+         flare_group +
+         Smoke +
          frailty(SiteNo)
      )) %>%
   mice::pool()
@@ -1429,6 +1551,8 @@ cox_anxiety_soft_cd <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_cd
 )
@@ -1448,6 +1572,8 @@ cox_anxiety_soft_cd_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_cd,
   m = 10,
@@ -1463,6 +1589,8 @@ cox_anxiety_soft_cd <- with(cox_anxiety_soft_cd_mice,
          Sex +
          age_decade +
          FC +
+         flare_group +
+         Smoke +
          frailty(SiteNo)
      )) %>%
   mice::pool()
@@ -1500,6 +1628,8 @@ cox_anxiety_hard_cd <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard_cd
 )
@@ -1518,6 +1648,8 @@ cox_anxiety_hard_cd_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard_cd,
   m = 10,
@@ -1525,16 +1657,20 @@ cox_anxiety_hard_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_hard_cd <- with(cox_anxiety_hard_cd_mice,
-     coxph(
-       Surv(time, DiseaseFlareYN) ~
-         score_group +
-         IMD +
-         Sex +
-         age_decade +
-         FC +
-         frailty(SiteNo)
-     )) %>%
+cox_anxiety_hard_cd <- with(
+  cox_anxiety_hard_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      score_group +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_anxiety_hard_cd %>% 
@@ -1573,6 +1709,8 @@ cox_depression_soft <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft
 )
@@ -1592,6 +1730,8 @@ cox_depression_soft_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft,
   m = 10,
@@ -1608,6 +1748,8 @@ cox_depression_soft <- with(
       Sex +
       age_decade +
       FC +
+      flare_group +
+      Smoke +
       frailty(SiteNo)
   )
 ) %>%
@@ -1646,6 +1788,8 @@ cox_depression_hard <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard
 )
@@ -1664,6 +1808,8 @@ cox_depression_hard_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard,
   m = 10,
@@ -1680,6 +1826,8 @@ cox_depression_hard <- with(
       Sex +
       age_decade +
       FC +
+      flare_group +
+      Smoke +
       frailty(SiteNo)
   )
 ) %>%
@@ -1719,6 +1867,8 @@ cox_depression_soft_uc <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_uc
 )
@@ -1738,6 +1888,8 @@ cox_depression_soft_uc_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_uc,
   m = 10,
@@ -1754,6 +1906,8 @@ cox_depression_soft_uc <- with(
       Sex +
       age_decade +
       FC +
+      flare_group +
+      Smoke +
       frailty(SiteNo)
   )
 ) %>%
@@ -1792,6 +1946,8 @@ cox_depression_hard_uc <- coxph(
     Sex +
     ns(age_decade, df = 4) +
     ns(FC, df = 2) +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_uc
 )
@@ -1811,6 +1967,8 @@ cox_depression_hard_uc_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_uc,
   m = 10,
@@ -1818,16 +1976,20 @@ cox_depression_hard_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_hard_uc <- with(cox_depression_hard_uc_mice,
-                               coxph(
-                                 Surv(time, DiseaseFlareYN) ~
-                                   score_group +
-                                   IMD +
-                                   Sex +
-                                   ns(age_decade, df = 4) +
-                                   ns(FC, df = 2) +
-                                   frailty(SiteNo)
-                               )) %>%
+cox_depression_hard_uc <- with(
+  cox_depression_hard_uc_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      score_group +
+      IMD +
+      Sex +
+      ns(age_decade, df = 4) +
+      ns(FC, df = 2) +
+      flare_group +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_depression_hard_uc %>% 
@@ -1864,6 +2026,8 @@ cox_depression_soft_cd <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_cd
 )
@@ -1883,6 +2047,8 @@ cox_depression_soft_cd_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_cd,
   m = 10,
@@ -1935,6 +2101,8 @@ cox_depression_hard_cd <- coxph(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_cd
 )
@@ -1953,6 +2121,8 @@ cox_depression_hard_cd_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
+    flare_group +
+    Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_cd,
   m = 10,
@@ -1960,16 +2130,20 @@ cox_depression_hard_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_hard_cd <- with(cox_depression_hard_cd_mice,
-                            coxph(
-                              Surv(time, DiseaseFlareYN) ~
-                                score_group +
-                                IMD +
-                                Sex +
-                                age_decade +
-                                FC +
-                                frailty(SiteNo)
-                            )) %>%
+cox_depression_hard_cd <- with(
+  cox_depression_hard_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      score_group +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_depression_hard_cd %>% 
@@ -2027,7 +2201,7 @@ data_control_depression <- data_control %>%
 # Independent variables
 independent = c('control_grouped', 'vas_control')
 
-# Multiple testing - we should technically take the other tests we performed during the baseline analysis into account, but relax.
+# Multiple testing - we should technically take the other tests we performed during the baseline analysis into account.
 
 summon_chisq_test(
   data = data_control_anxiety, 
