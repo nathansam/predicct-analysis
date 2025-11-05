@@ -1,6 +1,48 @@
 
 # Template for determining shapes of continuous variables
 
+# Replace hads_for_analysis with the data name
+
+## Survival Analysis
+
+### Data Cleaning
+
+```{r}
+# Survival data
+# Join HADS with flare data
+# Patient reported
+data_survival_soft <- hads_for_analysis %>% dplyr::inner_join(
+  flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+  by = 'ParticipantNo'
+) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+# UC
+data_survival_soft_uc <- data_survival_soft %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+# CD
+data_survival_soft_cd <- data_survival_soft %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+
+# Hard flares
+data_survival_hard <- hads_for_analysis %>% dplyr::inner_join(
+  flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+  by = 'ParticipantNo'
+) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+
+# UC
+data_survival_hard_uc <- data_survival_hard %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+# CD
+data_survival_hard_cd <- data_survival_hard %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+```
+
 
 #### Full Cohort
 
