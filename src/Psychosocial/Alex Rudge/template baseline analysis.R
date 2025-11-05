@@ -6,11 +6,14 @@
 
 
 # Add extra data cleaning for continuous variables
+library(mice)
+library(splines)
 
 # For load data chunk
 IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 # For data cleaning chunk
+# Add Smoke to select from demo.
 
 # IBD control scores
 hads_for_analysis %<>%
