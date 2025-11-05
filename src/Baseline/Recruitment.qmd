@@ -22,7 +22,7 @@ if (file.exists("/docker")) { # If running in docker
   data.path <- "data/final/20221004/"
   redcap.path <- "data/final/20231030/"
   prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
+  outdir <- "data/processed/"
   metadir <- "data/metadata/"
 } else { # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
