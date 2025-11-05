@@ -1730,7 +1730,7 @@ cox_anxiety_soft_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -1811,7 +1811,7 @@ cox_anxiety_hard_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -1894,7 +1894,7 @@ cox_anxiety_soft_uc_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_uc,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -1974,7 +1974,7 @@ cox_anxiety_hard_uc_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard_uc,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2055,7 +2055,7 @@ cox_anxiety_soft_cd_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_cd,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2134,7 +2134,7 @@ cox_anxiety_hard_cd_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_anxiety_hard_cd,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2219,7 +2219,7 @@ cox_depression_soft_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2300,7 +2300,7 @@ cox_depression_hard_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2383,7 +2383,7 @@ cox_depression_soft_uc_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_uc,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2463,7 +2463,7 @@ cox_depression_hard_uc_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_uc,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2544,7 +2544,7 @@ cox_depression_soft_cd_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_cd,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2623,7 +2623,7 @@ cox_depression_hard_cd_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_cd,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2741,7 +2741,7 @@ cox_depression_soft_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2822,7 +2822,7 @@ cox_depression_hard_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2905,7 +2905,7 @@ cox_depression_soft_uc_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_uc,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -2985,7 +2985,7 @@ cox_depression_hard_uc_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_uc,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -3066,7 +3066,7 @@ cox_depression_soft_cd_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_cd,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
@@ -3145,7 +3145,7 @@ cox_depression_hard_cd_mice <- coxph_mice(
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_hard_cd,
-  m = 10,
+  m = 20,
   printFlag = FALSE
 )
 
