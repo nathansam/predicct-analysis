@@ -41,7 +41,7 @@ summon_statistical_test <- function(data, dependent, independent) {
         
         wilcox_test(data, formula = test_formula) %>%
           # Don't need the adjusted p values as we adjust ourselves in a second
-          dplyr::select(-.y., -p.adj, -p.adj.signif) %>%
+          dplyr::select(-tidyselect::any_of(c('.y.', 'p.adj', 'p.adj.signif'))) %>%
           dplyr::mutate(independent = .x,
                         dependent = .y,
                         method = 'Wilcox test')
