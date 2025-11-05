@@ -56,6 +56,9 @@ library(survival)
 library(survminer)
 library(finalfit)
 
+library(mice)
+library(splines)
+
 ```
 
 ## Helper functions
@@ -1402,7 +1405,7 @@ plot_continuous_hr(
   data = data_survival_hard_uc, 
   model = cox_age_hard_uc, 
   variable = 'age_decade',
-  splineterm = 'ns(age_decade, df = 4)')
+  splineterm = 'ns(age_decade, df = 2)')
 
 # FC
 plot_continuous_hr(
