@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2025-09-10">
+<meta name="dcterms.date" content="2025-11-05">
 <title>PREdiCCt analyses - Demographic data</title>
 <style>
 code{white-space: pre-wrap;}
@@ -171,10 +171,10 @@ window.Quarto = {
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Demographic data">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2025-09-10">
-<meta name="citation_cover_date" content="2025-09-10">
+<meta name="citation_publication_date" content="2025-11-05">
+<meta name="citation_cover_date" content="2025-11-05">
 <meta name="citation_year" content="2025">
-<meta name="citation_online_date" content="2025-09-10">
+<meta name="citation_online_date" content="2025-11-05">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Location is important: Differentiation between ileal and colonic crohn’s disease;,citation_author=Raja Atreya;,citation_author=Britta Siegmund;,citation_publication_date=2021-03;,citation_cover_date=2021-03;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.1038/s41575-021-00424-6;,citation_issue=8;,citation_doi=10.1038/s41575-021-00424-6;,citation_issn=1759-5053;,citation_volume=18;,citation_journal_title=Nature Reviews Gastroenterology &amp;amp;amp; Hepatology;,citation_publisher=Springer Science; Business Media LLC;">
 <meta name="citation_reference" content="citation_title=Between-assay variability of faecal calprotectin enzyme-linked immunosorbent assay kits;,citation_author=S J Whitehead;,citation_author=J French;,citation_author=M J Brookes;,citation_author=C Ford;,citation_author=R Gama;,citation_publication_date=2012-11;,citation_cover_date=2012-11;,citation_year=2012;,citation_fulltext_html_url=http://dx.doi.org/10.1258/acb.2012.011272;,citation_issue=1;,citation_doi=10.1258/acb.2012.011272;,citation_issn=1758-1001;,citation_volume=50;,citation_journal_title=Annals of Clinical Biochemistry: International Journal of Laboratory Medicine;,citation_publisher=SAGE Publications;">
@@ -367,6 +367,7 @@ window.Quarto = {
   <li><a href="#bmi" id="toc-bmi" class="nav-link" data-scroll-target="#bmi">BMI</a></li>
   <li><a href="#ethnicity" id="toc-ethnicity" class="nav-link" data-scroll-target="#ethnicity">Ethnicity</a></li>
   <li><a href="#index-of-multiple-deprivation" id="toc-index-of-multiple-deprivation" class="nav-link" data-scroll-target="#index-of-multiple-deprivation">Index of multiple deprivation</a></li>
+  <li><a href="#missingness" id="toc-missingness" class="nav-link" data-scroll-target="#missingness">Missingness</a></li>
   
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/nathansam/predicct-analysis/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="Demographics.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
@@ -403,7 +404,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 10, 2025</p>
+      <p class="date">November 5, 2025</p>
     </div>
   </div>
   
@@ -415,6 +416,8 @@ window.Quarto = {
 </header><section id="introduction" class="level2"><h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"Baseline/utils.R"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">##############</span></span>
 <span><span class="co">## Packages ##</span></span>
@@ -441,7 +444,7 @@ window.Quarto = {
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
 <span>  <span class="va">prefix</span> <span class="op">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed"</span></span>
+<span>  <span class="va">outdir</span> <span class="op">&lt;-</span> <span class="st">"data/processed/"</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="co"># Run on OS directly</span></span>
 <span>  <span class="va">data.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
 <span>  <span class="va">redcap.path</span> <span class="op">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
@@ -914,8 +917,26 @@ Table&nbsp;6: CHI-squared test between IMD and FC groups.
 </figure>
 </div>
 </div>
+</section><section id="missingness" class="level2"><h2 class="anchored" data-anchor-id="missingness">Missingness</h2>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">demo</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">outdir</span>, <span class="st">"demo-demographics.RDS"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">demo</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span></span>
+<span>    <span class="va">Age</span>,</span>
+<span>    <span class="va">Sex</span>,</span>
+<span>    <span class="va">BMI</span>,</span>
+<span>    <span class="va">IMD</span>,</span>
+<span>    <span class="va">SiteName</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="fu">missing_plot2</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Demographics missingness"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="Demographics_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">demo</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">outdir</span>, <span class="st">"demo-demographics.RDS"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section><div id="quarto-appendix" class="default"><section id="reproduction-and-reproducibility" class="level2 appendix"><h2 class="anchored quarto-appendix-heading">Reproduction and reproducibility</h2><div class="quarto-appendix-contents">
@@ -928,7 +949,7 @@ Session info
 <p><strong>locale:</strong> <em>LC_CTYPE=en_US.UTF-8</em>, <em>LC_NUMERIC=C</em>, <em>LC_TIME=en_US.UTF-8</em>, <em>LC_COLLATE=en_US.UTF-8</em>, <em>LC_MONETARY=en_US.UTF-8</em>, <em>LC_MESSAGES=en_US.UTF-8</em>, <em>LC_PAPER=en_US.UTF-8</em>, <em>LC_NAME=C</em>, <em>LC_ADDRESS=C</em>, <em>LC_TELEPHONE=C</em>, <em>LC_MEASUREMENT=en_US.UTF-8</em> and <em>LC_IDENTIFICATION=C</em></p>
 <p><strong>attached base packages:</strong> <em>stats</em>, <em>graphics</em>, <em>grDevices</em>, <em>utils</em>, <em>datasets</em>, <em>methods</em> and <em>base</em></p>
 <p><strong>other attached packages:</strong> <em>DiagrammeRsvg(v.0.1)</em>, <em>DiagrammeR(v.1.0.11)</em>, <em>pander(v.0.6.5)</em>, <em>knitr(v.1.47)</em>, <em>table1(v.1.4.3)</em>, <em>patchwork(v.1.2.0)</em>, <em>datefixR(v.1.6.1)</em>, <em>readxl(v.1.4.3)</em>, <em>lubridate(v.1.9.3)</em>, <em>forcats(v.1.0.0)</em>, <em>stringr(v.1.5.1)</em>, <em>dplyr(v.1.1.4)</em>, <em>purrr(v.1.0.2)</em>, <em>readr(v.2.1.5)</em>, <em>tidyr(v.1.3.1)</em>, <em>tibble(v.3.2.1)</em>, <em>ggplot2(v.3.5.1)</em>, <em>tidyverse(v.2.0.0)</em> and <em>plyr(v.1.8.9)</em></p>
-<p><strong>loaded via a namespace (and not attached):</strong> <em>utf8(v.1.2.4)</em>, <em>generics(v.0.1.3)</em>, <em>stringi(v.1.8.4)</em>, <em>hms(v.1.1.3)</em>, <em>digest(v.0.6.35)</em>, <em>magrittr(v.2.0.3)</em>, <em>evaluate(v.0.23)</em>, <em>grid(v.4.4.0)</em>, <em>timechange(v.0.3.0)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>fastmap(v.1.2.0)</em>, <em>cellranger(v.1.1.0)</em>, <em>jsonlite(v.1.8.8)</em>, <em>Formula(v.1.2-5)</em>, <em>fansi(v.1.0.6)</em>, <em>scales(v.1.3.0)</em>, <em>textshaping(v.0.4.0)</em>, <em>codetools(v.0.2-20)</em>, <em>cli(v.3.6.2)</em>, <em>rlang(v.1.1.3)</em>, <em>visNetwork(v.2.1.2)</em>, <em>munsell(v.0.5.1)</em>, <em>withr(v.3.0.0)</em>, <em>yaml(v.2.3.8)</em>, <em>tools(v.4.4.0)</em>, <em>tzdb(v.0.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>curl(v.5.2.1)</em>, <em>vctrs(v.0.6.5)</em>, <em>R6(v.2.5.1)</em>, <em>lifecycle(v.1.0.4)</em>, <em>V8(v.4.4.2)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>ragg(v.1.3.2)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>pillar(v.1.9.0)</em>, <em>gtable(v.0.3.5)</em>, <em>glue(v.1.7.0)</em>, <em>Rcpp(v.1.0.12)</em>, <em>systemfonts(v.1.1.0)</em>, <em>xfun(v.0.44)</em>, <em>tidyselect(v.1.2.1)</em>, <em>farver(v.2.1.2)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>labeling(v.0.4.3)</em>, <em>rmarkdown(v.2.27)</em> and <em>compiler(v.4.4.0)</em></p>
+<p><strong>loaded via a namespace (and not attached):</strong> <em>shape(v.1.4.6.1)</em>, <em>gtable(v.0.3.5)</em>, <em>xfun(v.0.44)</em>, <em>htmlwidgets(v.1.6.4)</em>, <em>visNetwork(v.2.1.2)</em>, <em>lattice(v.0.22-6)</em>, <em>tzdb(v.0.4.0)</em>, <em>vctrs(v.0.6.5)</em>, <em>tools(v.4.4.0)</em>, <em>generics(v.0.1.3)</em>, <em>curl(v.5.2.1)</em>, <em>fansi(v.1.0.6)</em>, <em>pan(v.1.9)</em>, <em>jomo(v.2.7-6)</em>, <em>pkgconfig(v.2.0.3)</em>, <em>Matrix(v.1.7-0)</em>, <em>RColorBrewer(v.1.1-3)</em>, <em>lifecycle(v.1.0.4)</em>, <em>compiler(v.4.4.0)</em>, <em>farver(v.2.1.2)</em>, <em>textshaping(v.0.4.0)</em>, <em>munsell(v.0.5.1)</em>, <em>codetools(v.0.2-20)</em>, <em>htmltools(v.0.5.8.1)</em>, <em>yaml(v.2.3.8)</em>, <em>finalfit(v.1.0.7)</em>, <em>glmnet(v.4.1-8)</em>, <em>Formula(v.1.2-5)</em>, <em>mice(v.3.16.0)</em>, <em>nloptr(v.2.0.3)</em>, <em>pillar(v.1.9.0)</em>, <em>MASS(v.7.3-60.2)</em>, <em>iterators(v.1.0.14)</em>, <em>rpart(v.4.1.23)</em>, <em>boot(v.1.3-30)</em>, <em>mitml(v.0.4-5)</em>, <em>foreach(v.1.5.2)</em>, <em>nlme(v.3.1-164)</em>, <em>tidyselect(v.1.2.1)</em>, <em>digest(v.0.6.35)</em>, <em>stringi(v.1.8.4)</em>, <em>splines(v.4.4.0)</em>, <em>labeling(v.0.4.3)</em>, <em>fastmap(v.1.2.0)</em>, <em>grid(v.4.4.0)</em>, <em>colorspace(v.2.1-0)</em>, <em>cli(v.3.6.2)</em>, <em>magrittr(v.2.0.3)</em>, <em>survival(v.3.5-8)</em>, <em>utf8(v.1.2.4)</em>, <em>broom(v.1.0.6)</em>, <em>withr(v.3.0.0)</em>, <em>scales(v.1.3.0)</em>, <em>backports(v.1.5.0)</em>, <em>timechange(v.0.3.0)</em>, <em>rmarkdown(v.2.27)</em>, <em>nnet(v.7.3-19)</em>, <em>lme4(v.1.1-35.3)</em>, <em>cellranger(v.1.1.0)</em>, <em>ragg(v.1.3.2)</em>, <em>hms(v.1.1.3)</em>, <em>evaluate(v.0.23)</em>, <em>V8(v.4.4.2)</em>, <em>rlang(v.1.1.3)</em>, <em>Rcpp(v.1.0.12)</em>, <em>glue(v.1.7.0)</em>, <em>minqa(v.1.2.7)</em>, <em>jsonlite(v.1.8.8)</em>, <em>R6(v.2.5.1)</em> and <em>systemfonts(v.1.3.1)</em></p>
 </div>
 </div>
 </details><p>Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.</p>
@@ -1555,349 +1576,365 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Demographic data"</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">  - name: "Nathan Constantine-Cooke"</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">    corresponding: true</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&amp;hl=en&amp;oi=ao</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">    affiliations:</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: CGEM</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: HGU</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> Baseline.bib   </span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="do">##############</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Packages ##</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="do">##############</span></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyr) <span class="co"># Used for mapping values</span></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse)) <span class="co"># ggplot2, dplyr, and magrittr</span></span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) <span class="co"># Read in Excel files</span></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate) <span class="co"># Handle dates</span></span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(datefixR) <span class="co"># Standardise dates</span></span>
-<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork) <span class="co"># Arrange ggplots</span></span>
-<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate tables</span></span>
-<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(table1))</span>
-<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pander)</span>
-<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate flowchart of cohort derivation</span></span>
-<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeR)</span>
-<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeRsvg)</span>
-<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="co"># paths to PREdiCCt data</span></span>
-<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(<span class="st">"/docker"</span>)) { <span class="co"># If running in docker</span></span>
-<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
-<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
-<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
-<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed"</span></span>
-<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> { <span class="co"># Run on OS directly</span></span>
-<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
-<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
-<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"</span></span>
-<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/processed/"</span></span>
-<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(data.path, <span class="st">"Baseline2022/demographics.xlsx"</span>),</span>
-<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">c</span>(</span>
-<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
-<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
-<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
-<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
-<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numeric"</span>,</span>
-<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numeric"</span>,</span>
-<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
-<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
-<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">"date"</span>,</span>
-<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numeric"</span>,</span>
-<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span></span>
-<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(data.path, <span class="st">"Baseline2022/calprotectin.xlsx"</span>))</span>
-<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>fcal<span class="sc">$</span>Result <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(plyr<span class="sc">::</span><span class="fu">mapvalues</span>(fcal<span class="sc">$</span>Result, <span class="at">from =</span> <span class="st">"&lt;20"</span>, <span class="at">to =</span> <span class="dv">20</span>))</span>
-<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> fcal[, <span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"Result"</span>)]</span>
-<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(prefix, <span class="st">"EOF_fcal.xlsx"</span>))</span>
-<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> <span class="fu">subset</span>(fcal.eof, IsBaseline <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> <span class="fu">subset</span>(fcal.eof, FCALLevel <span class="sc">!=</span> <span class="st">"."</span>)</span>
-<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>fcal.eof<span class="sc">$</span>FCALLevel <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(fcal.eof<span class="sc">$</span>FCALLevel)</span>
-<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> fcal.eof[, <span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"FCALLevel"</span>)]</span>
-<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(fcal.eof)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"Result"</span></span>
-<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> <span class="fu">rbind</span>(fcal, fcal.eof)</span>
-<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> <span class="fu">distinct</span>(fcal, ParticipantNo, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a>fcal<span class="sc">$</span>cat <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(fcal)) {</span>
-<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fcal[i, <span class="st">"Result"</span>] <span class="sc">&lt;</span> <span class="dv">50</span>) fcal[i, <span class="st">"cat"</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> ((fcal[i, <span class="st">"Result"</span>] <span class="sc">&gt;=</span> <span class="dv">50</span>) <span class="sc">&amp;</span> (fcal[i, <span class="st">"Result"</span>] <span class="sc">&lt;=</span> <span class="dv">250</span>)) fcal[i, <span class="st">"cat"</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fcal[i, <span class="st">"Result"</span>] <span class="sc">&gt;</span> <span class="dv">250</span>) fcal[i, <span class="st">"cat"</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">merge</span>(demo, fcal[, <span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"Result"</span>, <span class="st">"cat"</span>)],</span>
-<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"ParticipantNo"</span>,</span>
-<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">all.x =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">all.y =</span> <span class="cn">FALSE</span></span>
-<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>cat <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>cat,</span>
-<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
-<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"FC &lt; 50"</span>, <span class="st">"FC 50-250"</span>, <span class="st">"FC &gt; 250"</span>)</span>
-<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(demo)[<span class="dv">12</span>] <span class="ot">&lt;-</span> <span class="st">"FC"</span> <span class="co"># Result ~&gt; FC</span></span>
-<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>This page describes key demographic data collected by the PREdiCCt study.</span>
-<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Age</span></span>
-<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>The distribution of age for the study cohort is approximately normally</span>
-<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a>distributed. </span>
-<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-age-dist</span></span>
-<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of age in the FC cohort."</span></span>
-<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age)) <span class="sc">+</span></span>
-<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"#64c7ce"</span>, <span class="at">color =</span> <span class="st">"#3B9EA4"</span>) <span class="sc">+</span></span>
-<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
-<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Age (years)"</span>) <span class="sc">+</span></span>
-<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
-<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a>Age is significantly associated with faecal calprotectin. </span>
-<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-age-fc</span></span>
-<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "ANOVA between age and FC groups."</span></span>
-<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(age <span class="sc">~</span> cat, <span class="at">data =</span> demo)))</span>
-<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sex</span></span>
-<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a>Sex was self-reported via subject questionnaires. As can be seen in</span>
-<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a>@fig-sex-dist, the PREdiCCt cohort is female by majority. </span>
-<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sex-dist</span></span>
-<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of sex in the FC cohort."</span></span>
-<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>Sex <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>Sex, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>))</span>
-<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Sex, <span class="at">fill =</span> Sex, <span class="at">color =</span> Sex)) <span class="sc">+</span></span>
-<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>) <span class="sc">+</span></span>
-<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#FCA17D"</span>, <span class="st">"#60D394"</span>)) <span class="sc">+</span></span>
-<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#B22A21"</span>, <span class="st">"#034C3C"</span>))</span>
-<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
-<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a>Moreover, the distribution of sex is significantly different between FCAL groups. </span>
-<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sex-fc</span></span>
-<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between Sex and FC groups."</span></span>
-<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>Sex, demo<span class="sc">$</span>cat))</span>
-<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## BMI</span></span>
-<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a>Body mass index is given by weight (in $Kg$) divided by height (in $M$) squared.</span>
-<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a>As thresholds differ in the paediatric population, and are dependent on both age</span>
-<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a>and sex, BMI has not been calculated for those less than 18 years of age. BMI is</span>
-<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a>first considered as a continuous variable. </span>
-<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-181"><a href="#cb15-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-BMI-dist</span></span>
-<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of BMI in the FC cohort."</span></span>
-<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>BMI <span class="ot">&lt;-</span> <span class="fu">with</span>(demo, Weight <span class="sc">/</span> ((Height <span class="sc">/</span> <span class="dv">100</span>)<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb15-186"><a href="#cb15-186" aria-hidden="true" tabindex="-1"></a>demo[demo[, <span class="st">"age"</span>] <span class="sc">&lt;</span> <span class="dv">18</span>, <span class="st">"BMI"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb15-187"><a href="#cb15-187" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> demo <span class="sc">%&gt;%</span></span>
-<span id="cb15-188"><a href="#cb15-188" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BMI)) <span class="sc">+</span></span>
-<span id="cb15-189"><a href="#cb15-189" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"#AD013B"</span>, <span class="at">fill =</span> <span class="st">"#F0386B"</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
-<span id="cb15-190"><a href="#cb15-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_family =</span> <span class="st">"sans"</span>) <span class="sc">+</span></span>
-<span id="cb15-191"><a href="#cb15-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
-<span id="cb15-192"><a href="#cb15-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/BMI-full-cohort.png"</span>,</span>
-<span id="cb15-194"><a href="#cb15-194" aria-hidden="true" tabindex="-1"></a>  p,</span>
-<span id="cb15-195"><a href="#cb15-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">9</span>,</span>
-<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">6</span></span>
-<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/BMI-full-cohort.pdf"</span>, p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
-<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb15-203"><a href="#cb15-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BMI)) <span class="sc">+</span></span>
-<span id="cb15-204"><a href="#cb15-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"#AD013B"</span>, <span class="at">fill =</span> <span class="st">"#F0386B"</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
-<span id="cb15-205"><a href="#cb15-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-206"><a href="#cb15-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
-<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-209"><a href="#cb15-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-210"><a href="#cb15-210" aria-hidden="true" tabindex="-1"></a>BMI as a continuous variable is not associated with FC groups. </span>
-<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-215"><a href="#cb15-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-BMI-fc</span></span>
-<span id="cb15-216"><a href="#cb15-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Fisher's exact test between BMI and FC groups."</span></span>
-<span id="cb15-217"><a href="#cb15-217" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(BMI <span class="sc">~</span> cat, <span class="at">data =</span> demo)))</span>
-<span id="cb15-218"><a href="#cb15-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-219"><a href="#cb15-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a>We also consider BMI grouped into underweight, normal, overweight, and obese</span>
-<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a>categories using the definitions used by the NIH and WHO</span>
-<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@weirBMIClassificationPercentile2024</span><span class="co">]</span>. </span>
-<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-224"><a href="#cb15-224" aria-hidden="true" tabindex="-1"></a>A cut-off of $30 KgM^{-2}$ is used to denote obesity in adults without</span>
-<span id="cb15-225"><a href="#cb15-225" aria-hidden="true" tabindex="-1"></a>Asian/South Asian backgrounds. As data on Asian and South Asian ethnicity is not</span>
-<span id="cb15-226"><a href="#cb15-226" aria-hidden="true" tabindex="-1"></a>available (See <span class="co">[</span><span class="ot">Ethnicity</span><span class="co">](#ethnicity)</span>), we are unable to adjust the threshold</span>
-<span id="cb15-227"><a href="#cb15-227" aria-hidden="true" tabindex="-1"></a>based on ethnicity. However, this is expected to be relevant to relatively few</span>
-<span id="cb15-228"><a href="#cb15-228" aria-hidden="true" tabindex="-1"></a>subjects.</span>
-<span id="cb15-229"><a href="#cb15-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-232"><a href="#cb15-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-233"><a href="#cb15-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-BMIcat-dist</span></span>
-<span id="cb15-234"><a href="#cb15-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of BMI categories in the FC cohort."</span></span>
-<span id="cb15-235"><a href="#cb15-235" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>BMIcat <span class="ot">&lt;-</span> <span class="fu">cut</span>(demo<span class="sc">$</span>BMI,</span>
-<span id="cb15-236"><a href="#cb15-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">18.5</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="cn">Inf</span>),</span>
-<span id="cb15-237"><a href="#cb15-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">include.lowest =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb15-238"><a href="#cb15-238" aria-hidden="true" tabindex="-1"></a>  <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb15-239"><a href="#cb15-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>)</span>
-<span id="cb15-240"><a href="#cb15-240" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-241"><a href="#cb15-241" aria-hidden="true" tabindex="-1"></a>demo[demo[, <span class="st">"age"</span>] <span class="sc">&lt;</span> <span class="dv">18</span>, <span class="st">"BMIcat"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb15-242"><a href="#cb15-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-243"><a href="#cb15-243" aria-hidden="true" tabindex="-1"></a>plt.cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#F6AE2D"</span>, <span class="st">"#C81D25"</span>, <span class="st">"#1481BA"</span>, <span class="st">"#7E1F86"</span>)</span>
-<span id="cb15-244"><a href="#cb15-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-245"><a href="#cb15-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-246"><a href="#cb15-246" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb15-247"><a href="#cb15-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb15-248"><a href="#cb15-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BMIcat, <span class="at">color =</span> BMIcat, <span class="at">fill =</span> BMIcat)) <span class="sc">+</span></span>
-<span id="cb15-249"><a href="#cb15-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb15-250"><a href="#cb15-250" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-251"><a href="#cb15-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb15-252"><a href="#cb15-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> plt.cols, <span class="at">na.value =</span> <span class="st">"#032B43"</span>) <span class="sc">+</span></span>
-<span id="cb15-253"><a href="#cb15-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
-<span id="cb15-254"><a href="#cb15-254" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> colorspace<span class="sc">::</span><span class="fu">darken</span>(plt.cols, <span class="fl">0.2</span>),</span>
-<span id="cb15-255"><a href="#cb15-255" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.value =</span> <span class="st">"#032B43"</span></span>
-<span id="cb15-256"><a href="#cb15-256" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb15-257"><a href="#cb15-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"BMI category"</span>) <span class="sc">+</span></span>
-<span id="cb15-258"><a href="#cb15-258" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
-<span id="cb15-259"><a href="#cb15-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-260"><a href="#cb15-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-261"><a href="#cb15-261" aria-hidden="true" tabindex="-1"></a>BMI by category is not associated with FC groups. </span>
-<span id="cb15-262"><a href="#cb15-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-265"><a href="#cb15-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-266"><a href="#cb15-266" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-BMIcat-fc</span></span>
-<span id="cb15-267"><a href="#cb15-267" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between BMI categories and FC groups."</span></span>
-<span id="cb15-268"><a href="#cb15-268" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>BMIcat, demo<span class="sc">$</span>cat))</span>
-<span id="cb15-269"><a href="#cb15-269" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-270"><a href="#cb15-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-271"><a href="#cb15-271" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ethnicity</span></span>
-<span id="cb15-272"><a href="#cb15-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-273"><a href="#cb15-273" aria-hidden="true" tabindex="-1"></a>Due to low counts for non-white ethnicities, we are only able to report</span>
-<span id="cb15-274"><a href="#cb15-274" aria-hidden="true" tabindex="-1"></a>frequencies of white and non-white ethnicities. </span>
-<span id="cb15-275"><a href="#cb15-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-278"><a href="#cb15-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-279"><a href="#cb15-279" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ethnic-dist</span></span>
-<span id="cb15-280"><a href="#cb15-280" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of ethnicity in the FC cohort."</span></span>
-<span id="cb15-281"><a href="#cb15-281" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>ethnic_gp <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>ethnic_gp,</span>
-<span id="cb15-282"><a href="#cb15-282" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>),</span>
-<span id="cb15-283"><a href="#cb15-283" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"White"</span>, <span class="st">"Non-white"</span>)</span>
-<span id="cb15-284"><a href="#cb15-284" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-285"><a href="#cb15-285" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(demo)[<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age"</span>, <span class="st">"Ethnicity"</span>)</span>
-<span id="cb15-286"><a href="#cb15-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-287"><a href="#cb15-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-288"><a href="#cb15-288" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb15-289"><a href="#cb15-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb15-290"><a href="#cb15-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Ethnicity, <span class="at">fill =</span> Ethnicity, <span class="at">color =</span> Ethnicity)) <span class="sc">+</span></span>
-<span id="cb15-291"><a href="#cb15-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb15-292"><a href="#cb15-292" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>) <span class="sc">+</span></span>
-<span id="cb15-293"><a href="#cb15-293" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-294"><a href="#cb15-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#F24236"</span>, <span class="st">"#2E86AB"</span>), <span class="at">na.value =</span> <span class="st">"#032B43"</span>) <span class="sc">+</span></span>
-<span id="cb15-295"><a href="#cb15-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#C0362C"</span>, <span class="st">"#1E556C"</span>), <span class="at">na.value =</span> <span class="st">"#032B43"</span>)</span>
-<span id="cb15-296"><a href="#cb15-296" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-297"><a href="#cb15-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-300"><a href="#cb15-300" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-301"><a href="#cb15-301" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-ethnicity-fc</span></span>
-<span id="cb15-302"><a href="#cb15-302" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between ethnicity and FC groups."</span></span>
-<span id="cb15-303"><a href="#cb15-303" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>Ethnicity, demo<span class="sc">$</span>cat))</span>
-<span id="cb15-304"><a href="#cb15-304" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-305"><a href="#cb15-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-306"><a href="#cb15-306" aria-hidden="true" tabindex="-1"></a><span class="fu">## Index of multiple deprivation</span></span>
-<span id="cb15-307"><a href="#cb15-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-308"><a href="#cb15-308" aria-hidden="true" tabindex="-1"></a>The PREdiCCt SAP states the primary analyses will be controlled for by index</span>
-<span id="cb15-309"><a href="#cb15-309" aria-hidden="true" tabindex="-1"></a>of multiple deprivation (IMD). It should be noted that the PREdiCCt study</span>
-<span id="cb15-310"><a href="#cb15-310" aria-hidden="true" tabindex="-1"></a>recruited across the UK and there is no consistent measure of IMD across the</span>
-<span id="cb15-311"><a href="#cb15-311" aria-hidden="true" tabindex="-1"></a>whole of the UK. Instead, IMD measures are handled slightly differently by each </span>
-<span id="cb15-312"><a href="#cb15-312" aria-hidden="true" tabindex="-1"></a>constituent nation.  </span>
-<span id="cb15-313"><a href="#cb15-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-316"><a href="#cb15-316" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-317"><a href="#cb15-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-imd-dist</span></span>
-<span id="cb15-318"><a href="#cb15-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of IMD."</span></span>
-<span id="cb15-319"><a href="#cb15-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb15-320"><a href="#cb15-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-321"><a href="#cb15-321" aria-hidden="true" tabindex="-1"></a>IMD <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(redcap.path, <span class="st">"/IMD.xlsx"</span>))</span>
-<span id="cb15-322"><a href="#cb15-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-323"><a href="#cb15-323" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-324"><a href="#cb15-324" aria-hidden="true" tabindex="-1"></a>IMD <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(IMD)</span>
-<span id="cb15-325"><a href="#cb15-325" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(IMD)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"IMD"</span></span>
-<span id="cb15-326"><a href="#cb15-326" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">merge</span>(demo, IMD, <span class="at">by =</span> <span class="st">"ParticipantNo"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>, <span class="at">all.y =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-327"><a href="#cb15-327" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>IMD <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(demo<span class="sc">$</span>IMD)</span>
-<span id="cb15-328"><a href="#cb15-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-329"><a href="#cb15-329" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#A8F9FF"</span>, <span class="st">"#EF8275"</span>, <span class="st">"#6D326D"</span>, <span class="st">"#0B6E4F"</span>, <span class="st">"#F4D35E"</span>)</span>
-<span id="cb15-330"><a href="#cb15-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-331"><a href="#cb15-331" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
-<span id="cb15-332"><a href="#cb15-332" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
-<span id="cb15-333"><a href="#cb15-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> IMD, <span class="at">color =</span> <span class="fu">as.factor</span>(IMD), <span class="at">fill =</span> <span class="fu">as.factor</span>(IMD))) <span class="sc">+</span></span>
-<span id="cb15-334"><a href="#cb15-334" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb15-335"><a href="#cb15-335" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb15-336"><a href="#cb15-336" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb15-337"><a href="#cb15-337" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>) <span class="sc">+</span></span>
-<span id="cb15-338"><a href="#cb15-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"IMD (most deprived to least deprived)"</span>) <span class="sc">+</span></span>
-<span id="cb15-339"><a href="#cb15-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cols) <span class="sc">+</span></span>
-<span id="cb15-340"><a href="#cb15-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colorspace<span class="sc">::</span><span class="fu">darken</span>(cols, <span class="at">amount =</span> <span class="fl">0.3</span>))</span>
-<span id="cb15-341"><a href="#cb15-341" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-342"><a href="#cb15-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-345"><a href="#cb15-345" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-346"><a href="#cb15-346" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-IMD-fc</span></span>
-<span id="cb15-347"><a href="#cb15-347" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "CHI-squared test between IMD and FC groups."</span></span>
-<span id="cb15-348"><a href="#cb15-348" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>IMD, demo<span class="sc">$</span>cat))</span>
-<span id="cb15-349"><a href="#cb15-349" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-350"><a href="#cb15-350" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-353"><a href="#cb15-353" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb15-354"><a href="#cb15-354" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(demo, <span class="fu">paste0</span>(outdir, <span class="st">"demo-demographics.RDS"</span>))</span>
-<span id="cb15-355"><a href="#cb15-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-356"><a href="#cb15-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-357"><a href="#cb15-357" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
-<span id="cb15-358"><a href="#cb15-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-359"><a href="#cb15-359" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
-<span id="cb15-360"><a href="#cb15-360" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
-<span id="cb15-361"><a href="#cb15-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-362"><a href="#cb15-362" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
-<span id="cb15-363"><a href="#cb15-363" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
-<span id="cb15-364"><a href="#cb15-364" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
-<span id="cb15-365"><a href="#cb15-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-366"><a href="#cb15-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-367"><a href="#cb15-367" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
-<span id="cb15-368"><a href="#cb15-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-369"><a href="#cb15-369" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
-<span id="cb15-370"><a href="#cb15-370" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
-<span id="cb15-371"><a href="#cb15-371" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
+<div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Demographic data"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">  - name: "Nathan Constantine-Cooke"</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">    corresponding: true</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&amp;hl=en&amp;oi=ao</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">    affiliations:</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: CGEM</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: HGU</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> Baseline.bib   </span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Baseline/utils.R"</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="do">##############</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Packages ##</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="do">##############</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plyr) <span class="co"># Used for mapping values</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse)) <span class="co"># ggplot2, dplyr, and magrittr</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) <span class="co"># Read in Excel files</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate) <span class="co"># Handle dates</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(datefixR) <span class="co"># Standardise dates</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork) <span class="co"># Arrange ggplots</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate tables</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(table1))</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pander)</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate flowchart of cohort derivation</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeR)</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiagrammeRsvg)</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="co"># paths to PREdiCCt data</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(<span class="st">"/docker"</span>)) { <span class="co"># If running in docker</span></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"data/final/20221004/"</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"data/final/20231030/"</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"data/end-of-follow-up/"</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"data/processed/"</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> { <span class="co"># Run on OS directly</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>  data.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>  redcap.path <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>  prefix <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>  outdir <span class="ot">&lt;-</span> <span class="st">"/Volumes/igmm/cvallejo-predicct/predicct/processed/"</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(data.path, <span class="st">"Baseline2022/demographics.xlsx"</span>),</span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">c</span>(</span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numeric"</span>,</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numeric"</span>,</span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span>,</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">"date"</span>,</span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">"numeric"</span>,</span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text"</span></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(data.path, <span class="st">"Baseline2022/calprotectin.xlsx"</span>))</span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>fcal<span class="sc">$</span>Result <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(plyr<span class="sc">::</span><span class="fu">mapvalues</span>(fcal<span class="sc">$</span>Result, <span class="at">from =</span> <span class="st">"&lt;20"</span>, <span class="at">to =</span> <span class="dv">20</span>))</span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> fcal[, <span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"Result"</span>)]</span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(prefix, <span class="st">"EOF_fcal.xlsx"</span>))</span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> <span class="fu">subset</span>(fcal.eof, IsBaseline <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> <span class="fu">subset</span>(fcal.eof, FCALLevel <span class="sc">!=</span> <span class="st">"."</span>)</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>fcal.eof<span class="sc">$</span>FCALLevel <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(fcal.eof<span class="sc">$</span>FCALLevel)</span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>fcal.eof <span class="ot">&lt;-</span> fcal.eof[, <span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"FCALLevel"</span>)]</span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(fcal.eof)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"Result"</span></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> <span class="fu">rbind</span>(fcal, fcal.eof)</span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a>fcal <span class="ot">&lt;-</span> <span class="fu">distinct</span>(fcal, ParticipantNo, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>fcal<span class="sc">$</span>cat <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(fcal)) {</span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fcal[i, <span class="st">"Result"</span>] <span class="sc">&lt;</span> <span class="dv">50</span>) fcal[i, <span class="st">"cat"</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> ((fcal[i, <span class="st">"Result"</span>] <span class="sc">&gt;=</span> <span class="dv">50</span>) <span class="sc">&amp;</span> (fcal[i, <span class="st">"Result"</span>] <span class="sc">&lt;=</span> <span class="dv">250</span>)) fcal[i, <span class="st">"cat"</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fcal[i, <span class="st">"Result"</span>] <span class="sc">&gt;</span> <span class="dv">250</span>) fcal[i, <span class="st">"cat"</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">merge</span>(demo, fcal[, <span class="fu">c</span>(<span class="st">"ParticipantNo"</span>, <span class="st">"Result"</span>, <span class="st">"cat"</span>)],</span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"ParticipantNo"</span>,</span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">all.x =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">all.y =</span> <span class="cn">FALSE</span></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>cat <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>cat,</span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"FC &lt; 50"</span>, <span class="st">"FC 50-250"</span>, <span class="st">"FC &gt; 250"</span>)</span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(demo)[<span class="dv">12</span>] <span class="ot">&lt;-</span> <span class="st">"FC"</span> <span class="co"># Result ~&gt; FC</span></span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a>This page describes key demographic data collected by the PREdiCCt study.</span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="fu">## Age</span></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a>The distribution of age for the study cohort is approximately normally</span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a>distributed. </span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-age-dist</span></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of age in the FC cohort."</span></span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age)) <span class="sc">+</span></span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"#64c7ce"</span>, <span class="at">color =</span> <span class="st">"#3B9EA4"</span>) <span class="sc">+</span></span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Age (years)"</span>) <span class="sc">+</span></span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a>Age is significantly associated with faecal calprotectin. </span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-age-fc</span></span>
+<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "ANOVA between age and FC groups."</span></span>
+<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(age <span class="sc">~</span> cat, <span class="at">data =</span> demo)))</span>
+<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-141"><a href="#cb16-141" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sex</span></span>
+<span id="cb16-142"><a href="#cb16-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a>Sex was self-reported via subject questionnaires. As can be seen in</span>
+<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a>@fig-sex-dist, the PREdiCCt cohort is female by majority. </span>
+<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-sex-dist</span></span>
+<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of sex in the FC cohort."</span></span>
+<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>Sex <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>Sex, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>))</span>
+<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Sex, <span class="at">fill =</span> Sex, <span class="at">color =</span> Sex)) <span class="sc">+</span></span>
+<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#FCA17D"</span>, <span class="st">"#60D394"</span>)) <span class="sc">+</span></span>
+<span id="cb16-160"><a href="#cb16-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#B22A21"</span>, <span class="st">"#034C3C"</span>))</span>
+<span id="cb16-161"><a href="#cb16-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
+<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a>Moreover, the distribution of sex is significantly different between FCAL groups. </span>
+<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-sex-fc</span></span>
+<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between Sex and FC groups."</span></span>
+<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>Sex, demo<span class="sc">$</span>cat))</span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a><span class="fu">## BMI</span></span>
+<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a>Body mass index is given by weight (in $Kg$) divided by height (in $M$) squared.</span>
+<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a>As thresholds differ in the paediatric population, and are dependent on both age</span>
+<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a>and sex, BMI has not been calculated for those less than 18 years of age. BMI is</span>
+<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a>first considered as a continuous variable. </span>
+<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-BMI-dist</span></span>
+<span id="cb16-185"><a href="#cb16-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of BMI in the FC cohort."</span></span>
+<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>BMI <span class="ot">&lt;-</span> <span class="fu">with</span>(demo, Weight <span class="sc">/</span> ((Height <span class="sc">/</span> <span class="dv">100</span>)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a>demo[demo[, <span class="st">"age"</span>] <span class="sc">&lt;</span> <span class="dv">18</span>, <span class="st">"BMI"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BMI)) <span class="sc">+</span></span>
+<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"#AD013B"</span>, <span class="at">fill =</span> <span class="st">"#F0386B"</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_family =</span> <span class="st">"sans"</span>) <span class="sc">+</span></span>
+<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
+<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/BMI-full-cohort.png"</span>,</span>
+<span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a>  p,</span>
+<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">9</span>,</span>
+<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">6</span></span>
+<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plots/BMI-full-cohort.pdf"</span>, p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-203"><a href="#cb16-203" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-204"><a href="#cb16-204" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BMI)) <span class="sc">+</span></span>
+<span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"#AD013B"</span>, <span class="at">fill =</span> <span class="st">"#F0386B"</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
+<span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-210"><a href="#cb16-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a>BMI as a continuous variable is not associated with FC groups. </span>
+<span id="cb16-213"><a href="#cb16-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-216"><a href="#cb16-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-BMI-fc</span></span>
+<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Fisher's exact test between BMI and FC groups."</span></span>
+<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">summary</span>(<span class="fu">aov</span>(BMI <span class="sc">~</span> cat, <span class="at">data =</span> demo)))</span>
+<span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a>We also consider BMI grouped into underweight, normal, overweight, and obese</span>
+<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a>categories using the definitions used by the NIH and WHO</span>
+<span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@weirBMIClassificationPercentile2024</span><span class="co">]</span>. </span>
+<span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a>A cut-off of $30 KgM^{-2}$ is used to denote obesity in adults without</span>
+<span id="cb16-227"><a href="#cb16-227" aria-hidden="true" tabindex="-1"></a>Asian/South Asian backgrounds. As data on Asian and South Asian ethnicity is not</span>
+<span id="cb16-228"><a href="#cb16-228" aria-hidden="true" tabindex="-1"></a>available (See <span class="co">[</span><span class="ot">Ethnicity</span><span class="co">](#ethnicity)</span>), we are unable to adjust the threshold</span>
+<span id="cb16-229"><a href="#cb16-229" aria-hidden="true" tabindex="-1"></a>based on ethnicity. However, this is expected to be relevant to relatively few</span>
+<span id="cb16-230"><a href="#cb16-230" aria-hidden="true" tabindex="-1"></a>subjects.</span>
+<span id="cb16-231"><a href="#cb16-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-234"><a href="#cb16-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-235"><a href="#cb16-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-BMIcat-dist</span></span>
+<span id="cb16-236"><a href="#cb16-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of BMI categories in the FC cohort."</span></span>
+<span id="cb16-237"><a href="#cb16-237" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>BMIcat <span class="ot">&lt;-</span> <span class="fu">cut</span>(demo<span class="sc">$</span>BMI,</span>
+<span id="cb16-238"><a href="#cb16-238" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">18.5</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="cn">Inf</span>),</span>
+<span id="cb16-239"><a href="#cb16-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">include.lowest =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-240"><a href="#cb16-240" aria-hidden="true" tabindex="-1"></a>  <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb16-241"><a href="#cb16-241" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>)</span>
+<span id="cb16-242"><a href="#cb16-242" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-243"><a href="#cb16-243" aria-hidden="true" tabindex="-1"></a>demo[demo[, <span class="st">"age"</span>] <span class="sc">&lt;</span> <span class="dv">18</span>, <span class="st">"BMIcat"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb16-244"><a href="#cb16-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-245"><a href="#cb16-245" aria-hidden="true" tabindex="-1"></a>plt.cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#F6AE2D"</span>, <span class="st">"#C81D25"</span>, <span class="st">"#1481BA"</span>, <span class="st">"#7E1F86"</span>)</span>
+<span id="cb16-246"><a href="#cb16-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-247"><a href="#cb16-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-248"><a href="#cb16-248" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-249"><a href="#cb16-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb16-250"><a href="#cb16-250" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BMIcat, <span class="at">color =</span> BMIcat, <span class="at">fill =</span> BMIcat)) <span class="sc">+</span></span>
+<span id="cb16-251"><a href="#cb16-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb16-252"><a href="#cb16-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-253"><a href="#cb16-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb16-254"><a href="#cb16-254" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> plt.cols, <span class="at">na.value =</span> <span class="st">"#032B43"</span>) <span class="sc">+</span></span>
+<span id="cb16-255"><a href="#cb16-255" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(</span>
+<span id="cb16-256"><a href="#cb16-256" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> colorspace<span class="sc">::</span><span class="fu">darken</span>(plt.cols, <span class="fl">0.2</span>),</span>
+<span id="cb16-257"><a href="#cb16-257" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.value =</span> <span class="st">"#032B43"</span></span>
+<span id="cb16-258"><a href="#cb16-258" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb16-259"><a href="#cb16-259" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"BMI category"</span>) <span class="sc">+</span></span>
+<span id="cb16-260"><a href="#cb16-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>)</span>
+<span id="cb16-261"><a href="#cb16-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-262"><a href="#cb16-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-263"><a href="#cb16-263" aria-hidden="true" tabindex="-1"></a>BMI by category is not associated with FC groups. </span>
+<span id="cb16-264"><a href="#cb16-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-267"><a href="#cb16-267" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-268"><a href="#cb16-268" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-BMIcat-fc</span></span>
+<span id="cb16-269"><a href="#cb16-269" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between BMI categories and FC groups."</span></span>
+<span id="cb16-270"><a href="#cb16-270" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>BMIcat, demo<span class="sc">$</span>cat))</span>
+<span id="cb16-271"><a href="#cb16-271" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-272"><a href="#cb16-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-273"><a href="#cb16-273" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ethnicity</span></span>
+<span id="cb16-274"><a href="#cb16-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-275"><a href="#cb16-275" aria-hidden="true" tabindex="-1"></a>Due to low counts for non-white ethnicities, we are only able to report</span>
+<span id="cb16-276"><a href="#cb16-276" aria-hidden="true" tabindex="-1"></a>frequencies of white and non-white ethnicities. </span>
+<span id="cb16-277"><a href="#cb16-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-280"><a href="#cb16-280" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-281"><a href="#cb16-281" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ethnic-dist</span></span>
+<span id="cb16-282"><a href="#cb16-282" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of ethnicity in the FC cohort."</span></span>
+<span id="cb16-283"><a href="#cb16-283" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>ethnic_gp <span class="ot">&lt;-</span> <span class="fu">factor</span>(demo<span class="sc">$</span>ethnic_gp,</span>
+<span id="cb16-284"><a href="#cb16-284" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>),</span>
+<span id="cb16-285"><a href="#cb16-285" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"White"</span>, <span class="st">"Non-white"</span>)</span>
+<span id="cb16-286"><a href="#cb16-286" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-287"><a href="#cb16-287" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(demo)[<span class="dv">10</span><span class="sc">:</span><span class="dv">11</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Age"</span>, <span class="st">"Ethnicity"</span>)</span>
+<span id="cb16-288"><a href="#cb16-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-289"><a href="#cb16-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-290"><a href="#cb16-290" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-291"><a href="#cb16-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb16-292"><a href="#cb16-292" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Ethnicity, <span class="at">fill =</span> Ethnicity, <span class="at">color =</span> Ethnicity)) <span class="sc">+</span></span>
+<span id="cb16-293"><a href="#cb16-293" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb16-294"><a href="#cb16-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb16-295"><a href="#cb16-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-296"><a href="#cb16-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#F24236"</span>, <span class="st">"#2E86AB"</span>), <span class="at">na.value =</span> <span class="st">"#032B43"</span>) <span class="sc">+</span></span>
+<span id="cb16-297"><a href="#cb16-297" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#C0362C"</span>, <span class="st">"#1E556C"</span>), <span class="at">na.value =</span> <span class="st">"#032B43"</span>)</span>
+<span id="cb16-298"><a href="#cb16-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-299"><a href="#cb16-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-302"><a href="#cb16-302" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-303"><a href="#cb16-303" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-ethnicity-fc</span></span>
+<span id="cb16-304"><a href="#cb16-304" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Chi-squared test between ethnicity and FC groups."</span></span>
+<span id="cb16-305"><a href="#cb16-305" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>Ethnicity, demo<span class="sc">$</span>cat))</span>
+<span id="cb16-306"><a href="#cb16-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-307"><a href="#cb16-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-308"><a href="#cb16-308" aria-hidden="true" tabindex="-1"></a><span class="fu">## Index of multiple deprivation</span></span>
+<span id="cb16-309"><a href="#cb16-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-310"><a href="#cb16-310" aria-hidden="true" tabindex="-1"></a>The PREdiCCt SAP states the primary analyses will be controlled for by index</span>
+<span id="cb16-311"><a href="#cb16-311" aria-hidden="true" tabindex="-1"></a>of multiple deprivation (IMD). It should be noted that the PREdiCCt study</span>
+<span id="cb16-312"><a href="#cb16-312" aria-hidden="true" tabindex="-1"></a>recruited across the UK and there is no consistent measure of IMD across the</span>
+<span id="cb16-313"><a href="#cb16-313" aria-hidden="true" tabindex="-1"></a>whole of the UK. Instead, IMD measures are handled slightly differently by each </span>
+<span id="cb16-314"><a href="#cb16-314" aria-hidden="true" tabindex="-1"></a>constituent nation.  </span>
+<span id="cb16-315"><a href="#cb16-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-318"><a href="#cb16-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-319"><a href="#cb16-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-imd-dist</span></span>
+<span id="cb16-320"><a href="#cb16-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of IMD."</span></span>
+<span id="cb16-321"><a href="#cb16-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb16-322"><a href="#cb16-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-323"><a href="#cb16-323" aria-hidden="true" tabindex="-1"></a>IMD <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(redcap.path, <span class="st">"/IMD.xlsx"</span>))</span>
+<span id="cb16-324"><a href="#cb16-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-325"><a href="#cb16-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-326"><a href="#cb16-326" aria-hidden="true" tabindex="-1"></a>IMD <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(IMD)</span>
+<span id="cb16-327"><a href="#cb16-327" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(IMD)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"IMD"</span></span>
+<span id="cb16-328"><a href="#cb16-328" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> <span class="fu">merge</span>(demo, IMD, <span class="at">by =</span> <span class="st">"ParticipantNo"</span>, <span class="at">all.x =</span> <span class="cn">TRUE</span>, <span class="at">all.y =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-329"><a href="#cb16-329" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>IMD <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(demo<span class="sc">$</span>IMD)</span>
+<span id="cb16-330"><a href="#cb16-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-331"><a href="#cb16-331" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#A8F9FF"</span>, <span class="st">"#EF8275"</span>, <span class="st">"#6D326D"</span>, <span class="st">"#0B6E4F"</span>, <span class="st">"#F4D35E"</span>)</span>
+<span id="cb16-332"><a href="#cb16-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-333"><a href="#cb16-333" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-334"><a href="#cb16-334" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(cat) <span class="sc">%&gt;%</span></span>
+<span id="cb16-335"><a href="#cb16-335" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> IMD, <span class="at">color =</span> <span class="fu">as.factor</span>(IMD), <span class="at">fill =</span> <span class="fu">as.factor</span>(IMD))) <span class="sc">+</span></span>
+<span id="cb16-336"><a href="#cb16-336" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb16-337"><a href="#cb16-337" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-338"><a href="#cb16-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb16-339"><a href="#cb16-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb16-340"><a href="#cb16-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"IMD (most deprived to least deprived)"</span>) <span class="sc">+</span></span>
+<span id="cb16-341"><a href="#cb16-341" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cols) <span class="sc">+</span></span>
+<span id="cb16-342"><a href="#cb16-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colorspace<span class="sc">::</span><span class="fu">darken</span>(cols, <span class="at">amount =</span> <span class="fl">0.3</span>))</span>
+<span id="cb16-343"><a href="#cb16-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-344"><a href="#cb16-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-347"><a href="#cb16-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-348"><a href="#cb16-348" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-IMD-fc</span></span>
+<span id="cb16-349"><a href="#cb16-349" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "CHI-squared test between IMD and FC groups."</span></span>
+<span id="cb16-350"><a href="#cb16-350" aria-hidden="true" tabindex="-1"></a><span class="fu">pander</span>(<span class="fu">chisq.test</span>(demo<span class="sc">$</span>IMD, demo<span class="sc">$</span>cat))</span>
+<span id="cb16-351"><a href="#cb16-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-352"><a href="#cb16-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-353"><a href="#cb16-353" aria-hidden="true" tabindex="-1"></a><span class="fu">## Missingness</span></span>
+<span id="cb16-354"><a href="#cb16-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-357"><a href="#cb16-357" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-358"><a href="#cb16-358" aria-hidden="true" tabindex="-1"></a>demo <span class="sc">%&gt;%</span></span>
+<span id="cb16-359"><a href="#cb16-359" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb16-360"><a href="#cb16-360" aria-hidden="true" tabindex="-1"></a>    Age,</span>
+<span id="cb16-361"><a href="#cb16-361" aria-hidden="true" tabindex="-1"></a>    Sex,</span>
+<span id="cb16-362"><a href="#cb16-362" aria-hidden="true" tabindex="-1"></a>    BMI,</span>
+<span id="cb16-363"><a href="#cb16-363" aria-hidden="true" tabindex="-1"></a>    IMD,</span>
+<span id="cb16-364"><a href="#cb16-364" aria-hidden="true" tabindex="-1"></a>    SiteName</span>
+<span id="cb16-365"><a href="#cb16-365" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb16-366"><a href="#cb16-366" aria-hidden="true" tabindex="-1"></a><span class="fu">missing_plot2</span>(<span class="at">title =</span> <span class="st">"Demographics missingness"</span>)</span>
+<span id="cb16-367"><a href="#cb16-367" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-368"><a href="#cb16-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-371"><a href="#cb16-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb16-372"><a href="#cb16-372" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(demo, <span class="fu">paste0</span>(outdir, <span class="st">"demo-demographics.RDS"</span>))</span>
+<span id="cb16-373"><a href="#cb16-373" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-374"><a href="#cb16-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-375"><a href="#cb16-375" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
+<span id="cb16-376"><a href="#cb16-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-377"><a href="#cb16-377" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
+<span id="cb16-378"><a href="#cb16-378" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
+<span id="cb16-379"><a href="#cb16-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-380"><a href="#cb16-380" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
+<span id="cb16-381"><a href="#cb16-381" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
+<span id="cb16-382"><a href="#cb16-382" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
+<span id="cb16-383"><a href="#cb16-383" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-384"><a href="#cb16-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-385"><a href="#cb16-385" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<span id="cb16-386"><a href="#cb16-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-387"><a href="#cb16-387" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
+<span id="cb16-388"><a href="#cb16-388" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
+<span id="cb16-389"><a href="#cb16-389" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
