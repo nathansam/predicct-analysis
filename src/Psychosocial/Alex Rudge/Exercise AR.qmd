@@ -5,7 +5,7 @@ author:
     url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
     affiliations:
       - ref: Lothian
-  - name: "Alex Rudge"
+  - name: "Alexander Rudge"
     affiliations:
       - ref: CGEM
   - name: "Nathan Constantine-Cooke"
