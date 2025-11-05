@@ -12,6 +12,11 @@ flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
 flare.cd.df <- readRDS(paste0(paths$outdir, "flares-biochem-cd.RDS"))
 flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
 
+
+if (!dir.exists(paste0(paths$outdir, "sensitivity/"))) {
+  dir.create(paste0(paths$outdir, "sensitivity/"))
+}
+
 paths$outdir <- paste0(paths$outdir, "sensitivity/")
 
 ## ------------------------------------------------------------------------------------------------------------------------------------------------------
