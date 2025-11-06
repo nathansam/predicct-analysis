@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2025-09-10">
+<meta name="dcterms.date" content="2025-11-05">
 <title>PREdiCCt analyses - Demographic data</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Demographic data">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2025-09-10">
-<meta name="citation_cover_date" content="2025-09-10">
+<meta name="citation_publication_date" content="2025-11-05">
+<meta name="citation_cover_date" content="2025-11-05">
 <meta name="citation_year" content="2025">
-<meta name="citation_online_date" content="2025-09-10">
+<meta name="citation_online_date" content="2025-11-05">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Inflammatory bowel disease and smoking: A review of epidemiology, pathophysiology, and therapeutic implications;,citation_author=Tanja Birrenbach;,citation_author=Ulrich Böcker;,citation_publication_date=2004-11;,citation_cover_date=2004-11;,citation_year=2004;,citation_fulltext_html_url=http://dx.doi.org/10.1097/00054725-200411000-00019;,citation_issue=6;,citation_doi=10.1097/00054725-200411000-00019;,citation_issn=1078-0998;,citation_volume=10;,citation_journal_title=Inflammatory Bowel Diseases;,citation_publisher=Oxford University Press;">
 <meta name="citation_reference" content="citation_title=The UN decade of nutrition, the NOVA food classification and the trouble with ultra-processing;,citation_author=Carlos Augusto Monteiro;,citation_author=Geoffrey Cannon;,citation_author=Jean-Claude Moubarac;,citation_author=Renata Bertazzi Levy;,citation_author=Maria Laura C Louzada;,citation_author=Patrícia Constante Jaime;,citation_publication_date=2017-03;,citation_cover_date=2017-03;,citation_year=2017;,citation_fulltext_html_url=http://dx.doi.org/10.1017/S1368980017000234;,citation_issue=1;,citation_doi=10.1017/s1368980017000234;,citation_issn=1475-2727;,citation_volume=21;,citation_journal_title=Public Health Nutrition;,citation_publisher=Cambridge University Press;">
@@ -342,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 10, 2025</p>
+      <p class="date">November 5, 2025</p>
     </div>
   </div>
   
@@ -378,7 +378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="followup">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" aria-current="page">Patient-reported flare</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Hard flare</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Objective flare</a></li>
 </ul>
 <div class="tab-content" data-group="followup">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
@@ -408,9 +408,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">cd.clin.forest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">cd.clin.forest</span>, <span class="fu">get_HR</span><span class="op">(</span><span class="va">fit.me</span>, <span class="st">"Age"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Display plot and model summary</span></span>
-<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><p>Cox model summary:</p>
 <table class="table">
 <thead><tr class="header">
@@ -484,6 +483,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
@@ -534,15 +534,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ℹ The deprecated feature was likely used in the survminer package.
   Please report the issue at &lt;https://github.com/kassambara/survminer/issues&gt;.</code></pre>
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Generate survival plot and run Cox model for hard flare</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Generate survival plot and run Cox model for objective flare</span></span>
 <span><span class="va">analysis_result</span> <span class="op">&lt;-</span> <span class="fu">run_survival_analysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">flare.cd.df</span>,</span>
 <span>  var_name <span class="op">=</span> <span class="st">"Age"</span>,</span>
@@ -563,9 +563,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">cd.hard.forest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">cd.hard.forest</span>, <span class="fu">get_HR</span><span class="op">(</span><span class="va">fit.me</span>, <span class="st">"Age"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Display plot and model summary</span></span>
-<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><p>Cox model summary:</p>
 <table class="table">
 <thead><tr class="header">
@@ -639,6 +638,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
@@ -685,9 +685,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-3-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -698,11 +698,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="followup">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Patient-reported flare</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Hard flare</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Objective flare</a></li>
 </ul>
 <div class="tab-content" data-group="followup">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Categorize age</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Categorize age</span></span>
 <span><span class="va">flare.uc.df</span> <span class="op">&lt;-</span> <span class="fu">categorize_variable</span><span class="op">(</span><span class="va">flare.uc.df</span>, <span class="st">"Age"</span>, </span>
 <span>                                   breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">18</span>, <span class="fl">30</span>, <span class="fl">45</span>, <span class="fl">65</span>, <span class="cn">Inf</span><span class="op">)</span>,</span>
 <span>                                   labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Under 18"</span>, <span class="st">"18-29"</span>, <span class="st">"30-44"</span>, <span class="st">"45-64"</span>, <span class="st">"65+"</span><span class="op">)</span><span class="op">)</span></span>
@@ -728,9 +728,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">uc.clin.forest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">uc.clin.forest</span>, <span class="fu">get_HR</span><span class="op">(</span><span class="va">fit.me</span>, <span class="st">"Age"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Display plot and model summary</span></span>
-<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><p>Cox model summary:</p>
 <table class="table">
 <thead><tr class="header">
@@ -804,6 +803,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
@@ -850,15 +850,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Generate survival plot and run Cox model for hard flare</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Generate survival plot and run Cox model for objective flare</span></span>
 <span><span class="va">analysis_result</span> <span class="op">&lt;-</span> <span class="fu">run_survival_analysis</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">flare.uc.df</span>,</span>
 <span>  var_name <span class="op">=</span> <span class="st">"Age"</span>,</span>
@@ -879,9 +879,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">uc.hard.forest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">uc.hard.forest</span>, <span class="fu">get_HR</span><span class="op">(</span><span class="va">fit.me</span>, <span class="st">"Age"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Display plot and model summary</span></span>
-<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="va">analysis_result</span><span class="op">$</span><span class="va">plot</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><p>Cox model summary:</p>
 <table class="table">
 <thead><tr class="header">
@@ -955,6 +954,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
@@ -1001,9 +1001,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -1015,11 +1015,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="followup">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">Patient-reported flare</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Hard flare</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Objective flare</a></li>
 </ul>
 <div class="tab-content" data-group="followup">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">flare.cd.df</span>,</span>
 <span>  formula <span class="op">=</span> <span class="fu">Surv</span><span class="op">(</span><span class="va">softflare_time</span>, <span class="va">softflare</span><span class="op">)</span> <span class="op">~</span> <span class="va">BMIcat</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="st">"BMI"</span>,</span>
@@ -1031,9 +1031,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  plot_path <span class="op">=</span> <span class="st">"plots/cd/soft-flare/demographics/bmi"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
 <span>  <span class="fu">Surv</span><span class="op">(</span><span class="va">softflare_time</span>, <span class="va">softflare</span><span class="op">)</span> <span class="op">~</span></span>
 <span>    <span class="va">Sex</span> <span class="op">+</span> <span class="va">IMD</span> <span class="op">+</span> <span class="va">cat</span> <span class="op">+</span> <span class="va">BMI</span> <span class="op">+</span> <span class="fu">frailty</span><span class="op">(</span><span class="va">SiteNo</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu">coxph.control</span><span class="op">(</span>outer.max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span>
@@ -1119,6 +1119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
@@ -1165,29 +1166,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">flare.cd.df</span>,</span>
 <span>  formula <span class="op">=</span> <span class="fu">Surv</span><span class="op">(</span><span class="va">hardflare_time</span>, <span class="va">hardflare</span><span class="op">)</span> <span class="op">~</span> <span class="va">BMIcat</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="st">"BMI"</span>,</span>
 <span>  legend_labs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span><span class="op">)</span>,</span>
 <span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
-<span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Time to objective flare"</span>,</span>
 <span>  break_time_by <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  plot_path <span class="op">=</span> <span class="st">"plots/cd/hard-flare/demographics/bmi"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
 <span>  <span class="fu">Surv</span><span class="op">(</span><span class="va">hardflare_time</span>, <span class="va">hardflare</span><span class="op">)</span> <span class="op">~</span></span>
 <span>    <span class="va">Sex</span> <span class="op">+</span> <span class="va">IMD</span> <span class="op">+</span> <span class="va">cat</span> <span class="op">+</span> <span class="va">BMI</span> <span class="op">+</span> <span class="fu">frailty</span><span class="op">(</span><span class="va">SiteNo</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu">coxph.control</span><span class="op">(</span>outer.max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span>
@@ -1273,6 +1274,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
@@ -1319,9 +1321,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -1332,11 +1334,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="followup">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">Patient-reported flare</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Hard flare</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Objective flare</a></li>
 </ul>
 <div class="tab-content" data-group="followup">
 <div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">flare.uc.df</span>,</span>
 <span>  formula <span class="op">=</span> <span class="fu">Surv</span><span class="op">(</span><span class="va">softflare_time</span>, <span class="va">softflare</span><span class="op">)</span> <span class="op">~</span> <span class="va">BMIcat</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="st">"BMI"</span>,</span>
@@ -1348,9 +1350,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  plot_path <span class="op">=</span> <span class="st">"plots/uc/soft-flare/demographics/bmi"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
 <span>  <span class="fu">Surv</span><span class="op">(</span><span class="va">softflare_time</span>, <span class="va">softflare</span><span class="op">)</span> <span class="op">~</span></span>
 <span>    <span class="va">Sex</span> <span class="op">+</span> <span class="va">IMD</span> <span class="op">+</span> <span class="va">cat</span> <span class="op">+</span> <span class="va">BMI</span> <span class="op">+</span> <span class="fu">frailty</span><span class="op">(</span><span class="va">SiteNo</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu">coxph.control</span><span class="op">(</span>outer.max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span>
@@ -1434,6 +1436,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-3" role="tab" aria-controls="tabset-10-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
@@ -1480,29 +1483,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-10-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-8-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
 </div>
 <div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">generate_survival_plot</span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">flare.uc.df</span>,</span>
 <span>  formula <span class="op">=</span> <span class="fu">Surv</span><span class="op">(</span><span class="va">hardflare_time</span>, <span class="va">hardflare</span><span class="op">)</span> <span class="op">~</span> <span class="va">BMIcat</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="st">"BMI"</span>,</span>
 <span>  legend_labs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span><span class="op">)</span>,</span>
 <span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span><span class="op">)</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
-<span>  title <span class="op">=</span> <span class="st">"Time to hard flare"</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Time to objective flare"</span>,</span>
 <span>  break_time_by <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  plot_path <span class="op">=</span> <span class="st">"plots/uc/hard-flare/demographics/bmi"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details><p><img src="Demographics_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span>, newpage <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
 <span>  <span class="fu">Surv</span><span class="op">(</span><span class="va">hardflare_time</span>, <span class="va">hardflare</span><span class="op">)</span> <span class="op">~</span></span>
 <span>    <span class="va">Sex</span> <span class="op">+</span> <span class="va">IMD</span> <span class="op">+</span> <span class="va">cat</span> <span class="op">+</span> <span class="va">BMI</span> <span class="op">+</span> <span class="fu">frailty</span><span class="op">(</span><span class="va">SiteNo</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu">coxph.control</span><span class="op">(</span>outer.max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span>
@@ -1586,6 +1589,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">Proportional hazards assumption test</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">DF betas</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-3" role="tab" aria-controls="tabset-11-3" aria-selected="false">Martingale residuals</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
@@ -1632,9 +1636,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+</div>
+<div id="tabset-11-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-3-tab">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-<p><img src="Demographics_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -1642,7 +1646,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">flare.df</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">paths</span><span class="op">$</span><span class="va">outdir</span>, <span class="st">"flares-demographics.RDS"</span><span class="op">)</span><span class="op">)</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">flare.df</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">paths</span><span class="op">$</span><span class="va">outdir</span>, <span class="st">"flares-demographics.RDS"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">flare.cd.df</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">paths</span><span class="op">$</span><span class="va">outdir</span>, <span class="st">"flares-demographics-cd.RDS"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">flare.uc.df</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">paths</span><span class="op">$</span><span class="va">outdir</span>, <span class="st">"flares-demographics-uc.RDS"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -1652,7 +1656,427 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">uc.hard.forest</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">paths</span><span class="op">$</span><span class="va">outdir</span>, <span class="st">"uc-hard-demographics.RDS"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</section></section><div id="quarto-appendix" class="default"><section id="reproduction-and-reproducibility" class="level2 appendix"><h2 class="anchored quarto-appendix-heading">Reproduction and reproducibility</h2><div class="quarto-appendix-contents">
+<details class="appendix"><summary>
+Control for additional covariates
+</summary><h3 class="anchored">
+Crohn’s disease
+</h3>
+<h4 class="anchored">
+Patient-reported flare
+</h4>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
+<span>  <span class="fu">Surv</span><span class="op">(</span><span class="va">softflare_time</span>, <span class="va">softflare</span><span class="op">)</span> <span class="op">~</span></span>
+<span>    <span class="va">Sex</span> <span class="op">+</span></span>
+<span>    <span class="va">IMD</span> <span class="op">+</span></span>
+<span>    <span class="va">cat</span> <span class="op">+</span> </span>
+<span>    <span class="va">`IBD Duration`</span> <span class="op">+</span></span>
+<span>    <span class="va">BMI</span> <span class="op">+</span></span>
+<span>    <span class="va">Treatment</span> <span class="op">+</span></span>
+<span>    <span class="va">Age</span> <span class="op">+</span></span>
+<span>    <span class="fu">frailty</span><span class="op">(</span><span class="va">SiteNo</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu">coxph.control</span><span class="op">(</span>outer.max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">flare.cd.df</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><p>Cox model summary:</p>
+<table class="table">
+<thead><tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">HR</th>
+<th style="text-align: right;">Lower 95%</th>
+<th style="text-align: right;">Upper 95%</th>
+<th style="text-align: right;">P-value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SexFemale</td>
+<td style="text-align: right;">2.1585</td>
+<td style="text-align: right;">1.6671</td>
+<td style="text-align: right;">2.7947</td>
+<td style="text-align: right;">0.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMD2</td>
+<td style="text-align: right;">0.8389</td>
+<td style="text-align: right;">0.5280</td>
+<td style="text-align: right;">1.3326</td>
+<td style="text-align: right;">0.4569</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IMD3</td>
+<td style="text-align: right;">0.8199</td>
+<td style="text-align: right;">0.5074</td>
+<td style="text-align: right;">1.3247</td>
+<td style="text-align: right;">0.4172</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMD4</td>
+<td style="text-align: right;">0.8984</td>
+<td style="text-align: right;">0.5702</td>
+<td style="text-align: right;">1.4156</td>
+<td style="text-align: right;">0.6442</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IMD5</td>
+<td style="text-align: right;">0.9268</td>
+<td style="text-align: right;">0.5991</td>
+<td style="text-align: right;">1.4337</td>
+<td style="text-align: right;">0.7327</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">catFC 50-250</td>
+<td style="text-align: right;">1.4944</td>
+<td style="text-align: right;">1.1441</td>
+<td style="text-align: right;">1.9521</td>
+<td style="text-align: right;">0.0032</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">catFC &gt; 250</td>
+<td style="text-align: right;">2.1836</td>
+<td style="text-align: right;">1.6127</td>
+<td style="text-align: right;">2.9566</td>
+<td style="text-align: right;">0.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>IBD Duration</code></td>
+<td style="text-align: right;">0.9942</td>
+<td style="text-align: right;">0.9829</td>
+<td style="text-align: right;">1.0056</td>
+<td style="text-align: right;">0.3152</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BMI</td>
+<td style="text-align: right;">1.0040</td>
+<td style="text-align: right;">0.9821</td>
+<td style="text-align: right;">1.0264</td>
+<td style="text-align: right;">0.7231</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TreatmentMono biologic</td>
+<td style="text-align: right;">0.9820</td>
+<td style="text-align: right;">0.6903</td>
+<td style="text-align: right;">1.3971</td>
+<td style="text-align: right;">0.9197</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TreatmentCombo therapy</td>
+<td style="text-align: right;">0.7083</td>
+<td style="text-align: right;">0.4599</td>
+<td style="text-align: right;">1.0909</td>
+<td style="text-align: right;">0.1175</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treatment5-ASA</td>
+<td style="text-align: right;">1.3322</td>
+<td style="text-align: right;">0.7502</td>
+<td style="text-align: right;">2.3657</td>
+<td style="text-align: right;">0.3276</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TreatmentNone reported</td>
+<td style="text-align: right;">0.9726</td>
+<td style="text-align: right;">0.7007</td>
+<td style="text-align: right;">1.3502</td>
+<td style="text-align: right;">0.8683</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Age</td>
+<td style="text-align: right;">1.0046</td>
+<td style="text-align: right;">0.9957</td>
+<td style="text-align: right;">1.0136</td>
+<td style="text-align: right;">0.3112</td>
+</tr>
+</tbody>
+</table>
+<p>Diagnostics:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">Proportional hazards assumption test</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">DF betas</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
+<table class="table">
+<thead><tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Chi-squared statistic</th>
+<th style="text-align: right;">DF</th>
+<th style="text-align: right;">P-value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Sex</td>
+<td style="text-align: right;">0.4811</td>
+<td style="text-align: right;">0.9924</td>
+<td style="text-align: right;">0.4849</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMD</td>
+<td style="text-align: right;">5.6223</td>
+<td style="text-align: right;">3.9577</td>
+<td style="text-align: right;">0.2246</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cat</td>
+<td style="text-align: right;">1.4933</td>
+<td style="text-align: right;">1.9842</td>
+<td style="text-align: right;">0.4702</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>IBD Duration</code></td>
+<td style="text-align: right;">3.5316</td>
+<td style="text-align: right;">0.9957</td>
+<td style="text-align: right;">0.0598</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BMI</td>
+<td style="text-align: right;">2.1568</td>
+<td style="text-align: right;">0.9913</td>
+<td style="text-align: right;">0.1404</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treatment</td>
+<td style="text-align: right;">3.4530</td>
+<td style="text-align: right;">3.9163</td>
+<td style="text-align: right;">0.4721</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Age</td>
+<td style="text-align: right;">2.1438</td>
+<td style="text-align: right;">0.9913</td>
+<td style="text-align: right;">0.1416</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GLOBAL</td>
+<td style="text-align: right;">18.1663</td>
+<td style="text-align: right;">18.5875</td>
+<td style="text-align: right;">0.4840</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+<p><img src="Demographics_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+<p><img src="Demographics_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<h4 class="anchored">
+Objective flare
+</h4>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">fit.me</span> <span class="op">&lt;-</span> <span class="fu">coxph</span><span class="op">(</span></span>
+<span>  <span class="fu">Surv</span><span class="op">(</span><span class="va">hardflare_time</span>, <span class="va">hardflare</span><span class="op">)</span> <span class="op">~</span></span>
+<span>    <span class="va">Sex</span> <span class="op">+</span></span>
+<span>    <span class="va">IMD</span> <span class="op">+</span></span>
+<span>    <span class="va">cat</span> <span class="op">+</span></span>
+<span>    <span class="va">`IBD Duration`</span> <span class="op">+</span></span>
+<span>    <span class="va">BMI</span> <span class="op">+</span></span>
+<span>    <span class="va">Treatment</span> <span class="op">+</span> </span>
+<span>    <span class="va">Age</span> <span class="op">+</span></span>
+<span>    <span class="fu">frailty</span><span class="op">(</span><span class="va">SiteNo</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu">coxph.control</span><span class="op">(</span>outer.max <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">flare.cd.df</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html">invisible</a></span><span class="op">(</span><span class="fu">cox_summary</span><span class="op">(</span><span class="va">fit.me</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><p>Cox model summary:</p>
+<table class="table">
+<thead><tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">HR</th>
+<th style="text-align: right;">Lower 95%</th>
+<th style="text-align: right;">Upper 95%</th>
+<th style="text-align: right;">P-value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SexFemale</td>
+<td style="text-align: right;">1.7096</td>
+<td style="text-align: right;">1.2650</td>
+<td style="text-align: right;">2.3103</td>
+<td style="text-align: right;">0.0005</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMD2</td>
+<td style="text-align: right;">0.9875</td>
+<td style="text-align: right;">0.5574</td>
+<td style="text-align: right;">1.7494</td>
+<td style="text-align: right;">0.9656</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IMD3</td>
+<td style="text-align: right;">0.8917</td>
+<td style="text-align: right;">0.4907</td>
+<td style="text-align: right;">1.6203</td>
+<td style="text-align: right;">0.7068</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMD4</td>
+<td style="text-align: right;">0.9573</td>
+<td style="text-align: right;">0.5384</td>
+<td style="text-align: right;">1.7022</td>
+<td style="text-align: right;">0.8819</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IMD5</td>
+<td style="text-align: right;">1.0963</td>
+<td style="text-align: right;">0.6346</td>
+<td style="text-align: right;">1.8936</td>
+<td style="text-align: right;">0.7417</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">catFC 50-250</td>
+<td style="text-align: right;">2.0382</td>
+<td style="text-align: right;">1.4550</td>
+<td style="text-align: right;">2.8550</td>
+<td style="text-align: right;">0.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">catFC &gt; 250</td>
+<td style="text-align: right;">3.2590</td>
+<td style="text-align: right;">2.2523</td>
+<td style="text-align: right;">4.7158</td>
+<td style="text-align: right;">0.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>IBD Duration</code></td>
+<td style="text-align: right;">0.9861</td>
+<td style="text-align: right;">0.9714</td>
+<td style="text-align: right;">1.0009</td>
+<td style="text-align: right;">0.0659</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BMI</td>
+<td style="text-align: right;">1.0172</td>
+<td style="text-align: right;">0.9912</td>
+<td style="text-align: right;">1.0439</td>
+<td style="text-align: right;">0.1964</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TreatmentMono biologic</td>
+<td style="text-align: right;">0.9700</td>
+<td style="text-align: right;">0.6482</td>
+<td style="text-align: right;">1.4516</td>
+<td style="text-align: right;">0.8824</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TreatmentCombo therapy</td>
+<td style="text-align: right;">0.6422</td>
+<td style="text-align: right;">0.3867</td>
+<td style="text-align: right;">1.0667</td>
+<td style="text-align: right;">0.0872</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treatment5-ASA</td>
+<td style="text-align: right;">1.2541</td>
+<td style="text-align: right;">0.5732</td>
+<td style="text-align: right;">2.7438</td>
+<td style="text-align: right;">0.5708</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TreatmentNone reported</td>
+<td style="text-align: right;">0.7334</td>
+<td style="text-align: right;">0.4971</td>
+<td style="text-align: right;">1.0822</td>
+<td style="text-align: right;">0.1183</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Age</td>
+<td style="text-align: right;">0.9883</td>
+<td style="text-align: right;">0.9777</td>
+<td style="text-align: right;">0.9991</td>
+<td style="text-align: right;">0.0331</td>
+</tr>
+</tbody>
+</table>
+<p>Diagnostics:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">Proportional hazards assumption test</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">DF betas</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
+<table class="table">
+<thead><tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Chi-squared statistic</th>
+<th style="text-align: right;">DF</th>
+<th style="text-align: right;">P-value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Sex</td>
+<td style="text-align: right;">0.3823</td>
+<td style="text-align: right;">0.9866</td>
+<td style="text-align: right;">0.5308</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IMD</td>
+<td style="text-align: right;">2.0716</td>
+<td style="text-align: right;">3.9513</td>
+<td style="text-align: right;">0.7157</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cat</td>
+<td style="text-align: right;">7.1574</td>
+<td style="text-align: right;">1.9870</td>
+<td style="text-align: right;">0.0275</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>IBD Duration</code></td>
+<td style="text-align: right;">0.1161</td>
+<td style="text-align: right;">0.9959</td>
+<td style="text-align: right;">0.7317</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BMI</td>
+<td style="text-align: right;">4.6695</td>
+<td style="text-align: right;">0.9901</td>
+<td style="text-align: right;">0.0302</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Treatment</td>
+<td style="text-align: right;">3.4118</td>
+<td style="text-align: right;">3.8994</td>
+<td style="text-align: right;">0.4757</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Age</td>
+<td style="text-align: right;">4.6542</td>
+<td style="text-align: right;">0.9917</td>
+<td style="text-align: right;">0.0306</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GLOBAL</td>
+<td style="text-align: right;">21.4207</td>
+<td style="text-align: right;">20.1145</td>
+<td style="text-align: right;">0.3796</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+<p><img src="Demographics_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"> ###### Martingale residuals</p>
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+<p><img src="Demographics_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<h3 class="anchored">
+Ulcerative colitis
+</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="followup">
+<ul class="nav nav-tabs" role="tablist"></ul>
+<div class="tab-content" data-group="followup">
+
+</div>
+</div>
+</details></section></section><div id="quarto-appendix" class="default"><section id="reproduction-and-reproducibility" class="level2 appendix"><h2 class="anchored quarto-appendix-heading">Reproduction and reproducibility</h2><div class="quarto-appendix-contents">
 <details class="appendix"><summary>
 Session info
 </summary><div class="cell">
@@ -2284,379 +2708,493 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb36" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Demographic data"</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">  - name: "Nathan Constantine-Cooke"</span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">    corresponding: true</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&amp;hl=en&amp;oi=ao</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co">    affiliations:</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: CGEM</span></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: HGU</span></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> Survival.bib   </span></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Survival/utils.R"</span>)</span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forestplot)</span>
-<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup analysis environment</span></span>
-<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>analysis_setup <span class="ot">&lt;-</span> <span class="fu">setup_analysis</span>()</span>
-<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>paths <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>paths</span>
-<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>demo</span>
-<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>flare.df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-controlled.RDS"</span>))</span>
-<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>flare.cd.df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-controlled-cd.RDS"</span>))</span>
-<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>flare.uc.df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-controlled-uc.RDS"</span>))</span>
-<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>cd.clin.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-clin-controlled.RDS"</span>))</span>
-<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>cd.hard.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-hard-controlled.RDS"</span>))</span>
-<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>uc.clin.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-clin-controlled.RDS"</span>))</span>
-<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>uc.hard.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-hard-controlled.RDS"</span>))</span>
-<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>This page describes associations between demographic data and time-to-flare. Sex</span>
-<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>and IMD are not covered here as they are covered in the</span>
-<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">controlled variables section</span><span class="co">](Controlled.qmd)</span></span>
-<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a>The page describing demographic variables in a descriptive manner can be found</span>
-<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">here</span><span class="co">](../Baseline/Demographics.qmd)</span>.</span>
-<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Age</span></span>
-<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crohn's disease</span></span>
-<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
-<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
-<span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-54"><a href="#cb36-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-55"><a href="#cb36-55" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-56"><a href="#cb36-56" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-57"><a href="#cb36-57" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-58"><a href="#cb36-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-59"><a href="#cb36-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorize age</span></span>
-<span id="cb36-60"><a href="#cb36-60" aria-hidden="true" tabindex="-1"></a>flare.cd.df <span class="ot">&lt;-</span> <span class="fu">categorize_variable</span>(flare.cd.df, <span class="st">"Age"</span>, </span>
-<span id="cb36-61"><a href="#cb36-61" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">30</span>, <span class="dv">45</span>, <span class="dv">65</span>, <span class="cn">Inf</span>),</span>
-<span id="cb36-62"><a href="#cb36-62" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Under 18"</span>, <span class="st">"18-29"</span>, <span class="st">"30-44"</span>, <span class="st">"45-64"</span>, <span class="st">"65+"</span>))</span>
-<span id="cb36-63"><a href="#cb36-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-64"><a href="#cb36-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model</span></span>
-<span id="cb36-65"><a href="#cb36-65" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
-<span id="cb36-66"><a href="#cb36-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
-<span id="cb36-67"><a href="#cb36-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-68"><a href="#cb36-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"softflare_time"</span>,</span>
-<span id="cb36-69"><a href="#cb36-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"softflare"</span>,</span>
-<span id="cb36-70"><a href="#cb36-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-71"><a href="#cb36-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/cd/soft-flare/demographics/age"</span>,</span>
-<span id="cb36-72"><a href="#cb36-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span></span>
-<span id="cb36-73"><a href="#cb36-73" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-74"><a href="#cb36-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-75"><a href="#cb36-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
-<span id="cb36-76"><a href="#cb36-76" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-77"><a href="#cb36-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-78"><a href="#cb36-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-79"><a href="#cb36-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
-<span id="cb36-80"><a href="#cb36-80" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-81"><a href="#cb36-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-82"><a href="#cb36-82" aria-hidden="true" tabindex="-1"></a>cd.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cd.clin.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
-<span id="cb36-83"><a href="#cb36-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-84"><a href="#cb36-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
-<span id="cb36-85"><a href="#cb36-85" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
-<span id="cb36-86"><a href="#cb36-86" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-87"><a href="#cb36-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-88"><a href="#cb36-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-89"><a href="#cb36-89" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Hard flare</span></span>
-<span id="cb36-90"><a href="#cb36-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-93"><a href="#cb36-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-94"><a href="#cb36-94" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-95"><a href="#cb36-95" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-96"><a href="#cb36-96" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-97"><a href="#cb36-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-98"><a href="#cb36-98" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model for hard flare</span></span>
-<span id="cb36-99"><a href="#cb36-99" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
-<span id="cb36-100"><a href="#cb36-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
-<span id="cb36-101"><a href="#cb36-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-102"><a href="#cb36-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"hardflare_time"</span>,</span>
-<span id="cb36-103"><a href="#cb36-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"hardflare"</span>,</span>
-<span id="cb36-104"><a href="#cb36-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-105"><a href="#cb36-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/cd/hard-flare/demographics/age"</span>,</span>
-<span id="cb36-106"><a href="#cb36-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span></span>
-<span id="cb36-107"><a href="#cb36-107" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-108"><a href="#cb36-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-109"><a href="#cb36-109" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
-<span id="cb36-110"><a href="#cb36-110" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-111"><a href="#cb36-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-112"><a href="#cb36-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-113"><a href="#cb36-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
-<span id="cb36-114"><a href="#cb36-114" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-115"><a href="#cb36-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-116"><a href="#cb36-116" aria-hidden="true" tabindex="-1"></a>cd.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cd.hard.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
-<span id="cb36-117"><a href="#cb36-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-118"><a href="#cb36-118" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
-<span id="cb36-119"><a href="#cb36-119" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
-<span id="cb36-120"><a href="#cb36-120" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-121"><a href="#cb36-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-122"><a href="#cb36-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-123"><a href="#cb36-123" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-124"><a href="#cb36-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-125"><a href="#cb36-125" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ulcerative colitis</span></span>
-<span id="cb36-126"><a href="#cb36-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-127"><a href="#cb36-127" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
-<span id="cb36-128"><a href="#cb36-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-129"><a href="#cb36-129" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
-<span id="cb36-130"><a href="#cb36-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-133"><a href="#cb36-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-134"><a href="#cb36-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-135"><a href="#cb36-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-136"><a href="#cb36-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-137"><a href="#cb36-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-138"><a href="#cb36-138" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorize age</span></span>
-<span id="cb36-139"><a href="#cb36-139" aria-hidden="true" tabindex="-1"></a>flare.uc.df <span class="ot">&lt;-</span> <span class="fu">categorize_variable</span>(flare.uc.df, <span class="st">"Age"</span>, </span>
-<span id="cb36-140"><a href="#cb36-140" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">30</span>, <span class="dv">45</span>, <span class="dv">65</span>, <span class="cn">Inf</span>),</span>
-<span id="cb36-141"><a href="#cb36-141" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Under 18"</span>, <span class="st">"18-29"</span>, <span class="st">"30-44"</span>, <span class="st">"45-64"</span>, <span class="st">"65+"</span>))</span>
-<span id="cb36-142"><a href="#cb36-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-143"><a href="#cb36-143" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model</span></span>
-<span id="cb36-144"><a href="#cb36-144" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
-<span id="cb36-145"><a href="#cb36-145" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
-<span id="cb36-146"><a href="#cb36-146" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-147"><a href="#cb36-147" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"softflare_time"</span>,</span>
-<span id="cb36-148"><a href="#cb36-148" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"softflare"</span>,</span>
-<span id="cb36-149"><a href="#cb36-149" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-150"><a href="#cb36-150" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/uc/soft-flare/demographics/age"</span>,</span>
-<span id="cb36-151"><a href="#cb36-151" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span></span>
-<span id="cb36-152"><a href="#cb36-152" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-153"><a href="#cb36-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-154"><a href="#cb36-154" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
-<span id="cb36-155"><a href="#cb36-155" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-156"><a href="#cb36-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-157"><a href="#cb36-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-158"><a href="#cb36-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
-<span id="cb36-159"><a href="#cb36-159" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-160"><a href="#cb36-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-161"><a href="#cb36-161" aria-hidden="true" tabindex="-1"></a>uc.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(uc.clin.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
-<span id="cb36-162"><a href="#cb36-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-163"><a href="#cb36-163" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
-<span id="cb36-164"><a href="#cb36-164" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
-<span id="cb36-165"><a href="#cb36-165" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-166"><a href="#cb36-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-167"><a href="#cb36-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-168"><a href="#cb36-168" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Hard flare</span></span>
-<span id="cb36-169"><a href="#cb36-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-172"><a href="#cb36-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-173"><a href="#cb36-173" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-174"><a href="#cb36-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-175"><a href="#cb36-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-176"><a href="#cb36-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-177"><a href="#cb36-177" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model for hard flare</span></span>
-<span id="cb36-178"><a href="#cb36-178" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
-<span id="cb36-179"><a href="#cb36-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
-<span id="cb36-180"><a href="#cb36-180" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-181"><a href="#cb36-181" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"hardflare_time"</span>,</span>
-<span id="cb36-182"><a href="#cb36-182" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"hardflare"</span>,</span>
-<span id="cb36-183"><a href="#cb36-183" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
-<span id="cb36-184"><a href="#cb36-184" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/uc/hard-flare/demographics/age"</span>,</span>
-<span id="cb36-185"><a href="#cb36-185" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span></span>
-<span id="cb36-186"><a href="#cb36-186" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-187"><a href="#cb36-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-188"><a href="#cb36-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
-<span id="cb36-189"><a href="#cb36-189" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-190"><a href="#cb36-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-191"><a href="#cb36-191" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-192"><a href="#cb36-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
-<span id="cb36-193"><a href="#cb36-193" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-194"><a href="#cb36-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-195"><a href="#cb36-195" aria-hidden="true" tabindex="-1"></a>uc.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(uc.hard.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
-<span id="cb36-196"><a href="#cb36-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-197"><a href="#cb36-197" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
-<span id="cb36-198"><a href="#cb36-198" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
-<span id="cb36-199"><a href="#cb36-199" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-200"><a href="#cb36-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-201"><a href="#cb36-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-202"><a href="#cb36-202" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-203"><a href="#cb36-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-204"><a href="#cb36-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## BMI</span></span>
-<span id="cb36-205"><a href="#cb36-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-206"><a href="#cb36-206" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crohn's disease</span></span>
-<span id="cb36-207"><a href="#cb36-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-208"><a href="#cb36-208" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
-<span id="cb36-209"><a href="#cb36-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-210"><a href="#cb36-210" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
-<span id="cb36-211"><a href="#cb36-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-214"><a href="#cb36-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-215"><a href="#cb36-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-216"><a href="#cb36-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-217"><a href="#cb36-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-218"><a href="#cb36-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-219"><a href="#cb36-219" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
-<span id="cb36-220"><a href="#cb36-220" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
-<span id="cb36-221"><a href="#cb36-221" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> BMIcat,</span>
-<span id="cb36-222"><a href="#cb36-222" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
-<span id="cb36-223"><a href="#cb36-223" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
-<span id="cb36-224"><a href="#cb36-224" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
-<span id="cb36-225"><a href="#cb36-225" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
-<span id="cb36-226"><a href="#cb36-226" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to clinical flare"</span>,</span>
-<span id="cb36-227"><a href="#cb36-227" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span>,</span>
-<span id="cb36-228"><a href="#cb36-228" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/cd/soft-flare/demographics/bmi"</span></span>
-<span id="cb36-229"><a href="#cb36-229" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-230"><a href="#cb36-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-231"><a href="#cb36-231" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-232"><a href="#cb36-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-233"><a href="#cb36-233" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-234"><a href="#cb36-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span></span>
-<span id="cb36-235"><a href="#cb36-235" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-236"><a href="#cb36-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-237"><a href="#cb36-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
-<span id="cb36-238"><a href="#cb36-238" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-239"><a href="#cb36-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-240"><a href="#cb36-240" aria-hidden="true" tabindex="-1"></a>cd.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb36-241"><a href="#cb36-241" aria-hidden="true" tabindex="-1"></a>  cd.clin.forest,</span>
-<span id="cb36-242"><a href="#cb36-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="fu">c</span>(<span class="st">"BMI"</span>))</span>
-<span id="cb36-243"><a href="#cb36-243" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-244"><a href="#cb36-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-245"><a href="#cb36-245" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-246"><a href="#cb36-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-247"><a href="#cb36-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-248"><a href="#cb36-248" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Hard flare</span></span>
-<span id="cb36-249"><a href="#cb36-249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-252"><a href="#cb36-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-253"><a href="#cb36-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-254"><a href="#cb36-254" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-255"><a href="#cb36-255" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-256"><a href="#cb36-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-257"><a href="#cb36-257" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
-<span id="cb36-258"><a href="#cb36-258" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
-<span id="cb36-259"><a href="#cb36-259" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> BMIcat,</span>
-<span id="cb36-260"><a href="#cb36-260" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
-<span id="cb36-261"><a href="#cb36-261" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
-<span id="cb36-262"><a href="#cb36-262" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
-<span id="cb36-263"><a href="#cb36-263" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
-<span id="cb36-264"><a href="#cb36-264" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span>,</span>
-<span id="cb36-265"><a href="#cb36-265" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span>,</span>
-<span id="cb36-266"><a href="#cb36-266" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/cd/hard-flare/demographics/bmi"</span></span>
-<span id="cb36-267"><a href="#cb36-267" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-268"><a href="#cb36-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-269"><a href="#cb36-269" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-270"><a href="#cb36-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-271"><a href="#cb36-271" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-272"><a href="#cb36-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span></span>
-<span id="cb36-273"><a href="#cb36-273" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-274"><a href="#cb36-274" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-275"><a href="#cb36-275" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
-<span id="cb36-276"><a href="#cb36-276" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-277"><a href="#cb36-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-278"><a href="#cb36-278" aria-hidden="true" tabindex="-1"></a>cd.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb36-279"><a href="#cb36-279" aria-hidden="true" tabindex="-1"></a>  cd.hard.forest,</span>
-<span id="cb36-280"><a href="#cb36-280" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="fu">c</span>(<span class="st">"BMI"</span>))</span>
-<span id="cb36-281"><a href="#cb36-281" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-282"><a href="#cb36-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-283"><a href="#cb36-283" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-284"><a href="#cb36-284" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-285"><a href="#cb36-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-286"><a href="#cb36-286" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-287"><a href="#cb36-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-288"><a href="#cb36-288" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ulcerative colitis</span></span>
-<span id="cb36-289"><a href="#cb36-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-290"><a href="#cb36-290" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
-<span id="cb36-291"><a href="#cb36-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-292"><a href="#cb36-292" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
-<span id="cb36-293"><a href="#cb36-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-296"><a href="#cb36-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-297"><a href="#cb36-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-298"><a href="#cb36-298" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-299"><a href="#cb36-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-300"><a href="#cb36-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-301"><a href="#cb36-301" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
-<span id="cb36-302"><a href="#cb36-302" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
-<span id="cb36-303"><a href="#cb36-303" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> BMIcat,</span>
-<span id="cb36-304"><a href="#cb36-304" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
-<span id="cb36-305"><a href="#cb36-305" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
-<span id="cb36-306"><a href="#cb36-306" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
-<span id="cb36-307"><a href="#cb36-307" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
-<span id="cb36-308"><a href="#cb36-308" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to clinical flare"</span>,</span>
-<span id="cb36-309"><a href="#cb36-309" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span>,</span>
-<span id="cb36-310"><a href="#cb36-310" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/uc/soft-flare/demographics/bmi"</span></span>
-<span id="cb36-311"><a href="#cb36-311" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-312"><a href="#cb36-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-313"><a href="#cb36-313" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-314"><a href="#cb36-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-315"><a href="#cb36-315" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-316"><a href="#cb36-316" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span></span>
-<span id="cb36-317"><a href="#cb36-317" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-318"><a href="#cb36-318" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-319"><a href="#cb36-319" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
-<span id="cb36-320"><a href="#cb36-320" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-321"><a href="#cb36-321" aria-hidden="true" tabindex="-1"></a>uc.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb36-322"><a href="#cb36-322" aria-hidden="true" tabindex="-1"></a>  uc.clin.forest,</span>
-<span id="cb36-323"><a href="#cb36-323" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="fu">c</span>(<span class="st">"BMI"</span>))</span>
-<span id="cb36-324"><a href="#cb36-324" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-325"><a href="#cb36-325" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-326"><a href="#cb36-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-327"><a href="#cb36-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-328"><a href="#cb36-328" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Hard flare</span></span>
-<span id="cb36-329"><a href="#cb36-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-332"><a href="#cb36-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-333"><a href="#cb36-333" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
-<span id="cb36-334"><a href="#cb36-334" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
-<span id="cb36-335"><a href="#cb36-335" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
-<span id="cb36-336"><a href="#cb36-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-337"><a href="#cb36-337" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
-<span id="cb36-338"><a href="#cb36-338" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
-<span id="cb36-339"><a href="#cb36-339" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> BMIcat,</span>
-<span id="cb36-340"><a href="#cb36-340" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
-<span id="cb36-341"><a href="#cb36-341" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
-<span id="cb36-342"><a href="#cb36-342" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
-<span id="cb36-343"><a href="#cb36-343" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
-<span id="cb36-344"><a href="#cb36-344" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to hard flare"</span>,</span>
-<span id="cb36-345"><a href="#cb36-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span>,</span>
-<span id="cb36-346"><a href="#cb36-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/uc/hard-flare/demographics/bmi"</span></span>
-<span id="cb36-347"><a href="#cb36-347" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-348"><a href="#cb36-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-349"><a href="#cb36-349" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-350"><a href="#cb36-350" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-351"><a href="#cb36-351" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
-<span id="cb36-352"><a href="#cb36-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span></span>
-<span id="cb36-353"><a href="#cb36-353" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
-<span id="cb36-354"><a href="#cb36-354" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
-<span id="cb36-355"><a href="#cb36-355" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
-<span id="cb36-356"><a href="#cb36-356" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-357"><a href="#cb36-357" aria-hidden="true" tabindex="-1"></a>uc.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb36-358"><a href="#cb36-358" aria-hidden="true" tabindex="-1"></a>  uc.hard.forest,</span>
-<span id="cb36-359"><a href="#cb36-359" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="st">"BMI"</span>)</span>
-<span id="cb36-360"><a href="#cb36-360" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb36-361"><a href="#cb36-361" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
-<span id="cb36-362"><a href="#cb36-362" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-363"><a href="#cb36-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-364"><a href="#cb36-364" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-365"><a href="#cb36-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-368"><a href="#cb36-368" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb36-369"><a href="#cb36-369" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.df, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-demographics.RDS"</span>))</span>
-<span id="cb36-370"><a href="#cb36-370" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.cd.df, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-demographics-cd.RDS"</span>))</span>
-<span id="cb36-371"><a href="#cb36-371" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.uc.df, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-demographics-uc.RDS"</span>))</span>
-<span id="cb36-372"><a href="#cb36-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-373"><a href="#cb36-373" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cd.clin.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-clin-demographics.RDS"</span>))</span>
-<span id="cb36-374"><a href="#cb36-374" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cd.hard.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-hard-demographics.RDS"</span>))</span>
-<span id="cb36-375"><a href="#cb36-375" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(uc.clin.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-clin-demographics.RDS"</span>))</span>
-<span id="cb36-376"><a href="#cb36-376" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(uc.hard.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-hard-demographics.RDS"</span>))</span>
-<span id="cb36-377"><a href="#cb36-377" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-378"><a href="#cb36-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-379"><a href="#cb36-379" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
-<span id="cb36-380"><a href="#cb36-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-381"><a href="#cb36-381" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
-<span id="cb36-382"><a href="#cb36-382" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
-<span id="cb36-383"><a href="#cb36-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-384"><a href="#cb36-384" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
-<span id="cb36-385"><a href="#cb36-385" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
-<span id="cb36-386"><a href="#cb36-386" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
-<span id="cb36-387"><a href="#cb36-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-388"><a href="#cb36-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-389"><a href="#cb36-389" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
-<span id="cb36-390"><a href="#cb36-390" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-391"><a href="#cb36-391" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
-<span id="cb36-392"><a href="#cb36-392" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
-<span id="cb36-393"><a href="#cb36-393" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
+<div class="sourceCode" id="cb34" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Demographic data"</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co">  - name: "Nathan Constantine-Cooke"</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">    corresponding: true</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co">    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&amp;hl=en&amp;oi=ao</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co">    affiliations:</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: CGEM</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: HGU</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> Survival.bib   </span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Survival/utils.R"</span>)</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forestplot)</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup analysis environment</span></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>analysis_setup <span class="ot">&lt;-</span> <span class="fu">setup_analysis</span>()</span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>paths <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>paths</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>demo</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>flare.df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-controlled.RDS"</span>))</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>flare.cd.df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-controlled-cd.RDS"</span>))</span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>flare.uc.df <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-controlled-uc.RDS"</span>))</span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>cd.clin.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-clin-controlled.RDS"</span>))</span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>cd.hard.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-hard-controlled.RDS"</span>))</span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>uc.clin.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-clin-controlled.RDS"</span>))</span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>uc.hard.forest <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-hard-controlled.RDS"</span>))</span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a>This page describes associations between demographic data and time-to-flare. Sex</span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>and IMD are not covered here as they are covered in the</span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">controlled variables section</span><span class="co">](Controlled.qmd)</span></span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>The page describing demographic variables in a descriptive manner can be found</span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">here</span><span class="co">](../Baseline/Demographics.qmd)</span>.</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Age</span></span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crohn's disease</span></span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-56"><a href="#cb34-56" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-57"><a href="#cb34-57" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorize age</span></span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true" tabindex="-1"></a>flare.cd.df <span class="ot">&lt;-</span> <span class="fu">categorize_variable</span>(flare.cd.df, <span class="st">"Age"</span>, </span>
+<span id="cb34-61"><a href="#cb34-61" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">30</span>, <span class="dv">45</span>, <span class="dv">65</span>, <span class="cn">Inf</span>),</span>
+<span id="cb34-62"><a href="#cb34-62" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Under 18"</span>, <span class="st">"18-29"</span>, <span class="st">"30-44"</span>, <span class="st">"45-64"</span>, <span class="st">"65+"</span>))</span>
+<span id="cb34-63"><a href="#cb34-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-64"><a href="#cb34-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model</span></span>
+<span id="cb34-65"><a href="#cb34-65" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
+<span id="cb34-66"><a href="#cb34-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
+<span id="cb34-67"><a href="#cb34-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-68"><a href="#cb34-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"softflare_time"</span>,</span>
+<span id="cb34-69"><a href="#cb34-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"softflare"</span>,</span>
+<span id="cb34-70"><a href="#cb34-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-71"><a href="#cb34-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/cd/soft-flare/demographics/age"</span>,</span>
+<span id="cb34-72"><a href="#cb34-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span></span>
+<span id="cb34-73"><a href="#cb34-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-74"><a href="#cb34-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-75"><a href="#cb34-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
+<span id="cb34-76"><a href="#cb34-76" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-77"><a href="#cb34-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-78"><a href="#cb34-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-79"><a href="#cb34-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
+<span id="cb34-80"><a href="#cb34-80" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-81"><a href="#cb34-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-82"><a href="#cb34-82" aria-hidden="true" tabindex="-1"></a>cd.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cd.clin.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
+<span id="cb34-83"><a href="#cb34-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-84"><a href="#cb34-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
+<span id="cb34-85"><a href="#cb34-85" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
+<span id="cb34-86"><a href="#cb34-86" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-87"><a href="#cb34-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-88"><a href="#cb34-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-89"><a href="#cb34-89" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Objective flare</span></span>
+<span id="cb34-90"><a href="#cb34-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-93"><a href="#cb34-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-94"><a href="#cb34-94" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-95"><a href="#cb34-95" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-96"><a href="#cb34-96" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-97"><a href="#cb34-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-98"><a href="#cb34-98" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model for objective flare</span></span>
+<span id="cb34-99"><a href="#cb34-99" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
+<span id="cb34-100"><a href="#cb34-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
+<span id="cb34-101"><a href="#cb34-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-102"><a href="#cb34-102" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"hardflare_time"</span>,</span>
+<span id="cb34-103"><a href="#cb34-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"hardflare"</span>,</span>
+<span id="cb34-104"><a href="#cb34-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-105"><a href="#cb34-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/cd/hard-flare/demographics/age"</span>,</span>
+<span id="cb34-106"><a href="#cb34-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span></span>
+<span id="cb34-107"><a href="#cb34-107" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-108"><a href="#cb34-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-109"><a href="#cb34-109" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
+<span id="cb34-110"><a href="#cb34-110" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-111"><a href="#cb34-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-112"><a href="#cb34-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-113"><a href="#cb34-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
+<span id="cb34-114"><a href="#cb34-114" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-115"><a href="#cb34-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-116"><a href="#cb34-116" aria-hidden="true" tabindex="-1"></a>cd.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cd.hard.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
+<span id="cb34-117"><a href="#cb34-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-118"><a href="#cb34-118" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
+<span id="cb34-119"><a href="#cb34-119" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
+<span id="cb34-120"><a href="#cb34-120" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-121"><a href="#cb34-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-122"><a href="#cb34-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-123"><a href="#cb34-123" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb34-124"><a href="#cb34-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-125"><a href="#cb34-125" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ulcerative colitis</span></span>
+<span id="cb34-126"><a href="#cb34-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-127"><a href="#cb34-127" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
+<span id="cb34-128"><a href="#cb34-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-129"><a href="#cb34-129" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
+<span id="cb34-130"><a href="#cb34-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-133"><a href="#cb34-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-134"><a href="#cb34-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-135"><a href="#cb34-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-136"><a href="#cb34-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-137"><a href="#cb34-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-138"><a href="#cb34-138" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorize age</span></span>
+<span id="cb34-139"><a href="#cb34-139" aria-hidden="true" tabindex="-1"></a>flare.uc.df <span class="ot">&lt;-</span> <span class="fu">categorize_variable</span>(flare.uc.df, <span class="st">"Age"</span>, </span>
+<span id="cb34-140"><a href="#cb34-140" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">30</span>, <span class="dv">45</span>, <span class="dv">65</span>, <span class="cn">Inf</span>),</span>
+<span id="cb34-141"><a href="#cb34-141" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Under 18"</span>, <span class="st">"18-29"</span>, <span class="st">"30-44"</span>, <span class="st">"45-64"</span>, <span class="st">"65+"</span>))</span>
+<span id="cb34-142"><a href="#cb34-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-143"><a href="#cb34-143" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model</span></span>
+<span id="cb34-144"><a href="#cb34-144" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
+<span id="cb34-145"><a href="#cb34-145" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
+<span id="cb34-146"><a href="#cb34-146" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-147"><a href="#cb34-147" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"softflare_time"</span>,</span>
+<span id="cb34-148"><a href="#cb34-148" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"softflare"</span>,</span>
+<span id="cb34-149"><a href="#cb34-149" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-150"><a href="#cb34-150" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/uc/soft-flare/demographics/age"</span>,</span>
+<span id="cb34-151"><a href="#cb34-151" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span></span>
+<span id="cb34-152"><a href="#cb34-152" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-153"><a href="#cb34-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-154"><a href="#cb34-154" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
+<span id="cb34-155"><a href="#cb34-155" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-156"><a href="#cb34-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-157"><a href="#cb34-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-158"><a href="#cb34-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
+<span id="cb34-159"><a href="#cb34-159" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-160"><a href="#cb34-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-161"><a href="#cb34-161" aria-hidden="true" tabindex="-1"></a>uc.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(uc.clin.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
+<span id="cb34-162"><a href="#cb34-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-163"><a href="#cb34-163" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
+<span id="cb34-164"><a href="#cb34-164" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
+<span id="cb34-165"><a href="#cb34-165" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-166"><a href="#cb34-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-167"><a href="#cb34-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-168"><a href="#cb34-168" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Objective flare</span></span>
+<span id="cb34-169"><a href="#cb34-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-172"><a href="#cb34-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-173"><a href="#cb34-173" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-174"><a href="#cb34-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-175"><a href="#cb34-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-176"><a href="#cb34-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-177"><a href="#cb34-177" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate survival plot and run Cox model for objective flare</span></span>
+<span id="cb34-178"><a href="#cb34-178" aria-hidden="true" tabindex="-1"></a>analysis_result <span class="ot">&lt;-</span> <span class="fu">run_survival_analysis</span>(</span>
+<span id="cb34-179"><a href="#cb34-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
+<span id="cb34-180"><a href="#cb34-180" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_name =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-181"><a href="#cb34-181" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_time =</span> <span class="st">"hardflare_time"</span>,</span>
+<span id="cb34-182"><a href="#cb34-182" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome_event =</span> <span class="st">"hardflare"</span>,</span>
+<span id="cb34-183"><a href="#cb34-183" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"Age"</span>,</span>
+<span id="cb34-184"><a href="#cb34-184" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_base_path =</span> <span class="st">"plots/uc/hard-flare/demographics/age"</span>,</span>
+<span id="cb34-185"><a href="#cb34-185" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span></span>
+<span id="cb34-186"><a href="#cb34-186" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-187"><a href="#cb34-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-188"><a href="#cb34-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract hazard ratio for Age (continuous variable)</span></span>
+<span id="cb34-189"><a href="#cb34-189" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-190"><a href="#cb34-190" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> Age <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-191"><a href="#cb34-191" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-192"><a href="#cb34-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
+<span id="cb34-193"><a href="#cb34-193" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-194"><a href="#cb34-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-195"><a href="#cb34-195" aria-hidden="true" tabindex="-1"></a>uc.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(uc.hard.forest, <span class="fu">get_HR</span>(fit.me, <span class="st">"Age"</span>))</span>
+<span id="cb34-196"><a href="#cb34-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-197"><a href="#cb34-197" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
+<span id="cb34-198"><a href="#cb34-198" aria-hidden="true" tabindex="-1"></a>analysis_result<span class="sc">$</span>plot</span>
+<span id="cb34-199"><a href="#cb34-199" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-200"><a href="#cb34-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-201"><a href="#cb34-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-202"><a href="#cb34-202" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb34-203"><a href="#cb34-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-204"><a href="#cb34-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## BMI</span></span>
+<span id="cb34-205"><a href="#cb34-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-206"><a href="#cb34-206" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crohn's disease</span></span>
+<span id="cb34-207"><a href="#cb34-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-208"><a href="#cb34-208" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
+<span id="cb34-209"><a href="#cb34-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-210"><a href="#cb34-210" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
+<span id="cb34-211"><a href="#cb34-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-214"><a href="#cb34-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-215"><a href="#cb34-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-216"><a href="#cb34-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-217"><a href="#cb34-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-218"><a href="#cb34-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-219"><a href="#cb34-219" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
+<span id="cb34-220"><a href="#cb34-220" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
+<span id="cb34-221"><a href="#cb34-221" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> BMIcat,</span>
+<span id="cb34-222"><a href="#cb34-222" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
+<span id="cb34-223"><a href="#cb34-223" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
+<span id="cb34-224"><a href="#cb34-224" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
+<span id="cb34-225"><a href="#cb34-225" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
+<span id="cb34-226"><a href="#cb34-226" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to clinical flare"</span>,</span>
+<span id="cb34-227"><a href="#cb34-227" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span>,</span>
+<span id="cb34-228"><a href="#cb34-228" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/cd/soft-flare/demographics/bmi"</span></span>
+<span id="cb34-229"><a href="#cb34-229" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-230"><a href="#cb34-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-231"><a href="#cb34-231" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-232"><a href="#cb34-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-233"><a href="#cb34-233" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-234"><a href="#cb34-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span></span>
+<span id="cb34-235"><a href="#cb34-235" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-236"><a href="#cb34-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-237"><a href="#cb34-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
+<span id="cb34-238"><a href="#cb34-238" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-239"><a href="#cb34-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-240"><a href="#cb34-240" aria-hidden="true" tabindex="-1"></a>cd.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb34-241"><a href="#cb34-241" aria-hidden="true" tabindex="-1"></a>  cd.clin.forest,</span>
+<span id="cb34-242"><a href="#cb34-242" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="fu">c</span>(<span class="st">"BMI"</span>))</span>
+<span id="cb34-243"><a href="#cb34-243" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-244"><a href="#cb34-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-245"><a href="#cb34-245" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-246"><a href="#cb34-246" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-247"><a href="#cb34-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-248"><a href="#cb34-248" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Objective flare</span></span>
+<span id="cb34-249"><a href="#cb34-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-252"><a href="#cb34-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-253"><a href="#cb34-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-254"><a href="#cb34-254" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-255"><a href="#cb34-255" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-256"><a href="#cb34-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-257"><a href="#cb34-257" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
+<span id="cb34-258"><a href="#cb34-258" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df,</span>
+<span id="cb34-259"><a href="#cb34-259" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> BMIcat,</span>
+<span id="cb34-260"><a href="#cb34-260" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
+<span id="cb34-261"><a href="#cb34-261" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
+<span id="cb34-262"><a href="#cb34-262" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
+<span id="cb34-263"><a href="#cb34-263" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
+<span id="cb34-264"><a href="#cb34-264" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to objective flare"</span>,</span>
+<span id="cb34-265"><a href="#cb34-265" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span>,</span>
+<span id="cb34-266"><a href="#cb34-266" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/cd/hard-flare/demographics/bmi"</span></span>
+<span id="cb34-267"><a href="#cb34-267" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-268"><a href="#cb34-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-269"><a href="#cb34-269" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-270"><a href="#cb34-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-271"><a href="#cb34-271" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-272"><a href="#cb34-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span></span>
+<span id="cb34-273"><a href="#cb34-273" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-274"><a href="#cb34-274" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-275"><a href="#cb34-275" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
+<span id="cb34-276"><a href="#cb34-276" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-277"><a href="#cb34-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-278"><a href="#cb34-278" aria-hidden="true" tabindex="-1"></a>cd.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb34-279"><a href="#cb34-279" aria-hidden="true" tabindex="-1"></a>  cd.hard.forest,</span>
+<span id="cb34-280"><a href="#cb34-280" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="fu">c</span>(<span class="st">"BMI"</span>))</span>
+<span id="cb34-281"><a href="#cb34-281" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-282"><a href="#cb34-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-283"><a href="#cb34-283" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-284"><a href="#cb34-284" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-285"><a href="#cb34-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-286"><a href="#cb34-286" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb34-287"><a href="#cb34-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-288"><a href="#cb34-288" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ulcerative colitis</span></span>
+<span id="cb34-289"><a href="#cb34-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-290"><a href="#cb34-290" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
+<span id="cb34-291"><a href="#cb34-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-292"><a href="#cb34-292" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Patient-reported flare</span></span>
+<span id="cb34-293"><a href="#cb34-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-296"><a href="#cb34-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-297"><a href="#cb34-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-298"><a href="#cb34-298" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-299"><a href="#cb34-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-300"><a href="#cb34-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-301"><a href="#cb34-301" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
+<span id="cb34-302"><a href="#cb34-302" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
+<span id="cb34-303"><a href="#cb34-303" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span> BMIcat,</span>
+<span id="cb34-304"><a href="#cb34-304" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
+<span id="cb34-305"><a href="#cb34-305" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
+<span id="cb34-306"><a href="#cb34-306" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
+<span id="cb34-307"><a href="#cb34-307" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
+<span id="cb34-308"><a href="#cb34-308" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to clinical flare"</span>,</span>
+<span id="cb34-309"><a href="#cb34-309" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">200</span>,</span>
+<span id="cb34-310"><a href="#cb34-310" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/uc/soft-flare/demographics/bmi"</span></span>
+<span id="cb34-311"><a href="#cb34-311" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-312"><a href="#cb34-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-313"><a href="#cb34-313" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-314"><a href="#cb34-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-315"><a href="#cb34-315" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-316"><a href="#cb34-316" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span></span>
+<span id="cb34-317"><a href="#cb34-317" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-318"><a href="#cb34-318" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-319"><a href="#cb34-319" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
+<span id="cb34-320"><a href="#cb34-320" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-321"><a href="#cb34-321" aria-hidden="true" tabindex="-1"></a>uc.clin.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb34-322"><a href="#cb34-322" aria-hidden="true" tabindex="-1"></a>  uc.clin.forest,</span>
+<span id="cb34-323"><a href="#cb34-323" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="fu">c</span>(<span class="st">"BMI"</span>))</span>
+<span id="cb34-324"><a href="#cb34-324" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-325"><a href="#cb34-325" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-326"><a href="#cb34-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-327"><a href="#cb34-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-328"><a href="#cb34-328" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Objective flare</span></span>
+<span id="cb34-329"><a href="#cb34-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-332"><a href="#cb34-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-333"><a href="#cb34-333" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-334"><a href="#cb34-334" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-335"><a href="#cb34-335" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-336"><a href="#cb34-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-337"><a href="#cb34-337" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">generate_survival_plot</span>(</span>
+<span id="cb34-338"><a href="#cb34-338" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df,</span>
+<span id="cb34-339"><a href="#cb34-339" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span> BMIcat,</span>
+<span id="cb34-340"><a href="#cb34-340" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_title =</span> <span class="st">"BMI"</span>,</span>
+<span id="cb34-341"><a href="#cb34-341" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend_labs =</span> <span class="fu">c</span>(<span class="st">"Underweight"</span>, <span class="st">"Normal"</span>, <span class="st">"Overweight"</span>, <span class="st">"Obese"</span>),</span>
+<span id="cb34-342"><a href="#cb34-342" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"#1A8FE3"</span>, <span class="st">"#E76D83"</span>, <span class="st">"#5FB49C"</span>, <span class="st">"#FED766"</span>),</span>
+<span id="cb34-343"><a href="#cb34-343" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Time from study recruitment (days)"</span>,</span>
+<span id="cb34-344"><a href="#cb34-344" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Time to objective flare"</span>,</span>
+<span id="cb34-345"><a href="#cb34-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">break_time_by =</span> <span class="dv">500</span>,</span>
+<span id="cb34-346"><a href="#cb34-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_path =</span> <span class="st">"plots/uc/hard-flare/demographics/bmi"</span></span>
+<span id="cb34-347"><a href="#cb34-347" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-348"><a href="#cb34-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-349"><a href="#cb34-349" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p, <span class="at">newpage =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-350"><a href="#cb34-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-351"><a href="#cb34-351" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-352"><a href="#cb34-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span></span>
+<span id="cb34-353"><a href="#cb34-353" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span> IMD <span class="sc">+</span> cat <span class="sc">+</span> BMI <span class="sc">+</span> <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-354"><a href="#cb34-354" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-355"><a href="#cb34-355" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
+<span id="cb34-356"><a href="#cb34-356" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-357"><a href="#cb34-357" aria-hidden="true" tabindex="-1"></a>uc.hard.forest <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb34-358"><a href="#cb34-358" aria-hidden="true" tabindex="-1"></a>  uc.hard.forest,</span>
+<span id="cb34-359"><a href="#cb34-359" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_HR</span>(fit.me, <span class="st">"BMI"</span>)</span>
+<span id="cb34-360"><a href="#cb34-360" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb34-361"><a href="#cb34-361" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-362"><a href="#cb34-362" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-363"><a href="#cb34-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-364"><a href="#cb34-364" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb34-365"><a href="#cb34-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-368"><a href="#cb34-368" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-369"><a href="#cb34-369" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.df, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-demographics.RDS"</span>))</span>
+<span id="cb34-370"><a href="#cb34-370" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.cd.df, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-demographics-cd.RDS"</span>))</span>
+<span id="cb34-371"><a href="#cb34-371" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(flare.uc.df, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"flares-demographics-uc.RDS"</span>))</span>
+<span id="cb34-372"><a href="#cb34-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-373"><a href="#cb34-373" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cd.clin.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-clin-demographics.RDS"</span>))</span>
+<span id="cb34-374"><a href="#cb34-374" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(cd.hard.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"cd-hard-demographics.RDS"</span>))</span>
+<span id="cb34-375"><a href="#cb34-375" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(uc.clin.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-clin-demographics.RDS"</span>))</span>
+<span id="cb34-376"><a href="#cb34-376" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(uc.hard.forest, <span class="fu">paste0</span>(paths<span class="sc">$</span>outdir, <span class="st">"uc-hard-demographics.RDS"</span>))</span>
+<span id="cb34-377"><a href="#cb34-377" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-378"><a href="#cb34-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-379"><a href="#cb34-379" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
+<span id="cb34-380"><a href="#cb34-380" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Control for additional covariates &lt;/summary&gt;</span>
+<span id="cb34-381"><a href="#cb34-381" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-382"><a href="#cb34-382" aria-hidden="true" tabindex="-1"></a>&lt;h3&gt; Crohn's disease &lt;/h3&gt;</span>
+<span id="cb34-383"><a href="#cb34-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-384"><a href="#cb34-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-385"><a href="#cb34-385" aria-hidden="true" tabindex="-1"></a>&lt;h4&gt; Patient-reported flare &lt;/h4&gt;</span>
+<span id="cb34-386"><a href="#cb34-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-389"><a href="#cb34-389" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-390"><a href="#cb34-390" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-391"><a href="#cb34-391" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-392"><a href="#cb34-392" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-393"><a href="#cb34-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-394"><a href="#cb34-394" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-395"><a href="#cb34-395" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span></span>
+<span id="cb34-396"><a href="#cb34-396" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
+<span id="cb34-397"><a href="#cb34-397" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb34-398"><a href="#cb34-398" aria-hidden="true" tabindex="-1"></a>    cat <span class="sc">+</span> </span>
+<span id="cb34-399"><a href="#cb34-399" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb34-400"><a href="#cb34-400" aria-hidden="true" tabindex="-1"></a>    BMI <span class="sc">+</span></span>
+<span id="cb34-401"><a href="#cb34-401" aria-hidden="true" tabindex="-1"></a>    Treatment <span class="sc">+</span></span>
+<span id="cb34-402"><a href="#cb34-402" aria-hidden="true" tabindex="-1"></a>    Age <span class="sc">+</span></span>
+<span id="cb34-403"><a href="#cb34-403" aria-hidden="true" tabindex="-1"></a>    <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-404"><a href="#cb34-404" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-405"><a href="#cb34-405" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
+<span id="cb34-406"><a href="#cb34-406" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-407"><a href="#cb34-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-408"><a href="#cb34-408" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-409"><a href="#cb34-409" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-410"><a href="#cb34-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-411"><a href="#cb34-411" aria-hidden="true" tabindex="-1"></a>&lt;h4&gt; Objective flare &lt;/h4&gt;</span>
+<span id="cb34-412"><a href="#cb34-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-415"><a href="#cb34-415" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-416"><a href="#cb34-416" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-417"><a href="#cb34-417" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-418"><a href="#cb34-418" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-419"><a href="#cb34-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-420"><a href="#cb34-420" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-421"><a href="#cb34-421" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span></span>
+<span id="cb34-422"><a href="#cb34-422" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
+<span id="cb34-423"><a href="#cb34-423" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb34-424"><a href="#cb34-424" aria-hidden="true" tabindex="-1"></a>    cat <span class="sc">+</span></span>
+<span id="cb34-425"><a href="#cb34-425" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb34-426"><a href="#cb34-426" aria-hidden="true" tabindex="-1"></a>    BMI <span class="sc">+</span></span>
+<span id="cb34-427"><a href="#cb34-427" aria-hidden="true" tabindex="-1"></a>    Treatment <span class="sc">+</span> </span>
+<span id="cb34-428"><a href="#cb34-428" aria-hidden="true" tabindex="-1"></a>    Age <span class="sc">+</span></span>
+<span id="cb34-429"><a href="#cb34-429" aria-hidden="true" tabindex="-1"></a>    <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-430"><a href="#cb34-430" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-431"><a href="#cb34-431" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.cd.df</span>
+<span id="cb34-432"><a href="#cb34-432" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-433"><a href="#cb34-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-434"><a href="#cb34-434" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-435"><a href="#cb34-435" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-436"><a href="#cb34-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-437"><a href="#cb34-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-438"><a href="#cb34-438" aria-hidden="true" tabindex="-1"></a>&lt;h3&gt; Ulcerative colitis &lt;/h3&gt;</span>
+<span id="cb34-439"><a href="#cb34-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-440"><a href="#cb34-440" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset group="followup"}</span>
+<span id="cb34-441"><a href="#cb34-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-442"><a href="#cb34-442" aria-hidden="true" tabindex="-1"></a>&lt;h4&gt; Patient-reported flare &lt;/h4&gt;</span>
+<span id="cb34-443"><a href="#cb34-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-446"><a href="#cb34-446" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-447"><a href="#cb34-447" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-448"><a href="#cb34-448" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-449"><a href="#cb34-449" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-450"><a href="#cb34-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-451"><a href="#cb34-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-452"><a href="#cb34-452" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb34-453"><a href="#cb34-453" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(softflare_time, softflare) <span class="sc">~</span></span>
+<span id="cb34-454"><a href="#cb34-454" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
+<span id="cb34-455"><a href="#cb34-455" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb34-456"><a href="#cb34-456" aria-hidden="true" tabindex="-1"></a>    cat <span class="sc">+</span></span>
+<span id="cb34-457"><a href="#cb34-457" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb34-458"><a href="#cb34-458" aria-hidden="true" tabindex="-1"></a>    BMI <span class="sc">+</span></span>
+<span id="cb34-459"><a href="#cb34-459" aria-hidden="true" tabindex="-1"></a>    Treatment <span class="sc">+</span></span>
+<span id="cb34-460"><a href="#cb34-460" aria-hidden="true" tabindex="-1"></a>    Age <span class="sc">+</span></span>
+<span id="cb34-461"><a href="#cb34-461" aria-hidden="true" tabindex="-1"></a>    <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-462"><a href="#cb34-462" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-463"><a href="#cb34-463" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
+<span id="cb34-464"><a href="#cb34-464" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-465"><a href="#cb34-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-466"><a href="#cb34-466" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plot and model summary</span></span>
+<span id="cb34-467"><a href="#cb34-467" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-468"><a href="#cb34-468" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-469"><a href="#cb34-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-470"><a href="#cb34-470" aria-hidden="true" tabindex="-1"></a>&lt;h4&gt; Objective flare &lt;/h4&gt;</span>
+<span id="cb34-471"><a href="#cb34-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-474"><a href="#cb34-474" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb34-475"><a href="#cb34-475" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: "hold"</span></span>
+<span id="cb34-476"><a href="#cb34-476" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: "asis"</span></span>
+<span id="cb34-477"><a href="#cb34-477" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6.5</span></span>
+<span id="cb34-478"><a href="#cb34-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-479"><a href="#cb34-479" aria-hidden="true" tabindex="-1"></a>fit.me <span class="ot">&lt;-</span> <span class="fu">coxph</span>( </span>
+<span id="cb34-480"><a href="#cb34-480" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(hardflare_time, hardflare) <span class="sc">~</span></span>
+<span id="cb34-481"><a href="#cb34-481" aria-hidden="true" tabindex="-1"></a>    Sex <span class="sc">+</span></span>
+<span id="cb34-482"><a href="#cb34-482" aria-hidden="true" tabindex="-1"></a>    IMD <span class="sc">+</span></span>
+<span id="cb34-483"><a href="#cb34-483" aria-hidden="true" tabindex="-1"></a>    cat <span class="sc">+</span></span>
+<span id="cb34-484"><a href="#cb34-484" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">IBD Duration</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb34-485"><a href="#cb34-485" aria-hidden="true" tabindex="-1"></a>    BMI <span class="sc">+</span></span>
+<span id="cb34-486"><a href="#cb34-486" aria-hidden="true" tabindex="-1"></a>    Treatment <span class="sc">+</span></span>
+<span id="cb34-487"><a href="#cb34-487" aria-hidden="true" tabindex="-1"></a>    Age <span class="sc">+</span></span>
+<span id="cb34-488"><a href="#cb34-488" aria-hidden="true" tabindex="-1"></a>    <span class="fu">frailty</span>(SiteNo),</span>
+<span id="cb34-489"><a href="#cb34-489" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">coxph.control</span>(<span class="at">outer.max =</span> <span class="dv">20</span>),</span>
+<span id="cb34-490"><a href="#cb34-490" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> flare.uc.df</span>
+<span id="cb34-491"><a href="#cb34-491" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-492"><a href="#cb34-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-493"><a href="#cb34-493" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">cox_summary</span>(fit.me))</span>
+<span id="cb34-494"><a href="#cb34-494" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-495"><a href="#cb34-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-496"><a href="#cb34-496" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb34-497"><a href="#cb34-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-498"><a href="#cb34-498" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<span id="cb34-499"><a href="#cb34-499" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-500"><a href="#cb34-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-501"><a href="#cb34-501" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproduction and reproducibility {.appendix}</span></span>
+<span id="cb34-502"><a href="#cb34-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-503"><a href="#cb34-503" aria-hidden="true" tabindex="-1"></a>&lt;details class = "appendix"&gt;</span>
+<span id="cb34-504"><a href="#cb34-504" aria-hidden="true" tabindex="-1"></a>  &lt;summary&gt; Session info &lt;/summary&gt;</span>
+<span id="cb34-505"><a href="#cb34-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-506"><a href="#cb34-506" aria-hidden="true" tabindex="-1"></a><span class="in">```{R Session info}</span></span>
+<span id="cb34-507"><a href="#cb34-507" aria-hidden="true" tabindex="-1"></a><span class="in">#| echo: false</span></span>
+<span id="cb34-508"><a href="#cb34-508" aria-hidden="true" tabindex="-1"></a><span class="in">pander::pander(sessionInfo())</span></span>
+<span id="cb34-509"><a href="#cb34-509" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb34-510"><a href="#cb34-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-511"><a href="#cb34-511" aria-hidden="true" tabindex="-1"></a>&lt;/details&gt;</span>
+<span id="cb34-512"><a href="#cb34-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-513"><a href="#cb34-513" aria-hidden="true" tabindex="-1"></a>Licensed by </span>
+<span id="cb34-514"><a href="#cb34-514" aria-hidden="true" tabindex="-1"></a>&lt;a href="https://creativecommons.org/licenses/by/4.0/"&gt;CC BY&lt;/a&gt;</span>
+<span id="cb34-515"><a href="#cb34-515" aria-hidden="true" tabindex="-1"></a> unless otherwise stated.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
