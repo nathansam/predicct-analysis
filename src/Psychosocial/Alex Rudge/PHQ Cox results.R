@@ -1,7 +1,7 @@
 
 # Extracting the results from the Cox models
 
-# Run Exercise
+# Run PHQ
 
 variable = "somatisation"
 filename = "cox_results_phq.rds"

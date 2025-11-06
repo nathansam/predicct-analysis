@@ -74,7 +74,7 @@ summon_statistical_test <- function(data, dependent, independent) {
   ) %>%
     dplyr::mutate(p.adjust = p.adjust(p = p, method = 'holm')) %>%
     dplyr::mutate(p.adjust = signif(p.adjust, 3)) %>%
-    dplyr::select(-p.signif) %>%
+    dplyr::select(-tidyselect::any_of(c('p.signif'))) %>%
     dplyr::mutate(
       p.adjust.signif = dplyr::case_when(
         p.adjust < 0.0001 ~ "****",
@@ -263,9 +263,9 @@ extract_cox_results <- function(data,
       by = "term"
     ) %>%
     # Diagnosis
-    dplyr::mutate(diagnosis2 = diagnosis2, flare_type = flare_type)
+    dplyr::mutate(diagnosis2 = diagnosis2, flare_type = flare_type) %>%
+    dplyr::select(term, variable, level, estimate, std.error, statistic, df, p.value, conf.low, conf.high, diagnosis2, flare_type)
 }
-
 
 # Creating KM curves
 summon_km_curves <- function(data,

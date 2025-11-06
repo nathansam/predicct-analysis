@@ -3,18 +3,7 @@
 
 # Run HADS
 
-# data = data_survival_anxiety_soft_uc
-# 
-# cox_model = cox_anxiety_soft_uc
-# 
-# variable = "score_group"
-# 
-# diagnosis2 = 'UC/IBDU'
-# 
-# flare_type = "soft"
-
 # Anxiety
-
 # Extract Cox results
 cox_results_hads_anxiety <- extract_cox_results(
   data = data_survival_anxiety_soft_uc,

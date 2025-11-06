@@ -4,7 +4,6 @@
 # Run Exercise
 
 variable = "SleepDisturbance"
-filename = "cox_results_psqi.rds"
 
 cox_results <- extract_cox_results(
   data = data_survival_soft_uc,
@@ -46,5 +45,5 @@ filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
 readr::write_rds(
   x = cox_results,
-  file = paste0(filepath, filename)
+  file = paste0(filepath, "cox_results_psqi.rds")
 )
