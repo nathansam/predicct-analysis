@@ -128,7 +128,6 @@ summon_complete_forest <- function(
   plot_anxiety <- summon_forest_plot(data, variable = 'score_group_anxiety', diagnosis2 = diagnosis2)
   plot_depression <- summon_forest_plot(data, variable = 'score_group_depression', diagnosis2 = diagnosis2)
   plot_exercise <- summon_forest_plot(data, variable = 'MinimumExercise', diagnosis2 = diagnosis2)
-  plot_alcohol <- summon_forest_plot(data, variable = 'weekly_units', diagnosis2 = diagnosis2)
   plot_lifeevents <- summon_forest_plot(data, variable = 'AnyLifeEvents', diagnosis2 = diagnosis2)
   plot_sleep <- summon_forest_plot(data, variable = 'SleepDisturbance', diagnosis2 = diagnosis2)
   plot_somatisation <- summon_forest_plot(data, variable = 'somatisation', diagnosis2 = diagnosis2)
@@ -142,7 +141,6 @@ summon_complete_forest <- function(
        theme(plot.title = element_text(size = 12))) +
    plot_depression$plot + plot_depression$hr +  plot_depression$p +
    plot_exercise$plot + plot_exercise$hr + plot_exercise$p +
-    plot_alcohol$plot + plot_alcohol$hr + plot_alcohol$p +
    plot_lifeevents$plot + plot_lifeevents$hr + plot_lifeevents$p +
    plot_sleep$plot + plot_sleep$hr + plot_sleep$p +
    plot_somatisation$plot + plot_somatisation$hr + plot_somatisation$p +
@@ -151,7 +149,7 @@ summon_complete_forest <- function(
      guides = 'collect',
      axes = 'collect',
      width = c(3, 1, 0.5),
-     height = c(3,3,1,3,1,1,4)
+     height = c(3,3,1,1,1,4)
    ) +
    patchwork::plot_annotation(
       title = title
@@ -164,29 +162,77 @@ summon_complete_forest <- function(
 }
 
 # Soft UC
-summon_complete_forest(
+plot_hr_soft_uc <- summon_complete_forest(
   data = cox_results_soft,
   diagnosis2 = 'UC/IBDU',
-  title = "Patient reported flare in UC/IBDU"
+  title = "Patient reported flare in ulcerative colitis"
 )
+
+plot_hr_soft_uc
 
 # Soft CD
-summon_complete_forest(
+plot_hr_soft_cd <- summon_complete_forest(
   data = cox_results_soft,
   diagnosis2 = 'CD',
-  title = "Patient reported flare in CD"
+  title = "Patient reported flare in Crohn's Disease"
 )
+
+plot_hr_soft_cd
 
 # Hard UC
-summon_complete_forest(
+plot_hr_hard_uc <- summon_complete_forest(
   data = cox_results_hard,
   diagnosis2 = 'UC/IBDU',
-  title = "Hard flare in UC/IBDU"
+  title = "Objective flare in ulcerative colitis"
 )
 
+plot_hr_hard_uc
+
 # Hard CD
-summon_complete_forest(
+plot_hr_hard_cd <- summon_complete_forest(
   data = cox_results_hard,
   diagnosis2 = 'CD',
-  title = "Hard flare in CD"
+  title = "Objective flare in Crohn's Disease"
+)
+
+plot_hr_hard_cd
+
+
+# Save
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
+
+# soft uc
+ggsave(
+  filename = paste0(filepath_save, "HR forest plot soft uc.pdf"),
+  plot = plot_hr_soft_uc,
+  width = 10,
+  height = 10,
+  units = 'in'
+)
+
+# soft cd
+ggsave(
+  filename = paste0(filepath_save, "HR forest plot soft cd.pdf"),
+  plot = plot_hr_soft_cd,
+  width = 10,
+  height = 10,
+  units = 'in'
+)
+
+# hard uc
+ggsave(
+  filename = paste0(filepath_save, "HR forest plot hard uc.pdf"),
+  plot = plot_hr_hard_uc,
+  width = 10,
+  height = 10,
+  units = 'in'
+)
+
+# hard cd
+ggsave(
+  filename = paste0(filepath_save, "HR forest plot hard cd.pdf"),
+  plot = plot_hr_hard_cd,
+  width = 10,
+  height = 10,
+  units = 'in'
 )
