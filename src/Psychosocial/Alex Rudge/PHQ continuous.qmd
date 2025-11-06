@@ -22,6 +22,7 @@ editor: visual
 toc: true
 toc-expand: true
 ---
+# Patient Health Questionnaire
 
 ## Setting up in R
 
