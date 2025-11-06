@@ -721,10 +721,12 @@ QOL <- QOL %>%
 
 # Binary versions of the scores
 QOL %<>% 
-  mutate(PSC12_binary = ifelse(PSC12 >= 50, "50+", "<50"))
+  dplyr::mutate(PSC12_binary = ifelse(PSC12 >= 50, "50+", "<50")) %>%
+  dplyr::mutate(PSC12_binary = forcats::fct_relevel(PSC12_binary, "50+", "<50"))
 
 QOL %<>% 
-  mutate(MCS12_binary = ifelse(MCS12 >= 50, "50+", "<50"))
+  dplyr::mutate(MCS12_binary = ifelse(MCS12 >= 50, "50+", "<50")) %>%
+  dplyr::mutate(MCS12_binary = forcats::fct_relevel(MCS12_binary, "50+", "<50"))
 
 
 # IBD control scores
@@ -1010,7 +1012,7 @@ summon_baseline_plot_continuous(
 #### Full Cohort
 
 ```{r}
-# Select depression data
+# Select mental data
 data_baseline <- QOL
 
 # Independent variables
@@ -1080,7 +1082,7 @@ summon_baseline_plot_continuous(
 #### Ulcerative Colitis/IBD Unclassified
 
 ```{r}
-# Select depression data and UC patients
+# Select mental data and UC patients
 data_baseline_uc <- QOL %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -1142,7 +1144,7 @@ summon_baseline_plot_continuous(
 #### Crohn's Disease
 
 ```{r}
-# Select depression data and CD patients
+# Select mental data and CD patients
 data_baseline_cd <- QOL %>%
   dplyr::filter(diagnosis2 == 'CD')
 
@@ -1725,7 +1727,7 @@ UC, soft, control df = 2. Hard, age df = 4, FC df = 2.
 
 CD, soft, control df = 2. Hard, no splines.
 
-### Physical Component
+### Models - Physical Component
 
 #### Full Cohort
 
@@ -1748,7 +1750,7 @@ data_survival_soft %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_anxiety_soft <- coxph(
+cox_physical_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -1762,7 +1764,7 @@ cox_anxiety_soft <- coxph(
   data = data_survival_soft
 )
 
-cox_anxiety_soft %>%
+cox_physical_soft %>%
   print_survival()
 
 ```
@@ -1770,7 +1772,7 @@ cox_anxiety_soft %>%
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_anxiety_soft_mice <- coxph_mice(
+cox_physical_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -1787,8 +1789,8 @@ cox_anxiety_soft_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_soft <- with(
-  cox_anxiety_soft_mice,
+cox_physical_soft <- with(
+  cox_physical_soft_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
       PSC12_binary +
@@ -1804,7 +1806,7 @@ cox_anxiety_soft <- with(
 ) %>%
   mice::pool()
 
-cox_anxiety_soft %>% 
+cox_physical_soft %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1830,7 +1832,7 @@ data_survival_hard %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_anxiety_hard <- coxph(
+cox_physical_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -1844,14 +1846,14 @@ cox_anxiety_hard <- coxph(
   data = data_survival_hard
 )
 
-cox_anxiety_hard %>%
+cox_physical_hard %>%
   print_survival()
 ```
 
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_anxiety_hard_mice <- coxph_mice(
+cox_physical_hard_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -1868,8 +1870,8 @@ cox_anxiety_hard_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_hard <- with(
-  cox_anxiety_hard_mice,
+cox_physical_hard <- with(
+  cox_physical_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
       PSC12_binary +
@@ -1885,7 +1887,7 @@ cox_anxiety_hard <- with(
 ) %>%
   mice::pool()
 
-cox_anxiety_hard %>% 
+cox_physical_hard %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1912,7 +1914,7 @@ data_survival_soft_uc %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_anxiety_soft_uc <- coxph(
+cox_physical_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -1926,7 +1928,7 @@ cox_anxiety_soft_uc <- coxph(
   data = data_survival_soft_uc
 )
 
-cox_anxiety_soft_uc %>%
+cox_physical_soft_uc %>%
   print_survival()
 
 ```
@@ -1934,7 +1936,7 @@ cox_anxiety_soft_uc %>%
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_anxiety_soft_uc_mice <- coxph_mice(
+cox_physical_soft_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -1951,7 +1953,7 @@ cox_anxiety_soft_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_soft_uc <- with(cox_anxiety_soft_uc_mice,
+cox_physical_soft_uc <- with(cox_physical_soft_uc_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
          PSC12_binary +
@@ -1966,7 +1968,7 @@ cox_anxiety_soft_uc <- with(cox_anxiety_soft_uc_mice,
      )) %>%
   mice::pool()
 
-cox_anxiety_soft_uc %>% 
+cox_physical_soft_uc %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1992,7 +1994,7 @@ data_survival_hard_uc %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_anxiety_hard_uc <- coxph(
+cox_physical_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -2006,7 +2008,7 @@ cox_anxiety_hard_uc <- coxph(
   data = data_survival_hard_uc
 )
 
-cox_anxiety_hard_uc %>%
+cox_physical_hard_uc %>%
   print_survival()
 ```
 
@@ -2014,7 +2016,7 @@ cox_anxiety_hard_uc %>%
 # Cox model with MICE
 # Run the mice
 # Note: mice does not support splines so I cannot impute using a spline.
-cox_anxiety_hard_uc_mice <- coxph_mice(
+cox_physical_hard_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -2031,7 +2033,7 @@ cox_anxiety_hard_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_hard_uc <- with(cox_anxiety_hard_uc_mice,
+cox_physical_hard_uc <- with(cox_physical_hard_uc_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
          PSC12_binary +
@@ -2046,7 +2048,7 @@ cox_anxiety_hard_uc <- with(cox_anxiety_hard_uc_mice,
      )) %>%
   mice::pool()
 
-cox_anxiety_hard_uc %>% 
+cox_physical_hard_uc %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -2073,7 +2075,7 @@ data_survival_soft_cd %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_anxiety_soft_cd <- coxph(
+cox_physical_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -2087,7 +2089,7 @@ cox_anxiety_soft_cd <- coxph(
   data = data_survival_soft_cd
 )
 
-cox_anxiety_soft_cd %>%
+cox_physical_soft_cd %>%
   print_survival()
 
 ```
@@ -2095,7 +2097,7 @@ cox_anxiety_soft_cd %>%
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_anxiety_soft_cd_mice <- coxph_mice(
+cox_physical_soft_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -2112,7 +2114,7 @@ cox_anxiety_soft_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_soft_cd <- with(cox_anxiety_soft_cd_mice,
+cox_physical_soft_cd <- with(cox_physical_soft_cd_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
          PSC12_binary +
@@ -2127,7 +2129,7 @@ cox_anxiety_soft_cd <- with(cox_anxiety_soft_cd_mice,
      )) %>%
   mice::pool()
 
-cox_anxiety_soft_cd %>% 
+cox_physical_soft_cd %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -2153,7 +2155,7 @@ data_survival_hard_cd %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_anxiety_hard_cd <- coxph(
+cox_physical_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -2167,14 +2169,14 @@ cox_anxiety_hard_cd <- coxph(
   data = data_survival_hard_cd
 )
 
-cox_anxiety_hard_cd %>%
+cox_physical_hard_cd %>%
   print_survival()
 ```
 
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_anxiety_hard_cd_mice <- coxph_mice(
+cox_physical_hard_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     PSC12_binary +
     IMD +
@@ -2191,8 +2193,8 @@ cox_anxiety_hard_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_anxiety_hard_cd <- with(
-  cox_anxiety_hard_cd_mice,
+cox_physical_hard_cd <- with(
+  cox_physical_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
       PSC12_binary +
@@ -2208,13 +2210,13 @@ cox_anxiety_hard_cd <- with(
 ) %>%
   mice::pool()
 
-cox_anxiety_hard_cd %>% 
+cox_physical_hard_cd %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
 ```
 
-### Mental Component
+### Models - Mental Component
 
 #### Full Cohort
 
@@ -2237,7 +2239,7 @@ data_survival_soft %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_depression_soft <- coxph(
+cox_mental_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2251,7 +2253,7 @@ cox_depression_soft <- coxph(
   data = data_survival_soft
 )
 
-cox_depression_soft %>%
+cox_mental_soft %>%
   print_survival()
 
 ```
@@ -2259,7 +2261,7 @@ cox_depression_soft %>%
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_depression_soft_mice <- coxph_mice(
+cox_mental_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2276,8 +2278,8 @@ cox_depression_soft_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_soft <- with(
-  cox_depression_soft_mice,
+cox_mental_soft <- with(
+  cox_mental_soft_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
       MCS12_binary +
@@ -2293,7 +2295,7 @@ cox_depression_soft <- with(
 ) %>%
   mice::pool()
 
-cox_depression_soft %>% 
+cox_mental_soft %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -2319,7 +2321,7 @@ data_survival_hard %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_depression_hard <- coxph(
+cox_mental_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2333,14 +2335,14 @@ cox_depression_hard <- coxph(
   data = data_survival_hard
 )
 
-cox_depression_hard %>%
+cox_mental_hard %>%
   print_survival()
 ```
 
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_depression_hard_mice <- coxph_mice(
+cox_mental_hard_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2357,8 +2359,8 @@ cox_depression_hard_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_hard <- with(
-  cox_depression_hard_mice,
+cox_mental_hard <- with(
+  cox_mental_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
       MCS12_binary +
@@ -2374,7 +2376,7 @@ cox_depression_hard <- with(
 ) %>%
   mice::pool()
 
-cox_depression_hard %>% 
+cox_mental_hard %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -2401,7 +2403,7 @@ data_survival_soft_uc %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_depression_soft_uc <- coxph(
+cox_mental_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2415,7 +2417,7 @@ cox_depression_soft_uc <- coxph(
   data = data_survival_soft_uc
 )
 
-cox_depression_soft_uc %>%
+cox_mental_soft_uc %>%
   print_survival()
 
 ```
@@ -2423,7 +2425,7 @@ cox_depression_soft_uc %>%
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_depression_soft_uc_mice <- coxph_mice(
+cox_mental_soft_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2440,7 +2442,7 @@ cox_depression_soft_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_soft_uc <- with(cox_depression_soft_uc_mice,
+cox_mental_soft_uc <- with(cox_mental_soft_uc_mice,
                             coxph(
                               Surv(time, DiseaseFlareYN) ~
                                 MCS12_binary +
@@ -2455,7 +2457,7 @@ cox_depression_soft_uc <- with(cox_depression_soft_uc_mice,
                             )) %>%
   mice::pool()
 
-cox_depression_soft_uc %>% 
+cox_mental_soft_uc %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -2481,7 +2483,7 @@ data_survival_hard_uc %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_depression_hard_uc <- coxph(
+cox_mental_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2495,7 +2497,7 @@ cox_depression_hard_uc <- coxph(
   data = data_survival_hard_uc
 )
 
-cox_depression_hard_uc %>%
+cox_mental_hard_uc %>%
   print_survival()
 ```
 
@@ -2503,7 +2505,7 @@ cox_depression_hard_uc %>%
 # Cox model with MICE
 # Run the mice
 # Note: mice does not support splines so I cannot impute using a spline.
-cox_depression_hard_uc_mice <- coxph_mice(
+cox_mental_hard_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2520,7 +2522,7 @@ cox_depression_hard_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_hard_uc <- with(cox_depression_hard_uc_mice,
+cox_mental_hard_uc <- with(cox_mental_hard_uc_mice,
                             coxph(
                               Surv(time, DiseaseFlareYN) ~
                                 MCS12_binary +
@@ -2535,7 +2537,7 @@ cox_depression_hard_uc <- with(cox_depression_hard_uc_mice,
                             )) %>%
   mice::pool()
 
-cox_depression_hard_uc %>% 
+cox_mental_hard_uc %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -2562,7 +2564,7 @@ data_survival_soft_cd %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_depression_soft_cd <- coxph(
+cox_mental_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2576,7 +2578,7 @@ cox_depression_soft_cd <- coxph(
   data = data_survival_soft_cd
 )
 
-cox_depression_soft_cd %>%
+cox_mental_soft_cd %>%
   print_survival()
 
 ```
@@ -2584,7 +2586,7 @@ cox_depression_soft_cd %>%
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_depression_soft_cd_mice <- coxph_mice(
+cox_mental_soft_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2601,7 +2603,7 @@ cox_depression_soft_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_soft_cd <- with(cox_depression_soft_cd_mice,
+cox_mental_soft_cd <- with(cox_mental_soft_cd_mice,
                             coxph(
                               Surv(time, DiseaseFlareYN) ~
                                 MCS12_binary +
@@ -2616,7 +2618,7 @@ cox_depression_soft_cd <- with(cox_depression_soft_cd_mice,
                             )) %>%
   mice::pool()
 
-cox_depression_soft_cd %>% 
+cox_mental_soft_cd %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -2642,7 +2644,7 @@ data_survival_hard_cd %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_depression_hard_cd <- coxph(
+cox_mental_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2656,14 +2658,14 @@ cox_depression_hard_cd <- coxph(
   data = data_survival_hard_cd
 )
 
-cox_depression_hard_cd %>%
+cox_mental_hard_cd %>%
   print_survival()
 ```
 
 ```{r}
 # Cox model with MICE
 # Run the mice
-cox_depression_hard_cd_mice <- coxph_mice(
+cox_mental_hard_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
     MCS12_binary +
     IMD +
@@ -2680,8 +2682,8 @@ cox_depression_hard_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_depression_hard_cd <- with(
-  cox_depression_hard_cd_mice,
+cox_mental_hard_cd <- with(
+  cox_mental_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
       MCS12_binary +
@@ -2697,7 +2699,7 @@ cox_depression_hard_cd <- with(
 ) %>%
   mice::pool()
 
-cox_depression_hard_cd %>% 
+cox_mental_hard_cd %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)

@@ -701,6 +701,8 @@ hads_for_analysis %<>%
 
 ## Baseline Analysis
 
+Justify statistical tests.
+
 ### Anxiety
 
 #### Full Cohort
