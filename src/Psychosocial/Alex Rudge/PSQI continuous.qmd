@@ -1001,7 +1001,6 @@ summon_baseline_plot_continuous(
 )
 ```
 
-
 ## Survival Analysis
 
 ### Data Cleaning
@@ -1180,7 +1179,7 @@ plot_continuous_hr(
 
 # Control
 plot_continuous_hr(
-  data = data_survival_soft, 
+  data = data_survival_hard, 
   model = cox_control_hard, 
   variable = 'OverallControl')
 ```
@@ -1474,7 +1473,6 @@ Full cohort, soft, control df = 2. Hard, no.
 UC, soft, none. Hard, age df = 2.
 
 CD, soft, control df = 2. Hard, no splines.
-
 
 ### Models
 
@@ -1970,13 +1968,6 @@ cox_anxiety_hard_cd %>%
           conf.level = 0.95,
           exponentiate = TRUE)
 ```
-
-
-
-
-
-
-
 
 ## Reproduction and reproducibility {.appendix}
 

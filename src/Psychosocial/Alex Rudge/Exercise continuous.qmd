@@ -1248,7 +1248,7 @@ plot_continuous_hr(
 
 # Control
 plot_continuous_hr(
-  data = data_survival_soft, 
+  data = data_survival_hard, 
   model = cox_control_hard, 
   variable = 'OverallControl')
 ```
