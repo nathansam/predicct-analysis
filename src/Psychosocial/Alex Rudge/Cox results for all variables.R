@@ -4,24 +4,27 @@ library(magrittr)
 
 # Load in all the Cox results
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Cox results/"
+
+# Suffix - cc (complete case) or mice 
+suffix <- "_cc.rds"
 
 # HADS
-cox_results_hads_anxiety <- readr::read_rds(paste0(filepath, "cox_results_hads_anxiety.rds"))
+cox_results_hads_anxiety <- readr::read_rds(paste0(filepath, "cox_results_hads_anxiety", suffix))
 
-cox_results_hads_depression <- readr::read_rds(paste0(filepath, "cox_results_hads_depression.rds"))
+cox_results_hads_depression <- readr::read_rds(paste0(filepath, "cox_results_hads_depression", suffix))
 
 # Exercise
-cox_results_exercise <- readr::read_rds(paste0(filepath, "cox_results_exercise.rds"))
+cox_results_exercise <- readr::read_rds(paste0(filepath, "cox_results_exercise", suffix))
 
 # Life Events
-cox_results_lifeevents <- readr::read_rds(paste0(filepath, "cox_results_lifeevents.rds"))
+cox_results_lifeevents <- readr::read_rds(paste0(filepath, "cox_results_lifeevents", suffix))
 
 # PHQ
-cox_results_phq <- readr::read_rds(paste0(filepath, "cox_results_phq.rds"))
+cox_results_phq <- readr::read_rds(paste0(filepath, "cox_results_phq", suffix))
 
 # PSQI
-cox_results_psqi <- readr::read_rds(paste0(filepath, "cox_results_psqi.rds"))
+cox_results_psqi <- readr::read_rds(paste0(filepath, "cox_results_psqi", suffix))
 
 # Differentiate between anxiety and depression
 cox_results_hads_anxiety %<>%
@@ -126,7 +129,7 @@ cox_results %<>%
 
 
 # Save
-readr::write_rds(
-  x = cox_results,
-  file = paste0(filepath, "cox_results_all_variables.rds")
-)
+# readr::write_rds(
+#   x = cox_results,
+#   file = paste0(filepath, "cox_results_all_variables", suffix)
+# )

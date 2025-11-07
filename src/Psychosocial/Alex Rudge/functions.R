@@ -264,7 +264,9 @@ extract_cox_results <- function(data,
     ) %>%
     # Diagnosis
     dplyr::mutate(diagnosis2 = diagnosis2, flare_type = flare_type) %>%
-    dplyr::select(term, variable, level, estimate, std.error, statistic, df, p.value, conf.low, conf.high, diagnosis2, flare_type)
+    dplyr::select(
+      tidyselect::any_of(
+        c('term', 'variable', 'level', 'estimate', 'std.error', 'statistic', 'df', 'p.value', 'conf.low', 'conf.high', 'diagnosis2', 'flare_type')))
 }
 
 # Creating KM curves

@@ -45,5 +45,5 @@ filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
 readr::write_rds(
   x = cox_results,
-  file = paste0(filepath, "cox_results_psqi.rds")
+  file = paste0(filepath, "cox_results_psqi_cc.rds")
 )

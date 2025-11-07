@@ -4,7 +4,6 @@
 # Run Exercise
 
 variable = "AnyLifeEvents"
-filename = "cox_results_lifeevents.rds"
 
 cox_results <- extract_cox_results(
   data = data_survival_soft_uc,
@@ -44,7 +43,8 @@ cox_results <- extract_cox_results(
 # Save
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
-readr::write_rds(
-  x = cox_results,
-  file = paste0(filepath, filename)
-)
+# readr::write_rds(
+#   x = cox_results,
+#   file = paste0(filepath, "cox_results_lifeevents_cc.rds")
+# )
+

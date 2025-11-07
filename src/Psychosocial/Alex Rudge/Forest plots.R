@@ -4,9 +4,13 @@ library(patchwork)
 
 # Load in data
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Cox results/"
 
-cox_results <- readr::read_rds(paste0(filepath, "cox_results_all_variables.rds"))
+# Suffix - cc (complete case) or mice 
+suffix <- "_cc.rds"
+suffix_save <- " cc.pdf"
+
+cox_results <- readr::read_rds(paste0(filepath, "cox_results_all_variables", suffix))
 
 # NA estimates as the reference level of 1
 cox_results %<>%
@@ -203,7 +207,7 @@ filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 
 # soft uc
 ggsave(
-  filename = paste0(filepath_save, "HR forest plot soft uc.pdf"),
+  filename = paste0(filepath_save, "HR forest plot soft uc", suffix_save),
   plot = plot_hr_soft_uc,
   width = 10,
   height = 10,
@@ -212,7 +216,7 @@ ggsave(
 
 # soft cd
 ggsave(
-  filename = paste0(filepath_save, "HR forest plot soft cd.pdf"),
+  filename = paste0(filepath_save, "HR forest plot soft cd cc", suffix_save),
   plot = plot_hr_soft_cd,
   width = 10,
   height = 10,
@@ -221,7 +225,7 @@ ggsave(
 
 # hard uc
 ggsave(
-  filename = paste0(filepath_save, "HR forest plot hard uc.pdf"),
+  filename = paste0(filepath_save, "HR forest plot hard uc", suffix_save),
   plot = plot_hr_hard_uc,
   width = 10,
   height = 10,
@@ -230,7 +234,7 @@ ggsave(
 
 # hard cd
 ggsave(
-  filename = paste0(filepath_save, "HR forest plot hard cd.pdf"),
+  filename = paste0(filepath_save, "HR forest plot hard cd", suffix_save),
   plot = plot_hr_hard_cd,
   width = 10,
   height = 10,

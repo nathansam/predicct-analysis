@@ -45,7 +45,12 @@ filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
 # readr::write_rds(
 #   x = cox_results_hads_anxiety,
-#   file = paste0(filepath, "cox_results_hads_anxiety.rds")
+#   file = paste0(filepath, "cox_results_hads_anxiety_cc.rds")
+# )
+
+# readr::write_rds(
+#   x = cox_results_hads_anxiety,
+#   file = paste0(filepath, "cox_results_hads_anxiety_mice.rds")
 # )
 
 # Depression
@@ -89,5 +94,10 @@ filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
 # readr::write_rds(
 #   x = cox_results_hads_depression,
-#   file = paste0(filepath, "cox_results_hads_depression.rds")
+#   file = paste0(filepath, "cox_results_hads_depression_cc.rds")
+# )
+
+# readr::write_rds(
+#   x = cox_results_hads_depression,
+#   file = paste0(filepath, "cox_results_hads_depression_mice.rds")
 # )

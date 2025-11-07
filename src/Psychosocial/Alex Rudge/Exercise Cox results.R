@@ -44,7 +44,7 @@ cox_results_exercise <- extract_cox_results(
 # Save
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
-# readr::write_rds(
-#   x = cox_results_exercise,
-#   file = paste0(filepath, "cox_results_exercise.rds")
-# )
+readr::write_rds(
+  x = cox_results_exercise,
+  file = paste0(filepath, "cox_results_exercise_cc.rds")
+)
