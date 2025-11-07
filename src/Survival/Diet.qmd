@@ -1355,6 +1355,257 @@ invisible(cox_summary(fit.me))
 ```
 :::
 
+## Alcohol
+
+### Crohn's disease
+
+::: {.panel-tabset group="followup"}
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+
+levels(flare.cd.df$weekly_units_cat) <- c("Less than 0.1 units", "0.1-14 units", "More than 14 units")
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.cd.df,
+  var_name = "weekly_units",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Alcohol units per week",
+  plot_base_path = "plots/cd/soft-flare/diet/alcohol",
+  break_time_by = 200
+)
+
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "alcohol-cd-soft.RDS"))
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + weekly_units_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+hrs <- rbind(hrs, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Soft") |>
+  relocate(diagnosis, flare)
+  )
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for objective flare
+analysis_result <- run_survival_analysis(
+  data = flare.cd.df,
+  var_name = "weekly_units",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Alcohol units per week",
+  plot_base_path = "plots/cd/hard-flare/diet/alcohol",
+  break_time_by = 500
+)
+
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "alcohol-cd-hard.RDS"))
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + weekly_units_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+hrs <- rbind(hrs, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "CD", flare ="Hard") |>
+  relocate(diagnosis, flare)
+  )
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+:::
+
+### Ulcerative colitis
+
+::: {.panel-tabset group="followup"}
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.uc.df,
+  var_name = "weekly_units",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Alcohol units per week",
+  plot_base_path = "plots/uc/soft-flare/diet/alcohol",
+  break_time_by = 200
+)
+
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "alcohol-uc-soft.RDS"))
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + weekly_units_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+hrs <- rbind(hrs, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "UC", flare ="Soft") |>
+  relocate(diagnosis, flare)
+  )
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for objective flare
+analysis_result <- run_survival_analysis(
+  data = flare.uc.df,
+  var_name = "weekly_units",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Alcohol units per week",
+  plot_base_path = "plots/uc/hard-flare/diet/alcohol",
+  break_time_by = 500
+)
+
+# Save plot as RDS
+saveRDS(analysis_result$plot, paste0(paths$outdir, "alcohol-uc-hard.RDS"))
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + weekly_units_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+hrs <- rbind(hrs, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "UC", flare ="Hard") |>
+  relocate(diagnosis, flare)
+  )
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+:::
+
+### Inflammatory bowel disease
+
+::: {.panel-tabset group="followup"}
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "weekly_units",
+  outcome_time = "softflare_time",
+  outcome_event = "softflare",
+  legend_title = "Alcohol units per week",
+  plot_base_path = "plots/ibd/soft-flare/diet/alcohol",
+  break_time_by = 200
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~
+    Sex + cat + IMD + dqi_tot + weekly_units_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+hrs <- rbind(hrs, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "IBD", flare ="Soft") |>
+  relocate(diagnosis, flare)
+  )
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+
+#### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6
+
+# Run survival analysis using utility function for objective flare
+analysis_result <- run_survival_analysis(
+  data = flare.df,
+  var_name = "weekly_units",
+  outcome_time = "hardflare_time",
+  outcome_event = "hardflare",
+  legend_title = "Alcohol units per week",
+  plot_base_path = "plots/ibd/hard-flare/diet/alcohol",
+  break_time_by = 500
+)
+
+# Run Cox model with categorical variable
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~
+    Sex + cat + IMD + dqi_tot + weekly_units_cat + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.df
+)
+
+hrs <- rbind(hrs, broom::tidy(fit.me) |> 
+  filter(!grepl("^Sex|^cat|^IMD|^dqi_tot|^BMI|^frailty", term)) |>
+  mutate(diagnosis = "IBD", flare ="Hard") |>
+  relocate(diagnosis, flare)
+  )
+
+# Display plot and model summary
+analysis_result$plot
+invisible(cox_summary(fit.me))
+```
+:::
+
 ## NOVA score
 
 The SAP states emulsifiers (specifically lecithin) will be investigated. However, data on emulsifiers are not available in the FFQ data extract. As a proxy for emulsifiers, this report will look at ultra-processed foods via Nova scores [@Monteiro_2017].
@@ -4513,23 +4764,55 @@ invisible(cox_summary(fit.me))
 pvalues <- hrs |> 
   select(diagnosis, flare, term, p.value)
 
-pvalues$term <- c(rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Overall meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Overall fish intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Dietary fibre", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("PUFA", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("NOVA Score", c("2", "3", "4")), 6),
-  rep(paste("%UPF", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Bread intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Sweet intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Drink intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Processed meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Fruit intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Vegetable intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Read meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("White mean intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("White fish intake", c("2nd", "3rd", "4th"), "quartile"), 6)
+# Create term labels dynamically based on actual data
+# Count entries per diagnosis-flare combination to handle actual structure
+term_patterns <- list(
+  "Meat_sum_cat" = "Meat protein",
+  "meat_overall_cat" = "Overall meat intake",
+  "fish_overall_cat" = "Overall fish intake",
+  "fibre_cat" = "Dietary fibre",
+  "PUFA_percEng_cat" = "PUFA",
+  "NOVA_Score" = "NOVA Score",
+  "UPF_perc_cat" = "%UPF",
+  "breadIntake_cat" = "Bread intake",
+  "sweetIntake_cat" = "Sweet intake",
+  "drinkIntake_cat" = "Drink intake",
+  "processedMeatIntake_cat" = "Processed meat intake",
+  "processedPlantIntake_cat" = "Processed plant intake",
+  "fruitIntake_cat" = "Fruit intake",
+  "vegIntake_cat" = "Vegetable intake",
+  "redMeatIntake_cat" = "Red meat intake",
+  "whiteMeatIntake_cat" = "White meat intake",
+  "whiteFishIntake_cat" = "White fish intake"
 )
+
+# Replace term names with human-readable labels
+pvalues <- pvalues |>
+  mutate(
+    clean_term = term,
+    clean_term = case_when(
+      grepl("Meat_sum_cat", term) ~ paste("Meat protein", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("meat_overall_cat", term) ~ paste("Overall meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("fish_overall_cat", term) ~ paste("Overall fish intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("fibre_cat", term) ~ paste("Dietary fibre", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("PUFA_percEng_cat", term) ~ paste("PUFA", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("NOVA_Score", term) ~ paste("NOVA Score", gsub(".*?(\\d+)", "\\1", term)),
+      grepl("UPF_perc_cat", term) ~ paste("%UPF", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("breadIntake_cat", term) ~ paste("Bread intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("sweetIntake_cat", term) ~ paste("Sweet intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("drinkIntake_cat", term) ~ paste("Drink intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("processedMeatIntake_cat", term) ~ paste("Processed meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("processedPlantIntake_cat", term) ~ paste("Processed plant intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("fruitIntake_cat", term) ~ paste("Fruit intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("vegIntake_cat", term) ~ paste("Vegetable intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("redMeatIntake_cat", term) ~ paste("Red meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("whiteMeatIntake_cat", term) ~ paste("White meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("whiteFishIntake_cat", term) ~ paste("White fish intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      TRUE ~ term
+    )
+  ) |>
+  select(-term) |>
+  rename(term = clean_term)
 
 pvalues <- pvalues |>
   mutate(adjusted.p.value = ifelse(
@@ -6130,23 +6413,33 @@ invisible(cox_summary(fit.me))
 pvalues <- hrs |> 
   select(diagnosis, flare, term, p.value)
 
-pvalues$term <- c(rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Overall meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Overall fish intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Dietary fibre", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("PUFA", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("NOVA Score", c("2", "3", "4")), 6),
-  rep(paste("%UPF", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Bread intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Sweet intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Drink intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Processed meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Fruit intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Vegetable intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Read meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("White mean intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("White fish intake", c("2nd", "3rd", "4th"), "quartile"), 6)
-)
+# Replace term names with human-readable labels (dynamic approach)
+pvalues <- pvalues |>
+  mutate(
+    clean_term = term,
+    clean_term = case_when(
+      grepl("Meat_sum_cat", term) ~ paste("Meat protein", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("meat_overall_cat", term) ~ paste("Overall meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("fish_overall_cat", term) ~ paste("Overall fish intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("fibre_cat", term) ~ paste("Dietary fibre", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("PUFA_percEng_cat", term) ~ paste("PUFA", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("NOVA_Score", term) ~ paste("NOVA Score", gsub(".*?(\\d+)", "\\1", term)),
+      grepl("UPF_perc_cat", term) ~ paste("%UPF", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("breadIntake_cat", term) ~ paste("Bread intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("sweetIntake_cat", term) ~ paste("Sweet intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("drinkIntake_cat", term) ~ paste("Drink intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("processedMeatIntake_cat", term) ~ paste("Processed meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("processedPlantIntake_cat", term) ~ paste("Processed plant intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("fruitIntake_cat", term) ~ paste("Fruit intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("vegIntake_cat", term) ~ paste("Vegetable intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("redMeatIntake_cat", term) ~ paste("Red meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("whiteMeatIntake_cat", term) ~ paste("White meat intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      grepl("whiteFishIntake_cat", term) ~ paste("White fish intake", gsub(".*\\[(.*?)\\].*|.*\\((.*?)\\).*", "\\1\\2", term)),
+      TRUE ~ term
+    )
+  ) |>
+  select(-term) |>
+  rename(term = clean_term)
 
 pvalues <- pvalues |>
   mutate(adjusted.p.value = ifelse(

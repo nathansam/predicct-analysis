@@ -1158,15 +1158,70 @@ cat_theme(p)
 
 ## Alcohol use
 
+
 ```{R}
 #| label: fig-alcohol
 #| fig-cap: "Distribution of alcohol per energy intake, stratified by sex." 
-demo <- merge(demo,
-              FFQ[, c("ParticipantNo", "Alcohol_percEng")],
-              by = "ParticipantNo",
-              all.x = TRUE,
-              all.y = FALSE)
 
+
+demo <- FFQ %>%
+  select(ParticipantNo,
+         Alcoholg,
+         Alcohol_percEng,
+         Alcohol_units,
+         Alcohol_units_wk) %>%
+  merge(x = demo,
+        by = "ParticipantNo",
+        all.x = TRUE,
+        all.y = FALSE)
+
+demo %<>% mutate(
+    weekly_units_cat = case_when(
+      Alcohol_units_wk <= 0.1 ~ "Less than 0.1 units",
+      Alcohol_units_wk > 0.1 & Alcohol_units_wk <= 14 ~ "0.1-14 units",
+      Alcohol_units_wk > 14 ~ "More than 14 units"
+    )
+  ) %>%
+  mutate(weekly_units_cat = factor(
+    weekly_units_cat,
+    levels = c("Less than 0.1 units", "0.1-14 units", "More than 14 units")
+))
+```
+
+For alcohol usage we consider both alcohol intake as a percentage of energy
+intake and weekly alcohol units, categorised into 0-0.1, 0.1-14 and more than
+14 units per week.
+
+### Weekly alcohol units
+
+```{R}
+#| label: fig-alcohol-units
+#| fig-cap: "Distribution of weekly alcohol units, stratified by sex."
+
+p <- demo %>%
+  drop_na(weekly_units_cat, cat) %>%
+  ggplot(aes(x = weekly_units_cat, color = cat, fill = cat)) +
+  geom_bar() +
+  facet_grid(rows = vars(Sex)) +
+  labs(x = "Weekly units",
+       y = "Frequency", 
+       color = "FC group",
+       fill = "FC group") +
+  theme_minimal()
+cat_theme(p) 
+```
+
+```{R}
+#| label: tbl-alcohol-units
+#| tbl-cap: "Chi-squared test between weekly alcohol units and FC groups."
+pander(chisq.test(temp$NOVAScore_cat, temp$cat))
+```
+
+### Percentage of energy
+
+```{R}
+#| label: fig-alcohol-perc
+#| fig-cap: "Distribution of alcohol intake per energy, stratified by sex."
 demo %>%
   drop_na(Alcohol_percEng) %>%
   ggplot(aes(x = Alcohol_percEng, color = Sex, fill = Sex)) +
