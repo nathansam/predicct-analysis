@@ -1176,15 +1176,15 @@ demo <- FFQ %>%
         all.y = FALSE)
 
 demo %<>% mutate(
-    weekly_units = case_when(
-      Alcohol_units_wk <= 0.1 ~ "0-0.1",
-      Alcohol_units_wk > 0.1 & Alcohol_units_wk <= 14 ~ "0.1-14",
-      Alcohol_units_wk > 14 ~ ">14"
+    weekly_units_cat = case_when(
+      Alcohol_units_wk <= 0.1 ~ "Less than 0.1 units",
+      Alcohol_units_wk > 0.1 & Alcohol_units_wk <= 14 ~ "0.1-14 units",
+      Alcohol_units_wk > 14 ~ "More than 14 units"
     )
   ) %>%
-  mutate(weekly_units = factor(
-    weekly_units,
-    levels = c("0-0.1", "0.1-14", ">14")
+  mutate(weekly_units_cat = factor(
+    weekly_units_cat,
+    levels = c("Less than 0.1 units", "0.1-14 units", "More than 14 units")
 ))
 ```
 
@@ -1199,8 +1199,8 @@ intake and weekly alcohol units, categorised into 0-0.1, 0.1-14 and more than
 #| fig-cap: "Distribution of weekly alcohol units, stratified by sex."
 
 p <- demo %>%
-  drop_na(weekly_units, cat) %>%
-  ggplot(aes(x = weekly_units, color = cat, fill = cat)) +
+  drop_na(weekly_units_cat, cat) %>%
+  ggplot(aes(x = weekly_units_cat, color = cat, fill = cat)) +
   geom_bar() +
   facet_grid(rows = vars(Sex)) +
   labs(x = "Weekly units",
