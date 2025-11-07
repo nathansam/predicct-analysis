@@ -632,10 +632,6 @@ hads_with_demographics <- hads_with_demographics %>%
 hads_with_demographics %<>%
   dplyr::mutate(flare_group = factor(flare_group, levels = c("No flares", "1 or More Flares")))
 
-# Remove subjects with missing flare group data - 3 subjects
-# hads_with_demographics <- hads_with_demographics %>% 
-#   filter(!is.na(flare_group))
-
 #create hads_for_analysis which has new variable 'hads_type' for anxiety and depression hads
 hads_for_analysis <- hads_with_demographics %>%
   tidyr::pivot_longer(

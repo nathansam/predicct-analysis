@@ -581,9 +581,6 @@ phq_clean <- phq_clean %>%
     IBD %>% select(ParticipantNo, FlaresInPastYear),
     by = 'ParticipantNo')
 
-#find missing flare data -> 4 participants, these were excluded
-# phq_clean %>% filter(is.na(FlaresInPastYear)) %>% nrow()
-
 
 #create flare groups
 phq_clean <- phq_clean %>%

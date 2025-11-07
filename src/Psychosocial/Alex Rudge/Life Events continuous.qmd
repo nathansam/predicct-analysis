@@ -552,7 +552,7 @@ lifeevents %<>%
   )
 ))
 
-# add FC data and exclude missing FC
+# add FC data
 lifeevents <- lifeevents %>% 
   dplyr::left_join(
     demo %>% dplyr::select(ParticipantNo, FC, cat, Biologic, Smoke, IMD),

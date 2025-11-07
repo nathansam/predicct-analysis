@@ -311,10 +311,6 @@ exercise <- exercise %>%
     IBD %>% dplyr::select(ParticipantNo, FlaresInPastYear)
     )
 
-# 7 patients removed with missing data on flares
-exercise <- exercise %>%
-  filter(!is.na(FlaresInPastYear))
-
 # create flare groups
 exercise <- exercise %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0,
@@ -338,18 +334,6 @@ exercise <- exercise %>%
     demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
     by = 'ParticipantNo'
     ) 
-
-# Remove subjects with missing FC (cat), 211.
-# exercise %>%
-#   filter(is.na(cat)) %>% 
-#   nrow()
-
-# exercise %<>%
-#   dplyr::filter(
-#     !is.na(cat)
-#   )
-
-#missing_ex_IMD <- exercise %>% filter(is.na(IMD))
 
 # Tidy - find and exclude if NA in VigorousWork, ModerateWork, WalkBicycle,
 # VigrorousSport, and ModerateSport - Nobody removed
