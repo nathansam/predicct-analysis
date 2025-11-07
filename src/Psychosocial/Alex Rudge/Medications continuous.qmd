@@ -494,7 +494,7 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 # Select relevant columns
 medications %<>%
-  dplyr::select(ParticipantId, ParticipantNo, ForgetPills:TakeMedicineYesterday)
+  dplyr::select(ParticipantId, ParticipantNo, SiteNo, ForgetPills:TakeMedicineYesterday, DifficultyRemembering)
 
 medications %<>%
   filter(!is.na(ParticipantId))
@@ -502,6 +502,9 @@ medications %<>%
 # Remove missing values for ForgetPills - 8
 medications %<>%
   filter(!is.na(ForgetPills))
+
+medications %<>%
+  filter(!is.na(DifficultyRemembering))
 
 
 # add age and sex data from demographics
@@ -594,12 +597,19 @@ medications %<>%
 medications %<>% 
   dplyr::mutate(vas_control = factor(vas_control))
 
-
 # ForgetPills as a factor
-medications %>%
+medications %<>%
   dplyr::mutate(ForgetPills = forcats::as_factor(ForgetPills)) %>%
-  dplyr::mutate(ForgetPills = forcats::fct_recode(ForgetPills, Yes = '1', No = '2'))
+  dplyr::mutate(ForgetPills = forcats::fct_recode(ForgetPills, Yes = '1', No = '2')) %>%
+  dplyr::mutate(ForgetPills = forcats::fct_relevel(ForgetPills, 'No', 'Yes'))
 
+# DifficultyRemembering as a factor
+# Group the highest 2 levels due to low counts
+medications %<>%
+  dplyr::mutate(DifficultyRemembering = forcats::as_factor(DifficultyRemembering)) %>%
+  dplyr::mutate(DifficultyRemembering = forcats::fct_recode(DifficultyRemembering, Rarely = '1', OnceInaWhile = '2', Sometimes = '3', Usually = '4', Usually = '5')) %>%
+  dplyr::mutate(DifficultyRemembering = forcats::fct_relevel(DifficultyRemembering, 'Rarely', 'OnceInaWhile', 'Sometimes', 'Usually'))
+  
 
 # Age in decades
 medications %<>%
@@ -641,13 +651,13 @@ independent = c('diagnosis2',
                 'Smoke',
                 'OverallControl')
 
-# Dependent variable is ForgetPills
+# Dependent variable is DifficultyRemembering
 
-# Statistical tests for each independent variable with ForgetPills
+# Statistical tests for each independent variable with DifficultyRemembering
 # With p-values adjusted for multiple testing using holm correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
-  dependent = 'ForgetPills', 
+  dependent = 'DifficultyRemembering', 
   independent = independent)
 
 statistical_tests
@@ -656,49 +666,49 @@ statistical_tests
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'diagnosis2'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'Sex'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'flare_group'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'age'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'FC'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'OverallControl'
 )
 ```
@@ -707,7 +717,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and UC patients
-data_baseline_uc <- exercise %>%
+data_baseline_uc <- medications %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
 # Independent variables
@@ -718,13 +728,13 @@ independent = c('age',
                 'Smoke',
                 'OverallControl')
 
-# Dependent variable is ForgetPills
+# Dependent variable is DifficultyRemembering
 
-# Statistical tests for each independent variable with ForgetPills
+# Statistical tests for each independent variable with DifficultyRemembering
 # With p-values adjusted for multiple testing using holm correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
-  dependent = 'ForgetPills', 
+  dependent = 'DifficultyRemembering', 
   independent = independent)
 
 statistical_tests
@@ -733,42 +743,42 @@ statistical_tests
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'Sex'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'flare_group'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'age'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'FC'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'OverallControl'
 )
 ```
@@ -777,16 +787,16 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and CD patients
-data_baseline_cd <- exercise %>%
+data_baseline_cd <- medications %>%
   dplyr::filter(diagnosis2 == 'CD')
 
-# Dependent variable is ForgetPills
+# Dependent variable is DifficultyRemembering
 
-# Statistical tests for each independent variable with ForgetPills
+# Statistical tests for each independent variable with DifficultyRemembering
 # With p-values adjusted for multiple testing using holm correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
-  dependent = 'ForgetPills', 
+  dependent = 'DifficultyRemembering', 
   independent = independent)
 
 statistical_tests
@@ -795,42 +805,42 @@ statistical_tests
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'Sex'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'flare_group'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'age'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'FC'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'ForgetPills',
+  dependent = 'DifficultyRemembering',
   independent = 'OverallControl'
 )
 ```
@@ -843,7 +853,7 @@ summon_baseline_plot_continuous(
 # Survival data
 # Join HADS with flare data
 # Patient reported
-data_survival_soft <- exercise %>% dplyr::inner_join(
+data_survival_soft <- medications %>% dplyr::inner_join(
   flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
   by = 'ParticipantNo'
 ) %>%
@@ -859,7 +869,7 @@ data_survival_soft_cd <- data_survival_soft %>%
 
 
 # Hard flares
-data_survival_hard <- exercise %>% dplyr::inner_join(
+data_survival_hard <- medications %>% dplyr::inner_join(
   flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
   by = 'ParticipantNo'
 ) %>%
@@ -930,7 +940,7 @@ cox_control_soft <- coxph(
 
 # Spline for control
 summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
-# No, 2 is sufficient
+
 
 ```
 
@@ -1343,7 +1353,7 @@ CD, soft, control df = 2. Hard, no splines.
 # Patient reported flare
 # Kaplan Meier
 data_survival_soft %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ ForgetPills, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ DifficultyRemembering, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_soft, 
@@ -1351,14 +1361,14 @@ data_survival_soft %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'Minimum Exercise',
+    legend.title = 'Minimum medications',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1380,7 +1390,7 @@ cox_soft %>%
 # Run the mice
 cox_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1399,7 +1409,7 @@ cox_soft <- with(
   cox_soft_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      ForgetPills +
+      DifficultyRemembering +
       IMD +
       Sex +
       age_decade +
@@ -1425,7 +1435,7 @@ cox_soft %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_hard %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ ForgetPills, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ DifficultyRemembering, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_hard, 
@@ -1433,14 +1443,14 @@ data_survival_hard %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'Minimum Exercise',
+    legend.title = 'Minimum medications',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1461,7 +1471,7 @@ cox_hard %>%
 # Run the mice
 cox_hard_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1480,7 +1490,7 @@ cox_hard <- with(
   cox_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      ForgetPills +
+      DifficultyRemembering +
       IMD +
       Sex +
       age_decade +
@@ -1507,7 +1517,7 @@ cox_hard %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_soft_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ ForgetPills, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ DifficultyRemembering, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_soft_uc, 
@@ -1515,14 +1525,14 @@ data_survival_soft_uc %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'Minimum Exercise',
+    legend.title = 'Minimum medications',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1544,7 +1554,7 @@ cox_soft_uc %>%
 # Run the mice
 cox_soft_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1563,7 +1573,7 @@ cox_soft_uc <- with(
   cox_soft_uc_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      ForgetPills +
+      DifficultyRemembering +
       IMD +
       Sex +
       age_decade +
@@ -1589,7 +1599,7 @@ cox_soft_uc %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_hard_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ ForgetPills, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ DifficultyRemembering, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_hard_uc, 
@@ -1597,14 +1607,14 @@ data_survival_hard_uc %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'Minimum Exercise',
+    legend.title = 'Minimum medications',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     ns(age_decade, df = 2) +
@@ -1626,7 +1636,7 @@ cox_hard_uc %>%
 # Note: mice does not support splines so I cannot impute using a spline.
 cox_hard_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1645,7 +1655,7 @@ cox_hard_uc <- with(
   cox_hard_uc_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      ForgetPills +
+      DifficultyRemembering +
       IMD +
       Sex +
       ns(age_decade, df = 2) +
@@ -1672,7 +1682,7 @@ cox_hard_uc %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_soft_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ ForgetPills, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ DifficultyRemembering, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_soft_cd, 
@@ -1680,14 +1690,14 @@ data_survival_soft_cd %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'Minimum Exercise',
+    legend.title = 'Minimum medications',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1709,7 +1719,7 @@ cox_soft_cd %>%
 # Run the mice
 cox_soft_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1728,7 +1738,7 @@ cox_soft_cd <- with(
   cox_soft_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      ForgetPills +
+      DifficultyRemembering +
       IMD +
       Sex +
       age_decade +
@@ -1754,7 +1764,7 @@ cox_soft_cd %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_hard_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ ForgetPills, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ DifficultyRemembering, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_hard_cd, 
@@ -1762,14 +1772,14 @@ data_survival_hard_cd %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'Minimum Exercise',
+    legend.title = 'Minimum medications',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1790,7 +1800,7 @@ cox_hard_cd %>%
 # Run the mice
 cox_hard_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    ForgetPills +
+    DifficultyRemembering +
     IMD +
     Sex +
     age_decade +
@@ -1809,7 +1819,7 @@ cox_hard_cd <- with(
   cox_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      ForgetPills +
+      DifficultyRemembering +
       IMD +
       Sex +
       age_decade +
