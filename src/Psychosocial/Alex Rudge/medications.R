@@ -38,3 +38,12 @@ medications %>%
   dplyr::count(DifficultyRemembering)
 # Seems to be a better version of ForgetPills
 
+
+# But, medication and pills are different no?
+# Lets see how many people do forget to take medication but not their pills
+medications %>%
+  dplyr::group_by(ForgetPills) %>%
+  dplyr::count(DifficultyRemembering)
+# So some people don't forget to take their pills 
+# but sometimes forget to take their medication and vice versa
+
