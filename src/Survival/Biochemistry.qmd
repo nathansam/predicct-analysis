@@ -76,7 +76,7 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -113,7 +113,7 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -160,7 +160,7 @@ uc.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -197,7 +197,7 @@ uc.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -246,7 +246,7 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -282,7 +282,7 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -329,7 +329,7 @@ uc.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -365,7 +365,7 @@ uc.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -414,7 +414,7 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -451,7 +451,7 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -498,7 +498,7 @@ uc.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -535,7 +535,7 @@ uc.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -589,7 +589,7 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -626,7 +626,7 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -673,7 +673,7 @@ uc.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -710,7 +710,7 @@ uc.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -759,7 +759,7 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -796,7 +796,7 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -843,7 +843,7 @@ uc.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 
@@ -880,7 +880,7 @@ uc.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
+print(analysis_result$plot, newpage = FALSE)
 invisible(cox_summary(fit.me))
 ```
 

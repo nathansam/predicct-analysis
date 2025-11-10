@@ -72,7 +72,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/soft-flare/controlled/sex"
 )
 saveRDS(p, paste0(paths$outdir, "sex-cd-soft.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 #### Objective flare
@@ -91,7 +91,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/hard-flare/controlled/sex"
 )
 saveRDS(p, paste0(paths$outdir, "sex-cd-hard.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -116,7 +116,7 @@ p <- generate_survival_plot(
   plot_path = "plots/uc/soft-flare/controlled/sex"
 )
 saveRDS(p, paste0(paths$outdir, "sex-uc-soft.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 #### Objective flare
@@ -135,7 +135,7 @@ p <- generate_survival_plot(
   plot_path = "plots/uc/hard-flare/controlled/sex"
 )
 saveRDS(p, paste0(paths$outdir, "sex-uc-hard.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -162,7 +162,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/soft-flare/controlled/smoke"
 )
 saveRDS(p, paste0(paths$outdir, "smoke-cd-soft.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 #### Objective flare
@@ -181,7 +181,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/hard-flare/controlled/smoke"
 )
 saveRDS(p, paste0(paths$outdir, "smoke-cd-hard.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -206,7 +206,7 @@ p <- generate_survival_plot(
   plot_path = "plots/uc/soft-flare/controlled/smoke"
 )
 saveRDS(p, paste0(paths$outdir, "smoke-uc-soft.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 #### Objective flare
@@ -226,7 +226,7 @@ p <- generate_survival_plot(
 )
 
 saveRDS(p, paste0(paths$outdir, "smoke-uc-hard.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -253,7 +253,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/soft-flare/controlled/imd"
 )
 saveRDS(p, paste0(paths$outdir, "imd-cd-soft.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 #### Objective flare
@@ -272,7 +272,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/hard-flare/controlled/imd"
 )
 saveRDS(p, paste0(paths$outdir, "imd-cd-hard.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 :::
@@ -297,7 +297,7 @@ p <- generate_survival_plot(
   plot_path = "plots/uc/soft-flare/controlled/imd"
 )
 saveRDS(p, paste0(paths$outdir, "imd-uc-soft.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 #### Objective flare
@@ -316,7 +316,7 @@ p <- generate_survival_plot(
   plot_path = "plots/uc/hard-flare/controlled/imd"
 )
 saveRDS(p, paste0(paths$outdir, "imd-uc-hard.RDS"))
-p
+print(p, newpage = FALSE)
 ```
 
 :::
