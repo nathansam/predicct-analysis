@@ -707,7 +707,7 @@ QOL <- QOL %>%
 # Standardisation of scores - from GitHub
 # Physical component score
 QOL <- QOL %>% 
-  mutate(PSC12 = RAWPCS12 + 56.57706)
+  mutate(PCS12 = RAWPCS12 + 56.57706)
 
 # Mental component score
 QOL <- QOL %>% 
@@ -715,8 +715,8 @@ QOL <- QOL %>%
 
 # Binary versions of the scores
 QOL %<>% 
-  dplyr::mutate(PSC12_binary = ifelse(PSC12 >= 50, "50+", "<50")) %>%
-  dplyr::mutate(PSC12_binary = forcats::fct_relevel(PSC12_binary, "50+", "<50"))
+  dplyr::mutate(PCS12_binary = ifelse(PCS12 >= 50, "50+", "<50")) %>%
+  dplyr::mutate(PCS12_binary = forcats::fct_relevel(PCS12_binary, "50+", "<50"))
 
 QOL %<>% 
   dplyr::mutate(MCS12_binary = ifelse(MCS12 >= 50, "50+", "<50")) %>%
@@ -776,11 +776,11 @@ QOL %<>%
 # Data is called QOL, rename to data_baseline
 data_baseline <- QOL
 
-# Variables PSC12 (Physical) and MCS12 (Mental)
+# Variables PCS12 (Physical) and MCS12 (Mental)
 
 # Density plots of each score
 data_baseline %>%
-  ggplot(aes(x = PSC12)) +
+  ggplot(aes(x = PCS12)) +
   geom_density() +
   theme_minimal()
 
@@ -807,13 +807,13 @@ independent = c('diagnosis2',
                 'Smoke',
                 'OverallControl')
 
-# Dependent variable is PSC12_binary
+# Dependent variable is PCS12_binary
 
-# Statistical tests for each independent variable with PSC12_binary
+# Statistical tests for each independent variable with PCS12_binary
 # With p-values adjusted for multiple testing using holm correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
-  dependent = 'PSC12_binary', 
+  dependent = 'PCS12_binary', 
   independent = independent)
 
 statistical_tests
@@ -822,49 +822,49 @@ statistical_tests
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'diagnosis2'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'Sex'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'flare_group'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'age'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'FC'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'OverallControl'
 )
 ```
@@ -884,13 +884,13 @@ independent = c('age',
                 'Smoke',
                 'OverallControl')
 
-# Dependent variable is PSC12_binary
+# Dependent variable is PCS12_binary
 
-# Statistical tests for each independent variable with PSC12_binary
+# Statistical tests for each independent variable with PCS12_binary
 # With p-values adjusted for multiple testing using holm correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
-  dependent = 'PSC12_binary', 
+  dependent = 'PCS12_binary', 
   independent = independent)
 
 statistical_tests
@@ -899,42 +899,42 @@ statistical_tests
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'Sex'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'flare_group'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'age'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'FC'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'OverallControl'
 )
 ```
@@ -946,13 +946,13 @@ summon_baseline_plot_continuous(
 data_baseline_cd <- QOL %>%
   dplyr::filter(diagnosis2 == 'CD')
 
-# Dependent variable is PSC12_binary
+# Dependent variable is PCS12_binary
 
-# Statistical tests for each independent variable with PSC12_binary
+# Statistical tests for each independent variable with PCS12_binary
 # With p-values adjusted for multiple testing using holm correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
-  dependent = 'PSC12_binary', 
+  dependent = 'PCS12_binary', 
   independent = independent)
 
 statistical_tests
@@ -961,42 +961,42 @@ statistical_tests
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'Sex'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'flare_group'
 )
 
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'Smoke'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'age'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'FC'
 )
 
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'PSC12_binary',
+  dependent = 'PCS12_binary',
   independent = 'OverallControl'
 )
 ```
@@ -1731,7 +1731,7 @@ CD, soft, control df = 2. Hard, no splines.
 # Patient reported flare
 # Kaplan Meier
 data_survival_soft %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ PSC12_binary, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ PCS12_binary, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_soft, 
@@ -1739,14 +1739,14 @@ data_survival_soft %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'PSC12 Score',
+    legend.title = 'PCS12 Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_physical_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -1768,7 +1768,7 @@ cox_physical_soft %>%
 # Run the mice
 cox_physical_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -1787,7 +1787,7 @@ cox_physical_soft <- with(
   cox_physical_soft_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      PSC12_binary +
+      PCS12_binary +
       IMD +
       Sex +
       age_decade +
@@ -1813,7 +1813,7 @@ cox_physical_soft %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_hard %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ PSC12_binary, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ PCS12_binary, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_hard, 
@@ -1821,14 +1821,14 @@ data_survival_hard %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'PSC12 Score',
+    legend.title = 'PCS12 Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_physical_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -1849,7 +1849,7 @@ cox_physical_hard %>%
 # Run the mice
 cox_physical_hard_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -1868,7 +1868,7 @@ cox_physical_hard <- with(
   cox_physical_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      PSC12_binary +
+      PCS12_binary +
       IMD +
       Sex +
       age_decade +
@@ -1895,7 +1895,7 @@ cox_physical_hard %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_soft_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ PSC12_binary, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ PCS12_binary, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_soft_uc, 
@@ -1903,14 +1903,14 @@ data_survival_soft_uc %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'PSC12 Score',
+    legend.title = 'PCS12 Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_physical_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -1932,7 +1932,7 @@ cox_physical_soft_uc %>%
 # Run the mice
 cox_physical_soft_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -1950,7 +1950,7 @@ cox_physical_soft_uc_mice <- coxph_mice(
 cox_physical_soft_uc <- with(cox_physical_soft_uc_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
-         PSC12_binary +
+         PCS12_binary +
          IMD +
          Sex +
          age_decade +
@@ -1975,7 +1975,7 @@ cox_physical_soft_uc %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_hard_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ PSC12_binary, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ PCS12_binary, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_hard_uc, 
@@ -1983,14 +1983,14 @@ data_survival_hard_uc %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'PSC12 Score',
+    legend.title = 'PCS12 Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_physical_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     ns(age_decade, df = 4) +
@@ -2012,7 +2012,7 @@ cox_physical_hard_uc %>%
 # Note: mice does not support splines so I cannot impute using a spline.
 cox_physical_hard_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -2030,7 +2030,7 @@ cox_physical_hard_uc_mice <- coxph_mice(
 cox_physical_hard_uc <- with(cox_physical_hard_uc_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
-         PSC12_binary +
+         PCS12_binary +
          IMD +
          Sex +
          ns(age_decade, df = 4) +
@@ -2056,7 +2056,7 @@ cox_physical_hard_uc %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_soft_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ PSC12_binary, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ PCS12_binary, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_soft_cd, 
@@ -2064,14 +2064,14 @@ data_survival_soft_cd %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'PSC12 Score',
+    legend.title = 'PCS12 Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_physical_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -2093,7 +2093,7 @@ cox_physical_soft_cd %>%
 # Run the mice
 cox_physical_soft_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -2111,7 +2111,7 @@ cox_physical_soft_cd_mice <- coxph_mice(
 cox_physical_soft_cd <- with(cox_physical_soft_cd_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
-         PSC12_binary +
+         PCS12_binary +
          IMD +
          Sex +
          age_decade +
@@ -2136,7 +2136,7 @@ cox_physical_soft_cd %>%
 # Patient reported flare
 # Kaplan Meier
 data_survival_hard_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ PSC12_binary, data = .) %>%
+  survfit(Surv(time, DiseaseFlareYN) ~ PCS12_binary, data = .) %>%
   ggsurvplot(
     ., 
     data = data_survival_hard_cd, 
@@ -2144,14 +2144,14 @@ data_survival_hard_cd %>%
     risk.table = TRUE,
     pval = TRUE,
     pval.method = TRUE,
-    legend.title = 'PSC12 Score',
+    legend.title = 'PCS12 Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
 
 # Cox model
 cox_physical_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -2172,7 +2172,7 @@ cox_physical_hard_cd %>%
 # Run the mice
 cox_physical_hard_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PSC12_binary +
+    PCS12_binary +
     IMD +
     Sex +
     age_decade +
@@ -2191,7 +2191,7 @@ cox_physical_hard_cd <- with(
   cox_physical_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      PSC12_binary +
+      PCS12_binary +
       IMD +
       Sex +
       age_decade +
