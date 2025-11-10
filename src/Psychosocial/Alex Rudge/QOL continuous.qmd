@@ -23,7 +23,7 @@ toc: true
 toc-expand: true
 ---
 
-# Quality of Life
+# SF12 Health Survey
 
 ## Setting up in R
 
@@ -751,6 +751,17 @@ QOL %<>%
     age_decade = age/10
   )
 
+# Scores in 'decades'
+QOL %<>%
+  dplyr::mutate(
+    PCS12_decade = PCS12/10
+  )
+
+QOL %<>%
+  dplyr::mutate(
+    MCS12_decade = MCS12/10
+  )
+
 
 # FC maximum detectable value is 1250
 QOL %<>%
@@ -1358,7 +1369,7 @@ plot_continuous_hr(
 # PCS12
 plot_continuous_hr(
   data = data_survival_soft, 
-  model = cox_PCS12_soft, 
+  model = cox_pcs12_soft, 
   variable = 'PCS12')
 
 # MCS12
@@ -2940,7 +2951,7 @@ cox_mental_hard_cd %>%
 # Cox model
 cox_physical_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -2962,7 +2973,7 @@ cox_physical_soft %>%
 # Run the mice
 cox_physical_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -2981,7 +2992,7 @@ cox_physical_soft <- with(
   cox_physical_soft_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      PCS12 +
+      PCS12_decade +
       IMD +
       Sex +
       age_decade +
@@ -3009,7 +3020,7 @@ cox_physical_soft %>%
 # Cox model
 cox_physical_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3030,7 +3041,7 @@ cox_physical_hard %>%
 # Run the mice
 cox_physical_hard_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3049,7 +3060,7 @@ cox_physical_hard <- with(
   cox_physical_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      PCS12 +
+      PCS12_decade +
       IMD +
       Sex +
       age_decade +
@@ -3078,7 +3089,7 @@ cox_physical_hard %>%
 # Cox model
 cox_physical_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3100,7 +3111,7 @@ cox_physical_soft_uc %>%
 # Run the mice
 cox_physical_soft_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3118,7 +3129,7 @@ cox_physical_soft_uc_mice <- coxph_mice(
 cox_physical_soft_uc <- with(cox_physical_soft_uc_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
-         PCS12 +
+         PCS12_decade +
          IMD +
          Sex +
          age_decade +
@@ -3145,7 +3156,7 @@ cox_physical_soft_uc %>%
 # Cox model
 cox_physical_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     ns(age_decade, df = 4) +
@@ -3167,7 +3178,7 @@ cox_physical_hard_uc %>%
 # Note: mice does not support splines so I cannot impute using a spline.
 cox_physical_hard_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3185,7 +3196,7 @@ cox_physical_hard_uc_mice <- coxph_mice(
 cox_physical_hard_uc <- with(cox_physical_hard_uc_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
-         PCS12 +
+         PCS12_decade +
          IMD +
          Sex +
          ns(age_decade, df = 4) +
@@ -3213,7 +3224,7 @@ cox_physical_hard_uc %>%
 # Cox model
 cox_physical_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3235,7 +3246,7 @@ cox_physical_soft_cd %>%
 # Run the mice
 cox_physical_soft_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3253,7 +3264,7 @@ cox_physical_soft_cd_mice <- coxph_mice(
 cox_physical_soft_cd <- with(cox_physical_soft_cd_mice,
      coxph(
        Surv(time, DiseaseFlareYN) ~
-         PCS12 +
+         PCS12_decade +
          IMD +
          Sex +
          age_decade +
@@ -3280,7 +3291,7 @@ cox_physical_soft_cd %>%
 # Cox model
 cox_physical_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3301,7 +3312,7 @@ cox_physical_hard_cd %>%
 # Run the mice
 cox_physical_hard_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    PCS12 +
+    PCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3320,7 +3331,7 @@ cox_physical_hard_cd <- with(
   cox_physical_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      PCS12 +
+      PCS12_decade +
       IMD +
       Sex +
       age_decade +
@@ -3351,7 +3362,7 @@ cox_physical_hard_cd %>%
 # Cox model
 cox_mental_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    ns(MCS12, df = 2) +
+    ns(MCS12_decade, df = 2) +
     IMD +
     Sex +
     age_decade +
@@ -3373,7 +3384,7 @@ cox_mental_soft %>%
 # Run the mice
 cox_mental_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    ns(MCS12, df = 2) +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3392,7 +3403,7 @@ cox_mental_soft <- with(
   cox_mental_soft_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      MCS12 +
+      ns(MCS12_decade, df = 2) +
       IMD +
       Sex +
       age_decade +
@@ -3415,12 +3426,11 @@ cox_mental_soft %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
 
 # Cox model
 cox_mental_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3441,7 +3451,7 @@ cox_mental_hard %>%
 # Run the mice
 cox_mental_hard_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3460,7 +3470,7 @@ cox_mental_hard <- with(
   cox_mental_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      MCS12 +
+      MCS12_decade +
       IMD +
       Sex +
       age_decade +
@@ -3489,7 +3499,7 @@ cox_mental_hard %>%
 # Cox model
 cox_mental_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3511,7 +3521,7 @@ cox_mental_soft_uc %>%
 # Run the mice
 cox_mental_soft_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3526,19 +3536,21 @@ cox_mental_soft_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_mental_soft_uc <- with(cox_mental_soft_uc_mice,
-                            coxph(
-                              Surv(time, DiseaseFlareYN) ~
-                                MCS12 +
-                                IMD +
-                                Sex +
-                                age_decade +
-                                FC +
-                                flare_group +
-                                ns(OverallControl, df = 2) +
-                                Smoke +
-                                frailty(SiteNo)
-                            )) %>%
+cox_mental_soft_uc <- with(
+  cox_mental_soft_uc_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MCS12_decade +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      ns(OverallControl, df = 2) +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_mental_soft_uc %>% 
@@ -3556,7 +3568,7 @@ cox_mental_soft_uc %>%
 # Cox model
 cox_mental_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     ns(age_decade, df = 4) +
@@ -3578,7 +3590,7 @@ cox_mental_hard_uc %>%
 # Note: mice does not support splines so I cannot impute using a spline.
 cox_mental_hard_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3593,19 +3605,21 @@ cox_mental_hard_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_mental_hard_uc <- with(cox_mental_hard_uc_mice,
-                            coxph(
-                              Surv(time, DiseaseFlareYN) ~
-                                MCS12 +
-                                IMD +
-                                Sex +
-                                ns(age_decade, df = 4) +
-                                ns(FC, df = 2) +
-                                flare_group +
-                                OverallControl +
-                                Smoke +
-                                frailty(SiteNo)
-                            )) %>%
+cox_mental_hard_uc <- with(
+  cox_mental_hard_uc_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MCS12_decade +
+      IMD +
+      Sex +
+      ns(age_decade, df = 4) +
+      ns(FC, df = 2) +
+      flare_group +
+      OverallControl +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_mental_hard_uc %>% 
@@ -3624,7 +3638,7 @@ cox_mental_hard_uc %>%
 # Cox model
 cox_mental_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3646,7 +3660,7 @@ cox_mental_soft_cd %>%
 # Run the mice
 cox_mental_soft_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3661,19 +3675,21 @@ cox_mental_soft_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_mental_soft_cd <- with(cox_mental_soft_cd_mice,
-                            coxph(
-                              Surv(time, DiseaseFlareYN) ~
-                                MCS12 +
-                                IMD +
-                                Sex +
-                                age_decade +
-                                FC +
-                                flare_group +
-                                ns(OverallControl, df = 2) +
-                                Smoke +
-                                frailty(SiteNo)
-                            )) %>%
+cox_mental_soft_cd <- with(
+  cox_mental_soft_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MCS12_decade +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      ns(OverallControl, df = 2) +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
   mice::pool()
 
 cox_mental_soft_cd %>% 
@@ -3691,7 +3707,7 @@ cox_mental_soft_cd %>%
 # Cox model
 cox_mental_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3712,7 +3728,7 @@ cox_mental_hard_cd %>%
 # Run the mice
 cox_mental_hard_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    MCS12_decade +
     IMD +
     Sex +
     age_decade +
@@ -3731,7 +3747,7 @@ cox_mental_hard_cd <- with(
   cox_mental_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      MCS12 +
+      MCS12_decade +
       IMD +
       Sex +
       age_decade +
