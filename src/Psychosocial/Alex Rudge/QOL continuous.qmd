@@ -719,8 +719,8 @@ QOL %<>%
   dplyr::mutate(PCS12_binary = forcats::fct_relevel(PCS12_binary, "50+", "<50"))
 
 QOL %<>% 
-  dplyr::mutate(MCS12_binary = ifelse(MCS12 >= 50, "50+", "<50")) %>%
-  dplyr::mutate(MCS12_binary = forcats::fct_relevel(MCS12_binary, "50+", "<50"))
+  dplyr::mutate(MCS12_binary = ifelse(MCS12 >= 40, "40+", "<40")) %>%
+  dplyr::mutate(MCS12_binary = forcats::fct_relevel(MCS12_binary, "40+", "<40"))
 
 
 # IBD control scores
@@ -1944,9 +1944,9 @@ plot_continuous_hr(
 
 Summary:
 
-Full cohort, soft, control df = 3, hard, no.
+Full cohort, soft, control df = 3, MCS12 df = 2. Hard, no.
 
-UC, soft, control df = 2, MCS12 df = 2. Hard, age df = 4, FC df = 2.
+UC, soft, control df = 2, Hard, age df = 4, FC df = 2.
 
 CD, soft, control df = 2. Hard, no splines.
 
@@ -3351,7 +3351,7 @@ cox_physical_hard_cd %>%
 # Cox model
 cox_mental_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    ns(MCS12, df = 2) +
     IMD +
     Sex +
     age_decade +
@@ -3373,7 +3373,7 @@ cox_mental_soft %>%
 # Run the mice
 cox_mental_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    MCS12 +
+    ns(MCS12, df = 2) +
     IMD +
     Sex +
     age_decade +
