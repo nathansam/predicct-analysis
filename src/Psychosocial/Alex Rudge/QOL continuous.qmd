@@ -1298,6 +1298,40 @@ cox_control_soft <- coxph(
 summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 3)', add = 'ns(OverallControl, df = 4)')
 # No, df = 3 is sufficient
 
+# PCS12
+cox_pcs12_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+# Spline for PCS12
+summon_lrt(cox_pcs12_soft, remove = 'PCS12', add = 'ns(PCS12, df = 2)')
+# No
+
+# MCS12
+cox_mcs12_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+# Spline
+summon_lrt(cox_mcs12_soft, remove = 'MCS12', add = 'ns(MCS12, df = 2)')
+# Yes
+
+# Refit with spline
+cox_mcs12_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    ns(MCS12, df = 2) +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+summon_lrt(cox_mcs12_soft, remove = 'ns(MCS12, df = 2)', add = 'ns(MCS12, df = 3)')
+# df = 2
 ```
 
 ```{r}
@@ -1306,7 +1340,7 @@ summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 3)', add = 'ns(Ov
 plot_continuous_hr(
   data = data_survival_soft, 
   model = cox_age_soft, 
-  variable = 'age_decade')
+  variable = 'age_decade') 
 
 # FC
 plot_continuous_hr(
@@ -1320,6 +1354,19 @@ plot_continuous_hr(
   model = cox_control_soft, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 3)')
+
+# PCS12
+plot_continuous_hr(
+  data = data_survival_soft, 
+  model = cox_PCS12_soft, 
+  variable = 'PCS12')
+
+# MCS12
+plot_continuous_hr(
+  data = data_survival_soft, 
+  model = cox_mcs12_soft, 
+  variable = 'MCS12',
+  splineterm = 'ns(MCS12, df = 2)')
 ```
 
 ##### Objective flare
@@ -1361,6 +1408,30 @@ cox_control_hard <- coxph(
 # Spline for control
 summon_lrt(cox_control_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # No
+
+# PCS12
+cox_pcs12_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+# Spline for pcs12
+summon_lrt(cox_pcs12_hard, remove = 'PCS12', add = 'ns(PCS12, df = 2)')
+# No
+
+# MCS12
+cox_mcs12_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+# Spline for mcs12
+summon_lrt(cox_mcs12_hard, remove = 'MCS12', add = 'ns(MCS12, df = 2)')
+# No
 ```
 
 ```{r}
@@ -1379,9 +1450,21 @@ plot_continuous_hr(
 
 # Control
 plot_continuous_hr(
-  data = data_survival_soft, 
+  data = data_survival_hard, 
   model = cox_control_hard, 
   variable = 'OverallControl')
+
+# PCS12
+plot_continuous_hr(
+  data = data_survival_hard, 
+  model = cox_pcs12_hard, 
+  variable = 'PCS12')
+
+# MCS12
+plot_continuous_hr(
+  data = data_survival_hard, 
+  model = cox_mcs12_hard, 
+  variable = 'MCS12')
 ```
 
 #### Ulcerative Colitis
@@ -1436,6 +1519,30 @@ cox_control_soft_uc <- coxph(
 summon_lrt(cox_control_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # No, df = 2 is sufficient
 
+# PCS12
+cox_pcs12_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+# Spline for age
+summon_lrt(cox_pcs12_soft_uc, remove = 'PCS12', add = 'ns(PCS12, df = 2)')
+# No
+
+# MCS12
+cox_mcs12_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+# Spline for age
+summon_lrt(cox_mcs12_soft_uc, remove = 'MCS12', add = 'ns(MCS12, df = 2)')
+# No
+
 ```
 
 ```{r}
@@ -1458,6 +1565,18 @@ plot_continuous_hr(
   model = cox_control_soft_uc, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 2)')
+
+# PCS12
+plot_continuous_hr(
+  data = data_survival_soft_uc, 
+  model = cox_pcs12_soft_uc, 
+  variable = 'PCS12')
+
+# MCS12
+plot_continuous_hr(
+  data = data_survival_soft_uc, 
+  model = cox_mcs12_soft_uc, 
+  variable = 'MCS12')
 ```
 
 ##### Objective flare
@@ -1549,6 +1668,31 @@ cox_control_hard_uc <- coxph(
 summon_lrt(cox_control_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # No
 
+
+# PCS12
+cox_pcs12_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+# Spline for age
+summon_lrt(cox_pcs12_hard_uc, remove = 'PCS12', add = 'ns(PCS12, df = 2)')
+# No
+
+# MCS12
+cox_mcs12_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+# Spline for age
+summon_lrt(cox_mcs12_hard_uc, remove = 'MCS12', add = 'ns(MCS12, df = 2)')
+# No
+
 ```
 
 ```{r}
@@ -1572,6 +1716,18 @@ plot_continuous_hr(
   data = data_survival_hard_uc, 
   model = cox_control_hard_uc, 
   variable = 'OverallControl')
+
+# PCS12
+plot_continuous_hr(
+  data = data_survival_hard_uc, 
+  model = cox_pcs12_hard_uc, 
+  variable = 'PCS12')
+
+# MCS12
+plot_continuous_hr(
+  data = data_survival_hard_uc, 
+  model = cox_mcs12_hard_uc, 
+  variable = 'MCS12')
 ```
 
 #### Crohn's Disease
@@ -1627,6 +1783,30 @@ cox_control_soft_cd <- coxph(
 summon_lrt(cox_control_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # No, df = 2 is sufficient
 
+# PCS12
+cox_pcs12_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+# Spline for PCS12
+summon_lrt(cox_pcs12_soft_cd, remove = 'PCS12', add = 'ns(PCS12, df = 2)')
+# No
+
+# MCS12
+cox_mcs12_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+# Spline for MCS12
+summon_lrt(cox_mcs12_soft_cd, remove = 'MCS12', add = 'ns(MCS12, df = 2)')
+# No
+
 ```
 
 ```{r}
@@ -1649,6 +1829,19 @@ plot_continuous_hr(
   model = cox_control_soft_cd, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 2)')
+
+# PCS12
+plot_continuous_hr(
+  data = data_survival_soft_cd, 
+  model = cox_pcs12_soft_cd, 
+  variable = 'PCS12')
+
+# MCS12
+plot_continuous_hr(
+  data = data_survival_soft_cd, 
+  model = cox_mcs12_soft_cd, 
+  variable = 'MCS12')
+
 ```
 
 ##### Objective flare
@@ -1690,6 +1883,30 @@ cox_control_hard_cd <- coxph(
 # Spline for control
 summon_lrt(cox_control_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # No
+
+# PCS12
+cox_pcs12_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+# Spline for PCS12
+summon_lrt(cox_pcs12_hard_cd, remove = 'PCS12', add = 'ns(PCS12, df = 2)')
+# No
+
+# MCS12
+cox_mcs12_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+# Spline for MCS12
+summon_lrt(cox_mcs12_hard_cd, remove = 'MCS12', add = 'ns(MCS12, df = 2)')
+# No
 ```
 
 ```{r}
@@ -1711,17 +1928,29 @@ plot_continuous_hr(
   data = data_survival_hard_cd, 
   model = cox_control_hard_cd, 
   variable = 'OverallControl')
+
+# PCS12
+plot_continuous_hr(
+  data = data_survival_hard_cd, 
+  model = cox_pcs12_hard_cd, 
+  variable = 'PCS12')
+
+# MCS12
+plot_continuous_hr(
+  data = data_survival_hard_cd, 
+  model = cox_mcs12_hard_cd, 
+  variable = 'MCS12')
 ```
 
 Summary:
 
 Full cohort, soft, control df = 3, hard, no.
 
-UC, soft, control df = 2. Hard, age df = 4, FC df = 2.
+UC, soft, control df = 2, MCS12 df = 2. Hard, age df = 4, FC df = 2.
 
 CD, soft, control df = 2. Hard, no splines.
 
-### Models - Physical Component
+### PCS12 (Binary)
 
 #### Full Cohort
 
@@ -2210,7 +2439,7 @@ cox_physical_hard_cd %>%
           exponentiate = TRUE)
 ```
 
-### Models - Mental Component
+### MCS12 (Binary)
 
 #### Full Cohort
 
@@ -2699,6 +2928,828 @@ cox_mental_hard_cd %>%
           exponentiate = TRUE)
 ```
 
+### PCS12 (Continuous)
+
+#### Full Cohort
+
+##### Patient reported flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_physical_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 3) +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+cox_physical_soft %>%
+  print_survival()
+
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_physical_soft_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_physical_soft <- with(
+  cox_physical_soft_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      PCS12 +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      ns(OverallControl, df = 3) +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_physical_soft %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+##### Objective flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_physical_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+cox_physical_hard %>%
+  print_survival()
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_physical_hard_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_physical_hard <- with(
+  cox_physical_hard_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      PCS12 +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      OverallControl +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_physical_hard %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+```
+
+#### Ulcerative Colitis
+
+##### Patient reported flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_physical_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 2) +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+cox_physical_soft_uc %>%
+  print_survival()
+
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_physical_soft_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_physical_soft_uc <- with(cox_physical_soft_uc_mice,
+     coxph(
+       Surv(time, DiseaseFlareYN) ~
+         PCS12 +
+         IMD +
+         Sex +
+         age_decade +
+         FC +
+         flare_group +
+         ns(OverallControl, df = 2) +
+         Smoke +
+         frailty(SiteNo)
+     )) %>%
+  mice::pool()
+
+cox_physical_soft_uc %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+##### Objective flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_physical_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    ns(age_decade, df = 4) +
+    ns(FC, df = 2) +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+cox_physical_hard_uc %>%
+  print_survival()
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+# Note: mice does not support splines so I cannot impute using a spline.
+cox_physical_hard_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_physical_hard_uc <- with(cox_physical_hard_uc_mice,
+     coxph(
+       Surv(time, DiseaseFlareYN) ~
+         PCS12 +
+         IMD +
+         Sex +
+         ns(age_decade, df = 4) +
+         ns(FC, df = 2) +
+         flare_group +
+         OverallControl +
+         Smoke +
+         frailty(SiteNo)
+     )) %>%
+  mice::pool()
+
+cox_physical_hard_uc %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+```
+
+#### Crohn's Disease
+
+##### Patient reported flare.
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_physical_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 2) +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+cox_physical_soft_cd %>%
+  print_survival()
+
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_physical_soft_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_physical_soft_cd <- with(cox_physical_soft_cd_mice,
+     coxph(
+       Surv(time, DiseaseFlareYN) ~
+         PCS12 +
+         IMD +
+         Sex +
+         age_decade +
+         FC +
+         flare_group +
+         ns(OverallControl, df = 2) +
+         Smoke +
+         frailty(SiteNo)
+     )) %>%
+  mice::pool()
+
+cox_physical_soft_cd %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+##### Objective flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_physical_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+cox_physical_hard_cd %>%
+  print_survival()
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_physical_hard_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    PCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_physical_hard_cd <- with(
+  cox_physical_hard_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      PCS12 +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      OverallControl +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_physical_hard_cd %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+```
+
+### MCS12 (Continuous)
+
+#### Full Cohort
+
+##### Patient reported flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_mental_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 3) +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+cox_mental_soft %>%
+  print_survival()
+
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_mental_soft_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_mental_soft <- with(
+  cox_mental_soft_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MCS12 +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      ns(OverallControl, df = 3) +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_mental_soft %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+##### Objective flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_mental_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+cox_mental_hard %>%
+  print_survival()
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_mental_hard_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_mental_hard <- with(
+  cox_mental_hard_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MCS12 +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      OverallControl +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_mental_hard %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+```
+
+#### Ulcerative Colitis
+
+##### Patient reported flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_mental_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 2) +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+cox_mental_soft_uc %>%
+  print_survival()
+
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_mental_soft_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_mental_soft_uc <- with(cox_mental_soft_uc_mice,
+                            coxph(
+                              Surv(time, DiseaseFlareYN) ~
+                                MCS12 +
+                                IMD +
+                                Sex +
+                                age_decade +
+                                FC +
+                                flare_group +
+                                ns(OverallControl, df = 2) +
+                                Smoke +
+                                frailty(SiteNo)
+                            )) %>%
+  mice::pool()
+
+cox_mental_soft_uc %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+##### Objective flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_mental_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    ns(age_decade, df = 4) +
+    ns(FC, df = 2) +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+cox_mental_hard_uc %>%
+  print_survival()
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+# Note: mice does not support splines so I cannot impute using a spline.
+cox_mental_hard_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_mental_hard_uc <- with(cox_mental_hard_uc_mice,
+                            coxph(
+                              Surv(time, DiseaseFlareYN) ~
+                                MCS12 +
+                                IMD +
+                                Sex +
+                                ns(age_decade, df = 4) +
+                                ns(FC, df = 2) +
+                                flare_group +
+                                OverallControl +
+                                Smoke +
+                                frailty(SiteNo)
+                            )) %>%
+  mice::pool()
+
+cox_mental_hard_uc %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+```
+
+#### Crohn's Disease
+
+##### Patient reported flare.
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_mental_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 2) +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+cox_mental_soft_cd %>%
+  print_survival()
+
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_mental_soft_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_mental_soft_cd <- with(cox_mental_soft_cd_mice,
+                            coxph(
+                              Surv(time, DiseaseFlareYN) ~
+                                MCS12 +
+                                IMD +
+                                Sex +
+                                age_decade +
+                                FC +
+                                flare_group +
+                                ns(OverallControl, df = 2) +
+                                Smoke +
+                                frailty(SiteNo)
+                            )) %>%
+  mice::pool()
+
+cox_mental_soft_cd %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+
+```
+
+##### Objective flare
+
+```{r}
+# Patient reported flare
+
+# Cox model
+cox_mental_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+cox_mental_hard_cd %>%
+  print_survival()
+```
+
+```{r}
+# Cox model with MICE
+# Run the mice
+cox_mental_hard_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MCS12 +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+# Fit the Cox
+cox_mental_hard_cd <- with(
+  cox_mental_hard_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MCS12 +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      OverallControl +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_mental_hard_cd %>% 
+  summary(conf.int = TRUE,
+          conf.level = 0.95,
+          exponentiate = TRUE)
+```
+
 ## Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
@@ -2712,4 +3763,4 @@ pander::pander(sessionInfo())
 
 </details>
 
-Licensed by <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a> unless otherwise stated.
+Licensed by `<a href="https://creativecommons.org/licenses/by/4.0/"`{=html}CC BY</a> unless otherwise stated.
