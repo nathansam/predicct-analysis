@@ -43,7 +43,7 @@ for (html_file in html_files) {
   content <- readLines(html_file, warn = FALSE)
   
   # Replace src="plots/ with src="../plots/ for files in subdirectories
-  if (grepl("/", sub("^../docs/", "", html_file))) {
+  if (grepl("/", sub("^\\.\\.\\/docs\\/", "", html_file))) {
     content <- gsub('src="plots/', 'src="../plots/', content)
   }
   
