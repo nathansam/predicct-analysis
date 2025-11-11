@@ -58,6 +58,8 @@ library(finalfit)
 
 library(splines)
 library(mice)
+library(naniar)
+library(ggmice)
 ```
 
 ## Helper functions
@@ -462,7 +464,7 @@ if (file.exists("/.dockerenv")) {
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
 
-hads <- read.xlsx(paste0(data.path, "Baseline2022/hads.xlsx"))
+phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
@@ -470,6 +472,7 @@ phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
 smoking <- readRDS(paste0(chiara, "smoking.rds"))
+IMD <- readRDS(paste0(chiara, "IMD.rds"))
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
@@ -479,17 +482,17 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 ```{r, load and tidy phq data set}
 
-phq_clean <- phq %>% 
+phq <- phq %>% 
   filter(!is.na(ParticipantId))
 
 #add age and sex data from demographics
-phq_clean <- phq_clean %>%
-  inner_join(
+phq <- phq %>%
+  left_join(
     demographics %>% select(ParticipantNo, Sex, age, diagnosis), 
     by  = "ParticipantNo")
 
 # Recode diagnosis
-phq_clean %<>%
+phq %<>%
   dplyr::mutate(
     diagnosis2 = dplyr::case_when(
       diagnosis == 1 ~ 1,
@@ -505,36 +508,116 @@ phq_clean %<>%
   ))
 
 #exclude <18 yo = 53 participants (1899 -> 1846)
-phq_clean %<>% dplyr::filter(age >= 18)
+phq %<>% dplyr::filter(age >= 18)
 
 #make sex into level
-phq_clean %<>% dplyr::mutate(Sex = factor(
+phq %<>% dplyr::mutate(Sex = factor(
   Sex,
   levels = c(1, 2),
   labels = c("Male", "Female"))
 )
 
-phq_clean %<>%
-  filter(
-    !dplyr::if_any(.cols = c(7:9, 11:21), .fns = is.na)
+# Age groups
+phq %<>%
+  dplyr::mutate(AgeGroup = cut(age, 
+                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
+                         labels = c("18-24",
+                                    "25-34",
+                                    "35-44",
+                                    "45-54",
+                                    "55-64",
+                                    "65+"),
+                         include.lowest = TRUE))
+
+#add flare data, FC, smoking
+#flare data from IBD data set
+phq <- phq %>% 
+  left_join(
+    IBD %>% select(ParticipantNo, FlaresInPastYear),
+    by = 'ParticipantNo')
+
+
+#create flare groups
+phq <- phq %>%
+  mutate(flare_group = ifelse(FlaresInPastYear == 0,
+                              "No Flares",
+                              "1 or More Flares"))
+
+#make flares into levels
+phq %<>% 
+  dplyr::mutate(
+    flare_group = factor(flare_group,
+                         levels = c( "No Flares", "1 or More Flares"))
   )
 
-# Fixing
-phq_clean %<>%
+# FC data
+phq <- phq %>% 
+  dplyr::left_join(
+    demo %>% dplyr::select(ParticipantNo, FC, cat), 
+    by = "ParticipantNo")
+
+# Add smoking
+phq %<>% 
+  dplyr::left_join(
+    smoking %>% dplyr::select(ParticipantNo, Smoke), 
+    by = "ParticipantNo")
+
+# Smoke as a factor
+phq %<>%
+  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
+  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
+
+# Add IMD
+phq %<>% 
+  dplyr::left_join(
+    IMD, 
+    by = "ParticipantNo") 
+
+# IMD as a factor
+phq %<>%
+  dplyr::mutate(
+    IMD = as.factor(IMD)
+  )
+
+
+# IBD control scores
+phq %<>%
+  dplyr::left_join(
+    IBD_C %>% dplyr::select(
+      ParticipantNo,
+      control_score,
+      OverallControl,
+      control_8,
+      control_grouped,
+      vas_control
+    ),
+    by = "ParticipantNo"
+  )
+
+#change control_grouped and vas_control from character into factors
+phq %<>% 
+  dplyr::mutate(control_grouped = factor(control_grouped))
+
+phq %<>% 
+  dplyr::mutate(vas_control = factor(vas_control))
+
+
+# PHQ numbering scale was shifted by 1 - fix here
+phq %<>%
   dplyr::mutate(
     dplyr::across(
       .cols = StomachPain:TroubleSleeping,
       .fns = ~. - 1)
   )
 
-# Menstrual cramps replace NA with 0
-phq_clean %<>%
+# Menstrual cramps replace NA with 0 (Men)
+phq %<>%
   tidyr::replace_na(
     list(MenstrualCramps = 0)
   )
 
 # Add all PHQ-15 columns to make final score
-phq_clean <- phq_clean %>% 
+phq <- phq %>% 
   mutate(
     TotalPHQ = StomachPain +
       BackPain +
@@ -552,8 +635,13 @@ phq_clean <- phq_clean %>%
       FeelingTired +
       TroubleSleeping)
 
+# Remove patients with any missing values
+phq %<>%
+  dplyr::filter(!is.na(TotalPHQ))
+
+
 # Make new variable for no, mild, moderate and severe levels of somatisation
-phq_clean <- phq_clean %>% 
+phq <- phq %>% 
   mutate(
     somatisation = cut(
       TotalPHQ, 
@@ -562,82 +650,16 @@ phq_clean <- phq_clean %>%
       include.lowest = TRUE)
   )
 
-# Age groups
-phq_clean %<>%
-  dplyr::mutate(AgeGroup = cut(age, 
-                         breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                         labels = c("18-24",
-                                    "25-34",
-                                    "35-44",
-                                    "45-54",
-                                    "55-64",
-                                    "65+"),
-                         include.lowest = TRUE))
-
-#add flare data, FC, smoking
-#flare data from IBD data set
-phq_clean <- phq_clean %>% 
-  left_join(
-    IBD %>% select(ParticipantNo, FlaresInPastYear),
-    by = 'ParticipantNo')
-
-
-#create flare groups
-phq_clean <- phq_clean %>%
-  mutate(flare_group = ifelse(FlaresInPastYear == 0,
-                              "No Flares",
-                              "1 or More Flares"))
-
-#make flares into levels
-phq_clean %<>% 
-  dplyr::mutate(
-    flare_group = factor(flare_group,
-                         levels = c( "No Flares", "1 or More Flares"))
-  )
-
-phq_clean <- phq_clean %>% 
-  left_join(
-    smoking %>% select(ParticipantNo, Smoke),
-    by = 'ParticipantNo')
-
-#204 patient smissing fc data
-phq_clean <- phq_clean %>% 
-  left_join(
-    demo %>% select(ParticipantNo, FC, cat, Biologic, IMD),
-    by = 'ParticipantNo')
-
-
-# IBD control scores
-phq_clean %<>%
-  dplyr::left_join(
-    IBD_C %>% dplyr::select(
-      ParticipantNo,
-      control_score,
-      OverallControl,
-      control_8,
-      control_grouped,
-      vas_control
-    ),
-    by = "ParticipantNo"
-  )
-
-#change control_grouped and vas_control from character into factors
-phq_clean %<>% 
-  dplyr::mutate(control_grouped = factor(control_grouped))
-
-phq_clean %<>% 
-  dplyr::mutate(vas_control = factor(vas_control))
-
 
 # Age in decades
-phq_clean %<>%
+phq %<>%
   dplyr::mutate(
     age_decade = age/10
   )
 
 
 # FC maximum detectable value is 1250
-phq_clean %<>%
+phq %<>%
   dplyr::mutate(
     FC = dplyr::case_when(
       FC > 1250 ~ 1250,
@@ -646,10 +668,40 @@ phq_clean %<>%
   )
 
 # Log transform FC due to extreme positive skew
-phq_clean %<>%
+phq %<>%
   dplyr::mutate(
     FC = log(FC)
   )
+```
+
+## Missingness
+
+```{r}
+# Visualise missingness
+
+data_vis_missingness <- phq %>%
+  # Select relevant variables
+  dplyr::select(
+    diagnosis,
+    age,
+    Sex,
+    IMD,
+    FC,
+    flare_group,
+    OverallControl,
+    Smoke,
+    SiteNo,
+    somatisation
+  )
+
+# Number of missing values per variable
+data_vis_missingness %>%
+  gg_miss_var()
+
+# Pairwise missingness
+data_vis_missingness %>%
+  ggmice::plot_pattern(rotate = TRUE)
+
 ```
 
 ## Baseline Analysis
@@ -658,7 +710,7 @@ phq_clean %<>%
 
 ```{r}
 
-data_baseline <- phq_clean
+data_baseline <- phq
 
 # Independent variables
 independent = c('diagnosis2',
@@ -735,7 +787,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and UC patients
-data_baseline_uc <- phq_clean %>%
+data_baseline_uc <- phq %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
 # Independent variables
@@ -805,7 +857,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and CD patients
-data_baseline_cd <- phq_clean %>%
+data_baseline_cd <- phq %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is somatisation
@@ -869,9 +921,9 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Survival data
-# Join HADS with flare data
+# Join phq with flare data
 # Patient reported
-data_survival_soft <- phq_clean %>% dplyr::inner_join(
+data_survival_soft <- phq %>% dplyr::inner_join(
   flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
   by = 'ParticipantNo'
 ) %>%
@@ -887,7 +939,7 @@ data_survival_soft_cd <- data_survival_soft %>%
 
 
 # Hard flares
-data_survival_hard <- phq_clean %>% dplyr::inner_join(
+data_survival_hard <- phq %>% dplyr::inner_join(
   flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
   by = 'ParticipantNo'
 ) %>%

@@ -60,6 +60,8 @@ library(finalfit)
 
 library(mice)
 library(splines)
+library(naniar)
+library(ggmice)
 ```
 
 ## Helper functions
@@ -464,9 +466,10 @@ if (file.exists("/.dockerenv")) {
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
 
-lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
+smoking <- readRDS(paste0(chiara, "smoking.rds"))
+IMD <- readRDS(paste0(chiara, "IMD.rds"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 QOL <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
@@ -541,20 +544,58 @@ QOL %<>%
                          levels = c( "No Flares","1 or More Flares"))
   )
 
+# FC data
 QOL <- QOL %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, Smoke, IMD),
-            by = "ParticipantNo")
+  dplyr::left_join(
+    demo %>% dplyr::select(ParticipantNo, FC, cat), 
+    by = "ParticipantNo")
 
-#209 with missing FC
-#QOL %>% filter(is.na(cat)) %>% nrow()
+# Add smoking
+QOL %<>% 
+  dplyr::left_join(
+    smoking %>% dplyr::select(ParticipantNo, Smoke), 
+    by = "ParticipantNo")
 
-# Check missing data - 53 
-# QOL %>%
-#   filter(
-#     dplyr::if_any(.cols = c(7:18), .fns = is.na)
-#   ) %>% nrow()
+# Smoke as a factor
+QOL %<>%
+  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
+  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
 
-# Exclude missing
+# Add IMD
+QOL %<>% 
+  dplyr::left_join(
+    IMD, 
+    by = "ParticipantNo") 
+
+# IMD as a factor
+QOL %<>%
+  dplyr::mutate(
+    IMD = as.factor(IMD)
+  )
+
+# IBD control scores
+QOL %<>%
+  dplyr::left_join(
+    IBD_C %>% dplyr::select(
+      ParticipantNo,
+      control_score,
+      OverallControl,
+      control_8,
+      control_grouped,
+      vas_control
+    ),
+    by = "ParticipantNo"
+  )
+
+#change control_grouped and vas_control from character into factors
+QOL %<>% 
+  dplyr::mutate(control_grouped = factor(control_grouped))
+
+QOL %<>% 
+  dplyr::mutate(vas_control = factor(vas_control))
+
+
+# Exclude missing questionnaire
 QOL %<>%
   filter(
     !dplyr::if_any(.cols = c(7:18), .fns = is.na)
@@ -723,27 +764,6 @@ QOL %<>%
   dplyr::mutate(MCS12_binary = forcats::fct_relevel(MCS12_binary, "40+", "<40"))
 
 
-# IBD control scores
-QOL %<>%
-  dplyr::left_join(
-    IBD_C %>% dplyr::select(
-      ParticipantNo,
-      control_score,
-      OverallControl,
-      control_8,
-      control_grouped,
-      vas_control
-    ),
-    by = "ParticipantNo"
-  )
-
-#change control_grouped and vas_control from character into factors
-QOL %<>% 
-  dplyr::mutate(control_grouped = factor(control_grouped))
-
-QOL %<>% 
-  dplyr::mutate(vas_control = factor(vas_control))
-
 
 # Age in decades
 QOL %<>%
@@ -799,6 +819,37 @@ data_baseline %>%
   ggplot(aes(x = MCS12)) +
   geom_density() +
   theme_minimal()
+```
+
+## Missingness
+
+```{r}
+# Visualise missingness
+
+data_vis_missingness <- QOL %>%
+  # Select relevant variables
+  dplyr::select(
+    diagnosis,
+    age,
+    Sex,
+    IMD,
+    FC,
+    flare_group,
+    OverallControl,
+    Smoke,
+    SiteNo,
+    PCS12,
+    MCS12
+  )
+
+# Number of missing values per variable
+data_vis_missingness %>%
+  gg_miss_var()
+
+# Pairwise missingness
+data_vis_missingness %>%
+  ggmice::plot_pattern(rotate = TRUE)
+
 ```
 
 ## Baseline Analysis
@@ -1207,7 +1258,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Survival data
-# Join HADS with flare data
+# Join QOL with flare data
 # Patient reported
 data_survival_soft <- QOL %>% dplyr::inner_join(
     flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),

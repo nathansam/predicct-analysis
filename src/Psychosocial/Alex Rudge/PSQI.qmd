@@ -60,6 +60,8 @@ library(finalfit)
 
 library(mice)
 library(splines)
+library(naniar)
+library(ggmice)
 ```
 
 ## Helper functions
@@ -462,7 +464,6 @@ if (file.exists("/.dockerenv")) {
   flare.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
                       "final/20240308/Followup/")
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
-  save_path <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
 
 health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
@@ -471,10 +472,11 @@ IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 psqi <- read.xlsx(paste0(data.path, "Baseline2022/psqi.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
-smoking <- readRDS(paste0(save_path, "smoking.rds"))
+smoking <- readRDS(paste0(chiara, "smoking.rds"))
+IMD <- readRDS(paste0(chiara, "IMD.rds"))
 flares_combined <- readRDS(paste0(outdir, "flares/flares-combined-cut.RDS"))
-flares_hard <- readRDS(paste0(save_path, "flares_hard.RDS"))
-flares_soft <- readRDS(paste0(save_path, "flares_soft.RDS"))
+flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
+flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 ```
 
@@ -483,17 +485,17 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 ```{r}
 #PSQI data
 
-psqi2 <- psqi %>% 
+psqi <- psqi %>% 
   dplyr::filter(!is.na(ParticipantNo))
 
 #add age and sex data from demographics
-psqi2 <- psqi2 %>% 
+psqi <- psqi %>% 
   left_join(
     demographics %>% select(ParticipantNo, Sex, age, diagnosis), 
     by  = "ParticipantNo")
 
 # Recode diagnosis
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     diagnosis2 = dplyr::case_when(
       diagnosis == 1 ~ 1,
@@ -509,17 +511,17 @@ psqi2 %<>%
   ))
 
 #exclude <18 yo = 53 participants (1907 -> 1854)
-psqi2 %<>% dplyr::filter(age >= 18)
+psqi %<>% dplyr::filter(age >= 18)
 
 #make sex into level
-psqi2 %<>% dplyr::mutate(Sex = factor(
+psqi %<>% dplyr::mutate(Sex = factor(
   Sex,
   levels = c(1, 2),
   labels = c("Male", "Female"))
 )
 
 #make age brackets
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(AgeGroup = cut(age, 
                          breaks = c(18, 24, 34, 44, 54, 65, Inf), 
                          labels = c("18-24",
@@ -530,33 +532,83 @@ psqi2 %<>%
                                     "65+"),
                          include.lowest = TRUE))
 
-psqi2 <- psqi2 %>% 
+# Flares
+psqi <- psqi %>% 
   left_join(IBD %>% select(ParticipantNo, FlaresInPastYear),
             by = "ParticipantNo")
 
 #create flare groups
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0,
                               "No Flares",
                               "1 or More Flares"))
 
 #make flares into levels
-psqi2 %<>% 
+psqi %<>% 
   dplyr::mutate(
     flare_group = factor(flare_group,
                          levels = c( "No Flares", "1 or More Flares"))
   )
 
-psqi2 <- psqi2 %>% 
-  left_join(demo %>% select(ParticipantNo, FC, cat, Biologic, Smoke, IMD),
-            by = "ParticipantNo")
+# FC data
+psqi <- psqi %>% 
+  dplyr::left_join(
+    demo %>% dplyr::select(ParticipantNo, FC, cat), 
+    by = "ParticipantNo")
 
-psqi2 %<>%
+# Add smoking
+psqi %<>% 
+  dplyr::left_join(
+    smoking %>% dplyr::select(ParticipantNo, Smoke), 
+    by = "ParticipantNo")
+
+# Smoke as a factor
+psqi %<>%
+  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
+  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
+
+# Add IMD
+psqi %<>% 
+  dplyr::left_join(
+    IMD, 
+    by = "ParticipantNo") 
+
+# IMD as a factor
+psqi %<>%
+  dplyr::mutate(
+    IMD = as.factor(IMD)
+  )
+
+# IBD control scores
+psqi %<>%
+  dplyr::left_join(
+    IBD_C %>% dplyr::select(
+      ParticipantNo,
+      control_score,
+      OverallControl,
+      control_8,
+      control_grouped,
+      vas_control
+    ),
+    by = "ParticipantNo"
+  )
+
+#change control_grouped and vas_control from character into factors
+psqi %<>% 
+  dplyr::mutate(control_grouped = factor(control_grouped))
+
+psqi %<>% 
+  dplyr::mutate(vas_control = factor(vas_control))
+
+
+# Sleep questionnaire data
+
+psqi %<>%
   dplyr::filter(
     !dplyr::if_any(.cols = c(7, 10, 12, 14:23, 25:28), .fns = is.na)
   )
 
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     dplyr::across(
       .cols = c("CantGetToSleep",
@@ -577,11 +629,11 @@ psqi2 %<>%
   )
 
 #comp1 (mutate SleepQuality to comp1)
-psqi2 <- psqi2 %>% 
+psqi <- psqi %>% 
   dplyr::rename(comp1 = SleepQuality)
 
 #comp2
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   dplyr::mutate(FallAsleepMns = case_when(
     FallAsleepMns <= 14 ~ 0,
     FallAsleepMns <= 30 ~ 1,
@@ -589,7 +641,7 @@ psqi2 <- psqi2 %>%
     TRUE ~ 3
   ))
 
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   dplyr::mutate(comp2 = case_when(
     (FallAsleepMns + CantGetToSleep) %in% c(0) ~ 0,
     (FallAsleepMns + CantGetToSleep) %in% c(1, 2) ~ 1,
@@ -597,12 +649,12 @@ psqi2 <- psqi2 %>%
     (FallAsleepMns + CantGetToSleep) %in% c(5, 6) ~ 3
   ))
 
-psqi2 %<>%
+psqi %<>%
   tidyr::replace_na(
     list(SleepEachNightMns = 0)
   )
 
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   dplyr::mutate(TotalSleepMinutes = SleepEachNightHrs * 60 + SleepEachNightMns,
          comp3 = case_when(
            TotalSleepMinutes < 300 ~ 3,
@@ -612,7 +664,7 @@ psqi2 <- psqi2 %>%
          ) 
 
 # Correcting non 24h clock entries.
-psqi2<- psqi2 %>%
+psqi<- psqi %>%
   dplyr::mutate(
     BedTimeHrs = dplyr::case_when(
       ParticipantNo %in% c(110415, 110463) ~ BedTimeHrs,
@@ -633,7 +685,7 @@ psqi2<- psqi2 %>%
   )
 
 #if mins bed time/wake up time is na assume 0
-psqi2 %<>%
+psqi %<>%
   tidyr::replace_na(
     list(BedTimeMns = 0, 
          WokenUpMns = 0)
@@ -641,13 +693,13 @@ psqi2 %<>%
 
 #Three obvious typos found, 2 corrected above + 1 excluded (found when looking at TotalSleepMins - calculated later)
 #Participant 170004 Bed time 22.30 wake up 20.00 reported 5 hours total sleep - exclude
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   dplyr::filter(ParticipantNo != 170004)
 
 #Participant No 110351 woken up hours 16, should be 6 - corrected above
 
 #Participant 120042 woken up hours 19 but with other data provided would be logical for this to be 9 - correct this
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   mutate(WokenUpHrs = dplyr::case_when(
     ParticipantNo == 110351 ~ 6, 
     ParticipantNo == 120042 ~ 9,
@@ -655,7 +707,7 @@ psqi2 <- psqi2 %>%
 
 # Calculate time spent in bed as difference between bed time and wake up time
 # Create date times using lubridate and calculate interval
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   dplyr::mutate(
     # Bed Time - automatically sets to 1970-01-01
     BedTimeDT = lubridate::make_datetime(hour = BedTimeHrs, min = BedTimeMns),
@@ -663,7 +715,7 @@ psqi2 <- psqi2 %>%
     WokenUpDT = lubridate::make_datetime(day = 2, hour = WokenUpHrs, min = WokenUpMns))
 
 # If asleep after midnight, correct the day
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     BedTimeDT = dplyr::case_when(
       BedTimeHrs >= 0 & BedTimeHrs <= 8 ~ BedTimeDT + lubridate::days(1),
@@ -672,18 +724,18 @@ psqi2 %<>%
   )
 
 # Calculate total minutes in bed
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     TotalBedMinutes = lubridate::interval(BedTimeDT, WokenUpDT)/lubridate::minutes()
   )
 
 #calculate comp 4
 # Sleep efficiency
-psqi2 <- psqi2 %>% 
+psqi <- psqi %>% 
   mutate(SleepEff = TotalSleepMinutes/TotalBedMinutes * 100)
 
 # Convert to a 0-3 scale score.
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   mutate(comp4 = case_when(
     SleepEff < 65 ~ 3, 
     SleepEff < 75 ~ 2,
@@ -693,12 +745,12 @@ psqi2 <- psqi2 %>%
 
 
 #comp 5 
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   mutate(TotalTrouble = rowSums(
     select(., WakeUpMiddleNight:OtherTroubleSleeping)))
 
 # Categorise
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     comp5 = dplyr::case_when(
       TotalTrouble == 0 ~ 0, 
@@ -708,15 +760,15 @@ psqi2 %<>%
     )
   )
 
-psqi2 <- psqi2 %>% 
+psqi <- psqi %>% 
   dplyr::select(-TotalTrouble)
 
 #comp6
-psqi2 <- psqi2 %>% 
+psqi <- psqi %>% 
   dplyr::rename(comp6 = SleepMedicines)
 
 #comp7
-psqi2 <- psqi2 %>% 
+psqi <- psqi %>% 
   dplyr::mutate(
     comp7 = dplyr::case_when(
       (StayingAwake + EnoughEnthusiasm) %in% c(0) ~ 0,
@@ -727,54 +779,32 @@ psqi2 <- psqi2 %>%
   )
 
 #TotalComp
-psqi2 <- psqi2 %>% 
+psqi <- psqi %>% 
   dplyr::mutate(TotalScore = comp1 + comp2 + comp3 + comp4 + comp5 + comp6 + comp7)
 
 #score > 5 is "poor sleep"
-psqi2 <- psqi2 %>%
+psqi <- psqi %>%
   dplyr::mutate(SleepDisturbance = if_else(TotalScore <= 5, "No", "Yes"))
 
-#tidy psqi2}
-psqi2 <- psqi2 %>% dplyr::select(-(7:35))
+#tidy psqi}
+psqi <- psqi %>% dplyr::select(-(7:35))
 
 # SleepDisturbance as a factor
 
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     SleepDisturbance = factor(SleepDisturbance, levels = c("No", "Yes"))
   )
 
-# IBD control scores
-psqi2 %<>%
-  dplyr::left_join(
-    IBD_C %>% dplyr::select(
-      ParticipantNo,
-      control_score,
-      OverallControl,
-      control_8,
-      control_grouped,
-      vas_control
-    ),
-    by = "ParticipantNo"
-  )
-
-#change control_grouped and vas_control from character into factors
-psqi2 %<>% 
-  dplyr::mutate(control_grouped = factor(control_grouped))
-
-psqi2 %<>% 
-  dplyr::mutate(vas_control = factor(vas_control))
-
-
 # Age in decades
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     age_decade = age/10
   )
 
 
 # FC maximum detectable value is 1250
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     FC = dplyr::case_when(
       FC > 1250 ~ 1250,
@@ -783,10 +813,40 @@ psqi2 %<>%
   )
 
 # Log transform FC due to extreme positive skew
-psqi2 %<>%
+psqi %<>%
   dplyr::mutate(
     FC = log(FC)
   )
+
+```
+
+## Missingness
+
+```{r}
+# Visualise missingness
+
+data_vis_missingness <- psqi %>%
+  # Select relevant variables
+  dplyr::select(
+    diagnosis,
+    age,
+    Sex,
+    IMD,
+    FC,
+    flare_group,
+    OverallControl,
+    Smoke,
+    SiteNo,
+    SleepDisturbance
+  )
+
+# Number of missing values per variable
+data_vis_missingness %>%
+  gg_miss_var()
+
+# Pairwise missingness
+data_vis_missingness %>%
+  ggmice::plot_pattern(rotate = TRUE)
 
 ```
 
@@ -796,7 +856,7 @@ psqi2 %<>%
 
 ```{r}
 
-data_baseline <- psqi2
+data_baseline <- psqi
 
 # Independent variables
 independent = c('diagnosis2',
@@ -873,7 +933,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and UC patients
-data_baseline_uc <- psqi2 %>%
+data_baseline_uc <- psqi %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
 # Independent variables
@@ -943,7 +1003,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and CD patients
-data_baseline_cd <- psqi2 %>%
+data_baseline_cd <- psqi %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is SleepDisturbance
@@ -1007,9 +1067,9 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Survival data
-# Join HADS with flare data
+# Join psqi with flare data
 # Patient reported
-data_survival_soft <- psqi2 %>% dplyr::inner_join(
+data_survival_soft <- psqi %>% dplyr::inner_join(
   flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
   by = 'ParticipantNo'
 ) %>%
@@ -1025,7 +1085,7 @@ data_survival_soft_cd <- data_survival_soft %>%
 
 
 # Hard flares
-data_survival_hard <- psqi2 %>% dplyr::inner_join(
+data_survival_hard <- psqi %>% dplyr::inner_join(
   flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
   by = 'ParticipantNo'
 ) %>%

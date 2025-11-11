@@ -58,6 +58,8 @@ library(finalfit)
 
 library(mice)
 library(splines)
+library(naniar)
+library(ggmice)
 
 ```
 
@@ -476,20 +478,11 @@ demographics <- read.xlsx(paste0(
 
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 
-ffq <- read.xlsx(
-  paste0(
-    prefix,
-    "predicct ffq_nutrientfood groupDQI all foods_data (n1092)Nov2022.",
-    "xlsx"
-  )
-)
-
 all_flares <- read.xlsx(paste0(flare.dir, "all-flares.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
 smoking <- readRDS(paste0(chiara, "smoking.rds"))
-demo_uc <- readRDS(paste0(outdir, "demo-uc.RDS"))
-demo_cd <- readRDS(paste0(outdir, "demo-cd.RDS"))
+IMD <- readRDS(paste0(chiara, "IMD.rds"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
@@ -552,10 +545,6 @@ exercise <- exercise %>%
     IBD %>% dplyr::select(ParticipantNo, FlaresInPastYear)
     )
 
-# 7 patients removed with missing data on flares
-exercise <- exercise %>%
-  filter(!is.na(FlaresInPastYear))
-
 # create flare groups
 exercise <- exercise %>%
   mutate(flare_group = ifelse(FlaresInPastYear == 0,
@@ -573,12 +562,56 @@ exercise %<>%
   )
 ))
 
-# Add FC data 
-exercise <- exercise %>%
+# FC data
+exercise <- exercise %>% 
   dplyr::left_join(
-    demo %>% select(ParticipantNo, FC, cat, Smoke, IMD),
-    by = 'ParticipantNo'
-    ) 
+    demo %>% dplyr::select(ParticipantNo, FC, cat), 
+    by = "ParticipantNo")
+
+# Add smoking
+exercise %<>% 
+  dplyr::left_join(
+    smoking %>% dplyr::select(ParticipantNo, Smoke), 
+    by = "ParticipantNo")
+
+# Smoke as a factor
+exercise %<>%
+  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
+  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
+
+# Add IMD
+exercise %<>% 
+  dplyr::left_join(
+    IMD, 
+    by = "ParticipantNo") 
+
+# IMD as a factor
+exercise %<>%
+  dplyr::mutate(
+    IMD = as.factor(IMD)
+  ) 
+
+# IBD control scores
+exercise %<>%
+  dplyr::left_join(
+    IBD_C %>% dplyr::select(
+      ParticipantNo,
+      control_score,
+      OverallControl,
+      control_8,
+      control_grouped,
+      vas_control
+    ),
+    by = "ParticipantNo"
+  )
+
+#change control_grouped and vas_control from character into factors
+exercise %<>% 
+  dplyr::mutate(control_grouped = factor(control_grouped))
+
+exercise %<>% 
+  dplyr::mutate(vas_control = factor(vas_control))
+
 
 # Tidy - find and exclude if NA in VigorousWork, ModerateWork, WalkBicycle,
 # VigrorousSport, and ModerateSport - Nobody removed
@@ -813,27 +846,6 @@ exercise %<>%
 exercise <- exercise %>% dplyr::filter(ExerciseMins < 6720)
 
 
-# IBD control scores
-exercise %<>%
-  dplyr::left_join(
-    IBD_C %>% dplyr::select(
-      ParticipantNo,
-      control_score,
-      OverallControl,
-      control_8,
-      control_grouped,
-      vas_control
-    ),
-    by = "ParticipantNo"
-  )
-
-#change control_grouped and vas_control from character into factors
-exercise %<>% 
-  dplyr::mutate(control_grouped = factor(control_grouped))
-
-exercise %<>% 
-  dplyr::mutate(vas_control = factor(vas_control))
-
 
 # Age in decades
 exercise %<>%
@@ -858,6 +870,37 @@ exercise %<>%
   )
 
 ```
+
+## Missingness
+
+```{r}
+# Visualise missingness
+
+data_vis_missingness <- exercise %>%
+  # Select relevant variables
+  dplyr::select(
+    diagnosis,
+    age,
+    Sex,
+    IMD,
+    FC,
+    flare_group,
+    OverallControl,
+    Smoke,
+    SiteNo,
+    MinimumExercise
+  )
+  
+# Number of missing values per variable
+data_vis_missingness %>%
+  gg_miss_var()
+
+# Pairwise missingness
+data_vis_missingness %>%
+  ggmice::plot_pattern(rotate = TRUE)
+
+```
+
 
 ## Baseline Analysis
 
@@ -1076,7 +1119,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Survival data
-# Join HADS with flare data
+# Join exercise with flare data
 # Patient reported
 data_survival_soft <- exercise %>% dplyr::inner_join(
   flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),

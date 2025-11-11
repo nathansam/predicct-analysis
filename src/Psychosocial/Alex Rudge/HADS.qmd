@@ -56,6 +56,8 @@ library(finalfit)
 
 library(mice)
 library(splines)
+library(naniar)
+library(ggmice)
 ```
 
 ## Helper functions
@@ -690,13 +692,6 @@ hads %<>%
     FC = log(FC)
   )
 
-
-# Remove missing HADS scores
-hads %<>%
-  dplyr::filter(
-    
-  )
-
 # Filter missing hads scores - 7 anxiety, 6 depression due to not answering all the questions
 # hads %>%
 #   dplyr::group_by(hads_type) %>%
@@ -738,11 +733,7 @@ data_vis_missingness %>%
 data_vis_missingness %>%
   ggmice::plot_pattern(rotate = TRUE)
 
-# FC, Smoke and IMD are often missing together
-
 ```
-
-
 
 ## Baseline Analysis
 

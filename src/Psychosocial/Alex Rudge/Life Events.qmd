@@ -60,6 +60,8 @@ library(finalfit)
 
 library(mice)
 library(splines)
+library(naniar)
+library(ggmice)
 ```
 
 Helper functions
@@ -467,8 +469,9 @@ if (file.exists("/.dockerenv")) {
 lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
+smoking <- readRDS(paste0(chiara, "smoking.rds"))
+IMD <- readRDS(paste0(chiara, "IMD.rds"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
-QOL <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
@@ -488,11 +491,6 @@ lifeevents <- lifeevents %>%
   dplyr::left_join(
     demographics %>% select(ParticipantNo, Sex, diagnosis, age),
     by = 'ParticipantNo')
-
-
-# Exclude missing life events (these patients simply did not fill out the questionnaire)
-lifeevents <- lifeevents %>% 
-  dplyr::filter(!is.na(AnyLifeEvents))
 
 # Age
 lifeevents %<>% dplyr::filter(age >= 18)
@@ -555,8 +553,31 @@ lifeevents %<>%
 # add FC data
 lifeevents <- lifeevents %>% 
   dplyr::left_join(
-    demo %>% dplyr::select(ParticipantNo, FC, cat, Biologic, Smoke, IMD),
+    demo %>% dplyr::select(ParticipantNo, FC, cat),
     by = "ParticipantNo")
+
+# Add smoking
+lifeevents %<>% 
+  dplyr::left_join(
+    smoking %>% dplyr::select(ParticipantNo, Smoke), 
+    by = "ParticipantNo")
+
+# Smoke as a factor
+lifeevents %<>%
+  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
+  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
+
+# Add IMD
+lifeevents %<>% 
+  dplyr::left_join(
+    IMD, 
+    by = "ParticipantNo") 
+
+# IMD as a factor
+lifeevents %<>%
+  dplyr::mutate(
+    IMD = as.factor(IMD)
+  )
 
 
 # IBD control scores
@@ -603,6 +624,10 @@ lifeevents %<>%
     FC = log(FC)
   )
 
+
+# Exclude missing life events (these patients simply did not fill out the questionnaire)
+lifeevents <- lifeevents %>% 
+  dplyr::filter(!is.na(AnyLifeEvents))
 ```
 
 ```{r}
@@ -657,6 +682,36 @@ lifeevents_counts %>%
   xlab("Count") +
   ylab("Life Event") +
   theme_minimal()
+```
+
+## Missingness
+
+```{r}
+# Visualise missingness
+
+data_vis_missingness <- lifeevents %>%
+  # Select relevant variables
+  dplyr::select(
+    diagnosis,
+    age,
+    Sex,
+    IMD,
+    FC,
+    flare_group,
+    OverallControl,
+    Smoke,
+    SiteNo,
+    AnyLifeEvents
+  )
+  
+# Number of missing values per variable
+data_vis_missingness %>%
+  gg_miss_var()
+
+# Pairwise missingness
+data_vis_missingness %>%
+  ggmice::plot_pattern(rotate = TRUE)
+
 ```
 
 ## Baseline Analysis
@@ -876,7 +931,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Survival data
-# Join HADS with flare data
+# Join lifeevents with flare data
 # Patient reported
 data_survival_soft <- lifeevents %>% dplyr::inner_join(
   flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
