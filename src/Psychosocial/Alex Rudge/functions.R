@@ -17,13 +17,9 @@ summon_statistical_test <- function(data, dependent, independent) {
     .x = independent,
     .y = dependent,
     .f = function(.x, .y) {
-      
       # Remove NA
       data %<>%
-        dplyr::filter(
-          !is.na(.x),
-          !is.na(.y)
-        )
+        dplyr::filter(!is.na(!!sym(.x)), !is.na(!!sym(.y)))
       
       x <- data %>%
         dplyr::pull(.x)
@@ -34,19 +30,36 @@ summon_statistical_test <- function(data, dependent, independent) {
       # Check if x is continuous (numeric) or not
       continuous_flag <- is.numeric(x)
       
-      # If continuous, use a Wilcox/Mann Whitney
-      if (continuous_flag) {
+      # If continuous, use a Wilcox/Mann Whitney if y has 2 levels
+      # or Kruskal Wallis if >2
+      n_levels_y <- levels(y) %>% length()
+      
+      if (continuous_flag & (n_levels_y <= 2)) {
+        # Wilcoxon
+        
         # Formula as score ~ group
         test_formula <- as.formula(paste0(.x, " ~ ", .y))
         
         wilcox_test(data, formula = test_formula) %>%
+          # Calculate n for consistency with kruskal_test
+          dplyr::mutate(n = n1 + n2) %>%
           # Don't need the adjusted p values as we adjust ourselves in a second
-          dplyr::select(-tidyselect::any_of(c('.y.', 'p.adj', 'p.adj.signif'))) %>%
-          dplyr::mutate(independent = .x,
-                        dependent = .y,
+          dplyr::select(-tidyselect::any_of(c('.y.', 'group1', 'group2', 'n1', 'n2', 'p.adj', 'p.adj.signif'))) %>%
+          dplyr::mutate(x = .x,
+                        y = .y,
                         method = 'Wilcox test')
         
-      } else { # Otherwise use categorical tests
+      } else if (continuous_flag & (n_levels_y > 2)) {
+        
+        # Formula as score ~ group
+        test_formula <- as.formula(paste0(.x, " ~ ", .y))
+        
+        kruskal_test(data, formula = test_formula) %>%
+          dplyr::select(-.y.) %>%
+          dplyr::mutate(x = .x, y = .y)
+        
+      } else {
+        # Otherwise use categorical tests
         
         # Check whether we need a Fisher test
         fisher_flag <- data %>%
@@ -60,14 +73,14 @@ summon_statistical_test <- function(data, dependent, independent) {
         if (fisher_flag) {
           # If one of the counts is < 5 use Fisher exact test
           fisher_test(table(x, y), simulate.p.value = TRUE, B = 1e5) %>%
-            dplyr::mutate(independent = .x,
-                          dependent = .y,
+            dplyr::mutate(x = .x,
+                          y = .y,
                           method = 'Fisher\'s exact test')
           
         } else {
           # Otherwise use chi square
           chisq_test(x = x, y = y) %>%
-            dplyr::mutate(independent = .x, dependent = .y)
+            dplyr::mutate(x = .x, y = .y)
         }
       }
     }
@@ -84,17 +97,9 @@ summon_statistical_test <- function(data, dependent, independent) {
         .default = 'ns'
       )
     ) %>%
-    # Calculate n for Wilcox tests
-    dplyr::mutate(n = dplyr::coalesce(n, n1 + n2)) %>%
-    # Rename group 1 and group2
-    dplyr::rename(
-      independent_group1 = group1, 
-      independent_group2 = group2,
-      n_group1 = n1,
-      n_group2 = n2) %>%
     # Reorder columns
     dplyr::select(
-      dependent, independent, method, independent_group1, independent_group2, n, n_group1, n_group2, statistic, df, p, p.adjust, p.adjust.signif
+      y, x, n, statistic, df, p, p.adjust, p.adjust.signif, method
     )
   
 }
@@ -117,11 +122,8 @@ summon_baseline_plot_discrete <- function(data, stat_tests, dependent, independe
   
   # Stat_tests is a dataframe from summon_statistical_test to get p-value info
   
-  # Rename independent for filtering
-  indep <- independent
-  
   label <- stat_tests %>%
-    dplyr::filter(independent == indep) %>%
+    dplyr::filter(x == independent) %>%
     dplyr::pull(p.adjust) %>%
     {paste0("Adjusted p-value: ", .)}
   
@@ -153,17 +155,10 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
   # Continuous independent variable
   
   # Stat_tests is a dataframe from summon_statistical_test to get p-value info
-  
-  # Label for the plot needs multiple tests on it
-  # Rename independent for filtering
-  indep <- independent
-
   label <- stat_tests %>%
-    dplyr::filter(independent == indep) %>%
-    dplyr::mutate(label = paste0(independent_group1, " vs ", independent_group2, ": ", p.adjust)) %>%
-    dplyr::pull(label) %>%
-    paste0(., collapse="\n") %>%
-    {paste0("Adjusted p-values:\n", .)}
+    dplyr::filter(x == independent) %>%
+    dplyr::pull(p.adjust) %>%
+    {paste0("Adjusted p-value: ", .)}
   
   # Plot
   data %>%
