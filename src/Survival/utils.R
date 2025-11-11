@@ -44,6 +44,14 @@ set_paths <- function() {
   return(paths)
 }
 
+# Helper function to save and include diagnostic plots
+save_and_include_plot <- function(plot, path_base, plot_name) {
+  plot_path <- paste0(path_base, "-", plot_name)
+  ggsave(paste0(plot_path, ".png"), plot, width = 8, height = 6)
+  ggsave(paste0(plot_path, ".pdf"), plot, width = 8, height = 6)
+  print(knitr::include_graphics(paste0(plot_path, ".png")))
+}
+
 # Function to summarize Cox models
 cox_summary <- function(fit, plot_base_path = NULL) {
   cat("Cox model summary:\n")
@@ -76,19 +84,13 @@ cox_summary <- function(fit, plot_base_path = NULL) {
 
   if (!is.null(plot_base_path)) {
     p_dfbeta <- ggcoxdiagnostics(fit, type = "dfbeta")
-    dfbeta_path <- paste0(plot_base_path, "-dfbeta")
-    ggsave(paste0(dfbeta_path, ".png"), p_dfbeta, width = 8, height = 6)
-    ggsave(paste0(dfbeta_path, ".pdf"), p_dfbeta, width = 8, height = 6)
-    print(knitr::include_graphics(paste0(dfbeta_path, ".png")))
+    save_and_include_plot(p_dfbeta, plot_base_path, "dfbeta")
   } else {
     print(ggcoxdiagnostics(fit, type = "dfbeta"))
   }
   if (!is.null(plot_base_path)) {
     p_martingale <- ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE)
-    martingale_path <- paste0(plot_base_path, "-martingale")
-    ggsave(paste0(martingale_path, ".png"), p_martingale, width = 8, height = 6)
-    ggsave(paste0(martingale_path, ".pdf"), p_martingale, width = 8, height = 6)
-    print(knitr::include_graphics(paste0(martingale_path, ".png")))
+    save_and_include_plot(p_martingale, plot_base_path, "martingale")
   } else {
     print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
   }
