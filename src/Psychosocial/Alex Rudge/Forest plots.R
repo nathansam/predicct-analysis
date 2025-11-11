@@ -216,7 +216,7 @@ ggsave(
 
 # soft cd
 ggsave(
-  filename = paste0(filepath_save, "HR forest plot soft cd cc", suffix_save),
+  filename = paste0(filepath_save, "HR forest plot soft cd", suffix_save),
   plot = plot_hr_soft_cd,
   width = 10,
   height = 10,
