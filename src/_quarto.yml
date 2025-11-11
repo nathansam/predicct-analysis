@@ -22,6 +22,7 @@ project:
     - "Survival/FC\ continuous/Diet.qmd"
     - "documents.qmd"
   post-render:
+    - "Scripts/move_plots.R"
     - "Scripts/arrangeplots.R"
     - "Scripts/forest.R"
     - "Scripts/generate_tables.R"
@@ -51,12 +52,6 @@ format:
     embed-resources: false
     mainfont: "Mulish"
     monofont: "Noto Sans Mono"
-  pdf:
-    toc: true
-    toc-depth: 5
-    fig_caption: true
-    latex-engine: xelatex
-    number-sections: false
 website:
   title: "PREdiCCt analyses"
   twitter-card:

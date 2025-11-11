@@ -78,8 +78,8 @@ fit.me <- coxph(
 cd.clin.forest <- rbind(cd.clin.forest, get_HR(fit.me, "Age"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/demographics/age.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/demographics/age"))
 ```
 
 #### Objective flare
@@ -110,8 +110,8 @@ fit.me <- coxph(
 cd.hard.forest <- rbind(cd.hard.forest, get_HR(fit.me, "Age"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/demographics/age.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/demographics/age"))
 ```
 
 :::
@@ -153,8 +153,8 @@ fit.me <- coxph(
 uc.clin.forest <- rbind(uc.clin.forest, get_HR(fit.me, "Age"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/soft-flare/demographics/age.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/demographics/age"))
 ```
 
 #### Objective flare
@@ -185,8 +185,8 @@ fit.me <- coxph(
 uc.hard.forest <- rbind(uc.hard.forest, get_HR(fit.me, "Age"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/hard-flare/demographics/age.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/demographics/age"))
 ```
 
 :::
@@ -216,7 +216,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/soft-flare/demographics/bmi"
 )
 
-print(p, newpage = FALSE)
+knitr::include_graphics("plots/cd/soft-flare/demographics/bmi.png")
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -252,7 +252,7 @@ p <- generate_survival_plot(
   plot_path = "plots/cd/hard-flare/demographics/bmi"
 )
 
-print(p, newpage = FALSE)
+knitr::include_graphics("plots/cd/hard-flare/demographics/bmi.png")
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -294,7 +294,7 @@ p <- generate_survival_plot(
   plot_path = "plots/uc/soft-flare/demographics/bmi"
 )
 
-print(p, newpage = FALSE)
+knitr::include_graphics("plots/uc/soft-flare/demographics/bmi.png")
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -328,7 +328,7 @@ p <- generate_survival_plot(
   plot_path = "plots/uc/hard-flare/demographics/bmi"
 )
 
-print(p, newpage = FALSE)
+knitr::include_graphics("plots/uc/hard-flare/demographics/bmi.png")
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~

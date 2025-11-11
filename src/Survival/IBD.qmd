@@ -74,8 +74,8 @@ fit.me <- coxph(
 cd.clin.forest <- rbind(cd.clin.forest, get_HR(fit.me, "control_8"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/control-8.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/control-8"))
 ```
 
 #### Objective flare
@@ -108,8 +108,8 @@ fit.me <- coxph(
 cd.hard.forest <- rbind(cd.hard.forest, get_HR(fit.me, "control_8"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/control-8.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/control-8"))
 ```
 
 :::
@@ -153,8 +153,8 @@ fit.me <- coxph(
 uc.clin.forest <- rbind(uc.clin.forest, get_HR(fit.me, "control_8"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/soft-flare/ibd/control-8.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/ibd/control-8"))
 ```
 
 #### Objective flare
@@ -187,8 +187,8 @@ fit.me <- coxph(
 uc.hard.forest <- rbind(uc.hard.forest, get_HR(fit.me, "control_8"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/hard-flare/ibd/control-8.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/ibd/control-8"))
 ```
 
 :::
@@ -230,8 +230,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/control-vas.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/control-vas"))
 ```
 
 #### Objective flare
@@ -262,8 +262,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/control-vas.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/control-vas"))
 ```
 
 :::
@@ -303,8 +303,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/soft-flare/ibd/control-vas.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/ibd/control-vas"))
 ```
 
 #### Objective flare
@@ -335,8 +335,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/hard-flare/ibd/control-vas.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/ibd/control-vas"))
 ```
 
 :::
@@ -388,8 +388,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/biologic.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/biologic"))
 ```
 
 #### Objective flare
@@ -420,8 +420,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/biologic.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/biologic"))
 ```
 
 :::
@@ -471,8 +471,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/soft-flare/ibd/biologic.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/ibd/biologic"))
 ```
 
 #### Objective flare
@@ -503,8 +503,8 @@ fit.me <- coxph(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/hard-flare/ibd/biologic.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/ibd/biologic"))
 ```
 
 :::
@@ -572,8 +572,8 @@ fit.me <- coxph(
 cd.clin.forest <- rbind(cd.clin.forest, get_HR(fit.me, "SurgeryYes"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/surgery.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/surgery"))
 ```
 
 #### Objective flare
@@ -606,8 +606,8 @@ fit.me <- coxph(
 cd.hard.forest <- rbind(cd.hard.forest, get_HR(fit.me, "SurgeryYes"))
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/surgery.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/surgery"))
 ```
 
 :::
@@ -650,8 +650,8 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/location.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/location"))
 ```
 
 #### Objective flare
@@ -688,8 +688,8 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/location.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/location"))
 ```
 
 :::
@@ -731,8 +731,8 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/l4.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/l4"))
 ```
 
 #### Objective flare
@@ -769,8 +769,8 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/l4.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/l4"))
 ```
 
 :::
@@ -813,8 +813,8 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/behaviour.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/behaviour"))
 ```
 
 #### Objective flare
@@ -851,8 +851,8 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/behaviour.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/behaviour"))
 ```
 
 :::
@@ -895,8 +895,8 @@ cd.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/soft-flare/ibd/perinal.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/ibd/perinal"))
 ```
 
 #### Objective flare
@@ -933,8 +933,8 @@ cd.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/cd/hard-flare/ibd/perinal.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/ibd/perinal"))
 ```
 
 :::
@@ -994,8 +994,8 @@ uc.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/soft-flare/ibd/extent.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/ibd/extent"))
 ```
 
 #### Objective flare
@@ -1032,8 +1032,8 @@ uc.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/hard-flare/ibd/extent.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/ibd/extent"))
 ```
 
 :::
@@ -1084,8 +1084,8 @@ uc.clin.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/soft-flare/ibd/mayo.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/ibd/mayo"))
 ```
 
 #### Objective flare
@@ -1122,8 +1122,8 @@ uc.hard.forest <- rbind(
 )
 
 # Display plot and model summary
-analysis_result$plot
-invisible(cox_summary(fit.me))
+knitr::include_graphics("plots/uc/hard-flare/ibd/mayo.png")
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/ibd/mayo"))
 ```
 
 :::

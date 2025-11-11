@@ -73,7 +73,7 @@ p <- p1 / p2 / p3 +
 
 ggsave("plots/response-rate.pdf", p, width = 7, height = 15)
 ggsave("plots/response-rate.png", p, width = 7, height = 15)
-p
+knitr::include_graphics("plots/response-rate.png")
 ```
 
 ## Primary outcome: First patient-reported flare
@@ -165,7 +165,11 @@ p <- create_km_flare_plot(
   xlab = "Time from study recruitment (days)",
   save_path = paste0(paths$outdir, "flare-soft")
 )
+# Save plot to PNG for display
+png("plots/flare-soft.png", width = 7, height = 7, units = "in", res = 300)
 print(p, newpage = FALSE)
+dev.off()
+knitr::include_graphics("plots/flare-soft.png")
 ```
 
 ## Secondary outcome: first objective flare
@@ -192,7 +196,11 @@ p <- create_km_flare_plot(
   palette = c("#4F6D7A", "#02C3BD"),
   xlab = "Time from study recruitment (days)"
 )
+# Save plot to PNG for display
+png("plots/flare-hard-cutoff.png", width = 7, height = 7, units = "in", res = 300)
 print(p, newpage = FALSE)
+dev.off()
+knitr::include_graphics("plots/flare-hard-cutoff.png")
 ```
 
 
@@ -236,7 +244,11 @@ p <- create_km_flare_plot(
   xlab = "Time from study recruitment (days)",
   save_path = paste0(paths$outdir, "flare-hard")
 )
+# Save plot to PNG for display
+png("plots/flare-hard-diag.png", width = 7, height = 7, units = "in", res = 300)
 print(p, newpage = FALSE)
+dev.off()
+knitr::include_graphics("plots/flare-hard-diag.png")
 ```
 
 
@@ -297,7 +309,11 @@ cairo_pdf("plots/flare-comparison.pdf", width = 7, height = 7)
 print(p, newpage = FALSE)
 invisible(dev.off())
 
+# Save plot to PNG for display
+png("plots/flare-comparison.png", width = 7, height = 7, units = "in", res = 300)
 print(p, newpage = FALSE)
+dev.off()
+knitr::include_graphics("plots/flare-comparison.png")
 ```
 
 
