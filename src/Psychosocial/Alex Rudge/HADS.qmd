@@ -477,10 +477,7 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 ```{r}
 # Exclude cases with missing ParticipantId
 # 60 removed - but they are all completely empty rows.
-hads <- hads %>%
-  filter(!is.na(ParticipantId))
-
-health <- health %>%
+data_hads <- hads %>%
   filter(!is.na(ParticipantId))
 
 demographics <- demographics %>% 
@@ -490,13 +487,13 @@ IBD <- IBD %>%
   filter(!is.na(ParticipantId))
 
 # join demographics
-hads_with_demographics <- hads %>%
+data_hads %<>%
   dplyr::left_join(demographics %>%
                      dplyr::select(ParticipantNo, Sex, age, diagnosis),
                    by = "ParticipantNo")
 
 # Convert diagnosis column to factor with labels
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::mutate(
     diagnosis2 = dplyr::case_when(
       diagnosis == 1 ~ 1,
@@ -513,7 +510,7 @@ hads_with_demographics %<>%
     )
   )
 
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::mutate(Sex = factor(
     Sex,
     levels = c(1, 2),
@@ -523,29 +520,20 @@ hads_with_demographics %<>%
 
 #exclude participants <17, 53 participants excluded, tot 1847
 
-n_underage <- hads_with_demographics %>%
+n_underage <- data_hads %>%
   dplyr::filter(age <= 17) %>%
   nrow()
 
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::filter(age > 17)
 
 
 #delete missing data, 9 participants, total 1838
 
-n_missing_hads <- hads_with_demographics %>%
-  dplyr::filter(
-    dplyr::if_any(.cols = 7:20, .fns = is.na)
-  ) %>%
-  nrow()
 
-hads_with_demographics %<>%
-  dplyr::filter(
-    !dplyr::if_any(.cols = 7:20, .fns = is.na)
-  )
 
 # Rescale
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::mutate(
     dplyr::across(
       .cols = FeelTense:CanEnjoyBookTV,
@@ -553,7 +541,7 @@ hads_with_demographics %<>%
   )
   
 #correcting inversely coded HADS
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::mutate(
     dplyr::across(
       .cols = c("FeelTense", 
@@ -569,7 +557,7 @@ hads_with_demographics %<>%
   )
 
 #anxiety HADS composite score
-hads_with_demographics %<>% 
+data_hads %<>% 
   dplyr::mutate(anxiety_hads = FeelTense + 
            FrightenedFeelingSomethingAwful + 
            WorryingThoughts +
@@ -579,7 +567,7 @@ hads_with_demographics %<>%
            SuddenFeelingsPanic)
 
 #depression HADS composite score
-hads_with_demographics %<>% 
+data_hads %<>% 
   dplyr::mutate(depression_hads = EnjoyThings +
            CanLaugh +
            FeelCheerful +
@@ -589,12 +577,12 @@ hads_with_demographics %<>%
            CanEnjoyBookTV)
 
 #remove breakdown hads columns
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::select(-c(FeelTense:CanEnjoyBookTV))
 
 
 #create age groups
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::mutate(AgeGroup = cut(
     age,
     breaks = c(18, 24, 34, 44, 54, 65, Inf),
@@ -603,44 +591,44 @@ hads_with_demographics %<>%
   ))
 
 
-#add FC data and exclude missing FC
-hads_with_demographics <- hads_with_demographics %>% 
+#add FC data
+data_hads <- data_hads %>% 
   dplyr::left_join(
     demo %>% dplyr::select(ParticipantNo, FC, cat, IMD, Smoke), 
     by = "ParticipantNo")
 
 # Smoke as a factor
-hads_with_demographics %<>%
+data_hads %<>%
   dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
   dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
 
 
 #Join flare data
-hads_with_demographics <- hads_with_demographics %>% 
+data_hads <- data_hads %>% 
   dplyr::left_join(
     IBD %>% select(ParticipantNo, FlaresInPastYear), 
     by = "ParticipantNo"
     )
 
 #create flare groups
-hads_with_demographics <- hads_with_demographics %>%
+data_hads <- data_hads %>%
   dplyr::mutate(
     flare_group = ifelse(FlaresInPastYear == 0, "No flares", "1 or More Flares")
     )
 
-#make flares into levels
-hads_with_demographics %<>%
+# make flares into levels
+data_hads %<>%
   dplyr::mutate(flare_group = factor(flare_group, levels = c("No flares", "1 or More Flares")))
 
-#create hads_for_analysis which has new variable 'hads_type' for anxiety and depression hads
-hads_for_analysis <- hads_with_demographics %>%
+# Pivot longer
+data_hads <- data_hads %>%
   tidyr::pivot_longer(
     cols = c(anxiety_hads, depression_hads),
     names_to = "hads_type", values_to = "hads_score"
   ) 
 
 #score groups
-hads_for_analysis <- hads_for_analysis %>% 
+data_hads <- data_hads %>% 
   mutate(
     score_group = cut(
       hads_score, 
@@ -650,7 +638,7 @@ hads_for_analysis <- hads_for_analysis %>%
   )
 
 # IBD control scores
-hads_for_analysis %<>%
+data_hads %<>%
   dplyr::left_join(
     IBD_C %>% dplyr::select(
       ParticipantNo,
@@ -664,22 +652,22 @@ hads_for_analysis %<>%
   )
 
 #change control_grouped and vas_control from character into factors
-hads_for_analysis %<>% 
+data_hads %<>% 
   dplyr::mutate(control_grouped = factor(control_grouped))
 
-hads_for_analysis %<>% 
+data_hads %<>% 
   dplyr::mutate(vas_control = factor(vas_control))
 
 
 # Age in decades
-hads_for_analysis %<>%
+data_hads %<>%
   dplyr::mutate(
     age_decade = age/10
   )
 
 
 # FC maximum detectable value is 1250
-hads_for_analysis %<>%
+data_hads %<>%
   dplyr::mutate(
     FC = dplyr::case_when(
       FC > 1250 ~ 1250,
@@ -688,12 +676,64 @@ hads_for_analysis %<>%
   )
 
 # Log transform FC due to extreme positive skew
-hads_for_analysis %<>%
+data_hads %<>%
   dplyr::mutate(
     FC = log(FC)
   )
 
+
+# Remove missing HADS scores
+data_hads %<>%
+  dplyr::filter(
+    
+  )
+
+# Filter missing hads scores - 7 anxiety, 6 depression due to not answering all the questions
+# data_hads %>%
+#   dplyr::group_by(hads_type) %>%
+#   dplyr::summarise(sum(is.na(score_group)))
+
+data_hads %<>%
+  dplyr::filter(!is.na(score_group))
+
 ```
+
+## Missingness
+
+```{r}
+# Visualise missingness
+# Only need to do it for one of anxiety and depression due to repeated participants
+
+data_vis_missingness <- data_hads %>%
+  # Select anxiety hads
+  dplyr::filter(hads_type == 'anxiety_hads') %>%
+  # Select relevant variables
+  dplyr::select(
+    diagnosis,
+    age,
+    Sex,
+    IMD,
+    FC,
+    flare_group,
+    OverallControl,
+    Smoke,
+    SiteNo,
+    score_group
+  )
+  
+# Number of missing values per variable
+data_vis_missingness %>%
+  gg_miss_var()
+
+# Pairwise missingness
+data_vis_missingness %>%
+  ggmice::plot_pattern(rotate = TRUE)
+
+# FC, Smoke and IMD are often missing together
+
+```
+
+
 
 ## Baseline Analysis
 
@@ -703,7 +743,7 @@ hads_for_analysis %<>%
 
 ```{r}
 # Select anxiety data
-data_baseline_anxiety <- hads_for_analysis %>%
+data_baseline_anxiety <- data_hads %>%
   dplyr::filter(hads_type == 'anxiety_hads')
 
 # Independent variables
@@ -781,7 +821,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and UC patients
-data_baseline_anxiety_uc <- hads_for_analysis %>%
+data_baseline_anxiety_uc <- data_hads %>%
   dplyr::filter(hads_type == 'anxiety_hads') %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -852,7 +892,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select anxiety data and CD patients
-data_baseline_anxiety_cd <- hads_for_analysis %>%
+data_baseline_anxiety_cd <- data_hads %>%
   dplyr::filter(hads_type == 'anxiety_hads') %>%
   dplyr::filter(diagnosis2 == 'CD')
 
@@ -917,7 +957,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select depression data
-data_baseline_depression <- hads_for_analysis %>%
+data_baseline_depression <- data_hads %>%
   dplyr::filter(hads_type == 'depression_hads')
 
 # Independent variables
@@ -988,7 +1028,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select depression data and UC patients
-data_baseline_depression_uc <- hads_for_analysis %>%
+data_baseline_depression_uc <- data_hads %>%
   dplyr::filter(hads_type == 'depression_hads') %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -1051,7 +1091,7 @@ summon_baseline_plot_continuous(
 
 ```{r}
 # Select depression data and CD patients
-data_baseline_depression_cd <- hads_for_analysis %>%
+data_baseline_depression_cd <- data_hads %>%
   dplyr::filter(hads_type == 'depression_hads') %>%
   dplyr::filter(diagnosis2 == 'CD')
 
@@ -1111,7 +1151,7 @@ summon_baseline_plot_continuous(
 # Survival data
 # Join HADS with flare data
 # Patient reported
-data_survival_soft <- hads_for_analysis %>% dplyr::inner_join(
+data_survival_soft <- data_hads %>% dplyr::inner_join(
     flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
     by = 'ParticipantNo'
   ) %>%
@@ -1144,7 +1184,7 @@ data_survival_depression_soft_cd <- data_survival_depression_soft %>%
 
 
 # Hard flares
-data_survival_hard <- hads_for_analysis %>% dplyr::inner_join(
+data_survival_hard <- data_hads %>% dplyr::inner_join(
     flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
     by = 'ParticipantNo'
   ) %>%

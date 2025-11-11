@@ -1,6 +1,7 @@
 library(tidyverse)
 library(magrittr)
 library(naniar)
+library(ggmice)
 
 # Missingness
 
@@ -115,3 +116,7 @@ data_hads %<>%
 
 # Visualise missingness
 gg_miss_var(data_hads)
+
+ggmice::plot_pattern(data_hads, rotate = TRUE)
+
+ggmice::plot_corr(data_hads, rotate = TRUE)
