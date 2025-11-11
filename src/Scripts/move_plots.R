@@ -7,8 +7,9 @@ cat("Moving plots to docs/plots...\n")
 # Copy plots directory to docs
 src_plots <- "plots"
 
+
  if (file.exists("/docker")) {
-  dest_plots <- "temp/plots"
+  dest_plots <- "temp/Survival/plots"
  } else {
   dest_plots <- "../docs/plots"
  }

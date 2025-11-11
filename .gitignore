@@ -7,7 +7,7 @@
 src/plots
 _freeze
 *_cache
-plots
+/plots
 src/Baseline/*_files
 src/Survival/*_files
 WARP.md
