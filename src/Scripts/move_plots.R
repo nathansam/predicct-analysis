@@ -17,7 +17,8 @@ if (dir.exists(src_plots)) {
   # Copy all files recursively
   files <- list.files(src_plots, recursive = TRUE, full.names = TRUE)
   for (file in files) {
-    if (file.info(file)$isdir) next
+    finfo <- file.info(file)
+    if (is.null(finfo) || isTRUE(finfo$isdir)) next
     
     # Get relative path
     rel_path <- sub(paste0("^", src_plots, "/"), "", file)
