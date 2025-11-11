@@ -12,3 +12,7 @@ RUN install2.r \
 # Clean up
 RUN rm -rf /var/lib/apt/lists/*
 RUN rm -rf /tmp/downloaded_packages
+
+COPY ./docker/render render
+RUN chmod u+x render
+CMD ["./render"]

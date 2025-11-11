@@ -15,7 +15,3 @@ rm -rf docs/*
 cp -r temp/* docs
 
 
-
-quarto render --output-dir temp --to pdf
-rm -rf temp/index.html
-cp -r temp/* docs
