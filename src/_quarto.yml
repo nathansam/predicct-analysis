@@ -22,6 +22,7 @@ project:
     - "Survival/FC\ continuous/Diet.qmd"
     - "documents.qmd"
   post-render:
+    - "Scripts/move_plots.R"
     - "Scripts/arrangeplots.R"
     - "Scripts/forest.R"
     - "Scripts/generate_tables.R"
