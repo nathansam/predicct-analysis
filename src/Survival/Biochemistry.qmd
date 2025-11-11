@@ -77,7 +77,7 @@ cd.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/biochem/crp.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/biochem/crp"))
 ```
 
 #### Objective flare
@@ -114,7 +114,7 @@ cd.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/biochem/crp.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/biochem/crp"))
 ```
 
 :::
@@ -161,7 +161,7 @@ uc.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/biochem/crp.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/biochem/crp"))
 ```
 
 #### Objective flare
@@ -198,7 +198,7 @@ uc.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/biochem/crp.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/biochem/crp"))
 ```
 
 :::
@@ -247,7 +247,7 @@ cd.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/biochem/haemoglobin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/biochem/haemoglobin"))
 ```
 
 #### Objective flare
@@ -283,7 +283,7 @@ cd.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/biochem/haemoglobin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/biochem/haemoglobin"))
 ```
 
 :::
@@ -330,7 +330,7 @@ uc.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/biochem/haemoglobin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/biochem/haemoglobin"))
 ```
 
 #### Objective flare
@@ -366,7 +366,7 @@ uc.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/biochem/haemoglobin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/biochem/haemoglobin"))
 ```
 
 :::
@@ -415,7 +415,7 @@ cd.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/biochem/wcc.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/biochem/wcc"))
 ```
 
 #### Objective flare
@@ -452,7 +452,7 @@ cd.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/biochem/wcc.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/biochem/wcc"))
 ```
 
 :::
@@ -499,7 +499,7 @@ uc.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/biochem/wcc.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/biochem/wcc"))
 ```
 
 #### Objective flare
@@ -536,7 +536,7 @@ uc.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/biochem/wcc.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/biochem/wcc"))
 ```
 
 :::
@@ -590,7 +590,7 @@ cd.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/biochem/Platelets.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/biochem/Platelets"))
 ```
 
 #### Objective flare
@@ -627,7 +627,7 @@ cd.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/biochem/Platelets.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/biochem/Platelets"))
 ```
 
 :::
@@ -674,7 +674,7 @@ uc.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/biochem/Platelets.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/biochem/Platelets"))
 ```
 
 #### Objective flare
@@ -711,7 +711,7 @@ uc.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/biochem/Platelets.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/biochem/Platelets"))
 ```
 
 :::
@@ -760,7 +760,7 @@ cd.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/biochem/albumin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/biochem/albumin"))
 ```
 
 #### Objective flare
@@ -797,7 +797,7 @@ cd.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/biochem/albumin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/biochem/albumin"))
 ```
 
 :::
@@ -844,7 +844,7 @@ uc.clin.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/biochem/albumin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/biochem/albumin"))
 ```
 
 #### Objective flare
@@ -881,7 +881,7 @@ uc.hard.forest <- rbind(
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/biochem/albumin.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/biochem/albumin"))
 ```
 
 :::

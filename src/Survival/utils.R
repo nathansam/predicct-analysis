@@ -45,7 +45,7 @@ set_paths <- function() {
 }
 
 # Function to summarize Cox models
-cox_summary <- function(fit) {
+cox_summary <- function(fit, plot_base_path = NULL) {
   cat("Cox model summary:\n")
   fit %>%
     finalfit::fit2df(condense = FALSE) %>%
@@ -61,8 +61,6 @@ cox_summary <- function(fit) {
     ) %>%
     print()
 
-  cat("\nDiagnostics: \n\n")
-  cat("::: {.panel-tabset}\n\n")
   cat("###### Proportional hazards assumption test \n\n")
   cox.zph(fit)$table %>%
     knitr::kable(
@@ -76,13 +74,24 @@ cox_summary <- function(fit) {
     ) %>%
     print()
 
-  cat("\n###### DF betas \n")
-  print(ggcoxdiagnostics(fit, type = "dfbeta"))
-
-  cat("\n###### Martingale residuals \n")
-  print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
-
-  cat("\n:::")
+  if (!is.null(plot_base_path)) {
+    p_dfbeta <- ggcoxdiagnostics(fit, type = "dfbeta")
+    dfbeta_path <- paste0(plot_base_path, "-dfbeta")
+    ggsave(paste0(dfbeta_path, ".png"), p_dfbeta, width = 8, height = 6)
+    ggsave(paste0(dfbeta_path, ".pdf"), p_dfbeta, width = 8, height = 6)
+    print(knitr::include_graphics(paste0(dfbeta_path, ".png")))
+  } else {
+    print(ggcoxdiagnostics(fit, type = "dfbeta"))
+  }
+  if (!is.null(plot_base_path)) {
+    p_martingale <- ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE)
+    martingale_path <- paste0(plot_base_path, "-martingale")
+    ggsave(paste0(martingale_path, ".png"), p_martingale, width = 8, height = 6)
+    ggsave(paste0(martingale_path, ".pdf"), p_martingale, width = 8, height = 6)
+    print(knitr::include_graphics(paste0(martingale_path, ".png")))
+  } else {
+    print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+  }
   return()
 }
 
@@ -118,12 +127,12 @@ generate_survival_plot <- function(
     title = title,
     break.time.by = break_time_by
   )
-  
+
   # Close any existing graphics devices first
   while (dev.cur() > 1) {
     dev.off()
   }
-  
+
   # Save PDF with error handling
   tryCatch(
     {
@@ -139,7 +148,7 @@ generate_survival_plot <- function(
       warning(paste("cairo_pdf failed, used pdf() instead:", e$message))
     }
   )
-  
+
   # Ensure device is closed
   while (dev.cur() > 1) {
     dev.off()
@@ -157,7 +166,7 @@ generate_survival_plot <- function(
       warning(paste("Failed to save PNG:", e$message))
     }
   )
-  
+
   # Set proper file permissions
   Sys.chmod(paste0(plot_path, ".pdf"), mode = "0644", use_umask = FALSE)
   Sys.chmod(paste0(plot_path, ".png"), mode = "0644", use_umask = FALSE)
@@ -345,7 +354,7 @@ run_survival_analysis <- function(
   while (dev.cur() > 1) {
     dev.off()
   }
-  
+
   # Save PDF
   tryCatch(
     {
@@ -362,7 +371,7 @@ run_survival_analysis <- function(
       warning(paste("cairo_pdf failed, used pdf() instead:", e$message))
     }
   )
-  
+
   # Ensure device is closed before next save
   while (dev.cur() > 1) {
     dev.off()
@@ -386,7 +395,7 @@ run_survival_analysis <- function(
       warning(paste("Failed to save PNG:", e$message))
     }
   )
-  
+
   # Set proper file permissions (readable by all)
   Sys.chmod(paste0(plot_base_path, ".pdf"), mode = "0644", use_umask = FALSE)
   Sys.chmod(paste0(plot_base_path, ".png"), mode = "0644", use_umask = FALSE)

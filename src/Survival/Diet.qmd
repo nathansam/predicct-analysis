@@ -96,7 +96,7 @@ hrs <- broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/meat.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/meat"))
 ```
 
 #### Objective flare
@@ -136,7 +136,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/meat.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/meat"))
 ```
 :::
 
@@ -183,7 +183,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/meat.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/meat"))
 ```
 
 #### Objective flare
@@ -223,7 +223,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/meat.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/meat"))
 ```
 :::
 
@@ -268,7 +268,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/meat.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/meat"))
 ```
 
 #### Objective flare
@@ -305,7 +305,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/meat.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/meat"))
 ```
 :::
 
@@ -354,7 +354,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/meat_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/meat_overall"))
 ```
 
 #### Objective flare
@@ -395,7 +395,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/meat_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/meat_overall"))
 ```
 :::
 
@@ -442,7 +442,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/meat_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/meat_overall"))
 ```
 
 #### Objective flare
@@ -483,7 +483,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/meat_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/meat_overall"))
 ```
 :::
 
@@ -528,7 +528,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/meat_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/meat_overall"))
 ```
 
 #### Objective flare
@@ -566,7 +566,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/meat_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/meat_overall"))
 ```
 :::
 
@@ -616,7 +616,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/fish_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/fish_overall"))
 ```
 
 #### Objective flare
@@ -656,7 +656,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/fish_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/fish_overall"))
 ```
 :::
 
@@ -703,7 +703,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/fish_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/fish_overall"))
 ```
 
 #### Objective flare
@@ -743,7 +743,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/fish_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/fish_overall"))
 ```
 :::
 
@@ -788,7 +788,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/fish_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/fish_overall"))
 ```
 
 #### Objective flare
@@ -825,7 +825,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/fish_overall.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/fish_overall"))
 ```
 :::
 
@@ -876,7 +876,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/fibre.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/fibre"))
 ```
 
 #### Objective flare
@@ -917,7 +917,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/fibre.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/fibre"))
 ```
 :::
 
@@ -964,7 +964,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/fibre.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/fibre"))
 ```
 
 #### Objective flare
@@ -1005,7 +1005,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/fibre.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/fibre"))
 ```
 :::
 
@@ -1050,7 +1050,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/fibre.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/fibre"))
 ```
 
 #### Objective flare
@@ -1088,7 +1088,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/fibre.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/fibre"))
 ```
 :::
 
@@ -1139,7 +1139,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/pufa.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/pufa"))
 ```
 
 #### Objective flare
@@ -1179,7 +1179,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/pufa.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/pufa"))
 ```
 :::
 
@@ -1227,7 +1227,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/pufa.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/pufa"))
 ```
 
 #### Objective flare
@@ -1268,7 +1268,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/pufa.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/pufa"))
 ```
 :::
 
@@ -1313,7 +1313,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/pufa.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/pufa"))
 ```
 
 #### Objective flare
@@ -1351,7 +1351,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/pufa.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/pufa"))
 ```
 :::
 
@@ -1400,7 +1400,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/alcohol.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/alcohol"))
 ```
 
 #### Objective flare
@@ -1440,7 +1440,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/alcohol.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/alcohol"))
 ```
 :::
 
@@ -1484,7 +1484,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/alcohol.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/alcohol"))
 ```
 
 #### Objective flare
@@ -1524,7 +1524,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/alcohol.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/alcohol"))
 ```
 :::
 
@@ -1565,7 +1565,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/alcohol.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/alcohol"))
 ```
 
 #### Objective flare
@@ -1602,7 +1602,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/alcohol.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/alcohol"))
 ```
 :::
 
@@ -1651,7 +1651,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/nova.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/nova"))
 ```
 
 #### Objective flare
@@ -1691,7 +1691,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/nova.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/nova"))
 ```
 :::
 
@@ -1736,7 +1736,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/nova.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/nova"))
 ```
 
 #### Objective flare
@@ -1777,7 +1777,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/nova.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/nova"))
 ```
 :::
 
@@ -1819,7 +1819,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/nova.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/nova"))
 ```
 
 #### Objective flare
@@ -1857,7 +1857,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/nova.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/nova"))
 ```
 :::
 
@@ -1909,7 +1909,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/UPF.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/UPF"))
 ```
 
 #### Objective flare
@@ -1950,7 +1950,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/UPF.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/UPF"))
 ```
 :::
 
@@ -1999,7 +1999,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/UPF.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/UPF"))
 ```
 
 #### Objective flare
@@ -2040,7 +2040,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/UPF.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/UPF"))
 ```
 :::
 
@@ -2085,7 +2085,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/UPF.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/UPF"))
 ```
 
 #### Objective flare
@@ -2123,7 +2123,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/UPF.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/UPF"))
 ```
 :::
 
@@ -2175,7 +2175,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/breadIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/breadIntake"))
 ```
 
 ##### Objective flare
@@ -2216,7 +2216,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/breadIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/breadIntake"))
 ```
 :::
 
@@ -2265,7 +2265,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/breadIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/breadIntake"))
 ```
 
 ##### Objective flare
@@ -2306,7 +2306,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/breadIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/breadIntake"))
 ```
 :::
 
@@ -2351,7 +2351,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/breadIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/breadIntake"))
 ```
 
 ##### Objective flare
@@ -2389,7 +2389,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/breadIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/breadIntake"))
 ```
 :::
 
@@ -2439,7 +2439,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/sweetIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/sweetIntake"))
 ```
 
 ##### Objective flare
@@ -2480,7 +2480,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/sweetIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/sweetIntake"))
 ```
 :::
 
@@ -2529,7 +2529,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/sweetIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/sweetIntake"))
 ```
 
 ##### Objective flare
@@ -2570,7 +2570,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/sweetIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/sweetIntake"))
 ```
 :::
 
@@ -2614,7 +2614,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/sweetIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/sweetIntake"))
 ```
 
 ##### Objective flare
@@ -2652,7 +2652,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/sweetIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/sweetIntake"))
 ```
 :::
 
@@ -2701,7 +2701,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/drinkIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/drinkIntake"))
 ```
 
 ##### Objective flare
@@ -2742,7 +2742,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/drinkIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/drinkIntake"))
 ```
 :::
 
@@ -2791,7 +2791,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/drinkIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/drinkIntake"))
 ```
 
 ##### Objective flare
@@ -2832,7 +2832,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/drinkIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/drinkIntake"))
 ```
 :::
 
@@ -2877,7 +2877,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/drinkIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/drinkIntake"))
 ```
 
 ##### Objective flare
@@ -2914,7 +2914,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/drinkIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/drinkIntake"))
 ```
 :::
 
@@ -2964,7 +2964,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/processedMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/processedMeatIntake"))
 ```
 
 ##### Objective flare
@@ -3005,7 +3005,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/processedMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/processedMeatIntake"))
 ```
 :::
 
@@ -3054,7 +3054,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/processedMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/processedMeatIntake"))
 ```
 
 ##### Objective flare
@@ -3094,7 +3094,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/processedMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/processedMeatIntake"))
 ```
 :::
 
@@ -3139,7 +3139,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/processedMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/processedMeatIntake"))
 ```
 
 ##### Objective flare
@@ -3177,7 +3177,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/processedMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/processedMeatIntake"))
 ```
 :::
 
@@ -3227,7 +3227,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/processedPlantIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/processedPlantIntake"))
 ```
 
 ##### Objective flare
@@ -3267,7 +3267,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/processedPlantIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/processedPlantIntake"))
 ```
 :::
 
@@ -3315,7 +3315,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/processedPlantIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/processedPlantIntake"))
 ```
 
 ##### Objective flare
@@ -3356,7 +3356,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/processedPlantIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/processedPlantIntake"))
 ```
 :::
 
@@ -3401,7 +3401,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/processedPlantIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/processedPlantIntake"))
 ```
 
 ##### Objective flare
@@ -3438,7 +3438,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/processedPlantIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/processedPlantIntake"))
 ```
 :::
 
@@ -3490,7 +3490,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/fruitIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/fruitIntake"))
 ```
 
 ##### Objective flare
@@ -3530,7 +3530,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/fruitIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/fruitIntake"))
 ```
 :::
 
@@ -3579,7 +3579,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/fruitIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/fruitIntake"))
 ```
 
 ##### Objective flare
@@ -3620,7 +3620,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/fruitIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/fruitIntake"))
 ```
 :::
 
@@ -3665,7 +3665,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/fruitIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/fruitIntake"))
 ```
 
 ##### Objective flare
@@ -3703,7 +3703,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/fruitIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/fruitIntake"))
 ```
 :::
 
@@ -3753,7 +3753,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/vegIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/vegIntake"))
 ```
 
 ##### Objective flare
@@ -3794,7 +3794,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/vegIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/vegIntake"))
 ```
 :::
 
@@ -3843,7 +3843,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/vegIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/vegIntake"))
 ```
 
 ##### Objective flare
@@ -3884,7 +3884,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/vegIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/vegIntake"))
 ```
 :::
 
@@ -3929,7 +3929,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/vegIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/vegIntake"))
 ```
 
 ##### Objective flare
@@ -3966,7 +3966,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/vegIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/vegIntake"))
 ```
 :::
 
@@ -4015,7 +4015,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/redMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/redMeatIntake"))
 ```
 
 ##### Objective flare
@@ -4056,7 +4056,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/redMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/redMeatIntake"))
 ```
 :::
 
@@ -4105,7 +4105,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/redMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/redMeatIntake"))
 ```
 
 ##### Objective flare
@@ -4146,7 +4146,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/redMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/redMeatIntake"))
 ```
 :::
 
@@ -4191,7 +4191,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/redMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/redMeatIntake"))
 ```
 
 ##### Objective flare
@@ -4228,7 +4228,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/redMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/redMeatIntake"))
 ```
 :::
 
@@ -4278,7 +4278,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/whiteMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/whiteMeatIntake"))
 ```
 
 ##### Objective flare
@@ -4319,7 +4319,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/whiteMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/whiteMeatIntake"))
 ```
 :::
 
@@ -4367,7 +4367,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/whiteMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/whiteMeatIntake"))
 ```
 
 ##### Objective flare
@@ -4408,7 +4408,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/whiteMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/whiteMeatIntake"))
 ```
 :::
 
@@ -4453,7 +4453,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/whiteMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/whiteMeatIntake"))
 ```
 
 ##### Objective flare
@@ -4491,7 +4491,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/whiteMeatIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/whiteMeatIntake"))
 ```
 :::
 
@@ -4541,7 +4541,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/soft-flare/diet/whiteFishIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/soft-flare/diet/whiteFishIntake"))
 ```
 
 ##### Objective flare
@@ -4582,7 +4582,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/cd/hard-flare/diet/whiteFishIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/cd/hard-flare/diet/whiteFishIntake"))
 ```
 :::
 
@@ -4630,7 +4630,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/soft-flare/diet/whiteFishIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/soft-flare/diet/whiteFishIntake"))
 ```
 
 ##### Objective flare
@@ -4671,7 +4671,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/uc/hard-flare/diet/whiteFishIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/whiteFishIntake"))
 ```
 :::
 
@@ -4716,7 +4716,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/whiteFishIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/whiteFishIntake"))
 ```
 
 ##### Objective flare
@@ -4754,7 +4754,7 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/hard-flare/diet/whiteFishIntake.png")
-invisible(cox_summary(fit.me))
+invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/whiteFishIntake"))
 ```
 :::
 
