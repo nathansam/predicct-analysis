@@ -1538,7 +1538,7 @@ data_survival_hard %>%
     ggtheme = theme_minimal())
 
 # Cox model
-cox_hard <- coxph(
+cox_hard_pool <- coxph(
   Surv(time, DiseaseFlareYN) ~
     AnyLifeEvents +
     IMD +
@@ -1552,7 +1552,7 @@ cox_hard <- coxph(
   data = data_survival_hard
 )
 
-cox_hard %>%
+cox_hard_pool %>%
   print_survival()
 ```
 
@@ -1576,7 +1576,7 @@ cox_hard_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_hard <- with(
+cox_hard_pool <- with(
   cox_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
@@ -1593,7 +1593,7 @@ cox_hard <- with(
 ) %>%
   mice::pool()
 
-cox_hard %>% 
+cox_hard_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1659,7 +1659,7 @@ cox_soft_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_soft_uc <- with(
+cox_soft_uc_pool <- with(
   cox_soft_uc_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
@@ -1676,7 +1676,7 @@ cox_soft_uc <- with(
 ) %>%
   mice::pool()
 
-cox_soft_uc %>% 
+cox_soft_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1741,7 +1741,7 @@ cox_hard_uc_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_hard_uc <- with(
+cox_hard_uc_pool <- with(
   cox_hard_uc_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
@@ -1758,7 +1758,7 @@ cox_hard_uc <- with(
 ) %>%
   mice::pool()
 
-cox_hard_uc %>% 
+cox_hard_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1824,7 +1824,7 @@ cox_soft_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_soft_cd <- with(
+cox_soft_cd_pool <- with(
   cox_soft_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
@@ -1841,7 +1841,7 @@ cox_soft_cd <- with(
 ) %>%
   mice::pool()
 
-cox_soft_cd %>% 
+cox_soft_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1905,7 +1905,7 @@ cox_hard_cd_mice <- coxph_mice(
 )
 
 # Fit the Cox
-cox_hard_cd <- with(
+cox_hard_cd_pool <- with(
   cox_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
@@ -1922,7 +1922,7 @@ cox_hard_cd <- with(
 ) %>%
   mice::pool()
 
-cox_hard_cd %>% 
+cox_hard_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
