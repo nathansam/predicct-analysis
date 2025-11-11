@@ -89,10 +89,14 @@ cox_summary <- function(fit, plot_base_path = NULL) {
     print(ggcoxdiagnostics(fit, type = "dfbeta"))
   }
   if (!is.null(plot_base_path)) {
-    p_martingale <- ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE)
+    p_martingale <- ggcoxdiagnostics(fit,
+                                     type = "martingale",
+                                     linear.predictions = TRUE)
     save_and_include_plot(p_martingale, plot_base_path, "martingale")
   } else {
-    print(ggcoxdiagnostics(fit, type = "martingale", linear.predictions = TRUE))
+    print(ggcoxdiagnostics(fit,
+                           type = "martingale",
+                           linear.predictions = TRUE))
   }
   return()
 }
@@ -159,7 +163,11 @@ generate_survival_plot <- function(
   # Save PNG with error handling
   tryCatch(
     {
-      png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+      png(paste0(plot_path, ".png"),
+          width = 7,
+          height = 7,
+          units = "in",
+          res = 300)
       print(p, newpage = FALSE)
       dev.off()
     },
