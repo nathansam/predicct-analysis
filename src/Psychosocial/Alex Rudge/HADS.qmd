@@ -1044,6 +1044,7 @@ independent = c('age',
                 'Sex',
                 'flare_group',
                 'FC',
+                'Smoke',
                 'OverallControl')
 
 # Dependent variable is score_group
@@ -1917,8 +1918,7 @@ cox_anxiety_soft_uc <- coxph(
   data = data_survival_anxiety_soft_uc
 )
 
-cox_anxiety_soft_uc %>%
-  print_survival()
+cox_anxiety_soft_uc
 
 ```
 
