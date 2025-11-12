@@ -9,7 +9,7 @@ library(splines)
 
 summon_statistical_test <- function(data, dependent, independent) {
   
-  # Chi square tests/Fisher's exact test/Wilcox or Mann Whitney
+  # Chi square tests/Fisher's exact test/Wilcox/Kruskal-Wallis
   # for the dependent variable vs each independent variable
   # Dependent variables must be discrete
   
@@ -104,16 +104,6 @@ summon_statistical_test <- function(data, dependent, independent) {
   
 }
 
-# independent = c('diagnosis2',
-#                 'age',
-#                 'Sex',
-#                 'flare_group',
-#                 'FC')
-# dependent = 'score_group'
-# 
-# summon_statistical_test(data = data_baseline_anxiety, dependent = dependent, independent = independent)
-
-
 # Function to create plots for baseline associations
 
 summon_baseline_plot_discrete <- function(data, stat_tests, dependent, independent) {
@@ -124,8 +114,14 @@ summon_baseline_plot_discrete <- function(data, stat_tests, dependent, independe
   
   label <- stat_tests %>%
     dplyr::filter(x == independent) %>%
-    dplyr::pull(p.adjust) %>%
-    {paste0("Adjusted p-value: ", .)}
+    {df <- .
+    method <- df %>% dplyr::pull(method)
+    p <- df %>% dplyr::pull(p.adjust)
+    
+    paste0(stringr::str_pad(method, 25, 'right'), "\n", "Adjusted p-value: ", p)
+    
+    }
+
   
   data %>%
     dplyr::filter(!is.na(!!sym(dependent)), !is.na(!!sym(independent))) %>%
@@ -157,8 +153,13 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
   # Stat_tests is a dataframe from summon_statistical_test to get p-value info
   label <- stat_tests %>%
     dplyr::filter(x == independent) %>%
-    dplyr::pull(p.adjust) %>%
-    {paste0("Adjusted p-value: ", .)}
+    {df <- .
+    method <- df %>% dplyr::pull(method)
+    p <- df %>% dplyr::pull(p.adjust)
+    
+    paste0(stringr::str_pad(method, 25, 'right'), "\n", "Adjusted p-value: ", p)
+    
+    }
   
   # Plot
   data %>%
@@ -180,27 +181,6 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
     theme_minimal()
   
 }
-
-
-# Test with HADS data
-# State dependent and independent variables
-# dependent = 'score_group'
-# independent = c('diagnosis2',
-#                 'AgeGroup',
-#                 'Sex',
-#                 'flare_group',
-#                 'cat')
-# 
-# 
-# data = data_baseline_anxiety
-# 
-# baseline_plots <- summon_baseline_plots(data = data, dependent = dependent, independent = independent)
-# 
-# baseline_plots$diagnosis2
-# baseline_plots$AgeGroup
-# baseline_plots$Sex
-# baseline_plots$flare_group
-# baseline_plots$cat
 
 
 # Function to perform coxph with mice for missing data
