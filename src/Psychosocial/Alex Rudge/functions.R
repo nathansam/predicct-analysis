@@ -283,13 +283,41 @@ summon_km_curves <- function(data,
   
   plot_surv$table <- plot_surv$table + ylab("")
   
+  plot_surv
+  
   # Recombine using patchwork
-  plot_surv$plot + plot_surv$table +
+  # plot_surv$plot + plot_surv$table +
+  #   patchwork::plot_layout(
+  #     ncol = 1,
+  #     heights = c(3.2, 1)
+  #     ) &
+  #   theme(plot.margin = margin(0, 0, 0, 0))
+  
+}
+
+
+summon_km_curves_panel <- function(p1, p2, p3, p4) {
+  
+  # Take 4 ggsurvplot objects and combine into a 2x2 panel plot.
+  
+  layout <- "
+AAAA
+BBDD
+CCEE
+FFHH
+GGII
+"
+  
+  patchwork::guide_area() +
+    p1$plot + p1$table +
+    p2$plot + p2$table +
+    p3$plot + p3$table +
+    p4$plot + p4$table +
     patchwork::plot_layout(
-      ncol = 1,
-      heights = c(3, 1)
-      ) &
-    theme(plot.margin = margin(0, 0, 0, 0))
+      design = layout,
+      heights = c(0.15, 3, 0.8, 3, 0.8),
+      guides = 'collect'
+    )
   
 }
 
