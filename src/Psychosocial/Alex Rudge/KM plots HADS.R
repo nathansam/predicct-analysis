@@ -38,7 +38,7 @@ summon_km_curves(
 summon_km_curves(
   data = data_survival_anxiety_hard_uc,
   dependent = dependent,
-  title = "Time to Hard Flare in UC",
+  title = "Time to Objective Flare in UC",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
@@ -48,7 +48,7 @@ summon_km_curves(
 summon_km_curves(
   data = data_survival_anxiety_hard_cd,
   dependent = dependent,
-  title = "Time to Hard Flare in CD",
+  title = "Time to Objective Flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
@@ -87,7 +87,7 @@ summon_km_curves(
 summon_km_curves(
   data = data_survival_depression_hard_uc,
   dependent = dependent,
-  title = "Time to Hard Flare in UC",
+  title = "Time to Objective Flare in UC",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
@@ -97,7 +97,7 @@ summon_km_curves(
 summon_km_curves(
   data = data_survival_depression_hard_cd,
   dependent = dependent,
-  title = "Time to Hard Flare in CD",
+  title = "Time to Objective Flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
