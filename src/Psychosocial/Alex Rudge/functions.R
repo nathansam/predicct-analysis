@@ -270,8 +270,8 @@ summon_km_curves <- function(data,
       xlab = "Time from study recruitment (months)",
       palette = palette,
       ggtheme = theme_minimal(),
-      break.time.by = 365.25/2,  
-      xscale = "d_m",
+      break.time.by = 365/2,  
+      xscale = 730/24,
       xlim = c(0, 750)
     )
   
