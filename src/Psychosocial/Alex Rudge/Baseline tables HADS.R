@@ -108,7 +108,9 @@ data_baseline_depression_table %>%
           OverallControl ~ "VAS Control Score"
         )
       ) %>%
-      gtsummary::add_p() %>%
+      gtsummary::add_p(
+        test.args = all_tests("fisher.test") ~ list(simulate.p.value = TRUE, B = 1e5)
+      ) %>%
       gtsummary::add_q(method = 'holm') %>%
       gtsummary::bold_p(q = TRUE),
     .header = "**{strata}**, N = {n}"
