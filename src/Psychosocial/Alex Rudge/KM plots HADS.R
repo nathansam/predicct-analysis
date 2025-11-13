@@ -64,15 +64,25 @@ plot_anxiety_hard_cd
 
 # 4x4 plots
 
-summon_km_curves_panel(
+plot_anxiety <- summon_km_curves_panel(
   p1 = plot_anxiety_soft_uc,
   p2 = plot_anxiety_soft_cd,
   p3 = plot_anxiety_hard_uc,
   p4 = plot_anxiety_hard_cd
 )
 
-# Save as landscape 10 x 11 inches
+plot_anxiety
 
+# Save as landscape 10 x 11 inches
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
+
+ggsave(
+  filename = paste0(filepath_save, "Kaplan Meier HADS Anxiety.pdf"),
+  plot = plot_anxiety,
+  width = 10,
+  height = 11,
+  units = 'in'
+)
 
 
 
@@ -85,7 +95,7 @@ dependent = 'score_group'
 
 # Soft
 # UC
-summon_km_curves(
+plot_depression_soft_uc <- summon_km_curves(
   data = data_survival_depression_soft_uc,
   dependent = dependent,
   title = "Time to Patient Reported Flare in UC",
@@ -94,8 +104,10 @@ summon_km_curves(
   palette = palette
 )
 
+plot_depression_soft_uc
+
 # CD
-summon_km_curves(
+plot_depression_soft_cd <- summon_km_curves(
   data = data_survival_depression_soft_cd,
   dependent = dependent,
   title = "Time to Patient Reported Flare in CD",
@@ -104,9 +116,11 @@ summon_km_curves(
   palette = palette
 )
 
+plot_depression_soft_cd
+
 # Hard
 # UC
-summon_km_curves(
+plot_depression_hard_uc <- summon_km_curves(
   data = data_survival_depression_hard_uc,
   dependent = dependent,
   title = "Time to Objective Flare in UC",
@@ -115,12 +129,38 @@ summon_km_curves(
   palette = palette
 )
 
+plot_depression_hard_uc
+
 # CD
-summon_km_curves(
+plot_depression_hard_cd <- summon_km_curves(
   data = data_survival_depression_hard_cd,
   dependent = dependent,
   title = "Time to Objective Flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
+)
+
+plot_depression_hard_cd
+
+# 4x4 plots
+
+plot_depression <- summon_km_curves_panel(
+  p1 = plot_depression_soft_uc,
+  p2 = plot_depression_soft_cd,
+  p3 = plot_depression_hard_uc,
+  p4 = plot_depression_hard_cd
+)
+
+plot_depression
+
+# Save as landscape 10 x 11 inches
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
+
+ggsave(
+  filename = paste0(filepath_save, "Kaplan Meier HADS Depression.pdf"),
+  plot = plot_depression,
+  width = 10,
+  height = 11,
+  units = 'in'
 )
