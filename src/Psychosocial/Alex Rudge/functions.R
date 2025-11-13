@@ -3,6 +3,7 @@ library(magrittr)
 library(survival)
 library(mice)
 library(splines)
+library(patchwork)
 
 
 # Functions for the analysis
@@ -261,14 +262,17 @@ summon_km_curves <- function(data,
       data = data,
       conf.int = TRUE,
       risk.table = TRUE,
-      pval = TRUE,
-      pval.method = TRUE,
+      #pval = TRUE,
+      #pval.method = TRUE,
       title = title,
       legend.title = legend.title,
       legend.labs = legend.labs,
-      xlab = "Time from study recruitment (days)",
+      xlab = "Time from study recruitment (months)",
       palette = palette,
-      ggtheme = theme_minimal()
+      ggtheme = theme_minimal(),
+      break.time.by = 365.25/2,  
+      xscale = "d_m",
+      xlim = c(0, 750)
     )
   
   # Customise the plot and table separately
@@ -280,7 +284,7 @@ summon_km_curves <- function(data,
   plot_surv$table <- plot_surv$table + ylab("")
   
   # Recombine using patchwork
-  plot_surv$plot / (plot_surv$table + ylab("")) +
+  plot_surv$plot + plot_surv$table +
     patchwork::plot_layout(
       ncol = 1,
       heights = c(3, 1)
