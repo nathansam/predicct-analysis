@@ -120,25 +120,19 @@ summon_statistical_test <- function(data, dependent, independent) {
         
       } else {
         # Otherwise use categorical tests
+        # Chi square
+        test_result <- chisq.test(x = x, y = y)
         
-        # Check whether we need a Fisher test
-        fisher_flag <- data %>%
-          # Count combinations of x and y
-          dplyr::count(!!rlang::sym(.x), !!rlang::sym(.y)) %>%
-          # Pull the count
-          dplyr::pull(n) %>%
-          # Check if any counts are < 5
-          min() < 5
-        
+        # If any expected counts are < 5 then we should use a Fisher
+        fisher_flag <- any(test_result$expected < 5)
+
         if (fisher_flag) {
           # If one of the counts is < 5 use Fisher exact test
           fisher_test(table(x, y), simulate.p.value = TRUE, B = 1e5) %>%
             dplyr::mutate(x = .x,
                           y = .y,
                           method = 'Fisher\'s exact test')
-          
         } else {
-          # Otherwise use chi square
           chisq_test(x = x, y = y) %>%
             dplyr::mutate(x = .x, y = .y)
         }
