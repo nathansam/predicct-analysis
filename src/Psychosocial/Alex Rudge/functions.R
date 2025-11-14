@@ -457,100 +457,99 @@ summon_lrt <- function(model, remove = NULL, add = NULL) {
 }
 
 
-summon_population_risk_difference <- function(data,
-                                              model,
-                                              times,
-                                              variable,
-                                              values,
-                                              ref_value = NULL) {
+summon_risk_difference_factor <- function(data, model, time, variable, ref_level = NULL) {
   # Function that calculates (population average) risk difference of a variable
-  # at given time points with respect to specified value of the variable from a
+  # at a given time point with respect to specified value of the variable from a
   # Cox model
   
-  # If no reference value then use one in the middle
-  if (is.null(ref_value)) {
-    pos <- (length(values) / 2) %>% ceiling()
-    ref_value <- values %>% purrr::pluck(pos)
+  # Values of the variable
+  values <- data %>%
+    dplyr::pull(variable) %>%
+    levels()
+  
+  # If no reference level then use the first factor level
+  if (is.null(ref_level)) {
+    ref_level <- values %>%
+      dplyr::first()
   }
   
   # Identify the time variable - to differentiate between soft and hard flare models
   time_variable <- all.vars(terms(model))[1]
   
-  df <- tidyr::expand_grid(times, values)
-  
-  purrr::map2(
-    .x = df$times,
-    .y = df$values,
-    .f = function(x, y) {
-      data %>%
+  results <- purrr::map(
+    .x = values,
+    .f = function(x) {
+      newdata <- data %>%
         # Set values for time and the variable
-        dplyr::mutate(!!sym(time_variable) := x, !!sym(variable) := y) %>%
-        # Estimate expected for entire population
-        predict(model, newdata = ., type = "expected") %>%
-        tibble(expected = .) %>%
-        # Remove NA
-        dplyr::filter(!is.na(expected)) %>%
-        # Calculate survival and cumulative incidence (1 - survival)
-        dplyr::mutate(
-          survival = exp(-expected),
-          cum_incidence = 1 - survival
-        ) %>%
-        dplyr::select(cum_incidence) %>%
-        dplyr::summarise(cum_incidence = mean(cum_incidence)) %>%
-        # Note time, value and variable
-        dplyr::mutate(time = x, value = y, variable = variable)
+        dplyr::mutate(!!sym(time_variable) := time, !!sym(variable) := x)
+      
+      # Estimate expected for entire population
+      expected <- predict(model, newdata = newdata, type = "expected")
+      
+      # Calculate mean cumulative incidence (1 - survival)
+      cum_incidence <- (1 - exp(-expected)) %>% mean(na.rm = TRUE)
+      
+      # Return as a tibble row
+      tibble(
+        time = time,
+        variable = variable,
+        level = x,
+        cum_incidence = cum_incidence
+      )
     }
   ) %>%
-    purrr::list_rbind() %>%
-    # Calculate risk difference relative to a reference
-    {
-      df <- .
-      
-      # Subtract chosen reference value to set linear predictor to 0 at that value
-      cum_incidence_ref <- df %>%
-        dplyr::filter(value == ref_value) %>%
-        dplyr::rename(cum_incidence_ref = cum_incidence) %>%
-        dplyr::select(time, cum_incidence_ref)
-      
-      df %>%
-        dplyr::left_join(cum_incidence_ref, by = "time") %>%
-        dplyr::mutate(rd = (cum_incidence - cum_incidence_ref)*100, .keep = "unused")
-    }
+    purrr::list_rbind()
+  
+  # Calculate difference relative to the reference
+  cum_incidence_ref <- df %>%
+    dplyr::filter(level == ref_level) %>%
+    dplyr::pull(cum_incidence)
+  
+  results %>%
+    dplyr::mutate(rd = (cum_incidence - cum_incidence_ref) * 100)
+  
 }
 
 
-summon_population_risk_difference_boot <- function(data,
-                                                   model,
-                                                   times,
-                                                   variable,
-                                                   values,
-                                                   ref_value = NULL,
-                                                   nboot = 99,
-                                                   seed = 1) {
-  # Function to calculate population risk difference for a given variable at given time points
-  # relative to a specified reference value
-  # Confidence intervals calculated using bootstrapping.
+summon_risk_difference_factor_boot <- function(data,
+                                               model,
+                                               time,
+                                               variable,
+                                               ref_level = NULL,
+                                               nboot = 99,
+                                               seed = 1) {
+  
+  
+  # Function to calculate bootstrapped risk difference
   
   # Set seed
   set.seed(seed)
   
-  # If no reference value then use one in the middle
-  if (is.null(ref_value)) {
-    pos <- (length(values) / 2) %>% ceiling()
-    ref_value <- values %>% purrr::pluck(pos)
+  # Values of the variable
+  values <- data %>%
+    dplyr::pull(variable) %>%
+    levels()
+  
+  # If no reference level then use the first factor level
+  if (is.null(ref_level)) {
+    ref_level <- values %>%
+      dplyr::first()
   }
+  
+  # Remove NAs from the data
+  # Variable used in the model
+  all_variables <- all.vars(terms(model))
+  
+  data %<>%
+    # Remove any NAs as Cox doesn't use these
+    dplyr::select(tidyselect::all_of(all_variables)) %>%
+    dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na)) %>%
   
   purrr::map_dfr(
     .x = seq_len(nboot),
     .f = function(b) {
-      # Variable used in the model
-      all_variables <- all.vars(terms(model))
       
-      # Bootstrap sample of the data
       data_boot <- data %>%
-        # Remove any NAs as Cox doesn't use these
-        dplyr::select(tidyselect::all_of(all_variables)) %>%
-        dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na)) %>%
         # Sample the df
         dplyr::slice_sample(prop = 1, replace = TRUE)
       
@@ -558,7 +557,7 @@ summon_population_risk_difference_boot <- function(data,
       model_boot <- coxph(formula(model), data = data_boot, model = TRUE)
       
       # Calculate risk differences
-      summon_population_risk_difference(
+      summon_risk_difference_factor(
         data = data_boot,
         model = model_boot,
         times = times,
