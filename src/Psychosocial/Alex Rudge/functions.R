@@ -501,7 +501,7 @@ summon_risk_difference_factor <- function(data, model, time, variable, ref_level
     purrr::list_rbind()
   
   # Calculate difference relative to the reference
-  cum_incidence_ref <- df %>%
+  cum_incidence_ref <- results %>%
     dplyr::filter(level == ref_level) %>%
     dplyr::pull(cum_incidence)
   
@@ -513,7 +513,7 @@ summon_risk_difference_factor <- function(data, model, time, variable, ref_level
 
 summon_risk_difference_factor_boot <- function(data,
                                                model,
-                                               time,
+                                               time = 365,
                                                variable,
                                                ref_level = NULL,
                                                nboot = 99,
@@ -543,7 +543,7 @@ summon_risk_difference_factor_boot <- function(data,
   data %<>%
     # Remove any NAs as Cox doesn't use these
     dplyr::select(tidyselect::all_of(all_variables)) %>%
-    dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na)) %>%
+    dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na))
   
   purrr::map_dfr(
     .x = seq_len(nboot),
@@ -560,14 +560,13 @@ summon_risk_difference_factor_boot <- function(data,
       summon_risk_difference_factor(
         data = data_boot,
         model = model_boot,
-        times = times,
+        time = time,
         variable = variable,
-        values = values,
-        ref_value = ref_value
+        ref_level = ref_level
       )
     }
   ) %>%
-    dplyr::group_by(time, value) %>%
+    dplyr::group_by(time, level) %>%
     # Bootstrapped estimate and confidence intervals
     dplyr::summarise(
       mean_rd = mean(rd),
@@ -579,10 +578,10 @@ summon_risk_difference_factor_boot <- function(data,
     # Note variable, reference level flag
     dplyr::mutate(
       variable = variable,
-      reference_flag = (value == ref_value)
+      reference_flag = (level == ref_level)
     ) %>%
     # Ordering for plotting
-    dplyr::arrange(time, value) %>%
+    dplyr::arrange(time, level) %>%
     dplyr::group_by(time) %>%
     dplyr::mutate(ordering = dplyr::row_number()) %>%
     # Tidy confidence intervals
