@@ -12,7 +12,7 @@ pool_cum_incidence <- function(model, newdata){
 }
 
 
-summon_risk_difference_factor_mice <- function(data, model, time, variable, ref_level = NULL) {
+summon_risk_difference_factor_mice <- function(data, model, time, variable, ref_level = NULL, ...) {
   # Function that calculates (population average) risk difference of a variable
   # at a given time point with respect to specified value of the variable from a
   # Cox model
@@ -35,7 +35,7 @@ summon_risk_difference_factor_mice <- function(data, model, time, variable, ref_
   time_variable <- all.vars(terms(model))[1]
   
   # Fit cox model using mice
-  model_mice <- coxph_mice(formula(model), data = data)
+  model_mice <- coxph_mice(formula(model), data = data, ...)
   
   data_imputed <- mice::complete(model_mice, action = 'all', include = FALSE)
   
@@ -94,8 +94,10 @@ summon_risk_difference_factor_mice <- function(data, model, time, variable, ref_
     dplyr::filter(level == ref_level) %>%
     dplyr::pull(cum_incidence)
   
-  results %>%
+  results %<>%
     dplyr::mutate(rd = (cum_incidence - cum_incidence_ref) * 100)
+  
+  return(results)
   
 }
 
@@ -142,9 +144,14 @@ summon_risk_difference_factor_boot_mice <- function(data,
     .x = seq_len(nboot),
     .f = function(b) {
       
+      # Progress bar
+      if (b %% 10 == 0) {message(paste0("Progress: ", round(100*b/nboot), "%"))}
+      
       data_boot <- data %>%
+        dplyr::group_by(DiseaseFlareYN) %>%
         # Sample the df
-        dplyr::slice_sample(prop = 1, replace = TRUE)
+        dplyr::slice_sample(prop = 1, replace = TRUE) %>%
+        dplyr::ungroup()
       
       # Calculate risk differences
       summon_risk_difference_factor_mice(
@@ -152,16 +159,18 @@ summon_risk_difference_factor_boot_mice <- function(data,
         model = model,
         time = time,
         variable = variable,
-        ref_level = ref_level
+        ref_level = ref_level,
+        ...
       )
     }
   ) %>%
     dplyr::group_by(time, level) %>%
     # Bootstrapped estimate and confidence intervals
     dplyr::summarise(
-      mean_rd = mean(rd),
-      conf.low = quantile(rd, prob = 0.025),
-      conf.high = quantile(rd, prob = 0.975)
+      mean_rd = mean(rd, na.rm = TRUE),
+      conf.low = quantile(rd, prob = 0.025, na.rm = TRUE),
+      conf.high = quantile(rd, prob = 0.975, na.rm = TRUE),
+      nboot = sum(!is.na(rd))
     ) %>%
     dplyr::ungroup() %>%
     dplyr::rename(estimate = mean_rd) %>%

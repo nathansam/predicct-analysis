@@ -479,9 +479,11 @@ summon_risk_difference_factor <- function(data, model, time, variable, ref_level
   results <- purrr::map(
     .x = values,
     .f = function(x) {
+      t <- time 
+      
       newdata <- data %>%
         # Set values for time and the variable
-        dplyr::mutate(!!sym(time_variable) := time, !!sym(variable) := x)
+        dplyr::mutate(!!sym(time_variable) := t, !!sym(variable) := x)
       
       # Estimate expected for entire population
       expected <- predict(model, newdata = newdata, type = "expected")
@@ -550,8 +552,10 @@ summon_risk_difference_factor_boot <- function(data,
     .f = function(b) {
       
       data_boot <- data %>%
+        dplyr::group_by(DiseaseFlareYN) %>%
         # Sample the df
-        dplyr::slice_sample(prop = 1, replace = TRUE)
+        dplyr::slice_sample(prop = 1, replace = TRUE) %>%
+        dplyr::ungroup()
       
       # Refit cox model of bootstrapped data
       model_boot <- coxph(formula(model), data = data_boot, model = TRUE)
@@ -569,9 +573,10 @@ summon_risk_difference_factor_boot <- function(data,
     dplyr::group_by(time, level) %>%
     # Bootstrapped estimate and confidence intervals
     dplyr::summarise(
-      mean_rd = mean(rd),
-      conf.low = quantile(rd, prob = 0.025),
-      conf.high = quantile(rd, prob = 0.975)
+      mean_rd = mean(rd, na.rm = TRUE),
+      conf.low = quantile(rd, prob = 0.025, na.rm = TRUE),
+      conf.high = quantile(rd, prob = 0.975, na.rm = TRUE),
+      nboot = sum(!is.na(rd))
     ) %>%
     dplyr::ungroup() %>%
     dplyr::rename(estimate = mean_rd) %>%
