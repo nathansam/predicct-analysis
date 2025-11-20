@@ -50,7 +50,8 @@ custom_theme <-
   plot.title = element_text(size = 10),
   plot.subtitle = element_text(size = 8),
   # Axes
-  axis.title.y = element_blank()
+  axis.title.y = element_blank(),
+  axis.text.y = element_text(size = 10)
 )
 
 # Do separate plots of UC and CD
@@ -152,7 +153,7 @@ summon_complete_forest <- function(
       ncol = 3,
      guides = 'collect',
      axes = 'collect',
-     width = c(3, 1, 0.5),
+     width = c(2.5, 1, 0.5),
      height = c(3,3,1,1,1,4)
    ) +
    patchwork::plot_annotation(
@@ -203,14 +204,14 @@ plot_hr_hard_cd
 
 
 # Save
-filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/"
 
 # soft uc
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft uc", suffix_save),
   plot = plot_hr_soft_uc,
-  width = 10,
-  height = 10,
+  width = 8,
+  height = 7,
   units = 'in'
 )
 
@@ -218,8 +219,8 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft cd", suffix_save),
   plot = plot_hr_soft_cd,
-  width = 10,
-  height = 10,
+  width = 8,
+  height = 7,
   units = 'in'
 )
 
@@ -227,8 +228,8 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard uc", suffix_save),
   plot = plot_hr_hard_uc,
-  width = 10,
-  height = 10,
+  width = 8,
+  height = 7,
   units = 'in'
 )
 
@@ -236,7 +237,7 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard cd", suffix_save),
   plot = plot_hr_hard_cd,
-  width = 10,
-  height = 10,
+  width = 8,
+  height = 7,
   units = 'in'
 )
