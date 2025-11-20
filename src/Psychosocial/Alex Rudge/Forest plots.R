@@ -7,8 +7,11 @@ library(patchwork)
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Cox results/"
 
 # Suffix - cc (complete case) or mice 
-suffix <- "_cc.rds"
-suffix_save <- " cc.pdf"
+# suffix <- "_cc.rds"
+# suffix_save <- " cc.pdf"
+
+suffix <- "_mice.rds"
+suffix_save <- " mice.pdf"
 
 cox_results <- readr::read_rds(paste0(filepath, "cox_results_all_variables", suffix))
 
