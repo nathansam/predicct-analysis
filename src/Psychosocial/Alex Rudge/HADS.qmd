@@ -138,7 +138,7 @@ summon_statistical_test <- function(data, dependent, independent) {
       }
     }
   ) %>%
-    dplyr::mutate(p.adjust = p.adjust(p = p, method = 'holm')) %>%
+    dplyr::mutate(p.adjust = p.adjust(p = p, method = 'fdr')) %>%
     dplyr::mutate(p.adjust = signif(p.adjust, 3)) %>%
     dplyr::select(-tidyselect::any_of(c('p.signif'))) %>%
     dplyr::mutate(
@@ -2773,7 +2773,6 @@ data_survival_anxiety_hard_cd %<>%
   )
 ```
 
-
 #### Full Cohort
 
 ##### Patient reported flare
@@ -3259,7 +3258,6 @@ cox_anxiety_hard_cd_pool %>%
           conf.level = 0.95,
           exponentiate = TRUE)
 ```
-
 
 ### Depression Grouped
 

@@ -80,7 +80,7 @@ summon_statistical_test <- function(data, dependent, independent) {
       }
     }
   ) %>%
-    dplyr::mutate(p.adjust = p.adjust(p = p, method = 'holm')) %>%
+    dplyr::mutate(p.adjust = p.adjust(p = p, method = 'fdr')) %>%
     dplyr::mutate(p.adjust = signif(p.adjust, 3)) %>%
     dplyr::select(-tidyselect::any_of(c('p.signif'))) %>%
     dplyr::mutate(
