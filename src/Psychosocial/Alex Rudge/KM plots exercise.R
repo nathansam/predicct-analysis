@@ -62,6 +62,33 @@ plot_hard_cd <- summon_km_curves(
 
 plot_hard_cd
 
+# Save individual plots as rds
+
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Kaplan-Meier/"
+
+# Soft uc
+readr::write_rds(
+  x = plot_soft_uc,
+  file = paste0(filepath_save, "plot_exercise_soft_uc.rds")
+)
+
+# Soft cd
+readr::write_rds(
+  x = plot_soft_cd,
+  file = paste0(filepath_save, "plot_exercise_soft_cd.rds")
+)
+
+# Hard uc
+readr::write_rds(
+  x = plot_hard_uc,
+  file = paste0(filepath_save, "plot_exercise_hard_uc.rds")
+)
+
+# Hard cd
+readr::write_rds(
+  x = plot_hard_cd,
+  file = paste0(filepath_save, "plot_exercise_hard_cd.rds")
+)
 
 # 4x4 plots
 

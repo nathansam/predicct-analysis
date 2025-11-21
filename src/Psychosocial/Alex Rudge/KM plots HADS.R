@@ -62,6 +62,36 @@ plot_anxiety_hard_cd <- summon_km_curves(
 
 plot_anxiety_hard_cd
 
+# Save individual plots as rds
+
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Kaplan-Meier/"
+
+# Soft uc
+readr::write_rds(
+  x = plot_anxiety_soft_uc,
+  file = paste0(filepath_save, "plot_anxiety_soft_uc.rds")
+)
+
+# Soft cd
+readr::write_rds(
+  x = plot_anxiety_soft_cd,
+  file = paste0(filepath_save, "plot_anxiety_soft_cd.rds")
+)
+
+# Hard uc
+readr::write_rds(
+  x = plot_anxiety_hard_uc,
+  file = paste0(filepath_save, "plot_anxiety_hard_uc.rds")
+)
+
+# Hard cd
+readr::write_rds(
+  x = plot_anxiety_hard_cd,
+  file = paste0(filepath_save, "plot_anxiety_hard_cd.rds")
+)
+
+
+
 # 4x4 plots
 
 plot_anxiety <- summon_km_curves_panel(
@@ -142,6 +172,34 @@ plot_depression_hard_cd <- summon_km_curves(
 )
 
 plot_depression_hard_cd
+
+# Save individual plots as rds
+
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Kaplan-Meier/"
+
+# Soft uc
+readr::write_rds(
+  x = plot_depression_soft_uc,
+  file = paste0(filepath_save, "plot_depression_soft_uc.rds")
+)
+
+# Soft cd
+readr::write_rds(
+  x = plot_depression_soft_cd,
+  file = paste0(filepath_save, "plot_depression_soft_cd.rds")
+)
+
+# Hard uc
+readr::write_rds(
+  x = plot_depression_hard_uc,
+  file = paste0(filepath_save, "plot_depression_hard_uc.rds")
+)
+
+# Hard cd
+readr::write_rds(
+  x = plot_depression_hard_cd,
+  file = paste0(filepath_save, "plot_depression_hard_cd.rds")
+)
 
 # 4x4 plots
 
