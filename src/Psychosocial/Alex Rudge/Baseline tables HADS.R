@@ -4,10 +4,10 @@ library(gtsummary)
 # Variable to include
 variables = c('age',
               'Sex',
-              'flare_group',
-              'FC',
               'Smoke',
-              'OverallControl')
+              'OverallControl',
+              'flare_group',
+              'FC')
 
 # Tidy up the data ready for the table
 data_baseline_anxiety_table <- data_baseline_anxiety %>%
@@ -47,7 +47,7 @@ data_baseline_anxiety_table %>%
         )
       ) %>%
       gtsummary::add_p() %>%
-      gtsummary::add_q(method = 'holm') %>%
+      gtsummary::add_q(method = 'fdr') %>%
       gtsummary::bold_p(q = TRUE),
     .header = "**{strata}**, N = {n}"
   ) %>%
@@ -111,7 +111,7 @@ data_baseline_depression_table %>%
       gtsummary::add_p(
         test.args = all_tests("fisher.test") ~ list(simulate.p.value = TRUE, B = 1e5)
       ) %>%
-      gtsummary::add_q(method = 'holm') %>%
+      gtsummary::add_q(method = 'fdr') %>%
       gtsummary::bold_p(q = TRUE),
     .header = "**{strata}**, N = {n}"
   ) %>%
