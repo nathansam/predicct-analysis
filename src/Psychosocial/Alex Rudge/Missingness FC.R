@@ -1,5 +1,6 @@
 library(tidyverse)
 library(magrittr)
+library(survival)
 
 
 # Run HADS data to get a dataset with missing FC
@@ -9,6 +10,7 @@ data <- hads %>%
   dplyr::filter(hads_type == 'anxiety_hads') %>%
   # Select relevant variables
   dplyr::select(
+    ParticipantNo,
     diagnosis2,
     age,
     Sex,
@@ -82,6 +84,33 @@ data %>%
   
   tbl
   }
+
+
+
+# Is missingness informative of the outcome?
+
+data_survival <- data %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(status = softflare, time = softflare_time)
+
+
+data_survival %>%
+  survfit(Surv(time, status) ~ missing_fc_flag, data = .) %>%
+  ggsurvplot(
+    ., 
+    data = data_survival, 
+    conf.int = TRUE, 
+    risk.table = TRUE,
+    pval = TRUE,
+    pval.method = TRUE,
+    legend.title = 'Missing FC',
+    xlab = "Time from study recruitment (days)",
+    ggtheme = theme_minimal())
+
+# Patients with missing FC have better survival probability
 
 
 
