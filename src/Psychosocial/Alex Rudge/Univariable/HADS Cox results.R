@@ -82,12 +82,12 @@ cox_results_hads_depression_cc <- extract_cox_results(
 # Save
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Univariable/"
 
-# readr::write_rds(
-#   x = cox_results_hads_anxiety_cc,
-#   file = paste0(filepath, "cox_results_hads_anxiety_cc.rds")
-# )
-# 
-# readr::write_rds(
-#   x = cox_results_hads_depression_cc,
-#   file = paste0(filepath, "cox_results_hads_depression_cc.rds")
-# )
+readr::write_rds(
+  x = cox_results_hads_anxiety_cc,
+  file = paste0(filepath, "cox_results_hads_anxiety_cc.rds")
+)
+
+readr::write_rds(
+  x = cox_results_hads_depression_cc,
+  file = paste0(filepath, "cox_results_hads_depression_cc.rds")
+)

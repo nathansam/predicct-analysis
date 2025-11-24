@@ -1100,7 +1100,6 @@ data_survival_hard_cd <- data_survival_hard %>%
 
 ```
 
-
 ### Models
 
 #### Full Cohort
@@ -1136,7 +1135,6 @@ cox_soft %>%
 
 ```
 
-
 ##### Objective flare
 
 ```{r}
@@ -1166,7 +1164,6 @@ cox_hard <- coxph(
 cox_hard %>%
   print_survival()
 ```
-
 
 #### Ulcerative Colitis
 
@@ -1200,7 +1197,6 @@ cox_soft_uc %>%
   print_survival()
 
 ```
-
 
 ##### Objective flare
 

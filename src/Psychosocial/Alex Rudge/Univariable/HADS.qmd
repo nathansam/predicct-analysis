@@ -1254,7 +1254,6 @@ cox_anxiety_soft %>%
 
 ```
 
-
 ##### Objective flare
 
 ```{r}
@@ -1284,7 +1283,6 @@ cox_anxiety_hard <- coxph(
 cox_anxiety_hard %>%
   print_survival()
 ```
-
 
 #### Ulcerative Colitis
 
@@ -1318,7 +1316,6 @@ cox_anxiety_soft_uc
 
 ```
 
-
 ##### Objective flare
 
 ```{r}
@@ -1348,7 +1345,6 @@ cox_anxiety_hard_uc <- coxph(
 cox_anxiety_hard_uc %>%
   print_survival()
 ```
-
 
 #### Crohn's Disease
 
@@ -1383,7 +1379,6 @@ cox_anxiety_soft_cd %>%
 
 ```
 
-
 ##### Objective flare
 
 ```{r}
@@ -1413,7 +1408,6 @@ cox_anxiety_hard_cd <- coxph(
 cox_anxiety_hard_cd %>%
   print_survival()
 ```
-
 
 ### Depression
 
@@ -1480,7 +1474,6 @@ cox_depression_hard %>%
   print_survival()
 ```
 
-
 #### Ulcerative Colitis
 
 ##### Patient reported flare
@@ -1514,7 +1507,6 @@ cox_depression_soft_uc %>%
 
 ```
 
-
 ##### Objective flare
 
 ```{r}
@@ -1544,7 +1536,6 @@ cox_depression_hard_uc <- coxph(
 cox_depression_hard_uc %>%
   print_survival()
 ```
-
 
 #### Crohn's Disease
 
@@ -1579,7 +1570,6 @@ cox_depression_soft_cd %>%
 
 ```
 
-
 ##### Objective flare
 
 ```{r}
@@ -1609,7 +1599,6 @@ cox_depression_hard_cd <- coxph(
 cox_depression_hard_cd %>%
   print_survival()
 ```
-
 
 ## Additional Analysis
 
@@ -1692,8 +1681,6 @@ data_survival_anxiety_hard_cd %<>%
   )
 ```
 
-
-
 ### Depression Grouped
 
 ```{r}
@@ -1753,8 +1740,6 @@ data_survival_depression_hard_cd %<>%
   )
 
 ```
-
-
 
 ## Reproduction and reproducibility {.appendix}
 
