@@ -4,10 +4,10 @@ library(gtsummary)
 # Variable to include
 variables = c('age',
               'Sex',
-              'flare_group',
-              'FC',
               'Smoke',
-              'OverallControl')
+              'OverallControl',
+              'flare_group',
+              'FC')
 
 # Tidy up the data ready for the table
 data_baseline_table <- data_baseline %>%
