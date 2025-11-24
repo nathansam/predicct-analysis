@@ -1253,7 +1253,7 @@ summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_soft <- coxph(
+cox_vas_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1261,11 +1261,11 @@ cox_control_soft <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_soft, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # Yes
 
 # OverallControl
-cox_control_soft <- coxph(
+cox_vas_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     ns(OverallControl, df = 2) +
     frailty(SiteNo),
@@ -1273,11 +1273,11 @@ cox_control_soft <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+summon_lrt(cox_vas_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # Yes
 
 # OverallControl
-cox_control_soft <- coxph(
+cox_vas_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     ns(OverallControl, df = 3) +
     frailty(SiteNo),
@@ -1285,7 +1285,7 @@ cox_control_soft <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 3)', add = 'ns(OverallControl, df = 4)')
+summon_lrt(cox_vas_soft, remove = 'ns(OverallControl, df = 3)', add = 'ns(OverallControl, df = 4)')
 # No, df = 3 is sufficient
 
 ```
@@ -1307,7 +1307,7 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_anxiety_soft, 
-  model = cox_control_soft, 
+  model = cox_vas_soft, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 3)')
 ```
@@ -1341,7 +1341,7 @@ summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_hard <- coxph(
+cox_vas_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1349,7 +1349,7 @@ cox_control_hard <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # No
 ```
 
@@ -1370,7 +1370,7 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_anxiety_soft, 
-  model = cox_control_hard, 
+  model = cox_vas_hard, 
   variable = 'OverallControl')
 ```
 
@@ -1404,7 +1404,7 @@ summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_soft_uc <- coxph(
+cox_vas_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1412,18 +1412,18 @@ cox_control_soft_uc <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_soft_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # Yes
 
 # OverallControl
-cox_control_soft_uc <- coxph(
+cox_vas_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     ns(OverallControl, df = 2) +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_uc
 )
 
-summon_lrt(cox_control_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+summon_lrt(cox_vas_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # No, df = 2 is sufficient
 
 ```
@@ -1445,7 +1445,7 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_anxiety_soft_uc, 
-  model = cox_control_soft_uc, 
+  model = cox_vas_soft_uc, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 2)')
 ```
@@ -1528,7 +1528,7 @@ summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 
 
 # OverallControl
-cox_control_hard_uc <- coxph(
+cox_vas_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1536,7 +1536,7 @@ cox_control_hard_uc <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # No
 
 ```
@@ -1560,7 +1560,7 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_anxiety_hard_uc, 
-  model = cox_control_hard_uc, 
+  model = cox_vas_hard_uc, 
   variable = 'OverallControl')
 ```
 
@@ -1595,7 +1595,7 @@ summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_soft_cd <- coxph(
+cox_vas_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1603,18 +1603,18 @@ cox_control_soft_cd <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_soft_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # Yes
 
 # OverallControl
-cox_control_soft_cd <- coxph(
+cox_vas_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     ns(OverallControl, df = 2) +
     frailty(SiteNo),
   data = data_survival_anxiety_soft_cd
 )
 
-summon_lrt(cox_control_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+summon_lrt(cox_vas_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # No, df = 2 is sufficient
 
 ```
@@ -1636,7 +1636,7 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_anxiety_soft_cd, 
-  model = cox_control_soft_cd, 
+  model = cox_vas_soft_cd, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 2)')
 ```
@@ -1670,7 +1670,7 @@ summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_hard_cd <- coxph(
+cox_vas_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1678,7 +1678,7 @@ cox_control_hard_cd <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # No
 ```
 
@@ -1699,7 +1699,7 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_anxiety_hard_cd, 
-  model = cox_control_hard_cd, 
+  model = cox_vas_hard_cd, 
   variable = 'OverallControl')
 ```
 
