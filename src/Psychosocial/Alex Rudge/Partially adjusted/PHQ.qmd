@@ -644,8 +644,8 @@ phq <- phq %>%
   mutate(
     somatisation = cut(
       TotalPHQ, 
-      breaks = c(0, 4, 9, 14, 30), 
-      labels = c("None", "Mild", "Moderate", "Severe"), 
+      breaks = c(0, 4, 9, 30), 
+      labels = c("None", "Mild", "ModSev"), 
       include.lowest = TRUE)
   )
 
@@ -715,15 +715,13 @@ data_baseline <- phq
 independent = c('diagnosis2',
                 'age',
                 'Sex',
-                'flare_group',
                 'FC',
-                'Smoke',
-                'OverallControl')
+                'Smoke')
 
 # Dependent variable is somatisation
 
 # Statistical tests for each independent variable with somatisation
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing.
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
   dependent = 'somatisation', 
@@ -750,13 +748,6 @@ summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
   dependent = 'somatisation',
-  independent = 'flare_group'
-)
-
-summon_baseline_plot_discrete(
-  data = data_baseline,
-  stat_tests = statistical_tests,
-  dependent = 'somatisation',
   independent = 'Smoke'
 )
 
@@ -774,12 +765,6 @@ summon_baseline_plot_continuous(
   independent = 'FC'
 )
 
-summon_baseline_plot_continuous(
-  data = data_baseline,
-  stat_tests = statistical_tests,
-  dependent = 'somatisation',
-  independent = 'OverallControl'
-)
 ```
 
 #### Ulcerative Colitis/IBD Unclassified
@@ -792,15 +777,14 @@ data_baseline_uc <- phq %>%
 # Independent variables
 independent = c('age',
                 'Sex',
-                'flare_group',
                 'FC',
-                'Smoke',
-                'OverallControl')
+                'Smoke')
 
 # Dependent variable is somatisation
 
 # Statistical tests for each independent variable with somatisation
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing
+
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
   dependent = 'somatisation', 
@@ -820,13 +804,6 @@ summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
   dependent = 'somatisation',
-  independent = 'flare_group'
-)
-
-summon_baseline_plot_discrete(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'somatisation',
   independent = 'Smoke'
 )
 
@@ -844,12 +821,6 @@ summon_baseline_plot_continuous(
   independent = 'FC'
 )
 
-summon_baseline_plot_continuous(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'somatisation',
-  independent = 'OverallControl'
-)
 ```
 
 #### Crohn's Disease
@@ -882,13 +853,6 @@ summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
   dependent = 'somatisation',
-  independent = 'flare_group'
-)
-
-summon_baseline_plot_discrete(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'somatisation',
   independent = 'Smoke'
 )
 
@@ -906,12 +870,6 @@ summon_baseline_plot_continuous(
   independent = 'FC'
 )
 
-summon_baseline_plot_continuous(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'somatisation',
-  independent = 'OverallControl'
-)
 ```
 
 ## Survival Analysis
@@ -987,30 +945,6 @@ cox_fc_soft <- coxph(
 summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_control_soft <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    OverallControl +
-    frailty(SiteNo),
-  data = data_survival_soft
-)
-
-# Spline for control
-summon_lrt(cox_control_soft, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# Yes
-
-# OverallControl
-cox_control_soft <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    ns(OverallControl, df = 2) +
-    frailty(SiteNo),
-  data = data_survival_soft
-)
-
-# Spline for control
-summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
-# No, 2 is sufficient
-
 ```
 
 ```{r}
@@ -1027,12 +961,6 @@ plot_continuous_hr(
   model = cox_fc_soft, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_soft, 
-  model = cox_control_soft, 
-  variable = 'OverallControl',
-  splineterm = 'ns(OverallControl, df = 2)')
 ```
 
 ##### Objective flare
@@ -1063,17 +991,6 @@ cox_fc_hard <- coxph(
 summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_control_hard <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    OverallControl +
-    frailty(SiteNo),
-  data = data_survival_hard
-)
-
-# Spline for control
-summon_lrt(cox_control_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# No
 ```
 
 ```{r}
@@ -1090,11 +1007,6 @@ plot_continuous_hr(
   model = cox_fc_hard, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_hard, 
-  model = cox_control_hard, 
-  variable = 'OverallControl')
 ```
 
 #### Ulcerative Colitis
@@ -1126,29 +1038,6 @@ cox_fc_soft_uc <- coxph(
 summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_control_soft_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    OverallControl +
-    frailty(SiteNo),
-  data = data_survival_soft_uc
-)
-
-# Spline for control
-summon_lrt(cox_control_soft_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# Yes
-
-# OverallControl
-cox_control_soft_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    ns(OverallControl, df = 2) +
-    frailty(SiteNo),
-  data = data_survival_soft_uc
-)
-
-summon_lrt(cox_control_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
-# No, df = 2 is sufficient
-
 ```
 
 ```{r}
@@ -1165,12 +1054,6 @@ plot_continuous_hr(
   model = cox_fc_soft_uc, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_soft_uc, 
-  model = cox_control_soft_uc, 
-  variable = 'OverallControl',
-  splineterm = 'ns(OverallControl, df = 2)')
 ```
 
 ##### Objective flare
@@ -1227,19 +1110,6 @@ cox_fc_hard_uc <- coxph(
 summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 # No, stay with df = 2
 
-
-# OverallControl
-cox_control_hard_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    OverallControl +
-    frailty(SiteNo),
-  data = data_survival_hard_uc
-)
-
-# Spline for control
-summon_lrt(cox_control_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# No
-
 ```
 
 ```{r}
@@ -1258,11 +1128,6 @@ plot_continuous_hr(
   variable = 'FC',
   splineterm = 'ns(FC, df = 2)')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_hard_uc, 
-  model = cox_control_hard_uc, 
-  variable = 'OverallControl')
 ```
 
 #### Crohn's Disease
@@ -1295,29 +1160,6 @@ cox_fc_soft_cd <- coxph(
 summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_control_soft_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    OverallControl +
-    frailty(SiteNo),
-  data = data_survival_soft_cd
-)
-
-# Spline for control
-summon_lrt(cox_control_soft_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# Yes
-
-# OverallControl
-cox_control_soft_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    ns(OverallControl, df = 2) +
-    frailty(SiteNo),
-  data = data_survival_soft_cd
-)
-
-summon_lrt(cox_control_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
-# No, df = 2 is sufficient
-
 ```
 
 ```{r}
@@ -1334,12 +1176,6 @@ plot_continuous_hr(
   model = cox_fc_soft_cd, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_soft_cd, 
-  model = cox_control_soft_cd, 
-  variable = 'OverallControl',
-  splineterm = 'ns(OverallControl, df = 2)')
 ```
 
 ##### Objective flare
@@ -1370,17 +1206,6 @@ cox_fc_hard_cd <- coxph(
 summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_control_hard_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    OverallControl +
-    frailty(SiteNo),
-  data = data_survival_hard_cd
-)
-
-# Spline for control
-summon_lrt(cox_control_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# No
 ```
 
 ```{r}
@@ -1397,20 +1222,7 @@ plot_continuous_hr(
   model = cox_fc_hard_cd, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_hard_cd, 
-  model = cox_control_hard_cd, 
-  variable = 'OverallControl')
 ```
-
-Summary:
-
-Full cohort, soft, control df = 2, hard, no.
-
-UC, soft, control df = 2. Hard, age df = 2, FC df = 2.
-
-CD, soft, control df = 2. Hard, no splines.
 
 ### Models
 
@@ -1442,8 +1254,6 @@ cox_soft <- coxph(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft
@@ -1464,8 +1274,6 @@ cox_soft_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft,
@@ -1483,8 +1291,6 @@ cox_soft_pool <- with(
       Sex +
       age_decade +
       FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
       Smoke +
       frailty(SiteNo)
   )
@@ -1524,8 +1330,6 @@ cox_hard <- coxph(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard
@@ -1545,8 +1349,6 @@ cox_hard_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard,
@@ -1564,8 +1366,6 @@ cox_hard_pool <- with(
       Sex +
       age_decade +
       FC +
-      flare_group +
-      OverallControl +
       Smoke +
       frailty(SiteNo)
   )
@@ -1606,8 +1406,6 @@ cox_soft_uc <- coxph(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_uc
@@ -1628,8 +1426,6 @@ cox_soft_uc_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_uc,
@@ -1647,8 +1443,6 @@ cox_soft_uc_pool <- with(
       Sex +
       age_decade +
       FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
       Smoke +
       frailty(SiteNo)
   )
@@ -1688,8 +1482,6 @@ cox_hard_uc <- coxph(
     Sex +
     ns(age_decade, df = 2) +
     ns(FC, df = 2) +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_uc
@@ -1710,8 +1502,6 @@ cox_hard_uc_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_uc,
@@ -1729,8 +1519,6 @@ cox_hard_uc_pool <- with(
       Sex +
       ns(age_decade, df = 2) +
       ns(FC, df = 2) +
-      flare_group +
-      OverallControl +
       Smoke +
       frailty(SiteNo)
   )
@@ -1771,8 +1559,6 @@ cox_soft_cd <- coxph(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_cd
@@ -1793,8 +1579,6 @@ cox_soft_cd_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_cd,
@@ -1812,8 +1596,6 @@ cox_soft_cd_pool <- with(
       Sex +
       age_decade +
       FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
       Smoke +
       frailty(SiteNo)
   )
@@ -1853,8 +1635,6 @@ cox_hard_cd <- coxph(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_cd
@@ -1874,8 +1654,6 @@ cox_hard_cd_mice <- coxph_mice(
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_cd,
@@ -1893,565 +1671,6 @@ cox_hard_cd_pool <- with(
       Sex +
       age_decade +
       FC +
-      flare_group +
-      OverallControl +
-      Smoke +
-      frailty(SiteNo)
-  )
-) %>%
-  mice::pool()
-
-cox_hard_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
-```
-
-## Additional Analysis
-
-### Somatisation grouped
-
-```{r}
-# Combine categories
-data_survival_soft %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::as_factor(somatisation)) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_soft_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_soft_cd %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_cd %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-```
-
-#### Full Cohort
-
-##### Patient reported flare
-
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_soft %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
-
-# Cox model
-cox_soft <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_soft
-)
-
-cox_soft %>%
-  print_survival()
-
-```
-
-```{r}
-# Cox model with MICE
-# Run the mice
-cox_soft_mice <- coxph_mice(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_soft,
-  m = 20,
-  printFlag = FALSE
-)
-
-# Fit the Cox
-cox_soft_pool <- with(
-  cox_soft_mice,
-  coxph(
-    Surv(time, DiseaseFlareYN) ~
-      somatisation +
-      IMD +
-      Sex +
-      age_decade +
-      FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
-      Smoke +
-      frailty(SiteNo)
-  )
-) %>%
-  mice::pool()
-
-cox_soft_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
-
-```
-
-##### Objective flare
-
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_hard %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
-
-# Cox model
-cox_hard <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_hard
-)
-
-cox_hard %>%
-  print_survival()
-```
-
-```{r}
-# Cox model with MICE
-# Run the mice
-cox_hard_mice <- coxph_mice(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_hard,
-  m = 20,
-  printFlag = FALSE
-)
-
-# Fit the Cox
-cox_hard_pool <- with(
-  cox_hard_mice,
-  coxph(
-    Surv(time, DiseaseFlareYN) ~
-      somatisation +
-      IMD +
-      Sex +
-      age_decade +
-      FC +
-      flare_group +
-      OverallControl +
-      Smoke +
-      frailty(SiteNo)
-  )
-) %>%
-  mice::pool()
-
-cox_hard_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
-```
-
-#### Ulcerative Colitis
-
-##### Patient reported flare
-
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_soft_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
-
-# Cox model
-cox_soft_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_soft_uc
-)
-
-cox_soft_uc %>%
-  print_survival()
-
-```
-
-```{r}
-# Cox model with MICE
-# Run the mice
-cox_soft_uc_mice <- coxph_mice(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_soft_uc,
-  m = 20,
-  printFlag = FALSE
-)
-
-# Fit the Cox
-cox_soft_uc_pool <- with(
-  cox_soft_uc_mice,
-  coxph(
-    Surv(time, DiseaseFlareYN) ~
-      somatisation +
-      IMD +
-      Sex +
-      age_decade +
-      FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
-      Smoke +
-      frailty(SiteNo)
-  )
-) %>%
-  mice::pool()
-
-cox_soft_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
-
-```
-
-##### Objective flare
-
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_hard_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
-
-# Cox model
-cox_hard_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    ns(age_decade, df = 2) +
-    ns(FC, df = 2) +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_hard_uc
-)
-
-cox_hard_uc %>%
-  print_survival()
-```
-
-```{r}
-# Cox model with MICE
-# Run the mice
-# Note: mice does not support splines so I cannot impute using a spline.
-cox_hard_uc_mice <- coxph_mice(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_hard_uc,
-  m = 20,
-  printFlag = FALSE
-)
-
-# Fit the Cox
-cox_hard_uc_pool <- with(
-  cox_hard_uc_mice,
-  coxph(
-    Surv(time, DiseaseFlareYN) ~
-      somatisation +
-      IMD +
-      Sex +
-      ns(age_decade, df = 2) +
-      ns(FC, df = 2) +
-      flare_group +
-      OverallControl +
-      Smoke +
-      frailty(SiteNo)
-  )
-) %>%
-  mice::pool()
-
-cox_hard_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
-```
-
-#### Crohn's Disease
-
-##### Patient reported flare.
-
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_soft_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
-
-# Cox model
-cox_soft_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_soft_cd
-)
-
-cox_soft_cd %>%
-  print_survival()
-
-```
-
-```{r}
-# Cox model with MICE
-# Run the mice
-cox_soft_cd_mice <- coxph_mice(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_soft_cd,
-  m = 20,
-  printFlag = FALSE
-)
-
-# Fit the Cox
-cox_soft_cd_pool <- with(
-  cox_soft_cd_mice,
-  coxph(
-    Surv(time, DiseaseFlareYN) ~
-      somatisation +
-      IMD +
-      Sex +
-      age_decade +
-      FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
-      Smoke +
-      frailty(SiteNo)
-  )
-) %>%
-  mice::pool()
-
-cox_soft_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
-
-```
-
-##### Objective flare
-
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_hard_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
-
-# Cox model
-cox_hard_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_hard_cd
-)
-
-cox_hard_cd %>%
-  print_survival()
-```
-
-```{r}
-# Cox model with MICE
-# Run the mice
-cox_hard_cd_mice <- coxph_mice(
-  Surv(time, DiseaseFlareYN) ~
-    somatisation +
-    IMD +
-    Sex +
-    age_decade +
-    FC +
-    flare_group +
-    OverallControl +
-    Smoke +
-    frailty(SiteNo),
-  data = data_survival_hard_cd,
-  m = 20,
-  printFlag = FALSE
-)
-
-# Fit the Cox
-cox_hard_cd_pool <- with(
-  cox_hard_cd_mice,
-  coxph(
-    Surv(time, DiseaseFlareYN) ~
-      somatisation +
-      IMD +
-      Sex +
-      age_decade +
-      FC +
-      flare_group +
-      OverallControl +
       Smoke +
       frailty(SiteNo)
   )

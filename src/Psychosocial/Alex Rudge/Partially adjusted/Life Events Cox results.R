@@ -77,7 +77,7 @@ cox_results_lifeevents_mice <- extract_cox_results(
   )
 
 # Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
 
 readr::write_rds(
   x = cox_results_lifeevents_cc,
