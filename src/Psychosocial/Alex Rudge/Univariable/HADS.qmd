@@ -666,8 +666,8 @@ hads <- hads %>%
   mutate(
     score_group = cut(
       hads_score, 
-      breaks = c(0, 7, 10, 21), 
-      labels = c("0-7", "8-10", "11-21"), 
+      breaks = c(0, 7, 21), 
+      labels = c("0-7", "8-21"), 
       include.lowest = TRUE)
   )
 
@@ -1600,146 +1600,7 @@ cox_depression_hard_cd %>%
   print_survival()
 ```
 
-## Additional Analysis
 
-Repeating survival analysis with moderate (8-10) and severe (11-21) scores grouped into a single category (8-21).
-
-### Anxiety Grouped
-
-```{r}
-# Combine categories
-data_survival_anxiety_soft %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_anxiety_hard %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_anxiety_hard_uc %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_anxiety_hard_uc %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_anxiety_soft_uc %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_anxiety_hard_uc %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_anxiety_soft_cd %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_anxiety_hard_cd %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-```
-
-### Depression Grouped
-
-```{r}
-# Combine categories
-data_survival_depression_soft %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_depression_hard %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_depression_soft_uc %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_depression_hard_uc %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_depression_soft_cd %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-data_survival_depression_hard_cd %<>%
-  mutate(score_group = case_when(
-    score_group %in% c("8-10", "11-21") ~ "8-21",
-    TRUE ~ score_group
-  )) %>%
-  dplyr::mutate(
-    score_group = factor(score_group)
-  )
-
-```
 
 ## Reproduction and reproducibility {.appendix}
 
