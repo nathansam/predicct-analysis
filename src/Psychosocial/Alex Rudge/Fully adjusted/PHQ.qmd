@@ -2053,8 +2053,6 @@ cox_hard_cd_pool %>%
           exponentiate = TRUE)
 ```
 
-
-
 ## Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
