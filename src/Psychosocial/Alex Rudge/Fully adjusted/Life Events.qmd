@@ -21,6 +21,8 @@ format:
 editor: visual
 toc: true
 toc-expand: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Life Events
@@ -728,7 +730,8 @@ independent = c('diagnosis2',
                 'flare_group',
                 'FC',
                 'Smoke',
-                'OverallControl')
+                'OverallControl',
+                'control_8')
 
 # Dependent variable is AnyLifeEvents
 
@@ -790,6 +793,13 @@ summon_baseline_plot_continuous(
   dependent = 'AnyLifeEvents',
   independent = 'OverallControl'
 )
+
+summon_baseline_plot_continuous(
+  data = data_baseline,
+  stat_tests = statistical_tests,
+  dependent = 'AnyLifeEvents',
+  independent = 'control_8'
+)
 ```
 
 #### Ulcerative Colitis/IBD Unclassified
@@ -805,7 +815,8 @@ independent = c('age',
                 'flare_group',
                 'FC',
                 'Smoke',
-                'OverallControl')
+                'OverallControl',
+                'control_8')
 
 # Dependent variable is AnyLifeEvents
 
@@ -859,6 +870,13 @@ summon_baseline_plot_continuous(
   stat_tests = statistical_tests,
   dependent = 'AnyLifeEvents',
   independent = 'OverallControl'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_uc,
+  stat_tests = statistical_tests,
+  dependent = 'AnyLifeEvents',
+  independent = 'control_8'
 )
 ```
 
@@ -921,6 +939,13 @@ summon_baseline_plot_continuous(
   stat_tests = statistical_tests,
   dependent = 'AnyLifeEvents',
   independent = 'OverallControl'
+)
+
+summon_baseline_plot_continuous(
+  data = data_baseline_cd,
+  stat_tests = statistical_tests,
+  dependent = 'AnyLifeEvents',
+  independent = 'control_8'
 )
 ```
 
@@ -998,7 +1023,7 @@ summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_soft <- coxph(
+cox_vas_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1006,11 +1031,11 @@ cox_control_soft <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_soft, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # Yes
 
 # OverallControl
-cox_control_soft <- coxph(
+cox_vas_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
     ns(OverallControl, df = 2) +
     frailty(SiteNo),
@@ -1018,9 +1043,20 @@ cox_control_soft <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+summon_lrt(cox_vas_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # No, 2 is sufficient
 
+# Control 8
+cox_control8_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    control_8 +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+# Spline for control 8
+summon_lrt(cox_control8_soft, remove = 'control_8', add = 'ns(control_8, df = 2)')
+# No
 ```
 
 ```{r}
@@ -1040,9 +1076,15 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_soft, 
-  model = cox_control_soft, 
+  model = cox_vas_soft, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 2)')
+
+# Control 8
+plot_continuous_hr(
+  data = data_survival_soft, 
+  model = cox_control8_soft, 
+  variable = 'control_8')
 ```
 
 ##### Objective flare
@@ -1074,7 +1116,7 @@ summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_hard <- coxph(
+cox_vas_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1082,7 +1124,19 @@ cox_control_hard <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# No
+
+# Control 8
+cox_control8_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    control_8 +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+# Spline for control 8
+summon_lrt(cox_control8_hard, remove = 'control_8', add = 'ns(control_8, df = 2)')
 # No
 ```
 
@@ -1103,8 +1157,14 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_hard, 
-  model = cox_control_hard, 
+  model = cox_vas_hard, 
   variable = 'OverallControl')
+
+# Control 8
+plot_continuous_hr(
+  data = data_survival_hard, 
+  model = cox_control8_hard, 
+  variable = 'control_8')
 ```
 
 #### Ulcerative Colitis
@@ -1137,7 +1197,7 @@ summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_soft_uc <- coxph(
+cox_vas_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1145,19 +1205,31 @@ cox_control_soft_uc <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_soft_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # Yes
 
 # OverallControl
-cox_control_soft_uc <- coxph(
+cox_vas_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     ns(OverallControl, df = 2) +
     frailty(SiteNo),
   data = data_survival_soft_uc
 )
 
-summon_lrt(cox_control_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+summon_lrt(cox_vas_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # No, df = 2 is sufficient
+
+# Control 8
+cox_control8_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    control_8 +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+# Spline for control 8
+summon_lrt(cox_control8_soft_uc, remove = 'control_8', add = 'ns(control_8, df = 2)')
+# No
 
 ```
 
@@ -1178,9 +1250,15 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_soft_uc, 
-  model = cox_control_soft_uc, 
+  model = cox_vas_soft_uc, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 2)')
+
+# Control 8
+plot_continuous_hr(
+  data = data_survival_soft_uc, 
+  model = cox_control8_soft_uc, 
+  variable = 'control_8')
 ```
 
 ##### Objective flare
@@ -1249,7 +1327,7 @@ summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 
 
 # OverallControl
-cox_control_hard_uc <- coxph(
+cox_vas_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1257,8 +1335,19 @@ cox_control_hard_uc <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # No
+
+# Control 8
+cox_control8_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    control_8 +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+# Spline 
+summon_lrt(cox_control8_hard_uc, remove = 'control_8', add = 'ns(control_8, df = 2)')
 
 ```
 
@@ -1281,8 +1370,14 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_hard_uc, 
-  model = cox_control_hard_uc, 
+  model = cox_vas_hard_uc, 
   variable = 'OverallControl')
+
+# Control 8
+plot_continuous_hr(
+  data = data_survival_hard_uc, 
+  model = cox_control8_hard_uc, 
+  variable = 'control_8')
 ```
 
 #### Crohn's Disease
@@ -1316,7 +1411,7 @@ summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_soft_cd <- coxph(
+cox_vas_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1324,19 +1419,31 @@ cox_control_soft_cd <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_soft_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_soft_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
 # Yes
 
 # OverallControl
-cox_control_soft_cd <- coxph(
+cox_vas_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     ns(OverallControl, df = 2) +
     frailty(SiteNo),
   data = data_survival_soft_cd
 )
 
-summon_lrt(cox_control_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
+summon_lrt(cox_vas_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
 # No, df = 2 is sufficient
+
+# Control 8
+cox_control8_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    control_8 +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+# Spline for control 8
+summon_lrt(cox_control8_soft_cd, remove = 'control_8', add = 'ns(control_8, df = 2)')
+# No
 
 ```
 
@@ -1357,9 +1464,15 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_soft_cd, 
-  model = cox_control_soft_cd, 
+  model = cox_vas_soft_cd, 
   variable = 'OverallControl',
   splineterm = 'ns(OverallControl, df = 2)')
+
+# Control 8
+plot_continuous_hr(
+  data = data_survival_soft_cd, 
+  model = cox_control8_soft_cd, 
+  variable = 'control_8')
 ```
 
 ##### Objective flare
@@ -1391,7 +1504,7 @@ summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 # OverallControl
-cox_control_hard_cd <- coxph(
+cox_vas_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
     OverallControl +
     frailty(SiteNo),
@@ -1399,7 +1512,19 @@ cox_control_hard_cd <- coxph(
 )
 
 # Spline for control
-summon_lrt(cox_control_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+summon_lrt(cox_vas_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
+# No
+
+# Control 8
+cox_control8_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    control_8 +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+# Spline
+summon_lrt(cox_control8_hard_cd, remove = 'control_8', add = 'ns(control_8, df = 2)')
 # No
 ```
 
@@ -1420,8 +1545,14 @@ plot_continuous_hr(
 # Control
 plot_continuous_hr(
   data = data_survival_hard_cd, 
-  model = cox_control_hard_cd, 
+  model = cox_vas_hard_cd, 
   variable = 'OverallControl')
+
+# Control 8
+plot_continuous_hr(
+  data = data_survival_hard_cd, 
+  model = cox_control8_hard_cd, 
+  variable = 'control_8')
 ```
 
 Summary:
@@ -1464,6 +1595,7 @@ cox_soft <- coxph(
     FC +
     flare_group +
     ns(OverallControl, df = 2) +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft
@@ -1486,6 +1618,7 @@ cox_soft_mice <- coxph_mice(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft,
@@ -1505,6 +1638,7 @@ cox_soft <- with(
       FC +
       flare_group +
       ns(OverallControl, df = 2) +
+      control_8 +
       Smoke +
       frailty(SiteNo)
   )
@@ -1546,6 +1680,7 @@ cox_hard_pool <- coxph(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard
@@ -1567,6 +1702,7 @@ cox_hard_mice <- coxph_mice(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard,
@@ -1586,6 +1722,7 @@ cox_hard_pool <- with(
       FC +
       flare_group +
       OverallControl +
+      control_8 +
       Smoke +
       frailty(SiteNo)
   )
@@ -1628,6 +1765,7 @@ cox_soft_uc <- coxph(
     FC +
     flare_group +
     ns(OverallControl, df = 2) +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_uc
@@ -1650,6 +1788,7 @@ cox_soft_uc_mice <- coxph_mice(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_uc,
@@ -1669,6 +1808,7 @@ cox_soft_uc_pool <- with(
       FC +
       flare_group +
       ns(OverallControl, df = 2) +
+      control_8 +
       Smoke +
       frailty(SiteNo)
   )
@@ -1710,6 +1850,7 @@ cox_hard_uc <- coxph(
     ns(FC, df = 2) +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_uc
@@ -1732,6 +1873,7 @@ cox_hard_uc_mice <- coxph_mice(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_uc,
@@ -1751,6 +1893,7 @@ cox_hard_uc_pool <- with(
       ns(FC, df = 2) +
       flare_group +
       OverallControl +
+      control_8 +
       Smoke +
       frailty(SiteNo)
   )
@@ -1793,6 +1936,7 @@ cox_soft_cd <- coxph(
     FC +
     flare_group +
     ns(OverallControl, df = 2) +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_cd
@@ -1815,6 +1959,7 @@ cox_soft_cd_mice <- coxph_mice(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_cd,
@@ -1834,6 +1979,7 @@ cox_soft_cd_pool <- with(
       FC +
       flare_group +
       ns(OverallControl, df = 2) +
+      control_8 +
       Smoke +
       frailty(SiteNo)
   )
@@ -1875,6 +2021,7 @@ cox_hard_cd <- coxph(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_cd
@@ -1896,6 +2043,7 @@ cox_hard_cd_mice <- coxph_mice(
     FC +
     flare_group +
     OverallControl +
+    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_cd,
@@ -1915,6 +2063,7 @@ cox_hard_cd_pool <- with(
       FC +
       flare_group +
       OverallControl +
+      control_8 +
       Smoke +
       frailty(SiteNo)
   )
