@@ -644,8 +644,8 @@ phq <- phq %>%
   mutate(
     somatisation = cut(
       TotalPHQ, 
-      breaks = c(0, 4, 9, 14, 30), 
-      labels = c("None", "Mild", "Moderate", "Severe"), 
+      breaks = c(0, 4, 9, 30), 
+      labels = c("None", "Mild", "ModSev"), 
       include.lowest = TRUE)
   )
 
@@ -1145,69 +1145,7 @@ cox_hard_cd %>%
   print_survival()
 ```
 
-## Additional Analysis
 
-### Somatisation grouped
-
-```{r}
-# Combine categories
-data_survival_soft %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::as_factor(somatisation)) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_soft_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_uc %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_soft_cd %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-
-data_survival_hard_cd %<>%
-  mutate(somatisation = case_when(
-    somatisation %in% c("Moderate", "Severe") ~ "Moderate",
-    TRUE ~ somatisation
-  )) %>%
-  dplyr::mutate(somatisation = forcats::fct_relevel(somatisation, "None", "Mild", "Moderate"))
-```
 
 ## Reproduction and reproducibility {.appendix}
 

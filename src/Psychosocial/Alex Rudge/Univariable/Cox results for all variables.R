@@ -49,16 +49,14 @@ cox_results %<>%
   dplyr::mutate(
     ordering = dplyr::case_when(
       term == 'score_group0-7' ~ 0,
-      term == 'score_group8-10' ~ 1,
-      term == 'score_group11-21' ~ 2,
+      term == 'score_group8-21' ~ 1,
       term == 'MinimumExerciseYes' ~ 0,
       term == 'MinimumExerciseNo' ~ 1,
       term == 'AnyLifeEventsNo' ~ 0,
       term == 'AnyLifeEventsYes' ~ 1,
       term == 'somatisationNone' ~ 0,
       term == 'somatisationMild' ~ 1,
-      term == 'somatisationModerate' ~ 2,
-      term == 'somatisationSevere' ~ 3,
+      term == 'somatisationModSev' ~ 2,
       term == 'SleepDisturbanceNo' ~ 0,
       term == 'SleepDisturbanceYes' ~ 1,
     )
@@ -69,19 +67,16 @@ cox_results %<>%
   dplyr::mutate(
     term_tidy = dplyr::case_when(
       term == 'score_group0-7' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score 0-7',
-      term == 'score_group8-10' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score 8-10',
-      term == 'score_group11-21' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score 11-21',
+      term == 'score_group8-21' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score 8-21',
       term == 'score_group0-7' & variable == 'score_group_depression' ~ 'HADS Depression Score 0-7',
-      term == 'score_group8-10' & variable == 'score_group_depression' ~ 'HADS Depression Score 8-10',
-      term == 'score_group11-21' & variable == 'score_group_depression' ~ 'HADS Depression Score 11-21',
+      term == 'score_group8-21' & variable == 'score_group_depression' ~ 'HADS Depression Score 8-21',
       term == 'MinimumExerciseYes' ~ 'Met minimum exercise',
       term == 'MinimumExerciseNo' ~ 'Not met minimum exercise',
       term == 'AnyLifeEventsNo' ~ 'No life events in past month',
       term == 'AnyLifeEventsYes' ~ 'At least 1 life event in past month',
       term == 'somatisationNone' ~ 'Somatisation 0-4 (none)',
       term == 'somatisationMild' ~ 'Somatisation 5-9 (mild)',
-      term == 'somatisationModerate' ~ 'Somatisation 10-14 (moderate)',
-      term == 'somatisationSevere' ~ 'Somatisation 15-30 (severe)',
+      term == 'somatisationModSev' ~ 'Somatisation 10-30 (moderate/severe)',
       term == 'SleepDisturbanceNo' ~ 'No sleep disturbance (PSQI<=5)',
       term == 'SleepDisturbanceYes' ~ 'Sleep disturbance (PSQI>5)',
     )
@@ -115,21 +110,9 @@ cox_results %<>%
     )
   )
 
-# Title/tidy variable name - don't need anymore as we are putting the variable name in the name
-# cox_results %<>%
-#   dplyr::mutate(title = dplyr::case_when(
-#     variable == 'score_group_anxiety' ~ 'HADS Anxiety',
-#     variable == 'score_group_depression' ~ 'HADS Depression',
-#     variable == 'MinimumExercise' ~ 'Exercise',
-#     variable == 'AnyLifeEvents' ~ 'Life events',
-#     variable == 'somatisation' ~ 'PHQ-15',
-#     variable == 'SleepDisturbance' ~ 'PSQI'
-#   )
-#   )
-
 
 # Save
-# readr::write_rds(
-#   x = cox_results,
-#   file = paste0(filepath, "cox_results_all_variables", suffix)
-# )
+readr::write_rds(
+  x = cox_results,
+  file = paste0(filepath, "cox_results_all_variables", suffix)
+)

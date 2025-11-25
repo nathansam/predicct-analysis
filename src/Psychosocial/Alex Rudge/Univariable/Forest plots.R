@@ -19,12 +19,12 @@ cox_results %<>%
   )
 
 # Remove reference group for binary variables (as the reference is obvious)
-cox_results %<>%
-  dplyr::filter(
-    !term == 'MinimumExerciseYes',
-    !term == 'AnyLifeEventsNo',
-    !term == 'SleepDisturbanceNo'
-  )
+# cox_results %<>%
+#   dplyr::filter(
+#     !term == 'MinimumExerciseYes',
+#     !term == 'AnyLifeEventsNo',
+#     !term == 'SleepDisturbanceNo'
+#   )
 
 # Significance as a factor
 cox_results %<>%
@@ -54,7 +54,8 @@ custom_theme <-
   axis.text.y = element_text(size = 10)
 )
 
-# Do separate plots of UC and CD
+# Maximum xlimit
+x_max <- cox_results %>% dplyr::pull(conf.high) %>% max(na.rm = TRUE) %>% ceiling()
 
 # Function to create forest plot for a variable as well as their HR and pvalue
 
@@ -82,7 +83,7 @@ summon_forest_plot <- function(data, variable, diagnosis2){
     geom_point() +
     geom_errorbarh() +
     geom_vline(xintercept = 1, linetype = "dotted") +
-    coord_cartesian(xlim = c(0, 7)) +
+    coord_cartesian(xlim = c(0, x_max)) +
     # Legend colours
     scale_colour_manual(
       limits = c("Reference level", "Not Significant", "Significant"),
@@ -127,7 +128,8 @@ summon_forest_plot <- function(data, variable, diagnosis2){
 summon_complete_forest <- function(
     data,
     diagnosis2,
-    title) {
+    title,
+    subtitle = NULL) {
 
   # Patient reported flares in UC
   plot_anxiety <- summon_forest_plot(data, variable = 'score_group_anxiety', diagnosis2 = diagnosis2)
@@ -154,10 +156,11 @@ summon_complete_forest <- function(
      guides = 'collect',
      axes = 'collect',
      width = c(2.5, 1, 0.5),
-     height = c(3,3,1,1,1,4)
+     height = c(2,2,2,2,2,3)
    ) +
    patchwork::plot_annotation(
-      title = title
+      title = title,
+      subtitle = subtitle
    ) &
     theme(
       plot.title = element_text(hjust = 0.5),
@@ -170,7 +173,8 @@ summon_complete_forest <- function(
 plot_hr_soft_uc <- summon_complete_forest(
   data = cox_results_soft,
   diagnosis2 = 'UC/IBDU',
-  title = "Patient reported flare in ulcerative colitis"
+  title = "Patient reported flare in ulcerative colitis",
+  subtitle = "Univariable analysis"
 )
 
 plot_hr_soft_uc
@@ -179,7 +183,8 @@ plot_hr_soft_uc
 plot_hr_soft_cd <- summon_complete_forest(
   data = cox_results_soft,
   diagnosis2 = 'CD',
-  title = "Patient reported flare in Crohn's Disease"
+  title = "Patient reported flare in Crohn's Disease",
+  subtitle = "Univariable analysis"
 )
 
 plot_hr_soft_cd
@@ -188,7 +193,8 @@ plot_hr_soft_cd
 plot_hr_hard_uc <- summon_complete_forest(
   data = cox_results_hard,
   diagnosis2 = 'UC/IBDU',
-  title = "Objective flare in ulcerative colitis"
+  title = "Objective flare in ulcerative colitis",
+  subtitle = "Univariable analysis"
 )
 
 plot_hr_hard_uc
@@ -197,7 +203,8 @@ plot_hr_hard_uc
 plot_hr_hard_cd <- summon_complete_forest(
   data = cox_results_hard,
   diagnosis2 = 'CD',
-  title = "Objective flare in Crohn's Disease"
+  title = "Objective flare in Crohn's Disease",
+  subtitle = "Univariable analysis"
 )
 
 plot_hr_hard_cd
