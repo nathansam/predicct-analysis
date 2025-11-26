@@ -6,10 +6,11 @@ library(patchwork)
 
 # Plotting Kaplan-Meier curves
 # Run PHQ
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 legend.title = 'Somatisation'
-legend.labs = c('None', 'Mild', 'Moderate', 'Severe')
-palette = NULL
+legend.labs = c('None', 'Mild', 'Moderate/Severe')
+palette = okabe_ito
 dependent = 'somatisation'
 
 # Soft

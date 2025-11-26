@@ -72,7 +72,7 @@ plot <- plot_anxiety$plot + plot_anxiety$table +
 
 plot
 
-# Save as landscape 10 x 11 inches
+# Save
 filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 
 ggsave(

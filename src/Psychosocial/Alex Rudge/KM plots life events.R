@@ -6,10 +6,11 @@ library(patchwork)
 
 # Plotting Kaplan-Meier curves
 # Run Life Events
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 legend.title = 'Life events in the past month'
 legend.labs = c("None", "One or more")
-palette = NULL
+palette = okabe_ito
 dependent = 'AnyLifeEvents'
 
 # Soft

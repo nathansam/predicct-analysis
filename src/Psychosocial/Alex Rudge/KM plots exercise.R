@@ -6,10 +6,11 @@ library(patchwork)
 
 # Plotting Kaplan-Meier curves
 # Run Exercise.qmd
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-legend.title = 'Acheived minimum exercise'
+legend.title = 'Meets recommended exercise'
 legend.labs = c("Yes", "No")
-palette = NULL
+palette = okabe_ito
 dependent = 'MinimumExercise'
 
 # Soft

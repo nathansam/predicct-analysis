@@ -5,11 +5,12 @@ library(patchwork)
 
 
 # Plotting Kaplan-Meier curves
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 # HADS Anxiety ####
 legend.title = 'HADS Anxiety Score'
-legend.labs = c('0-7', '8-10', '11-21')
-palette = NULL
+legend.labs = c('0-7', '8-21')
+palette = okabe_ito
 dependent = 'score_group'
 
 # Soft
@@ -118,8 +119,8 @@ ggsave(
 
 # HADS Depression ####
 legend.title = 'HADS Depression Score'
-legend.labs = c('0-7', '8-10', '11-21')
-palette = NULL
+legend.labs = c('0-7', '8-21')
+palette = okabe_ito
 dependent = 'score_group'
 
 
