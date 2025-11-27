@@ -18,17 +18,7 @@ data_cohort <- readr::read_rds(
 data_cohort %<>%
   dplyr::select(
     ParticipantNo,
-    SiteNo,
     diagnosis2,
-    Sex,
-    Age,
-    Ethnicity,
-    BMI,
-    IMD,
-    `IBD Duration`,
-    Treatment,
-    Smoke,
-    FC,
     softflare,
     softflare_time,
     hardflare,
@@ -59,37 +49,6 @@ data_cohort_soft_cd <- data_cohort %>%
   dplyr::filter(diagnosis2 == 'CD') %>%
   dplyr::rename(DiseaseFlareYN = softflare, time = softflare_time)
 
-legend.title = 'Responded to questionnaire'
-legend.labs = c('No', 'Yes')
-okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-palette = okabe_ito
-dependent = 'psychosocial'
-
-
-# Soft
-# UC
-summon_km_curves(
-  data = data_cohort_soft_uc,
-  dependent = dependent,
-  title = "Time to patient reported flare in ulcerative colitis",
-  legend.title = legend.title,
-  legend.labs = legend.labs,
-  palette = palette
-)
-
-# CD
-summon_km_curves(
-  data = data_cohort_soft_cd,
-  dependent = dependent,
-  title = "Time to patient reported flare in Crohn's disease",
-  legend.title = legend.title,
-  legend.labs = legend.labs,
-  palette = palette
-)
-
-# Very - needs mentioning in the paper.
-
-
 # Hard flare
 data_cohort_hard_uc <- data_cohort %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU') %>%
@@ -100,8 +59,44 @@ data_cohort_hard_cd <- data_cohort %>%
   dplyr::rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 
+
+legend.title = 'Responded to questionnaire'
+legend.labs = c('No', 'Yes')
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+palette = okabe_ito
+dependent = 'psychosocial'
+
+
+# Soft
 # UC
-summon_km_curves(
+plot_soft_uc <- summon_km_curves(
+  data = data_cohort_soft_uc,
+  dependent = dependent,
+  title = "Time to patient reported flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
+
+plot_soft_uc
+
+# CD
+plot_soft_cd <- summon_km_curves(
+  data = data_cohort_soft_cd,
+  dependent = dependent,
+  title = "Time to patient reported flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
+
+plot_soft_cd
+
+# Very - needs mentioning in the paper.
+
+
+# UC
+plot_hard_uc <- summon_km_curves(
   data = data_cohort_hard_uc,
   dependent = dependent,
   title = "Time to objective flare in ulcerative colitis",
@@ -110,8 +105,10 @@ summon_km_curves(
   palette = palette
 )
 
+plot_hard_uc
+
 # CD
-summon_km_curves(
+plot_hard_cd <- summon_km_curves(
   data = data_cohort_hard_cd,
   dependent = dependent,
   title = "Time to objective flare in Crohn's disease",
@@ -120,4 +117,29 @@ summon_km_curves(
   palette = palette
 )
 
+plot_hard_cd
+
+# But not hard flare.
+
+# As a 2x2 plot
+plot <- summon_km_curves_panel(
+  plot_soft_uc,
+  plot_soft_cd,
+  plot_hard_uc,
+  plot_hard_cd
+)
+
+plot
+
+# Save
+
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
+
+ggsave(
+  filename = paste0(filepath_save, "Kaplan Meier Questionnaire Response.pdf"),
+  plot = plot,
+  width = 9.5,
+  height = 8.5,
+  units = 'in'
+)
 
