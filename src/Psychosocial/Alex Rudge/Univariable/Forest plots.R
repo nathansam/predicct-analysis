@@ -183,7 +183,7 @@ plot_hr_soft_uc
 plot_hr_soft_cd <- summon_complete_forest(
   data = cox_results_soft,
   diagnosis2 = 'CD',
-  title = "Patient reported flare in Crohn's Disease",
+  title = "Patient reported flare in Crohn's disease",
   subtitle = "Univariable analysis"
 )
 
@@ -203,7 +203,7 @@ plot_hr_hard_uc
 plot_hr_hard_cd <- summon_complete_forest(
   data = cox_results_hard,
   diagnosis2 = 'CD',
-  title = "Objective flare in Crohn's Disease",
+  title = "Objective flare in Crohn's disease",
   subtitle = "Univariable analysis"
 )
 
