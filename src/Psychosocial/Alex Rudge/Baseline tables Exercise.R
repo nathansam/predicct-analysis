@@ -5,9 +5,11 @@ library(gtsummary)
 variables = c('age',
               'Sex',
               'Smoke',
-              'OverallControl',
+              'IMD',
+              'FC',
               'flare_group',
-              'FC')
+              'OverallControl',
+              'control_8')
 
 # Tidy up the data ready for the table
 data_baseline_table <- data_baseline %>%
@@ -24,9 +26,23 @@ data_baseline_table <- data_baseline %>%
   dplyr::mutate(
     flare_group = forcats::fct_recode(
       flare_group,
-      "None" = "No flares",
+      "None" = "No Flares",
       "At least one" = "1 or More Flares"
-  ))
+    )) %>%
+  dplyr::mutate(IMD = as.character(IMD)) %>%
+  dplyr::mutate(
+    IMD = dplyr::case_match(
+      IMD,
+      '1' ~ '1 (most deprived)',
+      '2' ~ '2',
+      '3' ~ '3',
+      '4' ~ '4',
+      '5' ~ '5 (least deprived)'
+    )
+  ) %>%
+  dplyr::mutate(
+    MinimumExercise = forcats::fct_relevel(MinimumExercise, 'No')
+  )
   
 
 data_baseline_table %>%
@@ -40,10 +56,13 @@ data_baseline_table %>%
         missing_text = 'Missing data',
         label = list(
           age ~ "Age",
-          flare_group ~ "Flares in previous year",
-          FC ~ 'Fecal Calprotectin',
+          Sex ~ 'Sex',
           Smoke ~ "Smoking",
-          OverallControl ~ "VAS Control Score"
+          IMD ~ 'Index of Multiple Deprivation',
+          FC ~ 'Fecal Calprotectin',
+          flare_group ~ "Flares in previous year",
+          OverallControl ~ "IBD-Control-VAS score",
+          control_8 ~ "IBD-Control-8 score"
         )
       ) %>%
       gtsummary::add_p(
@@ -55,7 +74,7 @@ data_baseline_table %>%
   ) %>%
   gtsummary::as_gt() %>%
   gt::tab_spanner(
-    label = gt::md("**Minimum Recommended Exercise**"),
+    label = gt::md("**Meets Recommended Exercise**"),
     columns = c(stat_1_1, stat_2_1, stat_1_2, stat_2_2),
     level = 2,
     gather = FALSE

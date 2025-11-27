@@ -115,7 +115,7 @@ data_baseline_anxiety_table %>%
   gtsummary::as_gt() %>%
   gt::tab_spanner(
     label = gt::md("**HADS Anxiety Score**"),
-    columns = c(stat_1_1, stat_2_1, stat_3_1, stat_1_2, stat_2_2, stat_3_2),
+    columns = c(stat_1_1, stat_2_1, stat_1_2, stat_2_2),
     level = 2,
     gather = FALSE
   ) %>%
@@ -167,7 +167,7 @@ data_baseline_depression_table %>%
   gtsummary::as_gt() %>%
   gt::tab_spanner(
     label = gt::md("**HADS Depression Score**"),
-    columns = c(stat_1_1, stat_2_1, stat_3_1, stat_1_2, stat_2_2, stat_3_2),
+    columns = c(stat_1_1, stat_2_1, stat_1_2, stat_2_2),
     level = 2,
     gather = FALSE
   ) %>%

@@ -5,9 +5,11 @@ library(gtsummary)
 variables = c('age',
               'Sex',
               'Smoke',
-              'OverallControl',
+              'IMD',
+              'FC',
               'flare_group',
-              'FC')
+              'OverallControl',
+              'control_8')
 
 # Tidy up the data ready for the table
 data_baseline_table <- data_baseline %>%
@@ -24,10 +26,34 @@ data_baseline_table <- data_baseline %>%
   dplyr::mutate(
     flare_group = forcats::fct_recode(
       flare_group,
-      "None" = "No flares",
+      "None" = "No Flares",
       "At least one" = "1 or More Flares"
-  ))
-  
+    )) %>%
+  dplyr::mutate(IMD = as.character(IMD)) %>%
+  dplyr::mutate(
+    IMD = dplyr::case_match(
+      IMD,
+      '1' ~ '1 (most deprived)',
+      '2' ~ '2',
+      '3' ~ '3',
+      '4' ~ '4',
+      '5' ~ '5 (least deprived)'
+    )
+  ) %>%
+  # Relabel somatisation
+  dplyr::mutate(
+    somatisation = dplyr::case_match(
+      somatisation,
+      "None" ~ "0-4 (none)",
+      "Mild" ~ "5-9 (mild)",
+      "ModSev" ~ "10-30 (moderate/severe)"
+    )
+  ) %>%
+  dplyr::mutate(
+    somatisation = forcats::as_factor(somatisation),
+    somatisation = forcats::fct_relevel(somatisation, "0-4 (none)", "5-9 (mild)")
+  )
+
 
 data_baseline_table %>%
   gtsummary::tbl_strata(
@@ -40,15 +66,18 @@ data_baseline_table %>%
         missing_text = 'Missing data',
         label = list(
           age ~ "Age",
-          flare_group ~ "Flares in previous year",
-          FC ~ 'Fecal Calprotectin',
+          Sex ~ 'Sex',
           Smoke ~ "Smoking",
-          OverallControl ~ "VAS Control Score"
+          IMD ~ 'Index of Multiple Deprivation',
+          FC ~ 'Fecal Calprotectin',
+          flare_group ~ "Flares in previous year",
+          OverallControl ~ "IBD-Control-VAS score",
+          control_8 ~ "IBD-Control-8 score"
         )
       ) %>%
       gtsummary::add_p(
         test.args = all_tests("fisher.test") ~ list(simulate.p.value = TRUE, B = 1e5)
-        ) %>%
+      ) %>%
       gtsummary::add_q(method = 'fdr') %>%
       gtsummary::bold_p(q = TRUE),
     .header = "**{strata}**, N = {n}"
@@ -56,7 +85,7 @@ data_baseline_table %>%
   gtsummary::as_gt() %>%
   gt::tab_spanner(
     label = gt::md("**Somatisation**"),
-    columns = c(stat_1_1, stat_2_1, stat_3_1, stat_4_1, stat_1_2, stat_2_2, stat_3_2, stat_4_2),
+    columns = c(stat_1_1, stat_2_1, stat_3_1, stat_1_2, stat_2_2, stat_3_2),
     level = 2,
     gather = FALSE
   ) %>%
