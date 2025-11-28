@@ -7,9 +7,9 @@ library(magrittr)
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
 
 # Suffix - cc (complete case) or mice 
-#suffix <- "_cc.rds"
+# suffix <- "_cc.rds"
 
-#suffix <- "_mice.rds"
+# suffix <- "_mice.rds"
 
 
 # HADS

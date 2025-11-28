@@ -219,6 +219,29 @@ extract_cox_results <- function(data,
                                 variable,
                                 flare_type,
                                 diagnosis2) {
+  
+  # Calculate sample size
+  if (inherits(cox_model, "mipo")) {
+    counts <- data %>%
+      dplyr::group_by(!!sym(variable)) %>%
+      dplyr::count() %>%
+      dplyr::ungroup() %>%
+      dplyr::rename(level = variable)
+    
+  } else {
+    model_variables <- cox_model %>% formula() %>% all.vars()
+    
+    
+    counts <- data %>%
+      dplyr::select(tidyselect::all_of(model_variables)) %>%
+      dplyr::filter(complete.cases(.)) %>%
+      dplyr::group_by(!!sym(variable)) %>%
+      dplyr::count() %>%
+      dplyr::ungroup() %>%
+      dplyr::rename(level = variable)
+    
+  }
+  
   data %>%
     dplyr::pull(variable) %>%
     levels() %>%
@@ -232,11 +255,13 @@ extract_cox_results <- function(data,
         dplyr::filter(stringr::str_starts(term, variable)),
       by = "term"
     ) %>%
+    # Add sample size
+    dplyr::left_join(counts, by = 'level') %>%
     # Diagnosis
     dplyr::mutate(diagnosis2 = diagnosis2, flare_type = flare_type) %>%
     dplyr::select(
       tidyselect::any_of(
-        c('term', 'variable', 'level', 'estimate', 'std.error', 'statistic', 'df', 'p.value', 'conf.low', 'conf.high', 'diagnosis2', 'flare_type')))
+        c('term', 'variable', 'level', 'estimate', 'std.error', 'statistic', 'df', 'n', 'p.value', 'conf.low', 'conf.high', 'diagnosis2', 'flare_type')))
 }
 
 # Creating KM curves
