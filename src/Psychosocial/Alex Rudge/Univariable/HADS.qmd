@@ -1600,8 +1600,6 @@ cox_depression_hard_cd %>%
   print_survival()
 ```
 
-
-
 ## Reproduction and reproducibility {.appendix}
 
 <details class="appendix">

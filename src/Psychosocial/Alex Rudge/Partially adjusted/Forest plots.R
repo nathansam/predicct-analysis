@@ -21,14 +21,6 @@ cox_results %<>%
     list(estimate = 1)
   )
 
-# Remove reference group for binary variables (as the reference is obvious)
-# cox_results %<>%
-#   dplyr::filter(
-#     !term == 'MinimumExerciseYes',
-#     !term == 'AnyLifeEventsNo',
-#     !term == 'SleepDisturbanceNo'
-#   )
-
 # Significance as a factor
 cox_results %<>%
   dplyr::mutate(

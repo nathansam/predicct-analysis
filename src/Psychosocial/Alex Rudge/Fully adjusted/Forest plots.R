@@ -21,13 +21,6 @@ cox_results %<>%
     list(estimate = 1)
   )
 
-# Remove reference group for binary variables (as the reference is obvious)
-# cox_results %<>%
-#   dplyr::filter(
-#     !term == 'MinimumExerciseYes',
-#     !term == 'AnyLifeEventsNo',
-#     !term == 'SleepDisturbanceNo'
-#   )
 
 # Significance as a factor
 cox_results %<>%
@@ -49,13 +42,13 @@ cox_results_hard <- cox_results %>%
 custom_theme <- 
   theme_minimal() +
   theme(
-  # Title
-  plot.title = element_text(size = 10),
-  plot.subtitle = element_text(size = 8),
-  # Axes
-  axis.title.y = element_blank(),
-  axis.text.y = element_text(size = 10)
-)
+    # Title
+    plot.title = element_text(size = 10),
+    plot.subtitle = element_text(size = 8),
+    # Axes
+    axis.title.y = element_blank(),
+    axis.text.y = element_text(size = 10)
+  )
 
 # Maximum xlimit
 x_max <- cox_results %>% dplyr::pull(conf.high) %>% max(na.rm = TRUE) %>% ceiling()
@@ -100,6 +93,16 @@ summon_forest_plot <- function(data, variable, diagnosis2){
     ) +
     custom_theme
   
+  # n, sample size
+  n <- data_plot %>%
+    ggplot() +
+    geom_text(aes(
+      x = 0,
+      y = forcats::as_factor(term_tidy),
+      label = n)) +
+    theme_void() +
+    theme(plot.title = element_text(hjust = 0.5))
+  
   # HR
   hr <- data_plot %>%
     ggplot() +
@@ -121,7 +124,7 @@ summon_forest_plot <- function(data, variable, diagnosis2){
     theme(plot.title = element_text(hjust = 0.5))
   
   # Return
-  list(plot = plot, hr = hr, p = p)
+  list(plot = plot, n = n, hr = hr, p = p)
   
 }
 
@@ -133,7 +136,7 @@ summon_complete_forest <- function(
     diagnosis2,
     title,
     subtitle = NULL) {
-
+  
   # Patient reported flares in UC
   plot_anxiety <- summon_forest_plot(data, variable = 'score_group_anxiety', diagnosis2 = diagnosis2)
   plot_depression <- summon_forest_plot(data, variable = 'score_group_depression', diagnosis2 = diagnosis2)
@@ -141,35 +144,38 @@ summon_complete_forest <- function(
   plot_lifeevents <- summon_forest_plot(data, variable = 'AnyLifeEvents', diagnosis2 = diagnosis2)
   plot_sleep <- summon_forest_plot(data, variable = 'SleepDisturbance', diagnosis2 = diagnosis2)
   plot_somatisation <- summon_forest_plot(data, variable = 'somatisation', diagnosis2 = diagnosis2)
-
+  
   plot_anxiety$plot + 
+    (plot_anxiety$n + 
+       labs(title = 'N') + 
+       theme(plot.title = element_text(size = 12))) +
     (plot_anxiety$hr + 
        labs(title = 'HR (95% CI)') + 
        theme(plot.title = element_text(size = 12))) + 
     (plot_anxiety$p + 
        labs(title = 'P-value') +
        theme(plot.title = element_text(size = 12))) +
-   plot_depression$plot + plot_depression$hr +  plot_depression$p +
-   plot_exercise$plot + plot_exercise$hr + plot_exercise$p +
-   plot_lifeevents$plot + plot_lifeevents$hr + plot_lifeevents$p +
-   plot_sleep$plot + plot_sleep$hr + plot_sleep$p +
-   plot_somatisation$plot + plot_somatisation$hr + plot_somatisation$p +
+    plot_depression$plot + plot_depression$n + plot_depression$hr +  plot_depression$p +
+    plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
+    plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
+    plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p +
+    plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p +
     patchwork::plot_layout(
-      ncol = 3,
-     guides = 'collect',
-     axes = 'collect',
-     width = c(2.5, 1, 0.5),
-     height = c(2,2,2,2,2,3)
-   ) +
-   patchwork::plot_annotation(
+      ncol = 4,
+      guides = 'collect',
+      axes = 'collect',
+      width = c(2.5, 0.4, 1, 0.5),
+      height = c(2,2,2,2,2,3)
+    ) +
+    patchwork::plot_annotation(
       title = title,
       subtitle = subtitle
-   ) &
+    ) &
     theme(
       plot.title = element_text(hjust = 0.5),
-     plot.subtitle = element_text(hjust = 0.5),
+      plot.subtitle = element_text(hjust = 0.5),
       legend.position = "none",
-     plot.margin = margin(0, 0, 3, 0))
+      plot.margin = margin(0, 0, 3, 0))
 }
 
 # Soft UC
@@ -216,7 +222,7 @@ filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/"
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft uc", suffix_save),
   plot = plot_hr_soft_uc,
-  width = 8,
+  width = 8.5,
   height = 7,
   units = 'in'
 )
@@ -225,7 +231,7 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft cd", suffix_save),
   plot = plot_hr_soft_cd,
-  width = 8,
+  width = 8.5,
   height = 7,
   units = 'in'
 )
@@ -234,7 +240,7 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard uc", suffix_save),
   plot = plot_hr_hard_uc,
-  width = 8,
+  width = 8.5,
   height = 7,
   units = 'in'
 )
@@ -243,7 +249,7 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard cd", suffix_save),
   plot = plot_hr_hard_cd,
-  width = 8,
+  width = 8.5,
   height = 7,
   units = 'in'
 )
