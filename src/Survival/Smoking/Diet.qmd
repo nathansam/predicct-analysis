@@ -87,23 +87,39 @@ flare.uc.df %<>%
 # Categorised continuous variables
 
 # Categorize meat protein by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "Meat_sum", reference_data = flare.df)
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "Meat_sum", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(flare.cd.df,
+                                       "Meat_sum",
+                                       reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df,
+                                       "Meat_sum",
+                                       reference_data = flare.df)
 
 
 # Categorize dietary fibre by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "fibre", reference_data = flare.df)
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "fibre", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(flare.cd.df,
+                                       "fibre",
+                                       reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df,
+                                       "fibre",
+                                       reference_data = flare.df)
 
 
 # Categorize PUFA by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "PUFA_percEng", reference_data = flare.df)
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "PUFA_percEng", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(flare.cd.df,
+                                       "PUFA_percEng",
+                                       reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df,
+                                       "PUFA_percEng",
+                                       reference_data = flare.df)
 
 
 # Categorize UPF percentage by quantiles
-flare.cd.df <- categorize_by_quantiles(flare.cd.df, "UPF_perc", reference_data = flare.df)
-flare.uc.df <- categorize_by_quantiles(flare.uc.df, "UPF_perc", reference_data = flare.df)
+flare.cd.df <- categorize_by_quantiles(flare.cd.df,
+                                       "UPF_perc",
+                                       reference_data = flare.df)
+flare.uc.df <- categorize_by_quantiles(flare.uc.df,
+                                       "UPF_perc",
+                                       reference_data = flare.df)
 
 # Smoking
 # Reorder Smoke factor levels
@@ -137,7 +153,8 @@ flare.cd.df %>%
     .fns = is.na
   )) %>%
   dplyr::pull(Smoke) %>%
-  forcats::fct_count(prop = TRUE)
+  forcats::fct_count(prop = TRUE) %>%
+  knitr::kable()
 ```
 
 ```{R}
@@ -158,7 +175,8 @@ flare.uc.df %>%
     .fns = is.na
   )) %>%
   dplyr::pull(Smoke) %>%
-  forcats::fct_count(prop = TRUE)
+  forcats::fct_count(prop = TRUE) %>%
+  knitr::kable()
 ```
 
 ## Total meat protein
