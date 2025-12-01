@@ -25,7 +25,9 @@ data <- hads %>%
 
 # New column - flag if FC is missing
 data %<>%
-  dplyr::mutate(missing_fc_flag = is.na(FC))
+  dplyr::mutate(missing_fc_flag = is.na(FC)) %>%
+  dplyr::mutate(missing_fc_flag = factor(missing_fc_flag)) %>%
+  dplyr::mutate(missing_fc_flag = forcats::fct_relevel(missing_fc_flag, "FALSE"))
 
 
 # Number of patients with missing FC
@@ -89,28 +91,49 @@ data %>%
 
 # Is missingness informative of the outcome?
 
-data_survival <- data %>%
+data_survival_soft <- data %>%
   dplyr::inner_join(
     flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
     by = 'ParticipantNo'
   ) %>%
-  dplyr::mutate(status = softflare, time = softflare_time)
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+data_survival_hard <- data %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 
-data_survival %>%
-  survfit(Surv(time, status) ~ missing_fc_flag, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Missing FC',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+# Plotting Kaplan-Meier curves
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+# HADS Anxiety ####
+legend.title = 'Missing FC'
+legend.labs = c('No', 'Yes')
+palette = okabe_ito
+dependent = 'missing_fc_flag'
+
+# Soft
+summon_km_curves(
+  data = data_survival_soft,
+  dependent = dependent,
+  title = "Time to Patient Reported Flare",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
+
+# Hard
+summon_km_curves(
+  data = data_survival_hard,
+  dependent = dependent,
+  title = "Time to Objective Flare",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
+
 
 # Patients with missing FC have better survival probability
-
-
-
