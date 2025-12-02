@@ -212,10 +212,41 @@ htmltools::HTML(export_svg(flow))
 
 ```{R}
 eof <- subset(eof, DiseaseFlareYN != ".")
+eof <- eof %>%
+  distinct(ParticipantId, .keep_all = TRUE)
 ```
 
 End of study phenotyping was avaialable for `r nrow(eof)` subjects. This equates
 to `r round(nrow(eof) / nrow(demo) * 100, 1)`% of the total cohort.
+
+
+```{R}
+eof.dates <- read_xlsx(paste0(prefix, "EOF_dates.xlsx")) %>%
+  distinct(ParticipantId, .keep_all = TRUE) %>%
+  filter(ParticipantId %in% eof$ParticipantId) %>%
+  select(-QuestionnaireId)
+
+eof.dates$lasteos <- as.Date(eof.dates$lasteos)
+
+
+eos.followup <- merge(
+  demo[, c("ParticipantId", "entry_date")],
+  eof.dates,
+  by = "ParticipantId",
+  all.x = FALSE, 
+  all.y = TRUE) %>%
+  mutate(followup_days = as.numeric(lasteos - entry_date)) %>%
+  summarise(
+    iqr_lower = quantile(followup_days, 0.25),
+    median_followup = median(followup_days),
+    iqr_upper = quantile(followup_days, 0.75)
+  ) / 30
+```
+
+The median follow-up time from study recruitment to end-of-study phenotyping
+is `r round(eos.followup$median_followup, 1)` months
+(IQR: `r round(eos.followup$iqr_lower, 1)`--`r round(eos.followup$iqr_upper, 1)`
+months).
 
 ## Reproduction and reproducibility {.appendix}
 
