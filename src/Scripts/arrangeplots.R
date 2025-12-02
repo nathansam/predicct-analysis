@@ -471,3 +471,36 @@ png(
 )
 survs
 dev.off()
+
+####################
+#### Figure S?? ####
+####################
+p1 <- readRDS(paste0(outdir, "fc-cont-cd-soft.RDS"))
+p2 <- readRDS(paste0(outdir, "fc-cont-cd-hard.RDS"))
+p3 <- readRDS(paste0(outdir, "fc-cont-uc-soft.RDS"))
+p4 <- readRDS(paste0(outdir, "fc-cont-uc-hard.RDS"))
+
+p <- (p1 + p2) / (p3 + p4) +
+  plot_annotation(tag_levels = "A") &
+  theme(legend.position = "bottom",
+        plot.tag = element_text(size = 18, face = "bold")) &
+  xlab("Log (FC (µg/g))") & xlim(2.5, 6.5) & ylim(0.4, 2.5)
+
+
+png(
+  "plots/arranged/FigureSFC.png",
+  width = 14.5 * 5 / 8,
+  height = 14.5 * 5 / 8,
+  units = "in",
+  res = 300
+)
+p
+dev.off()
+
+cairo_pdf(
+  "plots/arranged/FigureSFC.pdf",
+  width = 14.5 * 5 / 8,
+  height = 14.5 * 5 / 8
+)
+p
+dev.off()

@@ -20,10 +20,10 @@ This report presents a sensitivity analysis examining the association between di
 
 The key methodological differences from the primary analysis are:
 
-1. **Continuous FC**: FC is included as a continuous predictor rather than categorical
-2. **Spline modeling**: Natural splines are tested to assess non-linear relationships
-3. **Hazard ratio curves**: Continuous hazard ratios are plotted across the range of each dietary variable
-4. **Risk difference estimation**: Population-average risk differences are calculated using bootstrapping
+1.  **Continuous FC**: FC is included as a continuous predictor rather than categorical
+2.  **Spline modeling**: Natural splines are tested to assess non-linear relationships
+3.  **Hazard ratio curves**: Continuous hazard ratios are plotted across the range of each dietary variable
+4.  **Risk difference estimation**: Population-average risk differences are calculated using bootstrapping
 
 Dietary variables examined include total meat protein, dietary fibre, polyunsaturated fatty acids (PUFA), and ultra-processed food (UPF) intake. Analyses are stratified by disease type (Crohn's disease vs. ulcerative colitis) and flare definition (patient-reported vs. objective).
 
@@ -450,15 +450,18 @@ broom.cols <- c("Term",
 
 ## Shapes of continuous variables
 
-Using splines for the continuous variables. Testing the splines significance using a likelihood ratio test.
+Using splines for the continuous variables. Testing the splines significance
+using a likelihood ratio test.
 
 ### Crohn's disease
 
-#### Patient reported flare
+Before examining dietary exposures, we first assess whether continuous
+covariates (age, BMI, FC, and diet quality index) exhibit non-linear
+relationships with flare risk. Natural splines with 2 degrees of freedom are
+tested using likelihood ratio tests (LRT). Where significant, spline terms are
+retained in subsequent dietary models to improve model fit and reduce
+confounding.
 
-Before examining dietary exposures, we first assess whether continuous covariates (age, BMI, FC, and diet quality index) exhibit non-linear relationships with flare risk. Natural splines with 2 degrees of freedom are tested using likelihood ratio tests (LRT). Where significant, spline terms are retained in subsequent dietary models to improve model fit and reduce confounding.
-
-### Crohn's disease
 
 #### Patient-reported flare
 
@@ -514,11 +517,13 @@ plot_continuous_hr(
 )
 
 # FC
-plot_continuous_hr(
+p <- plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_soft,
   variable = "FC"
-)
+) 
+saveRDS(p, file = paste0(outdir, "fc-cont-cd-soft.RDS"))
+p
 
 # DQI
 plot_continuous_hr(
@@ -580,12 +585,13 @@ plot_continuous_hr(
 )
 
 # FC
-plot_continuous_hr(
+p <- plot_continuous_hr(
   data = flare.cd.df,
   model = cox_cd_hard,
   variable = "FC"
 )
-
+saveRDS(p, file = paste0(outdir, "fc-cont-cd-hard.RDS"))
+p
 
 # DQI
 plot_continuous_hr(
@@ -671,13 +677,14 @@ plot_continuous_hr(
 )
 
 # FC
-plot_continuous_hr(
+p <- plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_soft,
   variable = "FC",
   splineterm = "ns(FC, df = 2)"
 )
-
+saveRDS(p, file = paste0(outdir, "fc-cont-uc-soft.RDS"))
+p
 
 # DQI
 plot_continuous_hr(
@@ -687,6 +694,8 @@ plot_continuous_hr(
   splineterm = "ns(dqi_tot, df = 2)"
 ) +
   xlab("Diet quality index")
+```
+
 
 #### Objective flare
 
@@ -760,13 +769,14 @@ plot_continuous_hr(
 )
 
 # FC
-plot_continuous_hr(
+p <- plot_continuous_hr(
   data = flare.uc.df,
   model = cox_uc_hard,
   variable = "FC",
   splineterm = "ns(FC, df = 2)"
 )
-
+saveRDS(p, file = paste0(outdir, "fc-cont-uc-hard.RDS"))
+p
 
 # DQI
 plot_continuous_hr( 
@@ -780,7 +790,11 @@ plot_continuous_hr(
 
 ## Total meat protein
 
-This section examines the association between total meat protein intake (grams per day) and time to flare. Cox models are adjusted for sex, Index of Multiple Deprivation (IMD), age, BMI, FC (continuous), and diet quality index, with a frailty term for study site. We first test whether the relationship is non-linear using splines, then present hazard ratios and continuous HR curves.
+This section examines the association between total meat protein intake (grams
+per day) and time to flare. Cox models are adjusted for sex, Index of Multiple
+Deprivation (IMD), age, BMI, FC (continuous), and diet quality index, with a
+frailty term for study site. We first test whether the relationship is
+non-linear using splines, then present hazard ratios and continuous HR curves.
 
 ### Crohn's disease
 
@@ -840,7 +854,6 @@ cox_meat_cd_hard <- coxph(
 # Do we need a spline? No
 summon_lrt(cox_meat_cd_hard, remove = "Meat_sum", add = "ns(Meat_sum, df = 2)")
 ```
-
 
 ```{R}
 cox_meat_cd_hard %>%
@@ -941,7 +954,9 @@ plot_continuous_hr(
 
 ## Dietary Fibre
 
-This section examines the association between dietary fibre intake (grams per day) and time to flare, using the same covariate adjustment strategy as the meat protein analysis.
+This section examines the association between dietary fibre intake (grams per
+day) and time to flare, using the same covariate adjustment strategy as the meat
+protein analysis.
 
 ### Crohn's disease
 
@@ -1086,7 +1101,9 @@ plot_continuous_hr(
 
 ## Polyunsaturated fatty acids
 
-This section examines the association between PUFA intake (as percentage of total energy) and time to flare. Note that while the study protocol specified n-6 PUFAs, the available FFQ data captures total PUFA (both n-3 and n-6).
+This section examines the association between PUFA intake (as percentage of
+total energy) and time to flare. Note that while the study protocol specified
+n-6 PUFAs, the available FFQ data captures total PUFA (both n-3 and n-6).
 
 ### Crohn's disease
 
@@ -1131,7 +1148,6 @@ summon_lrt(cox_pufa_cd_soft,
   add = "ns(PUFA_percEng, df = 3)"
 )
 ```
-
 
 ```{R}
 cox_pufa_cd_soft %>%
@@ -1272,7 +1288,10 @@ plot_continuous_hr(
 
 ## Ultra-processed food
 
-This section examines the association between ultra-processed food consumption (percentage of daily energy intake from UPF) and time to flare. UPF is defined according to the NOVA classification system as foods that have undergone substantial industrial processing.
+This section examines the association between ultra-processed food consumption
+(percentage of daily energy intake from UPF) and time to flare. UPF is defined
+according to the NOVA classification system as foods that have undergone
+substantial industrial processing.
 
 ### Crohn's disease
 
@@ -1425,14 +1444,18 @@ plot_continuous_hr(
 nboot <- 199
 ```
 
-Risk differences quantify the absolute change in cumulative incidence of flare at a specific time point (1 year) associated with different levels of each dietary exposure. These are population-averaged estimates obtained by:
+Risk differences quantify the absolute change in cumulative incidence of flare
+at a specific time point (1 year) associated with different levels of each
+dietary exposure. These are population-averaged estimates obtained by:
 
-1. Predicting individual-level survival for each participant at specified dietary exposure values
-2. Averaging across the population to obtain mean cumulative incidence
-3. Calculating differences relative to a reference value (median)
-4. Bootstrapping to obtain 95% confidence intervals
+1.  Predicting individual-level survival for each participant at specified
+    dietary exposure values
+2.  Averaging across the population to obtain mean cumulative incidence
+3.  Calculating differences relative to a reference value (median)
+4.  Bootstrapping to obtain 95% confidence intervals
 
-Results are presented as forest plots with corresponding risk difference values and confidence intervals.
+Results are presented as forest plots with corresponding risk difference values
+and confidence intervals.
 
 ### Crohn's disease
 
