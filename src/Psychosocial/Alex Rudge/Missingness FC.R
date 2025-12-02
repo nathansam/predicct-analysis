@@ -137,3 +137,57 @@ summon_km_curves(
 
 
 # Patients with missing FC have better survival probability
+
+# Split UC and CD
+data_survival_soft_uc <- data_survival_soft %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+data_survival_soft_cd <- data_survival_soft %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+data_survival_hard_uc <- data_survival_hard %>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+data_survival_hard_cd <- data_survival_hard %>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+# Plot KM
+# Soft UC
+summon_km_curves(
+  data = data_survival_soft_uc,
+  dependent = dependent,
+  title = "Time to Patient Reported Flare in UC",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
+
+# Soft CD
+summon_km_curves(
+  data = data_survival_soft_cd,
+  dependent = dependent,
+  title = "Time to Patient Reported Flare in CD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
+
+# Hard UC
+summon_km_curves(
+  data = data_survival_hard_uc,
+  dependent = dependent,
+  title = "Time to Objective Flare in UC",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
+
+# Hard CD
+summon_km_curves(
+  data = data_survival_hard_cd,
+  dependent = dependent,
+  title = "Time to Objective Flare in CD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette
+)
