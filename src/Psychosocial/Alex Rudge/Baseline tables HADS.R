@@ -42,7 +42,7 @@ data_baseline_anxiety_table <- data_baseline_anxiety %>%
   )
 
 # Anxiety
-data_baseline_anxiety_table %>%
+tbl_anxiety <- data_baseline_anxiety_table %>%
   gtsummary::tbl_strata(
     strata = diagnosis2,
     .tbl_fun = ~
@@ -87,6 +87,8 @@ data_baseline_anxiety_table %>%
   tbl
   }
 
+tbl_anxiety
+
 # Depression
 # Tidy up the data ready for the table
 data_baseline_depression_table <- data_baseline_depression %>%
@@ -118,7 +120,7 @@ data_baseline_depression_table <- data_baseline_depression %>%
     )
   )
 
-data_baseline_depression_table %>%
+tbl_depression <- data_baseline_depression_table %>%
   gtsummary::tbl_strata(
     strata = diagnosis2,
     .tbl_fun = ~
@@ -164,3 +166,22 @@ data_baseline_depression_table %>%
   
   tbl
   }
+
+tbl_depression
+
+
+
+# Save to word
+filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
+
+# Anxiety
+tbl_anxiety %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations HADS anxiety.docx")
+  )
+
+# Depression
+tbl_depression %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations HADS depression.docx")
+  )

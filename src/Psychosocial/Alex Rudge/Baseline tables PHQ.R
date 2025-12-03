@@ -55,7 +55,7 @@ data_baseline_table <- data_baseline %>%
   )
 
 
-data_baseline_table %>%
+tbl <- data_baseline_table %>%
   gtsummary::tbl_strata(
     strata = diagnosis2,
     .tbl_fun = ~
@@ -103,3 +103,11 @@ data_baseline_table %>%
   }
 
 
+# Save to word
+filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
+
+# Anxiety
+tbl %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations PHQ.docx")
+  )
