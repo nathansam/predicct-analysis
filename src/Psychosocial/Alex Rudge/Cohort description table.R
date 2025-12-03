@@ -2,6 +2,7 @@ library(tidyverse)
 library(magrittr)
 library(gtsummary)
 
+
 # Comparing the psychosocial cohort to the entire Predicct cohort
 
 
@@ -352,18 +353,63 @@ tbl <- data_table_all %>%
       gtsummary::tbl_summary(
         by = diagnosis2,
         include = variables_all,
-        missing_text = 'Missing data'
+        missing_text = 'Missing data',
+        label = list(
+          Age ~ "Age",
+          Sex ~ 'Sex',
+          Ethnicity ~ "Ethnicity",
+          IMD ~ 'Index of multiple deprivation',
+          diagnosis ~ 'IBD Type',
+          IBD_duration ~ 'IBD Duration',
+          control_8 ~ 'IBD-Control-8',
+          OverallControl ~ 'IBD-Control-VAS',
+          FC ~ 'Fecal calprotectin (ug/g)',
+          CReactiveProtein ~ 'C-reactive protein (mg/L)',
+          Biologic ~ 'Biologic use',
+          Location ~ 'Montreal location',
+          Behaviour ~ 'Montreal behaviour',
+          Perianal ~ 'Perianal disease',
+          HBI_cat ~ 'Harvey-Bradshaw Index',
+          Surgery ~ 'Previous surgery for Crohn’s disease',
+          Extent ~ 'Montreal extent',
+          Mayo_cat ~ 'Partial Mayo score'
+        )
       )
   ) 
 
+# Fix CD columns 
 tbl$table_body %<>%
   dplyr::mutate(
     dplyr::across(
-      .cols = c(stat_1_1, stat_2_1, stat_1_2, stat_2_2),
+      # Select CD columns
+      .cols = c(stat_1_1, stat_1_2),
       .fns = function(x) {
-        dplyr::case_match(
-          x,
-          '0 (NA%)' ~ '-',
+        dplyr::case_when(
+          # Set UC specific variables to a dash
+          variable == 'Extent' ~ NA,
+          variable == 'Mayo' ~ NA,
+          variable == 'Mayo_cat' ~ NA,
+          .default = x
+        )
+      }
+    )
+)
+
+# Fix UC columns 
+tbl$table_body %<>%
+  dplyr::mutate(
+    dplyr::across(
+      # Select UC columns
+      .cols = c(stat_2_1, stat_2_2),
+      .fns = function(x) {
+        # Set CD specific variables to a dash
+        dplyr::case_when(
+          variable == 'Location' ~ NA,
+          variable == 'Behaviour' ~ NA,
+          variable == 'Perianal' ~ NA,
+          variable == 'HBI' ~ NA,
+          variable == 'HBI_cat' ~ NA,
+          variable == 'Surgery' ~ NA,
           .default = x
         )
       }
@@ -371,3 +417,14 @@ tbl$table_body %<>%
   )
 
 tbl
+
+# Save as word
+filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
+
+
+tbl %>%
+  gtsummary::as_gt() %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Table1.docx")
+  )
+
