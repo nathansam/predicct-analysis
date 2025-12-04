@@ -270,7 +270,8 @@ summon_km_curves <- function(data,
                              title = NULL,
                              legend.title = NULL,
                              legend.labs = NULL,
-                             palette = NULL) {
+                             palette = NULL,
+                             ...) {
   
   # ggsurvplot
   plot_surv <- data %>%
@@ -291,7 +292,8 @@ summon_km_curves <- function(data,
       ggtheme = theme_minimal(),
       break.time.by = 365/2,  
       xscale = 730/24,
-      xlim = c(0, 750)
+      xlim = c(0, 750),
+      ...
     )
   
   # Customise the plot and table separately

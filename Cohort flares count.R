@@ -1,0 +1,91 @@
+library(tidyverse)
+library(magrittr)
+library(survival)
+
+
+# Flare data
+chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+
+data_survival_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
+data_survival_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
+
+# Participants
+participants <- readr::read_rds(
+  file = "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/participants.rds"
+)
+
+
+# Rename columns
+data_survival_soft %<>%
+  dplyr::rename(
+    DiseaseFlareYN = softflare, time = softflare_time
+  )
+
+data_survival_hard %<>%
+  dplyr::rename(
+    DiseaseFlareYN = hardflare, time = hardflare_time
+  )
+
+# Only select psychosocial cohort with inner join
+data_survival_soft %<>%
+  dplyr::inner_join(participants, by = 'ParticipantNo')
+
+data_survival_hard %<>%
+  dplyr::inner_join(participants, by = 'ParticipantNo')
+
+# How many patients do we have soft/hard flare data for
+data_survival_soft %>%
+  dplyr::count(diagnosis2)
+# 1826 (CD 922, UC/IBDU 904) with soft flare data
+
+data_survival_hard %>%
+  dplyr::count(diagnosis2)
+# 1770 (CD 891, UC/IBDU 897) with hard flare data
+
+# How many having flares in the 24 months?
+data_survival_soft %>%
+  dplyr::count(diagnosis2, DiseaseFlareYN) %>%
+  dplyr::group_by(diagnosis2) %>%
+  dplyr::mutate(cum = n/sum(n))
+# Total 638 (CD 302, UC/IBDU 336) with soft flare data
+# Cumulative rate: Overall 638/1826 = 35.0%. CD 32.8%, UC 37.2%
+
+data_survival_hard %>%
+  dplyr::count(diagnosis2, DiseaseFlareYN) %>%
+  dplyr::group_by(diagnosis2) %>%
+  dplyr::mutate(cum = n/sum(n))
+# Total 230 (CD 105, UC/IBDU 125) with hard flare data
+# Cumulative rate: Overall 230/1770 = 13.0%. CD 11.8%, UC 14.2%
+
+
+
+# Kaplan-Meier
+legend.title = 'IBD Type'
+legend.labs = c('CD', 'UC/IBDU')
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+palette = okabe_ito
+dependent = 'diagnosis2'
+
+summon_km_curves(
+  data = data_survival_soft,
+  dependent = dependent,
+  title = "Time to patient reported flare",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  fun = "event"
+)
+
+summon_km_curves(
+  data = data_survival_hard,
+  dependent = dependent,
+  title = "Time to objective flare",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  fun = "event"
+)
+
+
+# Side by side
+
