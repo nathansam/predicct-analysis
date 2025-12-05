@@ -42,7 +42,7 @@ data_cohort %<>%
     Sex,
     Age,
     Ethnicity,
-    BMI,
+    BMIcat,
     IMD,
     `IBD Duration`,
     Treatment,
@@ -123,9 +123,9 @@ data_table %<>%
 variables <- c(
   'Age',
   'Sex',
-  'Ethnicity',
-  'BMI',
+  'BMIcat',
   'IMD',
+  'Ethnicity',
   'diagnosis',
   'IBD_duration',
   'control_8',
@@ -143,6 +143,7 @@ data_table %>%
     label = list(
       Age ~ "Age",
       Sex ~ 'Sex',
+      BMIcat ~ 'Body mass index',
       Ethnicity ~ "Ethnicity",
       IMD ~ 'Index of multiple deprivation',
       diagnosis ~ 'IBD Type',
@@ -343,7 +344,9 @@ variables_all <- c(
   'Surgery',
   'Extent', 
   'Mayo_cat'
-  )
+  ) %>%
+  {.[. != 'diagnosis']}
+
 
 tbl <- data_table_all %>%
   gtsummary::tbl_strata(
@@ -355,12 +358,12 @@ tbl <- data_table_all %>%
         include = variables_all,
         missing_text = 'Missing data',
         label = list(
-          Age ~ "Age",
+          Age ~ "Age (years)",
           Sex ~ 'Sex',
+          BMIcat ~ 'Body mass index',
           Ethnicity ~ "Ethnicity",
           IMD ~ 'Index of multiple deprivation',
-          diagnosis ~ 'IBD Type',
-          IBD_duration ~ 'IBD Duration',
+          IBD_duration ~ 'IBD Duration (years)',
           control_8 ~ 'IBD-Control-8',
           OverallControl ~ 'IBD-Control-VAS',
           FC ~ 'Fecal calprotectin (ug/g)',
@@ -422,9 +425,96 @@ tbl
 filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
 
 
-tbl %>%
-  gtsummary::as_gt() %>%
-  gt::gtsave(
-    filename = paste0(filepath, "Table1.docx")
+# tbl %>%
+#   gtsummary::as_gt() %>%
+#   gt::gtsave(
+#     filename = paste0(filepath, "Table1.docx")
+#   )
+
+
+
+
+# Alternative - strata by ibd type so we can do statistical tests between the cohorts.
+
+tbl2 <- data_table_all %>%
+  gtsummary::tbl_strata(
+    strata = diagnosis2,
+    .tbl_fun = ~
+      .x %>% 
+      gtsummary::tbl_summary(
+        by = cohort,
+        include = variables_all,
+        missing_text = 'Missing data',
+        label = list(
+          Age ~ "Age (years)",
+          Sex ~ 'Sex',
+          BMIcat ~ 'Body mass index',
+          Ethnicity ~ "Ethnicity",
+          IMD ~ 'Index of multiple deprivation',
+          IBD_duration ~ 'IBD Duration (years)',
+          control_8 ~ 'IBD-Control-8',
+          OverallControl ~ 'IBD-Control-VAS',
+          FC ~ 'Fecal calprotectin (ug/g)',
+          CReactiveProtein ~ 'C-reactive protein (mg/L)',
+          Biologic ~ 'Biologic use',
+          Location ~ 'Montreal location',
+          Behaviour ~ 'Montreal behaviour',
+          Perianal ~ 'Perianal disease',
+          HBI_cat ~ 'Harvey-Bradshaw Index',
+          Surgery ~ 'Previous surgery for Crohn’s disease',
+          Extent ~ 'Montreal extent',
+          Mayo_cat ~ 'Partial Mayo score'
+        )
+      ) %>%
+      gtsummary::add_p(
+        test.args = all_tests("fisher.test") ~ list(simulate.p.value = TRUE, B = 1e5)
+      ) 
+  ) 
+
+# Fix CD columns 
+tbl2$table_body %<>%
+  dplyr::mutate(
+    dplyr::across(
+      # Select CD columns
+      .cols = c(stat_1_1, stat_2_1),
+      .fns = function(x) {
+        dplyr::case_when(
+          # Set UC specific variables to a dash
+          variable == 'Extent' ~ NA,
+          variable == 'Mayo' ~ NA,
+          variable == 'Mayo_cat' ~ NA,
+          .default = x
+        )
+      }
+    )
   )
 
+# Fix UC columns 
+tbl2$table_body %<>%
+  dplyr::mutate(
+    dplyr::across(
+      # Select UC columns
+      .cols = c(stat_1_2, stat_2_2),
+      .fns = function(x) {
+        # Set CD specific variables to a dash
+        dplyr::case_when(
+          variable == 'Location' ~ NA,
+          variable == 'Behaviour' ~ NA,
+          variable == 'Perianal' ~ NA,
+          variable == 'HBI' ~ NA,
+          variable == 'HBI_cat' ~ NA,
+          variable == 'Surgery' ~ NA,
+          .default = x
+        )
+      }
+    )
+  )
+
+tbl2
+
+
+# tbl2 %>%
+#   gtsummary::as_gt() %>%
+#   gt::gtsave(
+#     filename = paste0(filepath, "Table1 v2.docx")
+#   )
