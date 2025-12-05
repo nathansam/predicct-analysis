@@ -1,7 +1,7 @@
 library(tidyverse)
 library(magrittr)
 library(survival)
-
+library(survminer)
 
 # Flare data
 chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
@@ -37,10 +37,12 @@ data_survival_hard %<>%
 data_survival_soft %>%
   dplyr::count(diagnosis2)
 # 1826 (CD 922, UC/IBDU 904) with soft flare data
+# Therefore missing 935 - 922 = 13 CD, 920 - 904 = 16 UC
 
 data_survival_hard %>%
   dplyr::count(diagnosis2)
 # 1770 (CD 891, UC/IBDU 897) with hard flare data
+# Therefore missing 935 - 891 = 44 CD, 920 - 897 = 23 UC
 
 # How many having flares in the 24 months?
 data_survival_soft %>%
@@ -57,6 +59,8 @@ data_survival_hard %>%
 # Total 230 (CD 105, UC/IBDU 125) with hard flare data
 # Cumulative rate: Overall 230/1770 = 13.0%. CD 11.8%, UC 14.2%
 
+# How many missing?
+
 
 
 # Kaplan-Meier
@@ -66,7 +70,7 @@ okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00",
 palette = okabe_ito
 dependent = 'diagnosis2'
 
-summon_km_curves(
+plot_soft <- summon_km_curves(
   data = data_survival_soft,
   dependent = dependent,
   title = "Time to patient reported flare",
@@ -76,7 +80,7 @@ summon_km_curves(
   fun = "event"
 )
 
-summon_km_curves(
+plot_hard <- summon_km_curves(
   data = data_survival_hard,
   dependent = dependent,
   title = "Time to objective flare",
@@ -88,4 +92,29 @@ summon_km_curves(
 
 
 # Side by side
+layout <- "
+AAAA
+BBDD
+CCEE
+"
 
+plot <- patchwork::guide_area() +
+  plot_soft$plot + plot_soft$table +
+  plot_hard$plot + plot_hard$table +
+  patchwork::plot_layout(
+    design = layout,
+    heights = c(0.15, 3, 0.8),
+    guides = 'collect'
+  )
+
+plot
+
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
+
+# ggsave(
+#   filename = paste0(filepath_save, "Cumulative events IBD type.pdf"),
+#   plot = plot,
+#   width = 9.5,
+#   height = 5,
+#   units = 'in'
+# )
