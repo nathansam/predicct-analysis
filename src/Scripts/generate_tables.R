@@ -46,10 +46,11 @@ final.table$term <- c(
   rep(paste("Sweet intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Drink intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Processed meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Processed plant intake", "above median"), 6),
   rep(paste("Fruit intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("Vegetable intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("Read meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
-  rep(paste("White mean intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Read meat intake", c("2nd", "3rd"), "tertile"), 6),
+  rep(paste("White meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
   rep(paste("White fish intake", c("2nd", "3rd", "4th"), "quartile"), 6)
 )
 
@@ -130,6 +131,27 @@ pv_disp <- pvalues %>%
     `p-value` = fmt_p(p.value),
     `Adj. p-value` = fmt_p(adjusted.p.value)
   )
+
+pv_disp$term <- c(
+  rep(paste("Meat protein", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Overall meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Overall fish intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Dietary fibre", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("PUFA", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("NOVA Score", c("2", "3", "4")), 6),
+  rep(paste("%UPF", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Bread intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Sweet intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Drink intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Processed meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Processed plant intake", "above median"), 6),
+  rep(paste("Fruit intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Vegetable intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("Read meat intake", c("2nd", "3rd"), "tertile"), 6),
+  rep(paste("White meat intake", c("2nd", "3rd", "4th"), "quartile"), 6),
+  rep(paste("White fish intake", c("2nd", "3rd", "4th"), "quartile"), 6)
+)
+
 
 # Six groups
 combos <- tidyr::expand_grid(
