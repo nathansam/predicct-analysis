@@ -61,7 +61,7 @@ plot <- plot_anxiety$plot + plot_anxiety$table +
     axes = 'collect'
     ) +
   plot_annotation(
-    title = "Time to objective flare in Crohn's disease",
+    title = "Time to objective flare in CD",
     theme = theme(
       plot.title = element_text(size = 16, hjust = 0.5))
   ) &

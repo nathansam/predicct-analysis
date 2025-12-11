@@ -72,7 +72,7 @@ dependent = 'psychosocial'
 plot_soft_uc <- summon_km_curves(
   data = data_cohort_soft_uc,
   dependent = dependent,
-  title = "Time to patient reported flare in ulcerative colitis",
+  title = "Time to patient-reported flare in UC/IBDU",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
@@ -84,7 +84,7 @@ plot_soft_uc
 plot_soft_cd <- summon_km_curves(
   data = data_cohort_soft_cd,
   dependent = dependent,
-  title = "Time to patient reported flare in Crohn's disease",
+  title = "Time to patient-reported flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
@@ -99,7 +99,7 @@ plot_soft_cd
 plot_hard_uc <- summon_km_curves(
   data = data_cohort_hard_uc,
   dependent = dependent,
-  title = "Time to objective flare in ulcerative colitis",
+  title = "Time to objective flare in UC",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
@@ -111,7 +111,7 @@ plot_hard_uc
 plot_hard_cd <- summon_km_curves(
   data = data_cohort_hard_cd,
   dependent = dependent,
-  title = "Time to objective flare in Crohn's disease",
+  title = "Time to objective flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette

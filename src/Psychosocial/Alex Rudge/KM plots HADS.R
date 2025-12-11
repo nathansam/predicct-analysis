@@ -18,7 +18,7 @@ dependent = 'score_group'
 plot_anxiety_soft_uc <- summon_km_curves(
   data = data_survival_anxiety_soft_uc,
   dependent = dependent,
-  title = "Time to Patient Reported Flare in UC",
+  title = "Time to patient-reported flare in UC/IBDU",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
@@ -30,7 +30,7 @@ plot_anxiety_soft_uc
 plot_anxiety_soft_cd <- summon_km_curves(
   data = data_survival_anxiety_soft_cd,
   dependent = dependent,
-  title = "Time to Patient Reported Flare in CD",
+  title = "Time to patient-reported Flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette
