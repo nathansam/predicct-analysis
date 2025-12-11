@@ -73,7 +73,7 @@ dependent = 'diagnosis2'
 plot_soft <- summon_km_curves(
   data = data_survival_soft,
   dependent = dependent,
-  title = "Time to patient reported flare",
+  title = "Time to patient-reported flare",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette,
