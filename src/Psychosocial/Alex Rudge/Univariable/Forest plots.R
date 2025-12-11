@@ -82,7 +82,7 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       values = c("black", "black", "red"),
       drop = FALSE) +
     # Axes labels
-    xlab("Hazard Ratio (HR)") +
+    xlab("Unadjusted Hazard Ratio (uHR)") +
     # Axes ticks
     scale_x_continuous(
       breaks = seq(0, 6, 1)
@@ -146,7 +146,7 @@ summon_complete_forest <- function(
        labs(title = 'N') + 
        theme(plot.title = element_text(size = 12))) +
     (plot_anxiety$hr + 
-       labs(title = 'HR (95% CI)') + 
+       labs(title = 'uHR (95% CI)') + 
        theme(plot.title = element_text(size = 12))) + 
     (plot_anxiety$p + 
        labs(title = 'P-value') +
@@ -160,7 +160,7 @@ summon_complete_forest <- function(
       ncol = 4,
       guides = 'collect',
       axes = 'collect',
-      width = c(2.5, 0.4, 1, 0.5),
+      width = c(2.5, 0.4, 1.2, 0.5),
       height = c(2,2,2,2,2,3)
     ) +
     patchwork::plot_annotation(

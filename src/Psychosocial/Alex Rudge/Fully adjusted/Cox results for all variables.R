@@ -7,7 +7,7 @@ library(magrittr)
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Fully adjusted/"
 
 # Suffix - cc (complete case) or mice 
-#suffix <- "_cc.rds"
+suffix <- "_cc.rds"
 
 #suffix <- "_mice.rds"
 
@@ -90,16 +90,19 @@ cox_results %<>%
   dplyr::mutate(
     conf.interval.tidy = dplyr::case_when(
       (is.na(conf.low) & is.na(conf.high)) ~ "-",
-      TRUE ~ paste0(sprintf("%.3g", estimate), " (", sprintf("%.3g", conf.low), " - ", sprintf("%.3g", conf.high), ")")
+      TRUE ~ paste0(sprintf("%#.3g", estimate), " (", sprintf("%#.3g", conf.low), " to ", sprintf("%#.3g", conf.high), ")")
     )
   )
 
 # Tidy p values
+# Following BMJ guidance
 cox_results %<>%
   dplyr::mutate(
     p.value.tidy = dplyr::case_when(
       is.na(p.value) ~ "-",
-      TRUE ~ sprintf("%.3g", p.value)
+      p.value > 0.01 ~ sprintf("%#.2f", round(p.value, 2)),
+      p.value >= 0.001 ~ sprintf("%#.3f", round(p.value, 3)),
+      p.value < 0.001 ~ '<0.001'
     )
   )
 

@@ -85,7 +85,7 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       values = c("black", "black", "red"),
       drop = FALSE) +
     # Axes labels
-    xlab("Hazard Ratio (HR)") +
+    xlab("Adjusted Hazard Ratio (aHR)") +
     # Axes ticks
     scale_x_continuous(
       breaks = seq(0, 6, 1)
@@ -149,7 +149,7 @@ summon_complete_forest <- function(
        labs(title = 'N') + 
        theme(plot.title = element_text(size = 12))) +
     (plot_anxiety$hr + 
-       labs(title = 'HR (95% CI)') + 
+       labs(title = 'aHR (95% CI)') + 
        theme(plot.title = element_text(size = 12))) + 
     (plot_anxiety$p + 
        labs(title = 'P-value') +
@@ -163,7 +163,7 @@ summon_complete_forest <- function(
       ncol = 4,
      guides = 'collect',
      axes = 'collect',
-     width = c(2.5, 0.4, 1, 0.5),
+     width = c(2.5, 0.4, 1.2, 0.5),
      height = c(2,2,2,2,2,3)
    ) +
    patchwork::plot_annotation(
@@ -181,7 +181,7 @@ summon_complete_forest <- function(
 plot_hr_soft_uc <- summon_complete_forest(
   data = cox_results_soft,
   diagnosis2 = 'UC/IBDU',
-  title = "Patient reported flare in ulcerative colitis"
+  title = "Patient-reported flare in UC/IBDU"
 )
 
 plot_hr_soft_uc
@@ -190,7 +190,7 @@ plot_hr_soft_uc
 plot_hr_soft_cd <- summon_complete_forest(
   data = cox_results_soft,
   diagnosis2 = 'CD',
-  title = "Patient reported flare in Crohn's disease"
+  title = "Patient-reported flare in CD"
 )
 
 plot_hr_soft_cd
@@ -199,7 +199,7 @@ plot_hr_soft_cd
 plot_hr_hard_uc <- summon_complete_forest(
   data = cox_results_hard,
   diagnosis2 = 'UC/IBDU',
-  title = "Objective flare in ulcerative colitis"
+  title = "Objective flare in UC/IBDU"
 )
 
 plot_hr_hard_uc
@@ -208,7 +208,7 @@ plot_hr_hard_uc
 plot_hr_hard_cd <- summon_complete_forest(
   data = cox_results_hard,
   diagnosis2 = 'CD',
-  title = "Objective flare in Crohn's disease"
+  title = "Objective flare in CD"
 )
 
 plot_hr_hard_cd
