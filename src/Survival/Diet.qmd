@@ -225,8 +225,41 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
 knitr::include_graphics("plots/uc/hard-flare/diet/meat.png")
 invisible(cox_summary(fit.me, plot_base_path = "plots/uc/hard-flare/diet/meat"))
 ```
-:::
 
+```{R}
+newdata <- flare.uc.df %>%
+  mutate(Meat_sum_cat = "[0,24.9)",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC < 50",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+
+
+newdata <- flare.uc.df %>%
+  mutate(Meat_sum_cat = "[50.6,331]",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(Meat_sum_cat = "[50.6,331]",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+```
+
+:::
+ 
 ### Inflammatory bowel disease
 
 ::: {.panel-tabset group="followup"}
@@ -265,10 +298,12 @@ hrs <- rbind(hrs, broom::tidy(fit.me) |>
   relocate(diagnosis, flare)
   )
 
-
 # Display plot and model summary
 knitr::include_graphics("plots/ibd/soft-flare/diet/meat.png")
-invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/soft-flare/diet/meat"))
+invisible(
+  cox_summary(
+    fit.me,
+    plot_base_path = "plots/ibd/soft-flare/diet/meat"))
 ```
 
 #### Objective flare
@@ -461,7 +496,7 @@ analysis_result <- run_survival_analysis(
   legend_title = "Meat intake quantiles",
   plot_base_path = "plots/uc/hard-flare/diet/meat_overall",
   break_time_by = 500
-)
+) 
 
 # Save plot as RDS
 saveRDS(analysis_result$plot, paste0(paths$outdir, "meat-overall-uc-hard.RDS"))

@@ -433,9 +433,6 @@ knitr::include_graphics("plots/uc/hard-flare/controlled/fc.png")
 
 ```{R}
 #| output: "asis"
-
-
-
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
     Sex + IMD + cat + Smoke + frailty(SiteNo),
@@ -448,8 +445,6 @@ cd.clin.forest <- get_HR(
   fit.me,
   c("SmokePrevious", "SmokeNever")
 )
-
-
 
 fit.me <- coxph(
   Surv(softflare_time, softflare) ~
@@ -472,16 +467,60 @@ cd.clin.forest <- rbind(
   )
 )
 
-
-
 invisible(cox_summary(fit.me))
+```
+
+
+```{R}
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC < 50",
+         softflare_time = 365.25,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC < 50",
+         softflare_time = 730,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC 50-250
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC 50-250",
+         softflare_time = 365.25,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC 50-250",
+         softflare_time = 730,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC > 250
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC > 250",
+         softflare_time = 365.25,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC > 250",
+         softflare_time = 730,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
 ```
 
 #### Objective flare
 
 ```{R}
 #| output: "asis"
-
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -494,7 +533,6 @@ cd.hard.forest <- get_HR(
   fit.me,
   c("SmokePrevious", "SmokeNever")
 )
-
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -516,6 +554,53 @@ cd.hard.forest <- rbind(
 )
 
 invisible(cox_summary(fit.me))
+```
+
+```{R}
+# FC < 50
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC < 50",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC < 50",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC 50-250
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC 50-250",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC 50-250",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC > 250
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC > 250",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.cd.df %>%
+  mutate(cat = "FC > 250",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
 ```
 
 :::
@@ -564,11 +649,58 @@ uc.clin.forest <- rbind(
 invisible(cox_summary(fit.me))
 ```
 
+```{R}
+# FC < 50
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC < 50",
+         softflare_time = 365.25,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC < 50",
+         softflare_time = 730,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC 50-250
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC 50-250",
+         softflare_time = 365.25,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC 50-250",
+         softflare_time = 730,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC > 250
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC > 250",
+         softflare_time = 365.25,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC > 250",
+         softflare_time = 730,
+         softflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+```
+
+
 #### Objective flare
 
 ```{R}
 #| output: "asis"
-
 
 fit.me <- coxph(
   Surv(hardflare_time, hardflare) ~
@@ -604,6 +736,53 @@ uc.hard.forest <- rbind(
 )
 
 invisible(cox_summary(fit.me))
+```
+
+```{R}
+# FC < 50
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC < 50",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC < 50",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC 50-250
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC 50-250",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC 50-250",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+# FC > 250
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC > 250",
+         hardflare_time = 365.25,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
+
+newdata <- flare.uc.df %>%
+  mutate(cat = "FC > 250",
+         hardflare_time = 730,
+         hardflare = 1)
+predict(fit.me, newdata = newdata, type = "expected", se.fit = TRUE)$fit %>%
+  mean(na.rm = TRUE)
 ```
 
 :::
