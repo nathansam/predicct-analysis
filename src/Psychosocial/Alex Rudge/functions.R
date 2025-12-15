@@ -694,3 +694,102 @@ summon_rd_forest_plot <- function(data, time) {
   
   return(list(plot = plot, rd = rd))
 }
+
+
+# Absolute risk only
+
+summon_absolute_risk_factor <- function(data, model, time, variable) {
+  # Function that calculates (population average) absolute risk of a variable
+  # at a given time point with respect to specified value of the variable from a
+  # Cox model
+  
+  # Values of the variable
+  values <- data %>%
+    dplyr::pull(variable) %>%
+    levels()
+  
+  # Identify the time variable - to differentiate between soft and hard flare models
+  time_variable <- all.vars(terms(model))[1]
+  
+  results <- purrr::map(
+    .x = values,
+    .f = function(x) {
+      t <- time 
+      
+      newdata <- data %>%
+        # Set values for time and the variable
+        dplyr::mutate(!!sym(time_variable) := t, !!sym(variable) := x)
+      
+      # Estimate expected for entire population
+      expected <- predict(model, newdata = newdata, type = "expected")
+      
+      # Calculate mean cumulative incidence (1 - survival)
+      absolute_risk <- (1 - exp(-expected)) %>% mean(na.rm = TRUE)
+      
+      # Return as a tibble row
+      tibble(
+        time = time,
+        variable = variable,
+        level = x,
+        absolute_risk = absolute_risk
+      )
+    }
+  ) %>%
+    purrr::list_rbind()
+  
+  return(results)
+  
+}
+
+
+summon_absolute_risk_factor_boot <- function(data,
+                                             model,
+                                             time,
+                                             variable,
+                                             nboot = 99,
+                                             seed = 42) {
+  
+  # Function to calculate bootstrapped risk difference
+  
+  # Set seed
+  set.seed(seed)
+  
+  # Values of the variable
+  values <- data %>%
+    dplyr::pull(variable) %>%
+    levels()
+  
+  # Remove NAs from the data
+  # Variable used in the model
+  all_variables <- all.vars(terms(model))
+  
+  data %<>%
+    # Remove any NAs as Cox doesn't use these
+    dplyr::select(tidyselect::all_of(all_variables)) %>%
+    dplyr::filter(!dplyr::if_any(.cols = everything(), .fns = is.na))
+  
+  purrr::map_dfr(
+    .x = seq_len(nboot),
+    .f = function(b) {
+      
+      data_boot <- data %>%
+        dplyr::group_by(DiseaseFlareYN) %>%
+        # Sample the df
+        dplyr::slice_sample(prop = 1, replace = TRUE) %>%
+        dplyr::ungroup()
+      
+      # Refit cox model of bootstrapped data
+      model_boot <- coxph(formula(model), data = data_boot, model = TRUE)
+      
+      # Calculate absolute risk
+      summon_absolute_risk_factor(
+        data = data_boot,
+        model = model_boot,
+        time = time,
+        variable = variable
+      ) %>%
+        dplyr::mutate(boot = b)
+    }
+  ) 
+}
+
