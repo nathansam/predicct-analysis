@@ -24,7 +24,8 @@ demo <- analysis_setup$demo
 
 demo$FC <- log(demo$FC)
 ```
-worthwhile to first consider how questionnaires were completed for each month. 
+
+Before examining flare patterns, it is worthwhile to first consider how questionnaires were completed for each month.
 
 As should be expected, there is a small degree of attrition of responses over
 time (@fig-responses). However,  there is a large increase at the end of
@@ -174,7 +175,7 @@ knitr::include_graphics("plots/flare-soft.png")
 
 ## Secondary outcome: first objective flare
 
-Disease flares been reported by clinical care teams instead of being
+For the secondary outcome, disease flares have been reported by clinical care teams instead of being
 reported by subjects themselves.
 
 ```{R}
