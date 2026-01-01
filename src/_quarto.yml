@@ -110,17 +110,11 @@ title-block-banner: false
 
 
 affiliations:
-  - id: HGU
-    name: "MRC Human Genetics Unit"
-    city: "Edinburgh"
-    region: "Scotland"
-    country: "United Kingdom"
-    url: "https://www.ed.ac.uk/mrc-human-genetics-unit"
-  - id: CGEM
-    name: "Centre for Genomic and Experimental Medicine"
+  - id: IGC
+    name: "Institute of Genetics and Cancer"
     city: "Edinburgh"
     country: "United Kingdom"
-    url: "https://www.ed.ac.uk/centre-genomic-medicine"
+    url: "https://institute-genetics-cancer.ed.ac.uk/"
   - id: IBD
     name: "Edinburgh IBD Unit"
     city: "Edinburgh"

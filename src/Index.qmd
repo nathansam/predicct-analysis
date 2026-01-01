@@ -8,8 +8,7 @@ author:
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     corresponding: true
     affiliations:
-      - ref: HGU
-      - ref: CGEM
+      - ref: IGC
 ---
 
 ```{R}

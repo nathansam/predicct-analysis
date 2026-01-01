@@ -9,8 +9,7 @@ author:
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      - ref: CGEM
-      - ref: HGU
+      - ref: IGC
   - name: "PREdiCCt Trial Steering Committee"
   - name: "PREdiCCt Analytical Committee"
 ---
