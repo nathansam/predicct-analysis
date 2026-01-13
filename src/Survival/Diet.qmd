@@ -5,15 +5,14 @@ author:
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      - ref: CGEM
-      - ref: HGU
+      - ref: IGC
   - name: "Víctor Velasco-Pardo"
     url: https://scholar.google.com/citations?user=cR3nbyAAAAAJ&hl=en&oi=ao
     affiliations:
-      - ref: CGEM
+      - ref: IGC
   - name: "Alexander Rudge"
     affiliations:
-      - ref: CGEM
+      - ref: IGC
   - name: "Beatriz Gros"
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:

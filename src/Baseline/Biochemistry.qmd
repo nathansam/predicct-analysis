@@ -5,8 +5,7 @@ author:
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      - ref: CGEM
-      - ref: HGU
+      - ref: IGC
 bibliography: Baseline.bib   
 ---
 
@@ -159,7 +158,7 @@ p <- demo %>%
   ylim(0, 12) +
   theme_minimal() +
   xlab("Faecal calprotectin category (\U03BCg/g)") +
-  ylab("C-reactivive protein (mg/L)")
+  ylab("C-reactive protein (mg/L)")
 cairo_pdf("plots/CRP-FC-boxplot.pdf", width = 8, height = 6)
 p
 invisible(dev.off())

@@ -8,8 +8,7 @@ author:
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     corresponding: true
     affiliations:
-      - ref: HGU
-      - ref: CGEM
+      - ref: IGC
 ---
 
 ```{R}
@@ -19,7 +18,38 @@ author:
 
 ## Introduction
 
-To-do
+This website presents comprehensive statistical analyses from the PREdiCCt study
+([NCT03282903](https://clinicaltrials.gov/study/NCT03282903)), a UK-wide
+prospective cohort study investigating inflammatory bowel disease (IBD) in adult
+patients. The study was designed to identify predictive biomarkers and clinical
+factors associated with disease flares in people living with Crohn's disease
+(CD) and ulcerative colitis (UC).
+
+The PREdiCCt study recruited participants in clinical remission across multiple
+UK centers, collecting detailed baseline characteristics including demographics,
+disease history, biochemistry markers, dietary patterns, and psychosocial
+factors. Participants were followed prospectively to identify disease flares,
+enabling comprehensive survival analyses to understand factors influencing
+time-to-flare outcomes.
+
+This analysis website provides two main categories of statistical reports:
+
+- [**Baseline Analyses**](Baseline/Introduction.qmd): Comprehensive descriptive
+  statistics of participant recruitment, demographics, IBD characteristics,
+  biochemistry profiles, dietary patterns, and summary tables comparing key
+  variables across disease types and faecal calprotecin categories.
+
+- [**Survival Analyses**](Survival/Introduction.qmd): Time-to-flare analyses
+  examining both patient-reported and objective flare definitions, with
+  controlled analyses investigating associations between baseline factors
+  (particularly faecal calprotectin levels and dietary patterns) and disease
+  outcomes.
+
+All analyses are conducted using reproducible research practices with
+[R](https://cran.r-project.org/) and [Quarto](https://quarto.org/), ensuring
+transparency and scientific rigor. The reports include both exploratory data
+visualizations and formal statistical modeling, with results presented in HTML
+format.
 
 This work uses data provided by patients and collected by the NHS as part of
 their care and support. We are grateful to participants and their IBD care
@@ -58,9 +88,3 @@ The PREdiCCt study was funded by
 <a href = "https://www.cso.scot.nhs.uk/"><img src = "images/CSO-Accord.jpg" alt = "Logo for the Chief Scientist Office, a heart beat symbol in shades of blue." height = 60px></a>
 <a href = "https://www.ukri.org/"><img src = "images/UKRI.png" alt = "Logo for UK Research and innovation (UKRI), white text on a blue background." height = 60px></a>
 </div>
-
-
-## {.appendix}
-
-This website has been generated using the [Quarto](https://quarto.org)
-scientific publishing system built on [pandoc](https://pandoc.org). 
