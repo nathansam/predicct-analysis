@@ -515,7 +515,7 @@ p <- plot_continuous_hr(
   model = cox_cd_soft,
   variable = "FC"
 ) 
-saveRDS(p, file = paste0(outdir, "fc-cont-cd-soft.RDS"))
+saveRDS(p, file = paste0(paths$outdir, "fc-cont-cd-soft.RDS"))
 p
 
 # DQI
@@ -583,7 +583,7 @@ p <- plot_continuous_hr(
   model = cox_cd_hard,
   variable = "FC"
 )
-saveRDS(p, file = paste0(outdir, "fc-cont-cd-hard.RDS"))
+saveRDS(p, file = paste0(paths$outdir, "fc-cont-cd-hard.RDS"))
 p
 
 # DQI
@@ -676,7 +676,7 @@ p <- plot_continuous_hr(
   variable = "FC",
   splineterm = "ns(FC, df = 2)"
 )
-saveRDS(p, file = paste0(outdir, "fc-cont-uc-soft.RDS"))
+saveRDS(p, file = paste0(paths$outdir, "fc-cont-uc-soft.RDS"))
 p
 
 # DQI
@@ -767,7 +767,7 @@ p <- plot_continuous_hr(
   variable = "FC",
   splineterm = "ns(FC, df = 2)"
 )
-saveRDS(p, file = paste0(outdir, "fc-cont-uc-hard.RDS"))
+saveRDS(p, file = paste0(paths$outdir, "fc-cont-uc-hard.RDS"))
 p
 
 # DQI
