@@ -3,6 +3,7 @@ library(magrittr)
 library(survival)
 library(patchwork)
 
+source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 
 # Plotting Kaplan-Meier curves
 # Run Life Events
@@ -13,6 +14,15 @@ legend.labs = c("None", "One or more")
 palette = okabe_ito
 dependent = 'AnyLifeEvents'
 
+custom_theme = theme_minimal() + 
+  theme(
+    title = element_text(size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 14)
+  )
+
 # Soft
 # UC
 plot_soft_uc <- summon_km_curves(
@@ -21,7 +31,8 @@ plot_soft_uc <- summon_km_curves(
   title = "Time to patient-reported flare in UC/IBDU",
   legend.title = legend.title,
   legend.labs = legend.labs,
-  palette = palette
+  palette = palette,
+  ggtheme = custom_theme
 )
 
 plot_soft_uc
@@ -30,10 +41,11 @@ plot_soft_uc
 plot_soft_cd <- summon_km_curves(
   data = data_survival_soft_cd,
   dependent = dependent,
-  title = "Time to patient reported flare in CD",
+  title = "Time to patient-reported flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
-  palette = palette
+  palette = palette,
+  ggtheme = custom_theme
 )
 
 plot_soft_cd
@@ -43,10 +55,11 @@ plot_soft_cd
 plot_hard_uc <- summon_km_curves(
   data = data_survival_hard_uc,
   dependent = dependent,
-  title = "Time to objective flare in UC",
+  title = "Time to objective flare in UC/IBDU",
   legend.title = legend.title,
   legend.labs = legend.labs,
-  palette = palette
+  palette = palette,
+  ggtheme = custom_theme
 )
 
 plot_hard_uc
@@ -58,7 +71,8 @@ plot_hard_cd <- summon_km_curves(
   title = "Time to objective flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
-  palette = palette
+  palette = palette,
+  ggtheme = custom_theme
 )
 
 plot_hard_cd
@@ -95,21 +109,21 @@ readr::write_rds(
 # 4x4 plots
 
 plot <- summon_km_curves_panel(
-  p1 = plot_soft_uc,
-  p2 = plot_soft_cd,
-  p3 = plot_hard_uc,
-  p4 = plot_hard_cd
-)
+  p1 = plot_soft_cd,
+  p2 = plot_soft_uc,
+  p3 = plot_hard_cd,
+  p4 = plot_hard_uc
+) & theme(axis.title.y = element_text(vjust = -14))
 
 plot
 
-# Save as landscape 10 x 11 inches
+# Save as landscape 9 x 9 inches
 filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 
 ggsave(
   filename = paste0(filepath_save, "Kaplan Meier Life Events.pdf"),
   plot = plot,
-  width = 10,
-  height = 11,
+  width = 9,
+  height = 9,
   units = 'in'
 )
