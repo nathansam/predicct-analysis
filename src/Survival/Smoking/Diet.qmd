@@ -28,20 +28,22 @@ flare.df <- readRDS(paste0(paths$outdir, "flares-biochem.RDS"))
 flare.cd.df <- readRDS(paste0(paths$outdir, "flares-biochem-cd.RDS"))
 flare.uc.df <- readRDS(paste0(paths$outdir, "flares-biochem-uc.RDS"))
 
-summon_plot_broom_hr <- function(data){
+summon_plot_broom_hr <- function(data) {
   data %>%
     # Remove frailty
     dplyr::filter(!stringr::str_detect(term, "frailty")) %>%
     # Rename confidence intervals only if they don't already exist
-    {if(!"conf.low" %in% names(.)) dplyr::rename(., conf.low = `2.5 %`, conf.high = `97.5 %`) else .} %>%
+    {if (!"conf.low" %in% names(.)) dplyr::rename(.,
+                                                  conf.low = `2.5 %`,
+                                                  conf.high = `97.5 %`) else .} %>%
     # Significance flag
     dplyr::mutate(
       significant = (p.value <= 0.05)
     ) %>%
     ggplot(aes(
-      y = forcats::as_factor(term), 
-      x = estimate, 
-      xmin = conf.low, 
+      y = forcats::as_factor(term),
+      x = estimate,
+      xmin = conf.low,
       xmax = conf.high,
       colour = significant)) +
     geom_point() +
@@ -58,30 +60,30 @@ summon_plot_broom_hr <- function(data){
 
 ```{r}
 # FC has been logged twice - reverse
-flare.df %<>%
+flare.df <- flare.df %>%
   dplyr::mutate(FC = exp(FC))
 
-flare.cd.df %<>%
+flare.cd.df <- flare.cd.df %>%
   dplyr::mutate(FC = exp(FC))
 
-flare.uc.df %<>%
+flare.uc.df <- flare.uc.df %>%
   dplyr::mutate(FC = exp(FC))
 # So now FC is the log of the FC measurement
 
 # Transform age variable to decades
-flare.df %<>%
+flare.df <- flare.df %>%
   dplyr::mutate(
-    age_decade = Age/10
+    age_decade = Age / 10
   )
 
-flare.cd.df %<>%
+flare.cd.df <- flare.cd.df %>%
   dplyr::mutate(
-    age_decade = Age/10
+    age_decade = Age / 10
   )
 
-flare.uc.df %<>%
+flare.uc.df <- flare.uc.df %>%
   dplyr::mutate(
-    age_decade = Age/10
+    age_decade = Age / 10
   )
 
 # Categorised continuous variables
@@ -123,12 +125,12 @@ flare.uc.df <- categorize_by_quantiles(flare.uc.df,
 
 # Smoking
 # Reorder Smoke factor levels
-flare.cd.df %<>%
+flare.cd.df <- flare.cd.df %>%
   dplyr::mutate(
     Smoke = forcats::fct_relevel(Smoke, "Never", "Previous", "Current")
   )
 
-flare.uc.df %<>%
+flare.uc.df <- flare.uc.df %>%
   dplyr::mutate(
     Smoke = forcats::fct_relevel(Smoke, "Never", "Previous", "Current")
   )
@@ -210,15 +212,16 @@ data_impute_meat_cd_soft <- flare.cd.df %>%
   # Calculate Cumulative hazard
   dplyr::mutate(
     cumhaz = mice::nelsonaalen(
-    data = .,
-    timevar = softflare_time,
-    statusvar = softflare
-  ))
+      data = .,
+      timevar = softflare_time,
+      statusvar = softflare
+      )
+    )
 
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_meat_cd_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_meat_cd_soft <- mice::mice(
@@ -229,12 +232,9 @@ mice_meat_cd_soft <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
-
 # Fit pooled Cox model
 with(
   mice_meat_cd_soft,
@@ -247,14 +247,13 @@ with(
       Meat_sum_cat +
       Smoke +
       frailty(SiteNo)
-  )
+    )
 ) %>%
   mice::pool() %>%
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 #### Objective flare
@@ -288,7 +287,7 @@ data_impute_meat_cd_hard <- flare.cd.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_meat_cd_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_meat_cd_hard <- mice::mice(
@@ -299,13 +298,9 @@ mice_meat_cd_hard <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
-
 ```
 
 ```{r}
-
 # Fit pooled Cox model
 with(
   mice_meat_cd_hard,
@@ -325,7 +320,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 ### Ulcerative colitis
@@ -365,7 +359,7 @@ data_impute_meat_uc_soft <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_meat_uc_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_meat_uc_soft <- mice::mice(
@@ -376,8 +370,6 @@ mice_meat_uc_soft <- mice::mice(
   seed = 73, 
   print = FALSE
 )
-
-
 ```
 
 ```{r}
@@ -435,7 +427,7 @@ data_impute_meat_uc_hard <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_meat_uc_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_meat_uc_hard <- mice::mice(
@@ -446,8 +438,6 @@ mice_meat_uc_hard <- mice::mice(
   seed = 73, 
   print = FALSE
 )
-
-
 ```
 
 ```{r}
@@ -471,7 +461,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 ## Dietary Fibre
@@ -513,7 +502,7 @@ data_impute_fibre_cd_soft <- flare.cd.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_cd_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_fibre_cd_soft <- mice::mice(
@@ -524,8 +513,6 @@ mice_fibre_cd_soft <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
@@ -583,7 +570,7 @@ data_impute_fibre_cd_hard <- flare.cd.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_cd_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_fibre_cd_hard <- mice::mice(
@@ -594,8 +581,6 @@ mice_fibre_cd_hard <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
@@ -619,7 +604,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 ### Ulcerative colitis
@@ -659,7 +643,7 @@ data_impute_fibre_uc_soft <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_uc_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_fibre_uc_soft <- mice::mice(
@@ -670,8 +654,6 @@ mice_fibre_uc_soft <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
@@ -695,7 +677,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 #### Objective flare
@@ -729,7 +710,7 @@ data_impute_fibre_uc_hard <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_fibre_uc_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_fibre_uc_hard <- mice::mice(
@@ -740,8 +721,6 @@ mice_fibre_uc_hard <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
@@ -765,7 +744,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 ## Polyunsaturated fatty acids
@@ -807,7 +785,7 @@ data_impute_pufa_cd_soft <- flare.cd.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_pufa_cd_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_pufa_cd_soft <- mice::mice(
@@ -842,7 +820,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 #### Objective flare
@@ -876,7 +853,7 @@ data_impute_pufa_cd_hard <- flare.cd.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_pufa_cd_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_pufa_cd_hard <- mice::mice(
@@ -887,7 +864,6 @@ mice_pufa_cd_hard <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
 ```
 
 ```{r}
@@ -911,7 +887,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 ### Ulcerative colitis
@@ -951,7 +926,7 @@ data_impute_pufa_uc_soft <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_pufa_uc_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_pufa_uc_soft <- mice::mice(
@@ -986,7 +961,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 #### Objective flare
@@ -1020,7 +994,7 @@ data_impute_pufa_uc_hard <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_pufa_uc_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_pufa_uc_hard <- mice::mice(
@@ -1056,7 +1030,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 ## Ultra-processed food
@@ -1098,7 +1071,7 @@ data_impute_upf_cd_soft <- flare.cd.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_upf_cd_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_upf_cd_soft <- mice::mice(
@@ -1109,8 +1082,6 @@ mice_upf_cd_soft <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
@@ -1134,7 +1105,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 #### Objective flare
@@ -1168,7 +1138,7 @@ data_impute_upf_cd_hard <- flare.cd.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_upf_cd_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_upf_cd_hard <- mice::mice(
@@ -1179,12 +1149,9 @@ mice_upf_cd_hard <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
-
 # Fit pooled Cox model
 with(
   mice_upf_cd_hard,
@@ -1204,7 +1171,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 ### Ulcerative colitis
@@ -1244,7 +1210,7 @@ data_impute_upf_uc_soft <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_upf_uc_soft)
 
-pred_matrix[, 'softflare_time'] <- 0
+pred_matrix[, "softflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_upf_uc_soft <- mice::mice(
@@ -1255,12 +1221,9 @@ mice_upf_uc_soft <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
-
 # Fit pooled Cox model
 with(
   mice_upf_uc_soft,
@@ -1280,7 +1243,6 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```
 
 #### Objective flare
@@ -1314,7 +1276,7 @@ data_impute_upf_uc_hard <- flare.uc.df %>%
 # Predictor matrix - need to exclude time from the model
 pred_matrix <- mice::make.predictorMatrix(data_impute_upf_uc_hard)
 
-pred_matrix[, 'hardflare_time'] <- 0
+pred_matrix[, "hardflare_time"] <- 0
 
 # MICE with 10 imputations
 mice_upf_uc_hard <- mice::mice(
@@ -1325,12 +1287,9 @@ mice_upf_uc_hard <- mice::mice(
   seed = 73,
   print = FALSE
 )
-
-
 ```
 
 ```{r}
-
 # Fit pooled Cox model
 with(
   mice_upf_uc_hard,
@@ -1350,5 +1309,4 @@ with(
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   summon_plot_broom_hr()
-
 ```

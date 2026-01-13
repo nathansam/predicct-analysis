@@ -22,18 +22,18 @@ missing_plot2 <- function(
   if (is.null(dependent) && is.null(explanatory)) {
     df.in <<- .data
   } else {
-    df.in = dplyr::select(.data, dependent, explanatory)
+    df.in <- dplyr::select(.data, dependent, explanatory)
   }
   if (use_labels) {
-    vlabels = finalfit::extract_labels(df.in)$vfill
+    vlabels <- finalfit::extract_labels(df.in)$vfill
   }
 
   sitenames <- unique(df.in[, col.name])
 
   df.in <- data.frame(lapply(df.in, as.character), stringsAsFactors = FALSE)
-  for (i in 1:nrow(df.in)) {
+  for (i in seq_len(nrow(df.in))) {
     site.no <- df.in[i, col.name]
-    for (j in 1:ncol(df.in)) {
+    for (j in seq_len(ncol(df.in))) {
       if (is.na(df.in[i, j]) == FALSE) {
         df.in[i, j] <- "Not missing"
       } else {
@@ -45,7 +45,7 @@ missing_plot2 <- function(
   counts <- data.frame()
   for (i in sitenames) {
     site.count <- 0
-    for (j in 1:ncol(df.in)) {
+    for (j in seq_len(ncol(df.in))) {
       site.count <- site.count + sum(df.in[, j] == i)
     }
     counts <- rbind(counts, data.frame(Site = i, Count = site.count))
@@ -59,15 +59,13 @@ missing_plot2 <- function(
   }
   high.na <- c("Not missing", as.character(counts[1:5, 1]))
 
-  for (i in 1:nrow(df.in)) {
-    for (j in 1:ncol(df.in)) {
+  for (i in seq_len(nrow(df.in))) {
+    for (j in seq_len(ncol(df.in))) {
       if (df.in[i, j] %in% high.na == FALSE) {
         df.in[i, j] <- "Other"
       }
     }
   }
-
-  n.color <- length(high.na) + 1
 
   plot.colors <- c(
     "#102033",
@@ -79,7 +77,7 @@ missing_plot2 <- function(
     "#6a4c93"
   )
 
-  df.in$.id = as.numeric(rownames(df.in))
+  df.in$.id <- as.numeric(rownames(df.in))
 
   plot_df <- tidyr::gather(df.in, "var", "value", -.id, factor_key = TRUE)
 
@@ -90,7 +88,7 @@ missing_plot2 <- function(
   plot_df$value <- factor(plot_df$value, levels = legend_levels)
 
   if (is.null(title)) {
-    title = paste(deparse(substitute(.data)), "Missing Values Map")
+    title <- paste(deparse(substitute(.data)), "Missing Values Map")
   }
 
   p <- ggplot2::ggplot(
@@ -98,7 +96,11 @@ missing_plot2 <- function(
     ggplot2::aes(x = .id, y = forcats::fct_rev(var), fill = value)
   )
   p <- p +
-    ggplot2::scale_fill_manual(values = plot.colors, breaks = legend_levels, name = "Recruitment site")
+    ggplot2::scale_fill_manual(
+      values = plot.colors,
+      breaks = legend_levels,
+      name = "Recruitment site"
+    )
   p <- p + ggplot2::geom_raster() + ggplot2::xlab("Observation")
   p <- p +
     ggplot2::scale_y_discrete(

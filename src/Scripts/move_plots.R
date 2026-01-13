@@ -8,11 +8,11 @@ cat("Moving plots to docs/plots...\n")
 src_plots <- "plots"
 
 
- if (file.exists("/docker")) {
+if (file.exists("/docker")) {
   dest_plots <- "temp/Survival/plots"
- } else {
+} else {
   dest_plots <- "../docs/plots"
- }
+}
 
 if (dir.exists(src_plots)) {
   # Create destination if it doesn't exist
@@ -40,11 +40,21 @@ if (dir.exists(src_plots)) {
     file.copy(file, dest_file, overwrite = TRUE)
   }
 
-  cat(sprintf("Copied %d files from %s to %s\n", length(files), src_plots, dest_plots))
+  cat(
+    sprintf(
+      "Copied %d files from %s to %s\n",
+      length(files),
+      src_plots,
+      dest_plots
+      )
+    )
 }
 
 # Update HTML files to use correct relative paths
-html_files <- list.files("../docs", pattern = "\\.html$", recursive = TRUE, full.names = TRUE)
+html_files <- list.files("../docs",
+                         pattern = "\\.html$",
+                         recursive = TRUE,
+                         full.names = TRUE)
 
 for (html_file in html_files) {
   content <- readLines(html_file, warn = FALSE)
@@ -57,5 +67,10 @@ for (html_file in html_files) {
   writeLines(content, html_file)
 }
 
-cat(sprintf("Updated %d HTML files with correct plot paths\n", length(html_files)))
+cat(
+  sprintf(
+    "Updated %d HTML files with correct plot paths\n",
+    length(html_files)
+    )
+  )
 cat("Done!\n")

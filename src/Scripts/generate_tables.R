@@ -13,7 +13,6 @@ colnames(final.table) <- c(
   "std.error.sensitivity"
 )
 
-# install.packages(c("dplyr", "purrr", "tidyr", "officer", "flextable", "googledrive"))
 library(dplyr)
 library(purrr)
 library(tidyr)
@@ -103,8 +102,6 @@ out_path <- file.path(paste0(
 ))
 print(doc, target = out_path)
 
-
-# install.packages(c("dplyr", "tidyr", "officer", "flextable"))
 library(dplyr)
 library(tidyr)
 library(officer)
