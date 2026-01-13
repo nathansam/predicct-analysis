@@ -271,6 +271,7 @@ summon_km_curves <- function(data,
                              legend.title = NULL,
                              legend.labs = NULL,
                              palette = NULL,
+                             ggtheme = theme_minimal(),
                              ...) {
   
   # ggsurvplot
@@ -287,9 +288,9 @@ summon_km_curves <- function(data,
       title = title,
       legend.title = legend.title,
       legend.labs = legend.labs,
+      ggtheme = ggtheme,
       xlab = "Time from study recruitment (months)",
       palette = palette,
-      ggtheme = theme_minimal(),
       break.time.by = 365/2,  
       xscale = 730/24,
       xlim = c(0, 750),
@@ -300,7 +301,9 @@ summon_km_curves <- function(data,
   
   plot_surv$plot <- plot_surv$plot +
     theme(
-      plot.title = element_text(hjust = 0.5))
+      plot.title = element_text(hjust = 0.5),
+      axis.title.x = element_blank()
+    )
   
   plot_surv$table <- plot_surv$table + ylab("")
   
