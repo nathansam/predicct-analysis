@@ -93,7 +93,7 @@ ggsave(
   "plots/arranged/Figure3.png",
   p,
   width = 12.5 * 7 / 8,
-  height = 12.5 *  7 / 8,
+  height = 12.5 * 7 / 8,
   units = "in"
 )
 
@@ -131,7 +131,7 @@ ggsave(
   "plots/arranged/Figure4.png",
   p,
   width = 12.5 * 7 / 8,
-  height = 12.5 *  7 / 8,
+  height = 12.5 * 7 / 8,
   units = "in"
 )
 
