@@ -31,7 +31,7 @@ p2 <- readRDS(paste0(outdir, "flare-soft.RDS"))
 p3 <- readRDS(paste0(outdir, "flare-hard.RDS"))
 
 
-p1_arranged <-arrange_subplot(p1)
+p1_arranged <- arrange_subplot(p1)
 p2_arranged <- arrange_subplot(p2)
 p3_arranged <-  arrange_subplot(p3)
 
@@ -70,7 +70,7 @@ p2 <- readRDS(paste0(outdir, "fc-cd-hard.RDS"))
 p3 <- readRDS(paste0(outdir, "fc-uc-soft.RDS"))
 p4 <- readRDS(paste0(outdir, "fc-uc-hard.RDS"))
 
-p1_arranged <-arrange_subplot(p1)
+p1_arranged <- arrange_subplot(p1)
 p2_arranged <- arrange_subplot(p2)
 p3_arranged <-  arrange_subplot(p3)
 p4_arranged <-  arrange_subplot(p4)
@@ -85,15 +85,15 @@ p <- (p1_arranged + p2_arranged) /
 ggsave(
   "plots/arranged/Figure3.pdf",
   p,
-  width = 12.5 * 7/8 ,
-  height = 12.5 * 7/8,
+  width = 12.5 * 7 / 8,
+  height = 12.5 * 7 / 8,
   units = "in"
 )
 ggsave(
   "plots/arranged/Figure3.png",
   p,
-  width = 12.5 * 7/8,
-  height = 12.5 * 7/8,
+  width = 12.5 * 7 / 8,
+  height = 12.5 *  7 / 8,
   units = "in"
 )
 
@@ -108,7 +108,7 @@ p3 <- readRDS(paste0(outdir, "meat-uc-soft.RDS"))
 p4 <- readRDS(paste0(outdir, "meat-uc-hard.RDS"))
 
 
-p1_arranged <-arrange_subplot(p1)
+p1_arranged <- arrange_subplot(p1)
 p2_arranged <- arrange_subplot(p2)
 p3_arranged <-  arrange_subplot(p3)
 p4_arranged <-  arrange_subplot(p4)
@@ -123,15 +123,15 @@ p <- (p1_arranged + p2_arranged) /
 ggsave(
   "plots/arranged/Figure4.pdf",
   p,
-  width = 12.5 * 7/8,
-  height = 12.5 * 7/8,
+  width = 12.5 * 7 / 8,
+  height = 12.5 * 7 / 8,
   units = "in"
 )
 ggsave(
   "plots/arranged/Figure4.png",
   p,
-  width = 12.5 * 7/8,
-  height = 12.5 * 7/8,
+  width = 12.5 * 7 / 8,
+  height = 12.5 *  7 / 8,
   units = "in"
 )
 

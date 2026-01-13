@@ -37,9 +37,12 @@ p1 <- clin.forest %>%
     shape = Diagnosis,
     color = color_group
   )) +
-  geom_pointrange(position = dodge, size = 0.7) + # For the point estimate and CI range
-  geom_hline(yintercept = 1, linetype = 2) + # Adds a reference line at y = 1 (null effect)
-  coord_flip() + # Flip coordinates for a horizontal forest plot
+  # For the point estimate and CI range
+  geom_pointrange(position = dodge, size = 0.7) +
+  # Adds a reference line at y = 1 (null effect)
+  geom_hline(yintercept = 1, linetype = 2) +
+  # Flip coordinates for a horizontal forest plot
+  coord_flip() +
   labs(
     y = "Hazard Ratio (95% CI)",
     x = "Psychosocial Variables",
@@ -48,7 +51,8 @@ p1 <- clin.forest %>%
   theme(
     plot.title.position = "plot",
     plot.caption.position = "plot",
-    plot.title = element_text(size = 8, hjust = 0.5, vjust = -10), # Adjust the size and position of the title
+    # Adjust the size and position of the title
+    plot.title = element_text(size = 8, hjust = 0.5, vjust = -10),
     plot.subtitle = element_text(size = 6, hjust = 0.5, vjust = -15)
   ) +
   scale_color_manual(values = color_palette) +

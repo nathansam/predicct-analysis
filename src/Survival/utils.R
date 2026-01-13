@@ -41,7 +41,7 @@ set_paths <- function() {
     paths$followup_dir <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
     paths$outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
   }
-  return(paths)
+  paths
 }
 
 # Helper function to save and include diagnostic plots
@@ -180,8 +180,7 @@ generate_survival_plot <- function(
   # Set proper file permissions
   Sys.chmod(paste0(plot_path, ".pdf"), mode = "0644", use_umask = FALSE)
   Sys.chmod(paste0(plot_path, ".png"), mode = "0644", use_umask = FALSE)
-
-  return(p)
+  p
 }
 
 # Function to categorize data
@@ -193,7 +192,7 @@ categorize_variable <- function(df, var_name, breaks, labels) {
     include.lowest = TRUE,
     right = FALSE
   )
-  return(df)
+  df
 }
 
 # Function to categorize by quantiles
@@ -418,7 +417,8 @@ run_survival_analysis <- function(
   )
 
   # Return results
-  # Try to get HR data, but handle case where var_name doesn't match coefficient names
+  # Try to get HR data, but handle case where var_name doesn't match
+  # coefficient names
   hr_data <- tryCatch(
     {
       get_HR(fit.me, var_name)
@@ -521,5 +521,5 @@ setup_analysis <- function() {
   demo <- readRDS(demo_file)
   demo$FC <- log(demo$FC)
 
-  return(list(paths = paths, demo = demo))
+  list(paths = paths, demo = demo)
 }

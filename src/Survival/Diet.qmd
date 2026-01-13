@@ -4796,7 +4796,7 @@ invisible(cox_summary(fit.me, plot_base_path = "plots/ibd/hard-flare/diet/whiteF
 ## Save tables with p-values and hazard ratios
 ```{r}
 
-pvalues <- hrs |> 
+pvalues <- hrs |>
   select(diagnosis, flare, term, p.value)
 
 # Create term labels dynamically based on actual data
@@ -4850,16 +4850,18 @@ pvalues <- pvalues |>
   rename(term = clean_term)
 
 pvalues <- pvalues |>
-  mutate(adjusted.p.value = ifelse(
-    grepl(
-      "^Meat|^%UP|^PUFA|^Dietary", term), 
+  mutate(
+    adjusted.p.value = ifelse(
+      grepl(
+        "^Meat|^%UP|^PUFA|^Dietary", term
+      ),
       NA,
-      p.value*216
+      p.value * 216
     )
   )
 pvalues$adjusted.p.value <- ifelse(
-  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value>1, 
-  1, 
+  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value > 1,
+  1,
   pvalues$adjusted.p.value
 )
 ```
@@ -6444,8 +6446,7 @@ invisible(cox_summary(fit.me))
 
 ## Save tables with p-values and hazard ratios
 ```{r}
-
-pvalues <- hrs |> 
+pvalues <- hrs |>
   select(diagnosis, flare, term, p.value)
 
 # Replace term names with human-readable labels (dynamic approach)
@@ -6477,16 +6478,18 @@ pvalues <- pvalues |>
   rename(term = clean_term)
 
 pvalues <- pvalues |>
-  mutate(adjusted.p.value = ifelse(
-    grepl(
-      "^Meat|^%UP|^PUFA|^Dietary", term), 
+  mutate(
+    adjusted.p.value = ifelse(
+      grepl(
+        "^Meat|^%UP|^PUFA|^Dietary", term
+      ),
       NA,
-      p.value*216
+      p.value * 216
     )
   )
 pvalues$adjusted.p.value <- ifelse(
-  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value>1, 
-  1, 
+  !is.na(pvalues$adjusted.p.value) & pvalues$adjusted.p.value > 1,
+  1,
   pvalues$adjusted.p.value
 )
 ```
