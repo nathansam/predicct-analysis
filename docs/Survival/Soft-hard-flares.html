@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.4.554">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Nathan Constantine-Cooke">
-<meta name="dcterms.date" content="2025-12-02">
+<meta name="dcterms.date" content="2026-01-13">
 <title>PREdiCCt analyses - Flare overview</title>
 <style>
 code{white-space: pre-wrap;}
@@ -112,10 +112,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:card" content="summary">
 <meta name="citation_title" content="Flare overview">
 <meta name="citation_author" content="Nathan Constantine-Cooke">
-<meta name="citation_publication_date" content="2025-12-02">
-<meta name="citation_cover_date" content="2025-12-02">
-<meta name="citation_year" content="2025">
-<meta name="citation_online_date" content="2025-12-02">
+<meta name="citation_publication_date" content="2026-01-13">
+<meta name="citation_cover_date" content="2026-01-13">
+<meta name="citation_year" content="2026">
+<meta name="citation_online_date" content="2026-01-13">
 <meta name="citation_language" content="en">
 <meta name="citation_reference" content="citation_title=Inflammatory bowel disease and smoking: A review of epidemiology, pathophysiology, and therapeutic implications;,citation_author=Tanja Birrenbach;,citation_author=Ulrich Böcker;,citation_publication_date=2004-11;,citation_cover_date=2004-11;,citation_year=2004;,citation_fulltext_html_url=http://dx.doi.org/10.1097/00054725-200411000-00019;,citation_issue=6;,citation_doi=10.1097/00054725-200411000-00019;,citation_issn=1078-0998;,citation_volume=10;,citation_journal_title=Inflammatory Bowel Diseases;,citation_publisher=Oxford University Press;">
 <meta name="citation_reference" content="citation_title=The UN decade of nutrition, the NOVA food classification and the trouble with ultra-processing;,citation_author=Carlos Augusto Monteiro;,citation_author=Geoffrey Cannon;,citation_author=Jean-Claude Moubarac;,citation_author=Renata Bertazzi Levy;,citation_author=Maria Laura C Louzada;,citation_author=Patrícia Constante Jaime;,citation_publication_date=2017-03;,citation_cover_date=2017-03;,citation_year=2017;,citation_fulltext_html_url=http://dx.doi.org/10.1017/S1368980017000234;,citation_issue=1;,citation_doi=10.1017/s1368980017000234;,citation_issn=1475-2727;,citation_volume=21;,citation_journal_title=Public Health Nutrition;,citation_publisher=Cambridge University Press;">
@@ -166,11 +166,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">About</span></a>
-  </div>
-</li>
+ <span class="menu-text">index.qmd</span>
+  </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../Baseline/Recruitment.html" class="sidebar-item-text sidebar-link">
@@ -313,13 +310,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   <div class="quarto-title-meta-contents">
         <p class="affiliation">
-            <a href="https://www.ed.ac.uk/centre-genomic-medicine">
-            Centre for Genomic and Experimental Medicine
-            </a>
-          </p>
-        <p class="affiliation">
-            <a href="https://www.ed.ac.uk/mrc-human-genetics-unit">
-            MRC Human Genetics Unit
+            <a href="https://institute-genetics-cancer.ed.ac.uk/">
+            Institute of Genetics and Cancer
             </a>
           </p>
       </div>
@@ -331,7 +323,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 2, 2025</p>
+      <p class="date">January 13, 2026</p>
     </div>
   </div>
   
@@ -353,7 +345,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">demo</span><span class="op">$</span><span class="va">FC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">demo</span><span class="op">$</span><span class="va">FC</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>worthwhile to first consider how questionnaires were completed for each month.</p>
+<p>Before examining flare patterns, it is worthwhile to first consider how questionnaires were completed for each month.</p>
 <p>As should be expected, there is a small degree of attrition of responses over time (<a href="#fig-responses" class="quarto-xref">Figure&nbsp;1</a>). However, there is a large increase at the end of followup (M24) as additional communications were sent which encouraged the completion of the final questionnaire.</p>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">monthly</span> <span class="op">&lt;-</span> <span class="fu">read_xlsx</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">paths</span><span class="op">$</span><span class="va">data.path</span>, <span class="st">"Followup/monthlyQ.xlsx"</span><span class="op">)</span><span class="op">)</span></span>
@@ -479,7 +471,7 @@ Figure&nbsp;2: Kaplan-Meier curves for patient-reported flares stratified by IBD
 </div>
 </div>
 </section><section id="secondary-outcome-first-objective-flare" class="level2"><h2 class="anchored" data-anchor-id="secondary-outcome-first-objective-flare">Secondary outcome: first objective flare</h2>
-<p>Disease flares been reported by clinical care teams instead of being reported by subjects themselves.</p>
+<p>For the secondary outcome, disease flares have been reported by clinical care teams instead of being reported by subjects themselves.</p>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">flare.df.cutoff</span> <span class="op">&lt;-</span> <span class="va">flare.df</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span></span>
@@ -544,23 +536,23 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
 </figcaption><div aria-describedby="tbl-hard-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div>
-<div id="grtplgujlx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#grtplgujlx table {
+<div id="fwfihlzowb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fwfihlzowb table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#grtplgujlx thead, #grtplgujlx tbody, #grtplgujlx tfoot, #grtplgujlx tr, #grtplgujlx td, #grtplgujlx th {
+#fwfihlzowb thead, #fwfihlzowb tbody, #fwfihlzowb tfoot, #fwfihlzowb tr, #fwfihlzowb td, #fwfihlzowb th {
   border-style: none;
 }
 
-#grtplgujlx p {
+#fwfihlzowb p {
   margin: 0;
   padding: 0;
 }
 
-#grtplgujlx .gt_table {
+#fwfihlzowb .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -586,12 +578,12 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-left-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_caption {
+#fwfihlzowb .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#grtplgujlx .gt_title {
+#fwfihlzowb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -603,7 +595,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-bottom-width: 0;
 }
 
-#grtplgujlx .gt_subtitle {
+#fwfihlzowb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -615,7 +607,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-top-width: 0;
 }
 
-#grtplgujlx .gt_heading {
+#fwfihlzowb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -627,13 +619,13 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-right-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_bottom_border {
+#fwfihlzowb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_col_headings {
+#fwfihlzowb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -648,7 +640,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-right-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_col_heading {
+#fwfihlzowb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -668,7 +660,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   overflow-x: hidden;
 }
 
-#grtplgujlx .gt_column_spanner_outer {
+#fwfihlzowb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -680,15 +672,15 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   padding-right: 4px;
 }
 
-#grtplgujlx .gt_column_spanner_outer:first-child {
+#fwfihlzowb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#grtplgujlx .gt_column_spanner_outer:last-child {
+#fwfihlzowb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#grtplgujlx .gt_column_spanner {
+#fwfihlzowb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -700,11 +692,11 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   width: 100%;
 }
 
-#grtplgujlx .gt_spanner_row {
+#fwfihlzowb .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#grtplgujlx .gt_group_heading {
+#fwfihlzowb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -730,7 +722,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   text-align: left;
 }
 
-#grtplgujlx .gt_empty_group_heading {
+#fwfihlzowb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -745,15 +737,15 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   vertical-align: middle;
 }
 
-#grtplgujlx .gt_from_md > :first-child {
+#fwfihlzowb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#grtplgujlx .gt_from_md > :last-child {
+#fwfihlzowb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#grtplgujlx .gt_row {
+#fwfihlzowb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -772,7 +764,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   overflow-x: hidden;
 }
 
-#grtplgujlx .gt_stub {
+#fwfihlzowb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -785,7 +777,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   padding-right: 5px;
 }
 
-#grtplgujlx .gt_stub_row_group {
+#fwfihlzowb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -799,15 +791,15 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   vertical-align: top;
 }
 
-#grtplgujlx .gt_row_group_first td {
+#fwfihlzowb .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#grtplgujlx .gt_row_group_first th {
+#fwfihlzowb .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#grtplgujlx .gt_summary_row {
+#fwfihlzowb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -817,16 +809,16 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   padding-right: 5px;
 }
 
-#grtplgujlx .gt_first_summary_row {
+#fwfihlzowb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_first_summary_row.thick {
+#fwfihlzowb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#grtplgujlx .gt_last_summary_row {
+#fwfihlzowb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -836,7 +828,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_grand_summary_row {
+#fwfihlzowb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -846,7 +838,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   padding-right: 5px;
 }
 
-#grtplgujlx .gt_first_grand_summary_row {
+#fwfihlzowb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -856,7 +848,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-top-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_last_grand_summary_row_top {
+#fwfihlzowb .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -866,11 +858,11 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_striped {
+#fwfihlzowb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#grtplgujlx .gt_table_body {
+#fwfihlzowb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -879,7 +871,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_footnotes {
+#fwfihlzowb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -893,7 +885,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-right-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_footnote {
+#fwfihlzowb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -902,7 +894,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   padding-right: 5px;
 }
 
-#grtplgujlx .gt_sourcenotes {
+#fwfihlzowb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -916,7 +908,7 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   border-right-color: #D3D3D3;
 }
 
-#grtplgujlx .gt_sourcenote {
+#fwfihlzowb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -924,63 +916,63 @@ Table&nbsp;1: Objective flare survival rates across the full follow-up.
   padding-right: 5px;
 }
 
-#grtplgujlx .gt_left {
+#fwfihlzowb .gt_left {
   text-align: left;
 }
 
-#grtplgujlx .gt_center {
+#fwfihlzowb .gt_center {
   text-align: center;
 }
 
-#grtplgujlx .gt_right {
+#fwfihlzowb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#grtplgujlx .gt_font_normal {
+#fwfihlzowb .gt_font_normal {
   font-weight: normal;
 }
 
-#grtplgujlx .gt_font_bold {
+#fwfihlzowb .gt_font_bold {
   font-weight: bold;
 }
 
-#grtplgujlx .gt_font_italic {
+#fwfihlzowb .gt_font_italic {
   font-style: italic;
 }
 
-#grtplgujlx .gt_super {
+#fwfihlzowb .gt_super {
   font-size: 65%;
 }
 
-#grtplgujlx .gt_footnote_marks {
+#fwfihlzowb .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#grtplgujlx .gt_asterisk {
+#fwfihlzowb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#grtplgujlx .gt_indent_1 {
+#fwfihlzowb .gt_indent_1 {
   text-indent: 5px;
 }
 
-#grtplgujlx .gt_indent_2 {
+#fwfihlzowb .gt_indent_2 {
   text-indent: 10px;
 }
 
-#grtplgujlx .gt_indent_3 {
+#fwfihlzowb .gt_indent_3 {
   text-indent: 15px;
 }
 
-#grtplgujlx .gt_indent_4 {
+#fwfihlzowb .gt_indent_4 {
   text-indent: 20px;
 }
 
-#grtplgujlx .gt_indent_5 {
+#fwfihlzowb .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1041,23 +1033,23 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
 <span>  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
 <div>
-<div id="zehbafotcx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#zehbafotcx table {
+<div id="bbstoacncq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bbstoacncq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#zehbafotcx thead, #zehbafotcx tbody, #zehbafotcx tfoot, #zehbafotcx tr, #zehbafotcx td, #zehbafotcx th {
+#bbstoacncq thead, #bbstoacncq tbody, #bbstoacncq tfoot, #bbstoacncq tr, #bbstoacncq td, #bbstoacncq th {
   border-style: none;
 }
 
-#zehbafotcx p {
+#bbstoacncq p {
   margin: 0;
   padding: 0;
 }
 
-#zehbafotcx .gt_table {
+#bbstoacncq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1083,12 +1075,12 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-left-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_caption {
+#bbstoacncq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#zehbafotcx .gt_title {
+#bbstoacncq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1100,7 +1092,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-bottom-width: 0;
 }
 
-#zehbafotcx .gt_subtitle {
+#bbstoacncq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1112,7 +1104,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-top-width: 0;
 }
 
-#zehbafotcx .gt_heading {
+#bbstoacncq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1124,13 +1116,13 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-right-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_bottom_border {
+#bbstoacncq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_col_headings {
+#bbstoacncq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1145,7 +1137,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-right-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_col_heading {
+#bbstoacncq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1165,7 +1157,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   overflow-x: hidden;
 }
 
-#zehbafotcx .gt_column_spanner_outer {
+#bbstoacncq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1177,15 +1169,15 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   padding-right: 4px;
 }
 
-#zehbafotcx .gt_column_spanner_outer:first-child {
+#bbstoacncq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zehbafotcx .gt_column_spanner_outer:last-child {
+#bbstoacncq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zehbafotcx .gt_column_spanner {
+#bbstoacncq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1197,11 +1189,11 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   width: 100%;
 }
 
-#zehbafotcx .gt_spanner_row {
+#bbstoacncq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#zehbafotcx .gt_group_heading {
+#bbstoacncq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1227,7 +1219,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   text-align: left;
 }
 
-#zehbafotcx .gt_empty_group_heading {
+#bbstoacncq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1242,15 +1234,15 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   vertical-align: middle;
 }
 
-#zehbafotcx .gt_from_md > :first-child {
+#bbstoacncq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zehbafotcx .gt_from_md > :last-child {
+#bbstoacncq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zehbafotcx .gt_row {
+#bbstoacncq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1269,7 +1261,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   overflow-x: hidden;
 }
 
-#zehbafotcx .gt_stub {
+#bbstoacncq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1282,7 +1274,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   padding-right: 5px;
 }
 
-#zehbafotcx .gt_stub_row_group {
+#bbstoacncq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1296,15 +1288,15 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   vertical-align: top;
 }
 
-#zehbafotcx .gt_row_group_first td {
+#bbstoacncq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#zehbafotcx .gt_row_group_first th {
+#bbstoacncq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#zehbafotcx .gt_summary_row {
+#bbstoacncq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1314,16 +1306,16 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   padding-right: 5px;
 }
 
-#zehbafotcx .gt_first_summary_row {
+#bbstoacncq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_first_summary_row.thick {
+#bbstoacncq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#zehbafotcx .gt_last_summary_row {
+#bbstoacncq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1333,7 +1325,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-bottom-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_grand_summary_row {
+#bbstoacncq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1343,7 +1335,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   padding-right: 5px;
 }
 
-#zehbafotcx .gt_first_grand_summary_row {
+#bbstoacncq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1353,7 +1345,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-top-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_last_grand_summary_row_top {
+#bbstoacncq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1363,11 +1355,11 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-bottom-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_striped {
+#bbstoacncq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#zehbafotcx .gt_table_body {
+#bbstoacncq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1376,7 +1368,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-bottom-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_footnotes {
+#bbstoacncq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1390,7 +1382,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-right-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_footnote {
+#bbstoacncq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1399,7 +1391,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   padding-right: 5px;
 }
 
-#zehbafotcx .gt_sourcenotes {
+#bbstoacncq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1413,7 +1405,7 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   border-right-color: #D3D3D3;
 }
 
-#zehbafotcx .gt_sourcenote {
+#bbstoacncq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1421,63 +1413,63 @@ Figure&nbsp;4: Kaplan-Meier curves of objective flares stratified by IBD type ac
   padding-right: 5px;
 }
 
-#zehbafotcx .gt_left {
+#bbstoacncq .gt_left {
   text-align: left;
 }
 
-#zehbafotcx .gt_center {
+#bbstoacncq .gt_center {
   text-align: center;
 }
 
-#zehbafotcx .gt_right {
+#bbstoacncq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zehbafotcx .gt_font_normal {
+#bbstoacncq .gt_font_normal {
   font-weight: normal;
 }
 
-#zehbafotcx .gt_font_bold {
+#bbstoacncq .gt_font_bold {
   font-weight: bold;
 }
 
-#zehbafotcx .gt_font_italic {
+#bbstoacncq .gt_font_italic {
   font-style: italic;
 }
 
-#zehbafotcx .gt_super {
+#bbstoacncq .gt_super {
   font-size: 65%;
 }
 
-#zehbafotcx .gt_footnote_marks {
+#bbstoacncq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#zehbafotcx .gt_asterisk {
+#bbstoacncq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#zehbafotcx .gt_indent_1 {
+#bbstoacncq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#zehbafotcx .gt_indent_2 {
+#bbstoacncq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#zehbafotcx .gt_indent_3 {
+#bbstoacncq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#zehbafotcx .gt_indent_4 {
+#bbstoacncq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#zehbafotcx .gt_indent_5 {
+#bbstoacncq .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1596,23 +1588,23 @@ Table&nbsp;2: Survival rates after two years of follow-up.
 </figcaption><div aria-describedby="tbl-comb-comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div>
-<div id="veqhuyywug" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#veqhuyywug table {
+<div id="uwcvmrcggv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#uwcvmrcggv table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#veqhuyywug thead, #veqhuyywug tbody, #veqhuyywug tfoot, #veqhuyywug tr, #veqhuyywug td, #veqhuyywug th {
+#uwcvmrcggv thead, #uwcvmrcggv tbody, #uwcvmrcggv tfoot, #uwcvmrcggv tr, #uwcvmrcggv td, #uwcvmrcggv th {
   border-style: none;
 }
 
-#veqhuyywug p {
+#uwcvmrcggv p {
   margin: 0;
   padding: 0;
 }
 
-#veqhuyywug .gt_table {
+#uwcvmrcggv .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1638,12 +1630,12 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-left-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_caption {
+#uwcvmrcggv .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#veqhuyywug .gt_title {
+#uwcvmrcggv .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1655,7 +1647,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-width: 0;
 }
 
-#veqhuyywug .gt_subtitle {
+#uwcvmrcggv .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1667,7 +1659,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-width: 0;
 }
 
-#veqhuyywug .gt_heading {
+#uwcvmrcggv .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1679,13 +1671,13 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_bottom_border {
+#uwcvmrcggv .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_col_headings {
+#uwcvmrcggv .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1700,7 +1692,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_col_heading {
+#uwcvmrcggv .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1720,7 +1712,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#veqhuyywug .gt_column_spanner_outer {
+#uwcvmrcggv .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1732,15 +1724,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 4px;
 }
 
-#veqhuyywug .gt_column_spanner_outer:first-child {
+#uwcvmrcggv .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#veqhuyywug .gt_column_spanner_outer:last-child {
+#uwcvmrcggv .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#veqhuyywug .gt_column_spanner {
+#uwcvmrcggv .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1752,11 +1744,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   width: 100%;
 }
 
-#veqhuyywug .gt_spanner_row {
+#uwcvmrcggv .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#veqhuyywug .gt_group_heading {
+#uwcvmrcggv .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1782,7 +1774,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   text-align: left;
 }
 
-#veqhuyywug .gt_empty_group_heading {
+#uwcvmrcggv .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1797,15 +1789,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: middle;
 }
 
-#veqhuyywug .gt_from_md > :first-child {
+#uwcvmrcggv .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#veqhuyywug .gt_from_md > :last-child {
+#uwcvmrcggv .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#veqhuyywug .gt_row {
+#uwcvmrcggv .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1824,7 +1816,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#veqhuyywug .gt_stub {
+#uwcvmrcggv .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1837,7 +1829,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#veqhuyywug .gt_stub_row_group {
+#uwcvmrcggv .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1851,15 +1843,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: top;
 }
 
-#veqhuyywug .gt_row_group_first td {
+#uwcvmrcggv .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#veqhuyywug .gt_row_group_first th {
+#uwcvmrcggv .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#veqhuyywug .gt_summary_row {
+#uwcvmrcggv .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1869,16 +1861,16 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#veqhuyywug .gt_first_summary_row {
+#uwcvmrcggv .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_first_summary_row.thick {
+#uwcvmrcggv .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#veqhuyywug .gt_last_summary_row {
+#uwcvmrcggv .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1888,7 +1880,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_grand_summary_row {
+#uwcvmrcggv .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1898,7 +1890,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#veqhuyywug .gt_first_grand_summary_row {
+#uwcvmrcggv .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1908,7 +1900,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_last_grand_summary_row_top {
+#uwcvmrcggv .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1918,11 +1910,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_striped {
+#uwcvmrcggv .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#veqhuyywug .gt_table_body {
+#uwcvmrcggv .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1931,7 +1923,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_footnotes {
+#uwcvmrcggv .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1945,7 +1937,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_footnote {
+#uwcvmrcggv .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1954,7 +1946,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#veqhuyywug .gt_sourcenotes {
+#uwcvmrcggv .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1968,7 +1960,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#veqhuyywug .gt_sourcenote {
+#uwcvmrcggv .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1976,63 +1968,63 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#veqhuyywug .gt_left {
+#uwcvmrcggv .gt_left {
   text-align: left;
 }
 
-#veqhuyywug .gt_center {
+#uwcvmrcggv .gt_center {
   text-align: center;
 }
 
-#veqhuyywug .gt_right {
+#uwcvmrcggv .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#veqhuyywug .gt_font_normal {
+#uwcvmrcggv .gt_font_normal {
   font-weight: normal;
 }
 
-#veqhuyywug .gt_font_bold {
+#uwcvmrcggv .gt_font_bold {
   font-weight: bold;
 }
 
-#veqhuyywug .gt_font_italic {
+#uwcvmrcggv .gt_font_italic {
   font-style: italic;
 }
 
-#veqhuyywug .gt_super {
+#uwcvmrcggv .gt_super {
   font-size: 65%;
 }
 
-#veqhuyywug .gt_footnote_marks {
+#uwcvmrcggv .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#veqhuyywug .gt_asterisk {
+#uwcvmrcggv .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#veqhuyywug .gt_indent_1 {
+#uwcvmrcggv .gt_indent_1 {
   text-indent: 5px;
 }
 
-#veqhuyywug .gt_indent_2 {
+#uwcvmrcggv .gt_indent_2 {
   text-indent: 10px;
 }
 
-#veqhuyywug .gt_indent_3 {
+#uwcvmrcggv .gt_indent_3 {
   text-indent: 15px;
 }
 
-#veqhuyywug .gt_indent_4 {
+#uwcvmrcggv .gt_indent_4 {
   text-indent: 20px;
 }
 
-#veqhuyywug .gt_indent_5 {
+#uwcvmrcggv .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2051,23 +2043,23 @@ Table&nbsp;2: Survival rates after two years of follow-up.
 </div>
 <div class="cell-output-display">
 <div>
-<div id="sjeomowfxm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#sjeomowfxm table {
+<div id="edxietclat" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#edxietclat table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#sjeomowfxm thead, #sjeomowfxm tbody, #sjeomowfxm tfoot, #sjeomowfxm tr, #sjeomowfxm td, #sjeomowfxm th {
+#edxietclat thead, #edxietclat tbody, #edxietclat tfoot, #edxietclat tr, #edxietclat td, #edxietclat th {
   border-style: none;
 }
 
-#sjeomowfxm p {
+#edxietclat p {
   margin: 0;
   padding: 0;
 }
 
-#sjeomowfxm .gt_table {
+#edxietclat .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2093,12 +2085,12 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-left-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_caption {
+#edxietclat .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#sjeomowfxm .gt_title {
+#edxietclat .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2110,7 +2102,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-width: 0;
 }
 
-#sjeomowfxm .gt_subtitle {
+#edxietclat .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2122,7 +2114,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-width: 0;
 }
 
-#sjeomowfxm .gt_heading {
+#edxietclat .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2134,13 +2126,13 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_bottom_border {
+#edxietclat .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_col_headings {
+#edxietclat .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2155,7 +2147,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_col_heading {
+#edxietclat .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2175,7 +2167,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#sjeomowfxm .gt_column_spanner_outer {
+#edxietclat .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2187,15 +2179,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 4px;
 }
 
-#sjeomowfxm .gt_column_spanner_outer:first-child {
+#edxietclat .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#sjeomowfxm .gt_column_spanner_outer:last-child {
+#edxietclat .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#sjeomowfxm .gt_column_spanner {
+#edxietclat .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2207,11 +2199,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   width: 100%;
 }
 
-#sjeomowfxm .gt_spanner_row {
+#edxietclat .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#sjeomowfxm .gt_group_heading {
+#edxietclat .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2237,7 +2229,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   text-align: left;
 }
 
-#sjeomowfxm .gt_empty_group_heading {
+#edxietclat .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2252,15 +2244,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: middle;
 }
 
-#sjeomowfxm .gt_from_md > :first-child {
+#edxietclat .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#sjeomowfxm .gt_from_md > :last-child {
+#edxietclat .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#sjeomowfxm .gt_row {
+#edxietclat .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2279,7 +2271,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#sjeomowfxm .gt_stub {
+#edxietclat .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2292,7 +2284,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sjeomowfxm .gt_stub_row_group {
+#edxietclat .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2306,15 +2298,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: top;
 }
 
-#sjeomowfxm .gt_row_group_first td {
+#edxietclat .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#sjeomowfxm .gt_row_group_first th {
+#edxietclat .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#sjeomowfxm .gt_summary_row {
+#edxietclat .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2324,16 +2316,16 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sjeomowfxm .gt_first_summary_row {
+#edxietclat .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_first_summary_row.thick {
+#edxietclat .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#sjeomowfxm .gt_last_summary_row {
+#edxietclat .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2343,7 +2335,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_grand_summary_row {
+#edxietclat .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2353,7 +2345,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sjeomowfxm .gt_first_grand_summary_row {
+#edxietclat .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2363,7 +2355,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_last_grand_summary_row_top {
+#edxietclat .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2373,11 +2365,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_striped {
+#edxietclat .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#sjeomowfxm .gt_table_body {
+#edxietclat .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2386,7 +2378,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_footnotes {
+#edxietclat .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2400,7 +2392,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_footnote {
+#edxietclat .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2409,7 +2401,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sjeomowfxm .gt_sourcenotes {
+#edxietclat .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2423,7 +2415,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sjeomowfxm .gt_sourcenote {
+#edxietclat .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2431,63 +2423,63 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sjeomowfxm .gt_left {
+#edxietclat .gt_left {
   text-align: left;
 }
 
-#sjeomowfxm .gt_center {
+#edxietclat .gt_center {
   text-align: center;
 }
 
-#sjeomowfxm .gt_right {
+#edxietclat .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#sjeomowfxm .gt_font_normal {
+#edxietclat .gt_font_normal {
   font-weight: normal;
 }
 
-#sjeomowfxm .gt_font_bold {
+#edxietclat .gt_font_bold {
   font-weight: bold;
 }
 
-#sjeomowfxm .gt_font_italic {
+#edxietclat .gt_font_italic {
   font-style: italic;
 }
 
-#sjeomowfxm .gt_super {
+#edxietclat .gt_super {
   font-size: 65%;
 }
 
-#sjeomowfxm .gt_footnote_marks {
+#edxietclat .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#sjeomowfxm .gt_asterisk {
+#edxietclat .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#sjeomowfxm .gt_indent_1 {
+#edxietclat .gt_indent_1 {
   text-indent: 5px;
 }
 
-#sjeomowfxm .gt_indent_2 {
+#edxietclat .gt_indent_2 {
   text-indent: 10px;
 }
 
-#sjeomowfxm .gt_indent_3 {
+#edxietclat .gt_indent_3 {
   text-indent: 15px;
 }
 
-#sjeomowfxm .gt_indent_4 {
+#edxietclat .gt_indent_4 {
   text-indent: 20px;
 }
 
-#sjeomowfxm .gt_indent_5 {
+#edxietclat .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2506,23 +2498,23 @@ Table&nbsp;2: Survival rates after two years of follow-up.
 </div>
 <div class="cell-output-display">
 <div>
-<div id="buvclnvyls" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#buvclnvyls table {
+<div id="matoklpaff" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#matoklpaff table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#buvclnvyls thead, #buvclnvyls tbody, #buvclnvyls tfoot, #buvclnvyls tr, #buvclnvyls td, #buvclnvyls th {
+#matoklpaff thead, #matoklpaff tbody, #matoklpaff tfoot, #matoklpaff tr, #matoklpaff td, #matoklpaff th {
   border-style: none;
 }
 
-#buvclnvyls p {
+#matoklpaff p {
   margin: 0;
   padding: 0;
 }
 
-#buvclnvyls .gt_table {
+#matoklpaff .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2548,12 +2540,12 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-left-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_caption {
+#matoklpaff .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#buvclnvyls .gt_title {
+#matoklpaff .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2565,7 +2557,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-width: 0;
 }
 
-#buvclnvyls .gt_subtitle {
+#matoklpaff .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2577,7 +2569,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-width: 0;
 }
 
-#buvclnvyls .gt_heading {
+#matoklpaff .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2589,13 +2581,13 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_bottom_border {
+#matoklpaff .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_col_headings {
+#matoklpaff .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2610,7 +2602,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_col_heading {
+#matoklpaff .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2630,7 +2622,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#buvclnvyls .gt_column_spanner_outer {
+#matoklpaff .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2642,15 +2634,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 4px;
 }
 
-#buvclnvyls .gt_column_spanner_outer:first-child {
+#matoklpaff .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#buvclnvyls .gt_column_spanner_outer:last-child {
+#matoklpaff .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#buvclnvyls .gt_column_spanner {
+#matoklpaff .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2662,11 +2654,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   width: 100%;
 }
 
-#buvclnvyls .gt_spanner_row {
+#matoklpaff .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#buvclnvyls .gt_group_heading {
+#matoklpaff .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2692,7 +2684,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   text-align: left;
 }
 
-#buvclnvyls .gt_empty_group_heading {
+#matoklpaff .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2707,15 +2699,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: middle;
 }
 
-#buvclnvyls .gt_from_md > :first-child {
+#matoklpaff .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#buvclnvyls .gt_from_md > :last-child {
+#matoklpaff .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#buvclnvyls .gt_row {
+#matoklpaff .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2734,7 +2726,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#buvclnvyls .gt_stub {
+#matoklpaff .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2747,7 +2739,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#buvclnvyls .gt_stub_row_group {
+#matoklpaff .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2761,15 +2753,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: top;
 }
 
-#buvclnvyls .gt_row_group_first td {
+#matoklpaff .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#buvclnvyls .gt_row_group_first th {
+#matoklpaff .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#buvclnvyls .gt_summary_row {
+#matoklpaff .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2779,16 +2771,16 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#buvclnvyls .gt_first_summary_row {
+#matoklpaff .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_first_summary_row.thick {
+#matoklpaff .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#buvclnvyls .gt_last_summary_row {
+#matoklpaff .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2798,7 +2790,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_grand_summary_row {
+#matoklpaff .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2808,7 +2800,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#buvclnvyls .gt_first_grand_summary_row {
+#matoklpaff .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2818,7 +2810,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_last_grand_summary_row_top {
+#matoklpaff .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2828,11 +2820,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_striped {
+#matoklpaff .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#buvclnvyls .gt_table_body {
+#matoklpaff .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2841,7 +2833,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_footnotes {
+#matoklpaff .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2855,7 +2847,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_footnote {
+#matoklpaff .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2864,7 +2856,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#buvclnvyls .gt_sourcenotes {
+#matoklpaff .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2878,7 +2870,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#buvclnvyls .gt_sourcenote {
+#matoklpaff .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2886,63 +2878,63 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#buvclnvyls .gt_left {
+#matoklpaff .gt_left {
   text-align: left;
 }
 
-#buvclnvyls .gt_center {
+#matoklpaff .gt_center {
   text-align: center;
 }
 
-#buvclnvyls .gt_right {
+#matoklpaff .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#buvclnvyls .gt_font_normal {
+#matoklpaff .gt_font_normal {
   font-weight: normal;
 }
 
-#buvclnvyls .gt_font_bold {
+#matoklpaff .gt_font_bold {
   font-weight: bold;
 }
 
-#buvclnvyls .gt_font_italic {
+#matoklpaff .gt_font_italic {
   font-style: italic;
 }
 
-#buvclnvyls .gt_super {
+#matoklpaff .gt_super {
   font-size: 65%;
 }
 
-#buvclnvyls .gt_footnote_marks {
+#matoklpaff .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#buvclnvyls .gt_asterisk {
+#matoklpaff .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#buvclnvyls .gt_indent_1 {
+#matoklpaff .gt_indent_1 {
   text-indent: 5px;
 }
 
-#buvclnvyls .gt_indent_2 {
+#matoklpaff .gt_indent_2 {
   text-indent: 10px;
 }
 
-#buvclnvyls .gt_indent_3 {
+#matoklpaff .gt_indent_3 {
   text-indent: 15px;
 }
 
-#buvclnvyls .gt_indent_4 {
+#matoklpaff .gt_indent_4 {
   text-indent: 20px;
 }
 
-#buvclnvyls .gt_indent_5 {
+#matoklpaff .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2961,23 +2953,23 @@ Table&nbsp;2: Survival rates after two years of follow-up.
 </div>
 <div class="cell-output-display">
 <div>
-<div id="sqhwolqtcn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#sqhwolqtcn table {
+<div id="mxxnpksruk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mxxnpksruk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#sqhwolqtcn thead, #sqhwolqtcn tbody, #sqhwolqtcn tfoot, #sqhwolqtcn tr, #sqhwolqtcn td, #sqhwolqtcn th {
+#mxxnpksruk thead, #mxxnpksruk tbody, #mxxnpksruk tfoot, #mxxnpksruk tr, #mxxnpksruk td, #mxxnpksruk th {
   border-style: none;
 }
 
-#sqhwolqtcn p {
+#mxxnpksruk p {
   margin: 0;
   padding: 0;
 }
 
-#sqhwolqtcn .gt_table {
+#mxxnpksruk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3003,12 +2995,12 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-left-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_caption {
+#mxxnpksruk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#sqhwolqtcn .gt_title {
+#mxxnpksruk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3020,7 +3012,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-width: 0;
 }
 
-#sqhwolqtcn .gt_subtitle {
+#mxxnpksruk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3032,7 +3024,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-width: 0;
 }
 
-#sqhwolqtcn .gt_heading {
+#mxxnpksruk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3044,13 +3036,13 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_bottom_border {
+#mxxnpksruk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_col_headings {
+#mxxnpksruk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3065,7 +3057,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_col_heading {
+#mxxnpksruk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3085,7 +3077,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#sqhwolqtcn .gt_column_spanner_outer {
+#mxxnpksruk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3097,15 +3089,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 4px;
 }
 
-#sqhwolqtcn .gt_column_spanner_outer:first-child {
+#mxxnpksruk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#sqhwolqtcn .gt_column_spanner_outer:last-child {
+#mxxnpksruk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#sqhwolqtcn .gt_column_spanner {
+#mxxnpksruk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -3117,11 +3109,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   width: 100%;
 }
 
-#sqhwolqtcn .gt_spanner_row {
+#mxxnpksruk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#sqhwolqtcn .gt_group_heading {
+#mxxnpksruk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3147,7 +3139,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   text-align: left;
 }
 
-#sqhwolqtcn .gt_empty_group_heading {
+#mxxnpksruk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3162,15 +3154,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: middle;
 }
 
-#sqhwolqtcn .gt_from_md > :first-child {
+#mxxnpksruk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#sqhwolqtcn .gt_from_md > :last-child {
+#mxxnpksruk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#sqhwolqtcn .gt_row {
+#mxxnpksruk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3189,7 +3181,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   overflow-x: hidden;
 }
 
-#sqhwolqtcn .gt_stub {
+#mxxnpksruk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3202,7 +3194,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sqhwolqtcn .gt_stub_row_group {
+#mxxnpksruk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3216,15 +3208,15 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   vertical-align: top;
 }
 
-#sqhwolqtcn .gt_row_group_first td {
+#mxxnpksruk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#sqhwolqtcn .gt_row_group_first th {
+#mxxnpksruk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#sqhwolqtcn .gt_summary_row {
+#mxxnpksruk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3234,16 +3226,16 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sqhwolqtcn .gt_first_summary_row {
+#mxxnpksruk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_first_summary_row.thick {
+#mxxnpksruk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#sqhwolqtcn .gt_last_summary_row {
+#mxxnpksruk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3253,7 +3245,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_grand_summary_row {
+#mxxnpksruk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3263,7 +3255,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sqhwolqtcn .gt_first_grand_summary_row {
+#mxxnpksruk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3273,7 +3265,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-top-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_last_grand_summary_row_top {
+#mxxnpksruk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3283,11 +3275,11 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_striped {
+#mxxnpksruk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#sqhwolqtcn .gt_table_body {
+#mxxnpksruk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3296,7 +3288,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-bottom-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_footnotes {
+#mxxnpksruk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3310,7 +3302,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_footnote {
+#mxxnpksruk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3319,7 +3311,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sqhwolqtcn .gt_sourcenotes {
+#mxxnpksruk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3333,7 +3325,7 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   border-right-color: #D3D3D3;
 }
 
-#sqhwolqtcn .gt_sourcenote {
+#mxxnpksruk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3341,63 +3333,63 @@ Table&nbsp;2: Survival rates after two years of follow-up.
   padding-right: 5px;
 }
 
-#sqhwolqtcn .gt_left {
+#mxxnpksruk .gt_left {
   text-align: left;
 }
 
-#sqhwolqtcn .gt_center {
+#mxxnpksruk .gt_center {
   text-align: center;
 }
 
-#sqhwolqtcn .gt_right {
+#mxxnpksruk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#sqhwolqtcn .gt_font_normal {
+#mxxnpksruk .gt_font_normal {
   font-weight: normal;
 }
 
-#sqhwolqtcn .gt_font_bold {
+#mxxnpksruk .gt_font_bold {
   font-weight: bold;
 }
 
-#sqhwolqtcn .gt_font_italic {
+#mxxnpksruk .gt_font_italic {
   font-style: italic;
 }
 
-#sqhwolqtcn .gt_super {
+#mxxnpksruk .gt_super {
   font-size: 65%;
 }
 
-#sqhwolqtcn .gt_footnote_marks {
+#mxxnpksruk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#sqhwolqtcn .gt_asterisk {
+#mxxnpksruk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#sqhwolqtcn .gt_indent_1 {
+#mxxnpksruk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#sqhwolqtcn .gt_indent_2 {
+#mxxnpksruk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#sqhwolqtcn .gt_indent_3 {
+#mxxnpksruk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#sqhwolqtcn .gt_indent_4 {
+#mxxnpksruk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#sqhwolqtcn .gt_indent_5 {
+#mxxnpksruk .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -3439,23 +3431,23 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
 </figcaption><div aria-describedby="tbl-comb-comp-cd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div>
-<div id="udyvonygqs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#udyvonygqs table {
+<div id="xemxaevkhd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xemxaevkhd table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#udyvonygqs thead, #udyvonygqs tbody, #udyvonygqs tfoot, #udyvonygqs tr, #udyvonygqs td, #udyvonygqs th {
+#xemxaevkhd thead, #xemxaevkhd tbody, #xemxaevkhd tfoot, #xemxaevkhd tr, #xemxaevkhd td, #xemxaevkhd th {
   border-style: none;
 }
 
-#udyvonygqs p {
+#xemxaevkhd p {
   margin: 0;
   padding: 0;
 }
 
-#udyvonygqs .gt_table {
+#xemxaevkhd .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3481,12 +3473,12 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-left-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_caption {
+#xemxaevkhd .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#udyvonygqs .gt_title {
+#xemxaevkhd .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3498,7 +3490,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-bottom-width: 0;
 }
 
-#udyvonygqs .gt_subtitle {
+#xemxaevkhd .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3510,7 +3502,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-top-width: 0;
 }
 
-#udyvonygqs .gt_heading {
+#xemxaevkhd .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3522,13 +3514,13 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-right-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_bottom_border {
+#xemxaevkhd .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_col_headings {
+#xemxaevkhd .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3543,7 +3535,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-right-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_col_heading {
+#xemxaevkhd .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3563,7 +3555,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   overflow-x: hidden;
 }
 
-#udyvonygqs .gt_column_spanner_outer {
+#xemxaevkhd .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3575,15 +3567,15 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   padding-right: 4px;
 }
 
-#udyvonygqs .gt_column_spanner_outer:first-child {
+#xemxaevkhd .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#udyvonygqs .gt_column_spanner_outer:last-child {
+#xemxaevkhd .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#udyvonygqs .gt_column_spanner {
+#xemxaevkhd .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -3595,11 +3587,11 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   width: 100%;
 }
 
-#udyvonygqs .gt_spanner_row {
+#xemxaevkhd .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#udyvonygqs .gt_group_heading {
+#xemxaevkhd .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3625,7 +3617,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   text-align: left;
 }
 
-#udyvonygqs .gt_empty_group_heading {
+#xemxaevkhd .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3640,15 +3632,15 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   vertical-align: middle;
 }
 
-#udyvonygqs .gt_from_md > :first-child {
+#xemxaevkhd .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#udyvonygqs .gt_from_md > :last-child {
+#xemxaevkhd .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#udyvonygqs .gt_row {
+#xemxaevkhd .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3667,7 +3659,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   overflow-x: hidden;
 }
 
-#udyvonygqs .gt_stub {
+#xemxaevkhd .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3680,7 +3672,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   padding-right: 5px;
 }
 
-#udyvonygqs .gt_stub_row_group {
+#xemxaevkhd .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3694,15 +3686,15 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   vertical-align: top;
 }
 
-#udyvonygqs .gt_row_group_first td {
+#xemxaevkhd .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#udyvonygqs .gt_row_group_first th {
+#xemxaevkhd .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#udyvonygqs .gt_summary_row {
+#xemxaevkhd .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3712,16 +3704,16 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   padding-right: 5px;
 }
 
-#udyvonygqs .gt_first_summary_row {
+#xemxaevkhd .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_first_summary_row.thick {
+#xemxaevkhd .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#udyvonygqs .gt_last_summary_row {
+#xemxaevkhd .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3731,7 +3723,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-bottom-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_grand_summary_row {
+#xemxaevkhd .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3741,7 +3733,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   padding-right: 5px;
 }
 
-#udyvonygqs .gt_first_grand_summary_row {
+#xemxaevkhd .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3751,7 +3743,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-top-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_last_grand_summary_row_top {
+#xemxaevkhd .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3761,11 +3753,11 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-bottom-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_striped {
+#xemxaevkhd .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#udyvonygqs .gt_table_body {
+#xemxaevkhd .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3774,7 +3766,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-bottom-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_footnotes {
+#xemxaevkhd .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3788,7 +3780,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-right-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_footnote {
+#xemxaevkhd .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3797,7 +3789,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   padding-right: 5px;
 }
 
-#udyvonygqs .gt_sourcenotes {
+#xemxaevkhd .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3811,7 +3803,7 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   border-right-color: #D3D3D3;
 }
 
-#udyvonygqs .gt_sourcenote {
+#xemxaevkhd .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3819,63 +3811,63 @@ Table&nbsp;3: Survival rates after two years of follow-up for Crohn’s disease 
   padding-right: 5px;
 }
 
-#udyvonygqs .gt_left {
+#xemxaevkhd .gt_left {
   text-align: left;
 }
 
-#udyvonygqs .gt_center {
+#xemxaevkhd .gt_center {
   text-align: center;
 }
 
-#udyvonygqs .gt_right {
+#xemxaevkhd .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#udyvonygqs .gt_font_normal {
+#xemxaevkhd .gt_font_normal {
   font-weight: normal;
 }
 
-#udyvonygqs .gt_font_bold {
+#xemxaevkhd .gt_font_bold {
   font-weight: bold;
 }
 
-#udyvonygqs .gt_font_italic {
+#xemxaevkhd .gt_font_italic {
   font-style: italic;
 }
 
-#udyvonygqs .gt_super {
+#xemxaevkhd .gt_super {
   font-size: 65%;
 }
 
-#udyvonygqs .gt_footnote_marks {
+#xemxaevkhd .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#udyvonygqs .gt_asterisk {
+#xemxaevkhd .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#udyvonygqs .gt_indent_1 {
+#xemxaevkhd .gt_indent_1 {
   text-indent: 5px;
 }
 
-#udyvonygqs .gt_indent_2 {
+#xemxaevkhd .gt_indent_2 {
   text-indent: 10px;
 }
 
-#udyvonygqs .gt_indent_3 {
+#xemxaevkhd .gt_indent_3 {
   text-indent: 15px;
 }
 
-#udyvonygqs .gt_indent_4 {
+#xemxaevkhd .gt_indent_4 {
   text-indent: 20px;
 }
 
-#udyvonygqs .gt_indent_5 {
+#xemxaevkhd .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -3931,23 +3923,23 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
 </figcaption><div aria-describedby="tbl-comb-comp-uc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div>
-<div id="yncgdmktft" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#yncgdmktft table {
+<div id="hdzuhbcuqn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hdzuhbcuqn table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#yncgdmktft thead, #yncgdmktft tbody, #yncgdmktft tfoot, #yncgdmktft tr, #yncgdmktft td, #yncgdmktft th {
+#hdzuhbcuqn thead, #hdzuhbcuqn tbody, #hdzuhbcuqn tfoot, #hdzuhbcuqn tr, #hdzuhbcuqn td, #hdzuhbcuqn th {
   border-style: none;
 }
 
-#yncgdmktft p {
+#hdzuhbcuqn p {
   margin: 0;
   padding: 0;
 }
 
-#yncgdmktft .gt_table {
+#hdzuhbcuqn .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3973,12 +3965,12 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-left-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_caption {
+#hdzuhbcuqn .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#yncgdmktft .gt_title {
+#hdzuhbcuqn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3990,7 +3982,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-bottom-width: 0;
 }
 
-#yncgdmktft .gt_subtitle {
+#hdzuhbcuqn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -4002,7 +3994,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-top-width: 0;
 }
 
-#yncgdmktft .gt_heading {
+#hdzuhbcuqn .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -4014,13 +4006,13 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-right-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_bottom_border {
+#hdzuhbcuqn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_col_headings {
+#hdzuhbcuqn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -4035,7 +4027,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-right-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_col_heading {
+#hdzuhbcuqn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4055,7 +4047,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   overflow-x: hidden;
 }
 
-#yncgdmktft .gt_column_spanner_outer {
+#hdzuhbcuqn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4067,15 +4059,15 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   padding-right: 4px;
 }
 
-#yncgdmktft .gt_column_spanner_outer:first-child {
+#hdzuhbcuqn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#yncgdmktft .gt_column_spanner_outer:last-child {
+#hdzuhbcuqn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#yncgdmktft .gt_column_spanner {
+#hdzuhbcuqn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -4087,11 +4079,11 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   width: 100%;
 }
 
-#yncgdmktft .gt_spanner_row {
+#hdzuhbcuqn .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#yncgdmktft .gt_group_heading {
+#hdzuhbcuqn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4117,7 +4109,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   text-align: left;
 }
 
-#yncgdmktft .gt_empty_group_heading {
+#hdzuhbcuqn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -4132,15 +4124,15 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   vertical-align: middle;
 }
 
-#yncgdmktft .gt_from_md > :first-child {
+#hdzuhbcuqn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#yncgdmktft .gt_from_md > :last-child {
+#hdzuhbcuqn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#yncgdmktft .gt_row {
+#hdzuhbcuqn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4159,7 +4151,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   overflow-x: hidden;
 }
 
-#yncgdmktft .gt_stub {
+#hdzuhbcuqn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4172,7 +4164,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   padding-right: 5px;
 }
 
-#yncgdmktft .gt_stub_row_group {
+#hdzuhbcuqn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -4186,15 +4178,15 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   vertical-align: top;
 }
 
-#yncgdmktft .gt_row_group_first td {
+#hdzuhbcuqn .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#yncgdmktft .gt_row_group_first th {
+#hdzuhbcuqn .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#yncgdmktft .gt_summary_row {
+#hdzuhbcuqn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -4204,16 +4196,16 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   padding-right: 5px;
 }
 
-#yncgdmktft .gt_first_summary_row {
+#hdzuhbcuqn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_first_summary_row.thick {
+#hdzuhbcuqn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#yncgdmktft .gt_last_summary_row {
+#hdzuhbcuqn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4223,7 +4215,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-bottom-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_grand_summary_row {
+#hdzuhbcuqn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -4233,7 +4225,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   padding-right: 5px;
 }
 
-#yncgdmktft .gt_first_grand_summary_row {
+#hdzuhbcuqn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4243,7 +4235,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-top-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_last_grand_summary_row_top {
+#hdzuhbcuqn .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -4253,11 +4245,11 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-bottom-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_striped {
+#hdzuhbcuqn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#yncgdmktft .gt_table_body {
+#hdzuhbcuqn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -4266,7 +4258,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-bottom-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_footnotes {
+#hdzuhbcuqn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -4280,7 +4272,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-right-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_footnote {
+#hdzuhbcuqn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -4289,7 +4281,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   padding-right: 5px;
 }
 
-#yncgdmktft .gt_sourcenotes {
+#hdzuhbcuqn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -4303,7 +4295,7 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   border-right-color: #D3D3D3;
 }
 
-#yncgdmktft .gt_sourcenote {
+#hdzuhbcuqn .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -4311,63 +4303,63 @@ Table&nbsp;4: Survival rates after two years of follow-up for ulcerative colitis
   padding-right: 5px;
 }
 
-#yncgdmktft .gt_left {
+#hdzuhbcuqn .gt_left {
   text-align: left;
 }
 
-#yncgdmktft .gt_center {
+#hdzuhbcuqn .gt_center {
   text-align: center;
 }
 
-#yncgdmktft .gt_right {
+#hdzuhbcuqn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#yncgdmktft .gt_font_normal {
+#hdzuhbcuqn .gt_font_normal {
   font-weight: normal;
 }
 
-#yncgdmktft .gt_font_bold {
+#hdzuhbcuqn .gt_font_bold {
   font-weight: bold;
 }
 
-#yncgdmktft .gt_font_italic {
+#hdzuhbcuqn .gt_font_italic {
   font-style: italic;
 }
 
-#yncgdmktft .gt_super {
+#hdzuhbcuqn .gt_super {
   font-size: 65%;
 }
 
-#yncgdmktft .gt_footnote_marks {
+#hdzuhbcuqn .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#yncgdmktft .gt_asterisk {
+#hdzuhbcuqn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#yncgdmktft .gt_indent_1 {
+#hdzuhbcuqn .gt_indent_1 {
   text-indent: 5px;
 }
 
-#yncgdmktft .gt_indent_2 {
+#hdzuhbcuqn .gt_indent_2 {
   text-indent: 10px;
 }
 
-#yncgdmktft .gt_indent_3 {
+#hdzuhbcuqn .gt_indent_3 {
   text-indent: 15px;
 }
 
-#yncgdmktft .gt_indent_4 {
+#hdzuhbcuqn .gt_indent_4 {
   text-indent: 20px;
 }
 
-#yncgdmktft .gt_indent_5 {
+#hdzuhbcuqn .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -5045,26 +5037,26 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">    corresponding: true</span></span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&amp;hl=en&amp;oi=ao</span></span>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">    affiliations:</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: CGEM</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: HGU</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> Survival.bib   </span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Survival/utils.R"</span>)</span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup analysis environment</span></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>analysis_setup <span class="ot">&lt;-</span> <span class="fu">setup_analysis</span>()</span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>paths <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>paths</span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>demo</span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>FC <span class="ot">&lt;-</span> <span class="fu">log</span>(demo<span class="sc">$</span>FC)</span>
-<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>worthwhile to first consider how questionnaires were completed for each month. </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">      - ref: IGC</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> Survival.bib   </span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Survival/utils.R"</span>)</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup analysis environment</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>analysis_setup <span class="ot">&lt;-</span> <span class="fu">setup_analysis</span>()</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>paths <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>paths</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>demo <span class="ot">&lt;-</span> analysis_setup<span class="sc">$</span>demo</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>demo<span class="sc">$</span>FC <span class="ot">&lt;-</span> <span class="fu">log</span>(demo<span class="sc">$</span>FC)</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>Before examining flare patterns, it is worthwhile to first consider how questionnaires were completed for each month.</span>
 <span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>As should be expected, there is a small degree of attrition of responses over</span>
 <span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>time (@fig-responses). However,  there is a large increase at the end of</span>
@@ -5214,7 +5206,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb26-182"><a href="#cb26-182" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-183"><a href="#cb26-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## Secondary outcome: first objective flare</span></span>
 <span id="cb26-184"><a href="#cb26-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a>Disease flares been reported by clinical care teams instead of being</span>
+<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a>For the secondary outcome, disease flares have been reported by clinical care teams instead of being</span>
 <span id="cb26-186"><a href="#cb26-186" aria-hidden="true" tabindex="-1"></a>reported by subjects themselves.</span>
 <span id="cb26-187"><a href="#cb26-187" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-190"><a href="#cb26-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
