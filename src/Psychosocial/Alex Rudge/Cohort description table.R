@@ -110,13 +110,13 @@ data_table %<>%
   dplyr::mutate(
     cohort = dplyr::case_match(
       cohort,
-      'predicct' ~ 'Total PREdiCCt Cohort',
-      'psychosocial' ~ 'Psychosocial Cohort'
+      'predicct' ~ 'Total PREdiCCt cohort',
+      'psychosocial' ~ 'Psychosocial sub-cohort'
     )
   ) %>%
   dplyr::mutate(
     cohort = factor(cohort),
-    cohort = forcats::fct_relevel(cohort, 'Total PREdiCCt Cohort')
+    cohort = forcats::fct_relevel(cohort, 'Total PREdiCCt cohort')
   )
 
 # Table
@@ -124,13 +124,14 @@ variables <- c(
   'Age',
   'Sex',
   'BMIcat',
+  'Smoke',
   'IMD',
   'Ethnicity',
   'diagnosis',
+  'FC',
   'IBD_duration',
   'control_8',
   'OverallControl',
-  'FC',
   'CReactiveProtein',
   'Biologic'
 )
@@ -169,7 +170,6 @@ data_cd %<>%
     Perianal,
     HBI,
     Surgery,
-    Smoke,
     Biologic
 )
   
@@ -227,7 +227,6 @@ variables_cd <- c(
   'Perianal',
   'HBI_cat',
   'Surgery',
-  'Smoke',
   'Biologic'
 )
 
@@ -242,7 +241,6 @@ data_table_cd %>%
       Perianal ~ 'Perianal disease',
       HBI_cat ~ 'Harvey-Bradshaw Index',
       Surgery ~ 'Previous surgery for Crohn’s disease',
-      Smoke ~ 'Smoking status (CD)',
       Biologic ~ 'Biologic use (CD)'
     )
   )
@@ -449,6 +447,7 @@ tbl2 <- data_table_all %>%
           Age ~ "Age (years)",
           Sex ~ 'Sex',
           BMIcat ~ 'Body mass index',
+          Smoke ~ 'Smoking status',
           Ethnicity ~ "Ethnicity",
           IMD ~ 'Index of multiple deprivation',
           IBD_duration ~ 'IBD Duration (years)',
@@ -516,5 +515,5 @@ tbl2
 # tbl2 %>%
 #   gtsummary::as_gt() %>%
 #   gt::gtsave(
-#     filename = paste0(filepath, "Table1 v2.docx")
+#     filename = paste0(filepath, "Table1.docx")
 #   )
