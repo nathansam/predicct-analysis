@@ -2,24 +2,24 @@
 title: "Hospital Anxiety and Depression Scale (HADS)"
 author:
   - name: "Chiara Cotronei"
-    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
     affiliations:
-      - ref: Lothian
+      #- ref: Lothian
   - name: "Alexander Rudge"
     affiliations:
-      - ref: CGEM
+      #- ref: CGEM
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      - ref: CGEM
-      - ref: HGU
+      #- ref: CGEM
+      #- ref: HGU
 format: 
   html:
     code-fold: true
     code-tools: true
 editor: visual
 toc: true
+toc-depth: 4
 toc-expand: true
 editor_options: 
   chunk_output_type: console
@@ -27,9 +27,13 @@ editor_options:
 
 # Hospital Anxiety and Depression Scale
 
+Patients completed the Hospital Anxiety and Depression Scale upon their recruitment to the study (baseline). In this analysis, our aim is to determine the extent to which anxiety, and depression scores are associated with subsequent patient-reported and objective flares. In the following, we present the steps used to clean and analyse the data to achieve this aim.
+
+Note that in the code, patient-reported and objective flares may be referred to as soft and hard flares, respectively.
+
 ## Setting up in R
 
-R packages
+Load R packages required.
 
 ```{r}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
@@ -63,6 +67,8 @@ library(ggmice)
 ```
 
 ## Helper functions
+
+We create a collection of custom functions used during the analysis.
 
 ```{r}
 
@@ -287,14 +293,36 @@ print_chisq <- function(data) {
 print_survival <- function(data) {
   data %>%
     broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
-    knitr::kable(digits = 3,
-                 col.names = c("Covariate",
-                               "Estimate",
+    # Relocate columns
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
                                "Std. Error",
                                "Statistic",
-                               "p value",
-                               "Lower CI",
-                               "Upper CI")
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "p-value"),
+                 format.args = list(drop0trailing = TRUE)
+                 )
+}
+
+print_survival_mice <- function(data) {
+  data %>%
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
+                               "Std. Error",
+                               "Statistic",
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "p-value"),
+                 format.args = list(drop0trailing = TRUE)
                  )
 }
 
@@ -443,6 +471,8 @@ summon_lrt <- function(model, remove = NULL, add = NULL) {
 ## Load data
 
 ```{r}
+#| message: false
+#| warning: false
 # paths to PREdiCCt data
 if (file.exists("/.dockerenv")) {
   # If running in docker
@@ -475,6 +505,18 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 ```
 
 ## Data Cleaning
+
+During data cleaning we:
+
+-   Remove completely empty rows.
+
+-   Combine data from different sources: demographics, HADS questionnaire responses, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+
+-   Calculate overall anxiety and depression scores based on patient questionnaire responses. Note that in the raw HADS data, the questionnaire responses are coded from 1 to 4, and some are coded inversely (1 is the 'bad' response and 4 the 'good' response). Therefore, to calculate the HADS score the responses were rescaled to between 0 and 3, and inversed where appropriate. The overall anxiety and depression scores were then the sum of the responses.
+
+-   We categorise the anxiety and depression scores into 0-7 (normal) and 8-21 (elevated) for analysis.
+
+-   We exclude patients for whom we could not calculate the HADS score.
 
 ```{r}
 # Exclude cases with missing ParticipantId
@@ -705,6 +747,8 @@ hads %<>%
 
 ## Missingness
 
+We visualise the amount of missingness in the data and find that the primary source of missingness was due to missing FC measurements.
+
 ```{r}
 # Visualise missingness
 # Only need to do it for one of anxiety and depression due to repeated participants
@@ -737,6 +781,10 @@ data_vis_missingness %>%
 ```
 
 ## Baseline Analysis
+
+We identify associations between anxiety and depression scores and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
+
+We first conduct the analysis in the full cohort, and then separately within the ulcerative colitis (including IBD unclassified) and Crohn’s disease subgroups.
 
 ### Anxiety
 
@@ -803,7 +851,7 @@ summon_baseline_plot_continuous(
 
 ```
 
-#### Ulcerative Colitis/IBD Unclassified
+#### Ulcerative Colitis
 
 ```{r}
 # Select anxiety data and UC patients
@@ -967,7 +1015,7 @@ summon_baseline_plot_continuous(
 
 ```
 
-#### Ulcerative Colitis/IBD Unclassified
+#### Ulcerative Colitis
 
 ```{r}
 # Select depression data and UC patients
@@ -1062,6 +1110,8 @@ summon_baseline_plot_continuous(
 
 ## Survival Analysis
 
+Associations between anxiety and depression scores and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level.
+
 ### Data Cleaning
 
 ```{r}
@@ -1141,6 +1191,12 @@ data_survival_depression_hard_cd <- data_survival_depression_hard %>%
 ##### Patient reported flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Cox with continuous variables
 # Age
@@ -1190,6 +1246,11 @@ plot_continuous_hr(
 ##### Objective flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
 
 # Age
 cox_age_hard <- coxph(
@@ -1238,6 +1299,13 @@ plot_continuous_hr(
 ##### Patient reported flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
+
 # Age
 cox_age_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1283,6 +1351,11 @@ plot_continuous_hr(
 ##### Objective flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
 
 # Age
 cox_age_hard_uc <- coxph(
@@ -1380,6 +1453,11 @@ plot_continuous_hr(
 ##### Patient reported flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
 
 # Age
 cox_age_soft_cd <- coxph(
@@ -1426,6 +1504,11 @@ plot_continuous_hr(
 ##### Objective flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
 
 # Age
 cox_age_hard_cd <- coxph(
@@ -1469,19 +1552,13 @@ plot_continuous_hr(
 
 ```
 
-Summary:
-
-Full cohort, soft, , hard, no.
-
-UC, soft, . Hard, age df = 4, FC df = 2.
-
-CD, soft, . Hard, no splines.
-
 ### Anxiety
 
 #### Full Cohort
 
 ##### Patient reported flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -1498,6 +1575,11 @@ data_survival_anxiety_soft %>%
     legend.title = 'HADS Anxiety Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
+
+###### Cox proportional hazards model (complete case)
+
+```{r}
 
 # Cox model
 cox_anxiety_soft <- coxph(
@@ -1516,6 +1598,8 @@ cox_anxiety_soft %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1553,11 +1637,14 @@ cox_anxiety_soft_pool <- with(
 cox_anxiety_soft_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -1574,7 +1661,11 @@ data_survival_anxiety_hard %>%
     legend.title = 'HADS Anxiety Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_anxiety_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1591,6 +1682,8 @@ cox_anxiety_hard <- coxph(
 cox_anxiety_hard %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1628,12 +1721,15 @@ cox_anxiety_hard_pool <- with(
 cox_anxiety_hard_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 #### Ulcerative Colitis
 
 ##### Patient reported flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -1650,7 +1746,11 @@ data_survival_anxiety_soft_uc %>%
     legend.title = 'HADS Anxiety Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_anxiety_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1667,6 +1767,8 @@ cox_anxiety_soft_uc <- coxph(
 cox_anxiety_soft_uc
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1702,11 +1804,14 @@ cox_anxiety_soft_uc_pool <- with(cox_anxiety_soft_uc_mice,
 cox_anxiety_soft_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -1723,7 +1828,11 @@ data_survival_anxiety_hard_uc %>%
     legend.title = 'HADS Anxiety Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_anxiety_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1740,6 +1849,8 @@ cox_anxiety_hard_uc <- coxph(
 cox_anxiety_hard_uc %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1776,12 +1887,15 @@ cox_anxiety_hard_uc_pool <- with(cox_anxiety_hard_uc_mice,
 cox_anxiety_hard_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 #### Crohn's Disease
 
 ##### Patient reported flare.
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -1798,7 +1912,11 @@ data_survival_anxiety_soft_cd %>%
     legend.title = 'HADS Anxiety Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_anxiety_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1816,6 +1934,8 @@ cox_anxiety_soft_cd %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1851,11 +1971,14 @@ cox_anxiety_soft_cd_pool <- with(cox_anxiety_soft_cd_mice,
 cox_anxiety_soft_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -1872,7 +1995,11 @@ data_survival_anxiety_hard_cd %>%
     legend.title = 'HADS Anxiety Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_anxiety_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1889,6 +2016,8 @@ cox_anxiety_hard_cd <- coxph(
 cox_anxiety_hard_cd %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1926,7 +2055,8 @@ cox_anxiety_hard_cd_pool <- with(
 cox_anxiety_hard_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 ### Depression
@@ -1934,6 +2064,8 @@ cox_anxiety_hard_cd_pool %>%
 #### Full Cohort
 
 ##### Patient reported flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -1950,7 +2082,11 @@ data_survival_depression_soft %>%
     legend.title = 'HADS Depression Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_depression_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1968,6 +2104,8 @@ cox_depression_soft %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -2005,11 +2143,14 @@ cox_depression_soft_pool <- with(
 cox_depression_soft_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -2026,7 +2167,11 @@ data_survival_depression_hard %>%
     legend.title = 'HADS Depression Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_depression_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -2043,6 +2188,8 @@ cox_depression_hard <- coxph(
 cox_depression_hard %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -2080,12 +2227,15 @@ cox_depression_hard_pool <- with(
 cox_depression_hard_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 #### Ulcerative Colitis
 
 ##### Patient reported flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -2102,7 +2252,11 @@ data_survival_depression_soft_uc %>%
     legend.title = 'HADS Depression Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_depression_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -2120,6 +2274,8 @@ cox_depression_soft_uc %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -2157,11 +2313,14 @@ cox_depression_soft_uc_pool <- with(
 cox_depression_soft_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -2178,7 +2337,11 @@ data_survival_depression_hard_uc %>%
     legend.title = 'HADS Depression Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_depression_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -2195,6 +2358,8 @@ cox_depression_hard_uc <- coxph(
 cox_depression_hard_uc %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -2233,12 +2398,15 @@ cox_depression_hard_uc_pool <- with(
 cox_depression_hard_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 #### Crohn's Disease
 
 ##### Patient reported flare.
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -2255,7 +2423,11 @@ data_survival_depression_soft_cd %>%
     legend.title = 'HADS Depression Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_depression_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -2273,6 +2445,8 @@ cox_depression_soft_cd %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -2310,11 +2484,14 @@ cox_depression_soft_cd_pool <- with(
 cox_depression_soft_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
+
+###### Kaplan-Meier
 
 ```{r}
 # Patient reported flare
@@ -2331,7 +2508,11 @@ data_survival_depression_hard_cd %>%
     legend.title = 'HADS Depression Score',
     xlab = "Time from study recruitment (days)",
     ggtheme = theme_minimal())
+```
 
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_depression_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -2348,6 +2529,8 @@ cox_depression_hard_cd <- coxph(
 cox_depression_hard_cd %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -2385,7 +2568,8 @@ cox_depression_hard_cd_pool <- with(
 cox_depression_hard_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 ## Reproduction and reproducibility {.appendix}
