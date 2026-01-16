@@ -95,11 +95,21 @@ cox_results %<>%
 # Following BMJ guidance
 cox_results %<>%
   dplyr::mutate(
-    p.value.tidy = dplyr::case_when(
+    p.value.tidy.bmj = dplyr::case_when(
       is.na(p.value) ~ "-",
       p.value > 0.01 ~ sprintf("%#.2f", round(p.value, 2)),
       p.value >= 0.001 ~ sprintf("%#.3f", round(p.value, 3)),
       p.value < 0.001 ~ '<0.001'
+    )
+  )
+
+# Lancet guidance
+cox_results %<>%
+  dplyr::mutate(
+    p.value.tidy.lancet = dplyr::case_when(
+      is.na(p.value) ~ "-",
+      p.value >= 0.0001 ~ sprintf("%#.2g", signif(p.value, 2)),
+      p.value < 0.0001 ~ '<0.0001'
     )
   )
 

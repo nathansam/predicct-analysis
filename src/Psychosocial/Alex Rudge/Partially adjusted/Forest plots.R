@@ -27,6 +27,10 @@ cox_results %<>%
     significance = forcats::as_factor(significance)
   )
 
+# p.value.tidy bmj or lancet
+cox_results %<>%
+  dplyr::rename(p.value.tidy = p.value.tidy.lancet)
+
 
 # Flare type
 cox_results_soft <- cox_results %>%
@@ -46,7 +50,7 @@ custom_theme <-
   plot.subtitle = element_text(size = 8),
   # Axes
   axis.title.y = element_blank(),
-  axis.text.y = element_text(size = 10)
+  axis.text.y = element_text(size = 10, colour = 'black')
 )
 
 # Maximum xlimit
@@ -215,7 +219,7 @@ plot_hr_hard_cd
 
 
 # Save
-filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/"
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Partially adjusted/"
 
 # soft uc
 ggsave(
