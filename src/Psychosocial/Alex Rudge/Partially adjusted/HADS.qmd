@@ -36,6 +36,8 @@ Note that in the code, patient-reported and objective flares may be referred to 
 Load R packages required.
 
 ```{r}
+#| message: false
+#| warning: false
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
 options(dplyr.summarise.inform = FALSE)
 
@@ -241,6 +243,62 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
   
 }
 
+# Creating KM curves
+summon_km_curves <- function(data,
+                             dependent = 1,
+                             title = NULL,
+                             legend.title = NULL,
+                             legend.labs = NULL,
+                             palette = NULL,
+                             ggtheme = theme_minimal(),
+                             ...) {
+  
+  # ggsurvplot
+  plot_surv <- data %>%
+    survfit(as.formula(paste0("Surv(time, DiseaseFlareYN) ~ ", dependent)), 
+            data = .) %>%
+    ggsurvplot(
+      .,
+      data = data,
+      conf.int = TRUE,
+      risk.table = TRUE,
+      #pval = TRUE,
+      #pval.method = TRUE,
+      title = title,
+      legend.title = legend.title,
+      legend.labs = legend.labs,
+      ggtheme = ggtheme,
+      xlab = "Time from study recruitment (months)",
+      palette = palette,
+      break.time.by = 365/2,  
+      xscale = 730/24,
+      xlim = c(0, 750),
+      ...
+    )
+  
+  # Customise the plot and table separately
+  
+  plot_surv$plot <- plot_surv$plot +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      axis.title.x = element_blank()
+    )
+  
+  plot_surv$table <- plot_surv$table + ylab("")
+  
+  plot_surv
+  
+  # Recombine using patchwork
+  # plot_surv$plot + plot_surv$table +
+  #   patchwork::plot_layout(
+  #     ncol = 1,
+  #     heights = c(3.2, 1)
+  #     ) &
+  #   theme(plot.margin = margin(0, 0, 0, 0))
+  
+}
+
+
 # Function to perform coxph with mice for missing data
 coxph_mice <- function(formula, data, ...){
   
@@ -304,7 +362,7 @@ print_survival <- function(data) {
                                "Statistic",
                                "Lower 95% CI",
                                "Upper 95% CI",
-                               "p-value"),
+                               "P-value"),
                  format.args = list(drop0trailing = TRUE)
                  )
 }
@@ -321,7 +379,7 @@ print_survival_mice <- function(data) {
                                "Statistic",
                                "Lower 95% CI",
                                "Upper 95% CI",
-                               "p-value"),
+                               "P-value"),
                  format.args = list(drop0trailing = TRUE)
                  )
 }
@@ -811,8 +869,6 @@ statistical_tests <- summon_statistical_test(
   dependent = 'score_group', 
   independent = independent)
 
-statistical_tests
-
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety,
@@ -874,8 +930,6 @@ statistical_tests <- summon_statistical_test(
   dependent = 'score_group', 
   independent = independent)
 
-statistical_tests
-
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety_uc,
@@ -923,8 +977,6 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety_cd, 
   dependent = 'score_group', 
   independent = independent)
-
-statistical_tests
 
 # Plots
 summon_baseline_plot_discrete(
@@ -982,8 +1034,6 @@ statistical_tests <- summon_statistical_test(
   dependent = 'score_group', 
   independent = independent)
 
-statistical_tests
-
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_depression,
@@ -1038,8 +1088,6 @@ statistical_tests <- summon_statistical_test(
   dependent = 'score_group', 
   independent = independent)
 
-statistical_tests
-
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_depression_uc,
@@ -1080,8 +1128,6 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_depression_cd, 
   dependent = 'score_group', 
   independent = independent)
-
-statistical_tests
 
 # Plots
 summon_baseline_plot_discrete(
@@ -1188,7 +1234,7 @@ data_survival_depression_hard_cd <- data_survival_depression_hard %>%
 
 #### Full Cohort
 
-##### Patient reported flare
+##### Patient-reported flare
 
 ```{r}
 #| eval: true
@@ -1296,7 +1342,7 @@ plot_continuous_hr(
 
 #### Ulcerative Colitis
 
-##### Patient reported flare
+##### Patient-reported flare
 
 ```{r}
 #| eval: true
@@ -1450,7 +1496,7 @@ plot_continuous_hr(
 
 #### Crohn's Disease
 
-##### Patient reported flare
+##### Patient-reported flare
 
 ```{r}
 #| eval: true
@@ -1552,29 +1598,44 @@ plot_continuous_hr(
 
 ```
 
-### Anxiety
+### Results - Anxiety
 
 #### Full Cohort
 
-##### Patient reported flare
+##### Patient-reported flare
 
 ###### Kaplan-Meier
 
 ```{r}
+# Plotting Kaplan-Meier curves
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+legend.title = 'HADS Anxiety Score'
+legend.labs = c('0-7', '8-21')
+palette = okabe_ito
+dependent = 'score_group'
+
+custom_theme = theme_minimal() + 
+  theme(
+    title = element_text(size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 14)
+  )
+
 # Patient reported flare
 # Kaplan Meier
-data_survival_anxiety_soft %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_anxiety_soft, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Anxiety Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_anxiety_soft,
+  dependent = dependent,
+  title = "Time to patient-reported flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -1647,20 +1708,17 @@ cox_anxiety_soft_pool %>%
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
+
 # Kaplan Meier
-data_survival_anxiety_hard %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_anxiety_hard, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Anxiety Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_anxiety_hard,
+  dependent = dependent,
+  title = "Time to objective flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -1727,25 +1785,22 @@ cox_anxiety_hard_pool %>%
 
 #### Ulcerative Colitis
 
-##### Patient reported flare
+##### Patient-reported flare
 
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
+
 # Kaplan Meier
-data_survival_anxiety_soft_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_anxiety_soft_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Anxiety Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_anxiety_soft_uc,
+  dependent = dependent,
+  title = "Time to patient-reported flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -1764,7 +1819,8 @@ cox_anxiety_soft_uc <- coxph(
   data = data_survival_anxiety_soft_uc
 )
 
-cox_anxiety_soft_uc
+cox_anxiety_soft_uc %>%
+  print_survival()
 
 ```
 
@@ -1814,20 +1870,16 @@ cox_anxiety_soft_uc_pool %>%
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
 # Kaplan Meier
-data_survival_anxiety_hard_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_anxiety_hard_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Anxiety Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_anxiety_hard_uc,
+  dependent = dependent,
+  title = "Time to objective flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -1893,25 +1945,21 @@ cox_anxiety_hard_uc_pool %>%
 
 #### Crohn's Disease
 
-##### Patient reported flare.
+##### Patient-reported flare
 
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
 # Kaplan Meier
-data_survival_anxiety_soft_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_anxiety_soft_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Anxiety Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_anxiety_soft_cd,
+  dependent = dependent,
+  title = "Time to patient-reported flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -1981,20 +2029,16 @@ cox_anxiety_soft_cd_pool %>%
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
 # Kaplan Meier
-data_survival_anxiety_hard_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_anxiety_hard_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Anxiety Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_anxiety_hard_cd,
+  dependent = dependent,
+  title = "Time to objective flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -2059,29 +2103,30 @@ cox_anxiety_hard_cd_pool %>%
   print_survival_mice()
 ```
 
-### Depression
+### Results - Depression
 
 #### Full Cohort
 
-##### Patient reported flare
+##### Patient-reported flare
 
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
 # Kaplan Meier
-data_survival_depression_soft %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_depression_soft, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Depression Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+legend.title = 'HADS Depression Score'
+legend.labs = c('0-7', '8-21')
+palette = okabe_ito
+dependent = 'score_group'
+
+summon_km_curves(
+  data = data_survival_depression_soft,
+  dependent = dependent,
+  title = "Time to patient-reported flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -2153,20 +2198,15 @@ cox_depression_soft_pool %>%
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_depression_hard %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_depression_hard, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Depression Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_depression_hard,
+  dependent = dependent,
+  title = "Time to objective flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -2233,25 +2273,20 @@ cox_depression_hard_pool %>%
 
 #### Ulcerative Colitis
 
-##### Patient reported flare
+##### Patient-reported flare
 
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_depression_soft_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_depression_soft_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Depression Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_depression_soft_uc,
+  dependent = dependent,
+  title = "Time to patient-reported flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -2323,20 +2358,15 @@ cox_depression_soft_uc_pool %>%
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_depression_hard_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_depression_hard_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Depression Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_depression_hard_uc,
+  dependent = dependent,
+  title = "Time to objective flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -2404,25 +2434,20 @@ cox_depression_hard_uc_pool %>%
 
 #### Crohn's Disease
 
-##### Patient reported flare.
+##### Patient-reported flare
 
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_depression_soft_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_depression_soft_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Depression Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_depression_soft_cd,
+  dependent = dependent,
+  title = "Time to patient-reported flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
@@ -2494,20 +2519,15 @@ cox_depression_soft_cd_pool %>%
 ###### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_depression_hard_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_depression_hard_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'HADS Depression Score',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_depression_hard_cd,
+  dependent = dependent,
+  title = "Time to objective flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
 ```
 
 ###### Cox proportional hazards model (complete case)
