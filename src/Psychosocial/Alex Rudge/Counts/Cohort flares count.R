@@ -3,6 +3,8 @@ library(magrittr)
 library(survival)
 library(survminer)
 
+source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
+
 # Flare data
 chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 
@@ -98,9 +100,12 @@ BBDD
 CCEE
 "
 
+# Max y so both plots have the same scale
+ymax = 0.42
+
 plot <- patchwork::guide_area() +
-  plot_soft$plot + plot_soft$table +
-  plot_hard$plot + plot_hard$table +
+  (plot_soft$plot + ylim(0, ymax)) + plot_soft$table +
+  (plot_hard$plot + ylim(0, ymax)) + plot_hard$table +
   patchwork::plot_layout(
     design = layout,
     heights = c(0.15, 3, 0.8),

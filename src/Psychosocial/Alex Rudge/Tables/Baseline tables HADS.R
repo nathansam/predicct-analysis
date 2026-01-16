@@ -174,14 +174,14 @@ tbl_depression
 # Save to word
 filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
 
-# Anxiety
-tbl_anxiety %>%
-  gt::gtsave(
-    filename = paste0(filepath, "Baseline associations HADS anxiety.docx")
-  )
-
-# Depression
-tbl_depression %>%
-  gt::gtsave(
-    filename = paste0(filepath, "Baseline associations HADS depression.docx")
-  )
+# # Anxiety
+# tbl_anxiety %>%
+#   gt::gtsave(
+#     filename = paste0(filepath, "Baseline associations HADS anxiety.docx")
+#   )
+# 
+# # Depression
+# tbl_depression %>%
+#   gt::gtsave(
+#     filename = paste0(filepath, "Baseline associations HADS depression.docx")
+#   )

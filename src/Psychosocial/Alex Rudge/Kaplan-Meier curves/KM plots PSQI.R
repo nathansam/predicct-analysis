@@ -5,14 +5,15 @@ library(patchwork)
 
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 
+
 # Plotting Kaplan-Meier curves
-# Run Life Events
+# Run PSQI
 okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-legend.title = 'Life events in the past month'
-legend.labs = c("None", "One or more")
+legend.title = 'PSQI'
+legend.labs = c("5 and under", "Over 5")
 palette = okabe_ito
-dependent = 'AnyLifeEvents'
+dependent = 'SleepDisturbance'
 
 custom_theme = theme_minimal() + 
   theme(
@@ -84,25 +85,25 @@ filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Kap
 # Soft uc
 readr::write_rds(
   x = plot_soft_uc,
-  file = paste0(filepath_save, "plot_lifeevents_soft_uc.rds")
+  file = paste0(filepath_save, "plot_psqi_soft_uc.rds")
 )
 
 # Soft cd
 readr::write_rds(
   x = plot_soft_cd,
-  file = paste0(filepath_save, "plot_lifeevents_soft_cd.rds")
+  file = paste0(filepath_save, "plot_psqi_soft_cd.rds")
 )
 
 # Hard uc
 readr::write_rds(
   x = plot_hard_uc,
-  file = paste0(filepath_save, "plot_lifeevents_hard_uc.rds")
+  file = paste0(filepath_save, "plot_psqi_hard_uc.rds")
 )
 
 # Hard cd
 readr::write_rds(
   x = plot_hard_cd,
-  file = paste0(filepath_save, "plot_lifeevents_hard_cd.rds")
+  file = paste0(filepath_save, "plot_psqi_hard_cd.rds")
 )
 
 
@@ -117,13 +118,13 @@ plot <- summon_km_curves_panel(
 
 plot
 
-# Save as landscape 9 x 9 inches
+# Save as landscape 10 x 9 inches
 filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 
 ggsave(
-  filename = paste0(filepath_save, "Kaplan Meier Life Events.pdf"),
+  filename = paste0(filepath_save, "Kaplan Meier PSQI.pdf"),
   plot = plot,
-  width = 9,
+  width = 10,
   height = 9,
   units = 'in'
 )
