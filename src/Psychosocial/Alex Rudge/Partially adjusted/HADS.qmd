@@ -27,7 +27,7 @@ editor_options:
 
 # Hospital Anxiety and Depression Scale
 
-Patients completed the Hospital Anxiety and Depression Scale upon their recruitment to the study (baseline). In this analysis, our aim is to determine the extent to which anxiety, and depression scores are associated with subsequent patient-reported and objective flares. In the following, we present the steps used to clean and analyse the data to achieve this aim.
+Patients completed the Hospital Anxiety and Depression Scale upon their recruitment to the study (baseline). In this analysis, our aim was to determine the extent to which anxiety, and depression scores are associated with subsequent patient-reported and objective flares. In the following, we present the steps used to clean and analyse the data to achieve this aim.
 
 Note that in the code, patient-reported and objective flares may be referred to as soft and hard flares, respectively.
 
@@ -564,11 +564,13 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 
 ## Data Cleaning
 
-During data cleaning we:
+During data cleaning we performed the following:
 
 -   Remove completely empty rows.
 
--   Combine data from different sources: demographics, HADS questionnaire responses, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+-   Combine data from different sources: HADS questionnaire responses, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+
+-   Remove participants under 18 years of age.
 
 -   Calculate overall anxiety and depression scores based on patient questionnaire responses. Note that in the raw HADS data, the questionnaire responses are coded from 1 to 4, and some are coded inversely (1 is the 'bad' response and 4 the 'good' response). Therefore, to calculate the HADS score the responses were rescaled to between 0 and 3, and inversed where appropriate. The overall anxiety and depression scores were then the sum of the responses.
 
