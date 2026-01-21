@@ -555,7 +555,7 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 ## Data Cleaning
 
-During data cleaning we performed the following:
+Data cleaning involved the following steps:
 
 -   Remove completely empty rows.
 
@@ -1161,7 +1161,7 @@ summon_baseline_plot_continuous(
 
 ## Survival Analysis
 
-Associations between meeting minimum exercise recommendations and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level.
+Associations between meeting minimum exercise recommendations and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level. Participants with missing flare status or time are excluded.
 
 ### Data Cleaning
 

@@ -27,7 +27,7 @@ editor_options:
 
 # Hospital Anxiety and Depression Scale
 
-Patients completed the Hospital Anxiety and Depression Scale upon their recruitment to the study (baseline). In this analysis, our aim was to determine the extent to which anxiety, and depression scores are associated with subsequent patient-reported and objective flares. In the following, we present the steps used to clean and analyse the data to achieve this aim.
+Patients completed the Hospital Anxiety and Depression Scale upon their recruitment to the study (baseline). In this analysis, our aim was to determine the extent to which anxiety, and depression scores are associated with subsequent patient-reported and objective flares.
 
 Note that in the code, patient-reported and objective flares may be referred to as soft and hard flares, respectively.
 
@@ -564,7 +564,7 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 
 ## Data Cleaning
 
-During data cleaning we performed the following:
+Data cleaning involved the following steps:
 
 -   Remove completely empty rows.
 
@@ -1158,7 +1158,7 @@ summon_baseline_plot_continuous(
 
 ## Survival Analysis
 
-Associations between anxiety and depression scores and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level.
+Associations between anxiety and depression scores and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level. Participants with missing flare status or time are excluded.
 
 ### Data Cleaning
 
