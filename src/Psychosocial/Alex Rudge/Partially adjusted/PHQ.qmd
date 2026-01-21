@@ -2,28 +2,30 @@
 title: "Patient Health Questionnaire (PHQ)"
 author:
   - name: "Chiara Cotronei"
-    url: https://www.research.ed.ac.uk/en/persons/chiara-cotronei
     affiliations:
-      - ref: Lothian
+      #- ref: Lothian
   - name: "Alexander Rudge"
     affiliations:
-      - ref: CGEM
+      #- ref: CGEM
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      - ref: CGEM
-      - ref: HGU
+      #- ref: CGEM
+      #- ref: HGU
 format: 
   html:
     code-fold: true
     code-tools: true
 editor: visual
 toc: true
+toc-depth: 4
 toc-expand: true
 ---
 
 # Patient Health Questionnaire
+
+Participants completed the Patient Health Questionnaire-15 (PHQ) upon their recruitment to the study, which was used to assess the patient's physical somatisation severity. In this analysis, our aim was to determine the extent to which somatisation is associated with subsequent patient-reported and objective flares.
 
 ## Setting up in R
 
@@ -235,6 +237,53 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
   
 }
 
+# Creating KM curves
+summon_km_curves <- function(data,
+                             dependent = 1,
+                             title = NULL,
+                             legend.title = NULL,
+                             legend.labs = NULL,
+                             palette = NULL,
+                             ggtheme = theme_minimal(),
+                             ...) {
+  
+  # ggsurvplot
+  plot_surv <- data %>%
+    survfit(as.formula(paste0("Surv(time, DiseaseFlareYN) ~ ", dependent)), 
+            data = .) %>%
+    ggsurvplot(
+      .,
+      data = data,
+      conf.int = TRUE,
+      risk.table = TRUE,
+      #pval = TRUE,
+      #pval.method = TRUE,
+      title = title,
+      legend.title = legend.title,
+      legend.labs = legend.labs,
+      ggtheme = ggtheme,
+      xlab = "Time from study recruitment (months)",
+      palette = palette,
+      break.time.by = 365/2,  
+      xscale = 730/24,
+      xlim = c(0, 750),
+      ...
+    )
+  
+  # Customise the plot and table separately
+  
+  plot_surv$plot <- plot_surv$plot +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      axis.title.x = element_blank()
+    )
+  
+  plot_surv$table <- plot_surv$table + ylab("")
+  
+  plot_surv
+  
+}
+
 # Function to perform coxph with mice for missing data
 coxph_mice <- function(formula, data, ...){
   
@@ -287,14 +336,36 @@ print_chisq <- function(data) {
 print_survival <- function(data) {
   data %>%
     broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
-    knitr::kable(digits = 3,
-                 col.names = c("Covariate",
-                               "Estimate",
+    # Relocate columns
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
                                "Std. Error",
                                "Statistic",
-                               "p value",
-                               "Lower CI",
-                               "Upper CI")
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "P-value"),
+                 format.args = list(drop0trailing = TRUE)
+                 )
+}
+
+print_survival_mice <- function(data) {
+  data %>%
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
+                               "Std. Error",
+                               "Statistic",
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "P-value"),
+                 format.args = list(drop0trailing = TRUE)
                  )
 }
 
@@ -478,6 +549,22 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 ```
 
 ## Data Cleaning
+
+Data cleaning involved the following steps:
+
+-   Remove completely empty rows.
+
+-   Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+
+-   Remove participants under 18 years of age.
+
+-   Remove participants who did not answer all PHQ questions.
+
+-   Rescale the PHQ responses, which in the raw data were recorded as 1-4 instead of 0-3.
+
+-   Calculate the somatisation score by summing responses from each PHQ question.
+
+-   Categorise somatisation score into 0-4 (none), 5-9 (mild), and 10-30 (moderate to severe).
 
 ```{r, load and tidy phq data set}
 
@@ -675,6 +762,8 @@ phq %<>%
 
 ## Missingness
 
+Visualise missingness in patient characteristics.
+
 ```{r}
 # Visualise missingness
 
@@ -705,6 +794,10 @@ data_vis_missingness %>%
 
 ## Baseline Analysis
 
+We identify associations between meeting minimum exercise recommendations and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
+
+We first conduct the analysis in the full cohort, and then separately within the ulcerative colitis (including IBD unclassified) and Crohn’s disease subgroups.
+
 #### Full Cohort
 
 ```{r}
@@ -726,8 +819,6 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline, 
   dependent = 'somatisation', 
   independent = independent)
-
-statistical_tests
 
 # Plots
 summon_baseline_plot_discrete(
@@ -767,7 +858,7 @@ summon_baseline_plot_continuous(
 
 ```
 
-#### Ulcerative Colitis/IBD Unclassified
+#### Ulcerative Colitis
 
 ```{r}
 # Select anxiety data and UC patients
@@ -789,8 +880,6 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
   dependent = 'somatisation', 
   independent = independent)
-
-statistical_tests
 
 # Plots
 summon_baseline_plot_discrete(
@@ -839,8 +928,6 @@ statistical_tests <- summon_statistical_test(
   dependent = 'somatisation', 
   independent = independent)
 
-statistical_tests
-
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
@@ -873,6 +960,8 @@ summon_baseline_plot_continuous(
 ```
 
 ## Survival Analysis
+
+Associations between level of somatisation and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level. Participants with missing flare status or time are excluded.
 
 ### Data Cleaning
 
@@ -919,6 +1008,12 @@ data_survival_hard_cd <- data_survival_hard %>%
 ##### Patient reported flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Cox with continuous variables
 # Age
@@ -966,6 +1061,12 @@ plot_continuous_hr(
 ##### Objective flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Age
 cox_age_hard <- coxph(
@@ -1014,6 +1115,13 @@ plot_continuous_hr(
 ##### Patient reported flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
+
 # Age
 cox_age_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1059,6 +1167,13 @@ plot_continuous_hr(
 ##### Objective flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
+
 
 # Age
 cox_age_hard_uc <- coxph(
@@ -1135,6 +1250,12 @@ plot_continuous_hr(
 ##### Patient reported flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Age
 cox_age_soft_cd <- coxph(
@@ -1181,6 +1302,12 @@ plot_continuous_hr(
 ##### Objective flare
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Age
 cox_age_hard_cd <- coxph(
@@ -1224,28 +1351,46 @@ plot_continuous_hr(
 
 ```
 
-### Models
+### Results
 
 #### Full Cohort
 
 ##### Patient reported flare
 
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_soft %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+###### Kaplan-Meier
 
+```{r}
+# Plotting Kaplan-Meier curves
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+legend.title = 'Somatisation'
+legend.labs = c('None', 'Mild', 'Moderate/severe')
+palette = okabe_ito
+dependent = 'somatisation'
+
+custom_theme = theme_minimal() + 
+  theme(
+    title = element_text(size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 14)
+  )
+
+summon_km_curves(
+  data = data_survival_soft,
+  dependent = dependent,
+  title = "Time to patient-reported flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
+
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1263,6 +1408,8 @@ cox_soft %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1300,28 +1447,31 @@ cox_soft_pool <- with(
 cox_soft_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
 
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_hard %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+###### Kaplan-Meier
 
+```{r}
+# Kaplan Meier
+summon_km_curves(
+  data = data_survival_hard,
+  dependent = dependent,
+  title = "Time to objective flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
+
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1338,6 +1488,8 @@ cox_hard <- coxph(
 cox_hard %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1375,29 +1527,32 @@ cox_hard_pool <- with(
 cox_hard_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 #### Ulcerative Colitis
 
 ##### Patient reported flare
 
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_soft_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+###### Kaplan-Meier
 
+```{r}
+# Kaplan Meier
+summon_km_curves(
+  data = data_survival_soft_uc,
+  dependent = dependent,
+  title = "Time to patient-reported flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
+
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1415,6 +1570,8 @@ cox_soft_uc %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1452,28 +1609,31 @@ cox_soft_uc_pool <- with(
 cox_soft_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
 
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_hard_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+###### Kaplan-Meier
 
+```{r}
+# Kaplan Meier
+summon_km_curves(
+  data = data_survival_hard_uc,
+  dependent = dependent,
+  title = "Time to objective flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
+
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1490,6 +1650,8 @@ cox_hard_uc <- coxph(
 cox_hard_uc %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1528,29 +1690,32 @@ cox_hard_uc_pool <- with(
 cox_hard_uc_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 #### Crohn's Disease
 
 ##### Patient reported flare.
 
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_soft_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+###### Kaplan-Meier
 
+```{r}
+# Kaplan Meier
+summon_km_curves(
+  data = data_survival_soft_cd,
+  dependent = dependent,
+  title = "Time to patient-reported flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
+
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1568,6 +1733,8 @@ cox_soft_cd %>%
   print_survival()
 
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1605,28 +1772,31 @@ cox_soft_cd_pool <- with(
 cox_soft_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
 ##### Objective flare
 
-```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_hard_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'Somatisation',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+###### Kaplan-Meier
 
+```{r}
+# Kaplan Meier
+summon_km_curves(
+  data = data_survival_hard_cd,
+  dependent = dependent,
+  title = "Time to objective flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
+
+###### Cox proportional hazards model (complete case)
+
+```{r}
 # Cox model
 cox_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1643,6 +1813,8 @@ cox_hard_cd <- coxph(
 cox_hard_cd %>%
   print_survival()
 ```
+
+###### Cox proportional hazards model (MICE)
 
 ```{r}
 # Cox model with MICE
@@ -1680,7 +1852,8 @@ cox_hard_cd_pool <- with(
 cox_hard_cd_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
-          exponentiate = TRUE)
+          exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 ## Reproduction and reproducibility {.appendix}
