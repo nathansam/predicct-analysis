@@ -25,6 +25,46 @@ toc-expand: true
 
 # Life Events
 
+Participants were asked whether they had experienced any significant life events in the month prior to the start of the study. The exact wording and response options of the question were as follows: "Have you had any significant life events in the last month? (please tick those that apply)"
+
+-   Death of a spouse/close family member/friend
+
+-   Divorce
+
+-   Marital separation
+
+-   Personal injury or illness not related to your IBD
+
+-   Marriage
+
+-   Dismissal from work
+
+-   Marital reconciliation
+
+-   Retirement
+
+-   Change in health of family member
+
+-   Pregnancy
+
+-   Sexual difficulties
+
+-   Gain a new family member
+
+-   Business readjustment
+
+-   Change in financial state
+
+-   Change to a different line of work
+
+-   Change in the frequency of arguments
+
+-   New mortgage
+
+-   Other (please give details)
+
+For analysis, patients' responses were used to construct a binary variable indicating whether a patient had experienced a life event in the past month. In this analysis, our aim was to determine the extent to which experiencing a significant life event was associated with subsequent patient-reported and objective flares.
+
 ## Setting up in R
 
 ## R Packages
@@ -478,12 +518,26 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 ## Data Cleaning
 
+Data cleaning involved the following steps:
+
+-   Remove completely empty rows.
+
+-   Remove participants who did not complete the questionnaire at all (to avoid assuming a patient did not have a life event when in fact they did not complete the questionnaire).
+
+-   Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+
+-   Remove participants under 18 years of age.
+
 ```{r}
 # Life event data
 
 # Remove patients with missing ParticipantId
 lifeevents <- lifeevents %>% 
   dplyr::filter(!is.na(ParticipantId))
+
+# Exclude missing life events (these patients simply did not fill out the questionnaire)
+lifeevents <- lifeevents %>% 
+  dplyr::filter(!is.na(AnyLifeEvents))
 
 # Add demographics
 lifeevents <- lifeevents %>% 
@@ -623,10 +677,6 @@ lifeevents %<>%
     FC = log(FC)
   )
 
-
-# Exclude missing life events (these patients simply did not fill out the questionnaire)
-lifeevents <- lifeevents %>% 
-  dplyr::filter(!is.na(AnyLifeEvents))
 ```
 
 ```{r}
@@ -714,6 +764,10 @@ data_vis_missingness %>%
 ```
 
 ## Baseline Analysis
+
+We identify associations between meeting minimum exercise recommendations and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
+
+We first conduct the analysis in the full cohort, and then separately within the ulcerative colitis (including IBD unclassified) and Crohn’s disease subgroups.
 
 #### Full Cohort
 
@@ -883,6 +937,8 @@ summon_baseline_plot_continuous(
 ```
 
 ## Survival Analysis
+
+Associations between experiencing a life event and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level. Participants with missing flare status or time are excluded.
 
 ### Data Cleaning
 
