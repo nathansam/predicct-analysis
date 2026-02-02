@@ -66,6 +66,15 @@ data_survival_hard %>%
 
 
 # Kaplan-Meier
+custom_theme = theme_minimal() + 
+  theme(
+    title = element_text(size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16, face = 'bold')
+  )
+
 legend.title = 'IBD Type'
 legend.labs = c('CD', 'UC/IBDU')
 okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
@@ -79,7 +88,7 @@ plot_soft <- summon_km_curves(
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette,
-  fun = "event"
+  ggtheme = custom_theme
 )
 
 plot_hard <- summon_km_curves(
@@ -89,7 +98,7 @@ plot_hard <- summon_km_curves(
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette,
-  fun = "event"
+  ggtheme = custom_theme
 )
 
 
@@ -100,12 +109,9 @@ BBDD
 CCEE
 "
 
-# Max y so both plots have the same scale
-ymax = 0.42
-
 plot <- patchwork::guide_area() +
-  (plot_soft$plot + ylim(0, ymax)) + plot_soft$table +
-  (plot_hard$plot + ylim(0, ymax)) + plot_hard$table +
+  plot_soft$plot + plot_soft$table +
+  plot_hard$plot + plot_hard$table +
   patchwork::plot_layout(
     design = layout,
     heights = c(0.15, 3, 0.8),
@@ -116,10 +122,10 @@ plot
 
 filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 
-# ggsave(
-#   filename = paste0(filepath_save, "Cumulative events IBD type.pdf"),
-#   plot = plot,
-#   width = 9.5,
-#   height = 5,
-#   units = 'in'
-# )
+ggsave(
+  filename = paste0(filepath_save, "Cumulative events IBD type.pdf"),
+  plot = plot,
+  width = 9.5,
+  height = 5,
+  units = 'in'
+)
