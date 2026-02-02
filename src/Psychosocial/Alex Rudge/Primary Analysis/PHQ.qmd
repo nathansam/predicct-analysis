@@ -560,7 +560,7 @@ Data cleaning involved the following steps:
 
 -   Remove participants who did not answer all PHQ questions.
 
--   Rescale the PHQ responses, which in the raw data were recorded as 1-4 instead of 0-3.
+-   Rescale the PHQ responses, as the raw data responses were recorded as 1-4 instead of 0-3.
 
 -   Calculate the somatisation score by summing responses from each PHQ question.
 
@@ -794,7 +794,7 @@ data_vis_missingness %>%
 
 ## Baseline Analysis
 
-We identify associations between meeting minimum exercise recommendations and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
+We identify associations between somatisation and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
 
 We first conduct the analysis in the full cohort, and then separately within the ulcerative colitis (including IBD unclassified) and Crohn’s disease subgroups.
 
