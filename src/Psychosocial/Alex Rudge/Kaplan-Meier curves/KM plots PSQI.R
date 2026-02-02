@@ -10,8 +10,8 @@ source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 # Run PSQI
 okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-legend.title = 'PSQI'
-legend.labs = c("5 and under", "Over 5")
+legend.title = 'Sleep disturbance'
+legend.labs = c("No", "Yes")
 palette = okabe_ito
 dependent = 'SleepDisturbance'
 
@@ -21,7 +21,7 @@ custom_theme = theme_minimal() +
     axis.title = element_text(size = 12),
     axis.text = element_text(size = 12),
     legend.text = element_text(size = 14),
-    legend.title = element_text(size = 14)
+    legend.title = element_text(size = 16, face = 'bold')
   )
 
 # Soft
@@ -114,7 +114,7 @@ plot <- summon_km_curves_panel(
   p2 = plot_soft_uc,
   p3 = plot_hard_cd,
   p4 = plot_hard_uc
-) & theme(axis.title.y = element_text(vjust = -14))
+)
 
 plot
 
@@ -124,7 +124,7 @@ filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 ggsave(
   filename = paste0(filepath_save, "Kaplan Meier PSQI.pdf"),
   plot = plot,
-  width = 10,
+  width = 9,
   height = 9,
   units = 'in'
 )

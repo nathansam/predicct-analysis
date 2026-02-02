@@ -20,7 +20,7 @@ custom_theme = theme_minimal() +
     axis.title = element_text(size = 12),
     axis.text = element_text(size = 12),
     legend.text = element_text(size = 14),
-    legend.title = element_text(size = 14)
+    legend.title = element_text(size = 16, face = 'bold')
   )
 
 # Soft
@@ -117,13 +117,13 @@ plot <- summon_km_curves_panel(
 
 plot
 
-# Save as landscape 10 x 11 inches
+# Save as landscape 10.5 x 9 inches
 filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 
 ggsave(
   filename = paste0(filepath_save, "Kaplan Meier PHQ.pdf"),
   plot = plot,
-  width = 11,
+  width = 10.5,
   height = 9,
   units = 'in'
 )

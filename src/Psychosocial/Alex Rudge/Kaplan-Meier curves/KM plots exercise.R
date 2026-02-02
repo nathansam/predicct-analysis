@@ -20,7 +20,7 @@ custom_theme = theme_minimal() +
     axis.title = element_text(size = 12),
     axis.text = element_text(size = 12),
     legend.text = element_text(size = 14),
-    legend.title = element_text(size = 14)
+    legend.title = element_text(size = 16, face = 'bold')
   )
 
 # Soft
