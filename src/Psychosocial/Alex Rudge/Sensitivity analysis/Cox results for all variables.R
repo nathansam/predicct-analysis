@@ -4,7 +4,7 @@ library(magrittr)
 
 # Load in all the Cox results
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitivity Analysis/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Fully adjusted/"
 
 # Suffix - cc (complete case) or mice 
 suffix <- "_cc.rds"
@@ -29,6 +29,10 @@ cox_results_phq <- readr::read_rds(paste0(filepath, "cox_results_phq", suffix))
 # PSQI
 cox_results_psqi <- readr::read_rds(paste0(filepath, "cox_results_psqi", suffix))
 
+# Fatigue
+cox_results_fatigue <- readr::read_rds(paste0(filepath, "cox_results_fatigue", suffix))
+
+
 # Differentiate between anxiety and depression
 cox_results_hads_anxiety %<>%
   dplyr::mutate(variable = "score_group_anxiety")
@@ -40,10 +44,11 @@ cox_results_hads_depression %<>%
 # Combine
 cox_results <- cox_results_hads_anxiety %>%
   dplyr::bind_rows(cox_results_hads_depression) %>%
-  dplyr::bind_rows(cox_results_exercise) %>%
-  dplyr::bind_rows(cox_results_lifeevents) %>%
   dplyr::bind_rows(cox_results_phq) %>%
-  dplyr::bind_rows(cox_results_psqi)
+  dplyr::bind_rows(cox_results_fatigue) %>%
+  dplyr::bind_rows(cox_results_psqi) %>%
+  dplyr::bind_rows(cox_results_exercise) %>%
+  dplyr::bind_rows(cox_results_lifeevents)
 
 
 # Ordering for plotting?
@@ -62,6 +67,8 @@ cox_results %<>%
       term == 'somatisationModSev' ~ 2,
       term == 'SleepDisturbanceNo' ~ 0,
       term == 'SleepDisturbanceYes' ~ 1,
+      term == 'OftenLackEnergyNo' ~ 0,
+      term == 'OftenLackEnergyYes' ~ 1
     )
   )
 
@@ -69,10 +76,10 @@ cox_results %<>%
 cox_results %<>%
   dplyr::mutate(
     term_tidy = dplyr::case_when(
-      term == 'score_group0-7' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score 0-7',
-      term == 'score_group8-21' & variable == 'score_group_anxiety' ~ 'HADS Anxiety Score 8-21',
-      term == 'score_group0-7' & variable == 'score_group_depression' ~ 'HADS Depression Score 0-7',
-      term == 'score_group8-21' & variable == 'score_group_depression' ~ 'HADS Depression Score 8-21',
+      term == 'score_group0-7' & variable == 'score_group_anxiety' ~ 'HADS anxiety score 0-7',
+      term == 'score_group8-21' & variable == 'score_group_anxiety' ~ 'HADS anxiety score 8-21',
+      term == 'score_group0-7' & variable == 'score_group_depression' ~ 'HADS depression score 0-7',
+      term == 'score_group8-21' & variable == 'score_group_depression' ~ 'HADS depression score 8-21',
       term == 'MinimumExerciseYes' ~ 'Meets recommended exercise',
       term == 'MinimumExerciseNo' ~ 'Does not meet recommended exercise',
       term == 'AnyLifeEventsNo' ~ 'No life events in past month',
@@ -82,6 +89,8 @@ cox_results %<>%
       term == 'somatisationModSev' ~ 'Somatisation 10-30 (moderate/severe)',
       term == 'SleepDisturbanceNo' ~ 'No sleep disturbance (PSQI<=5)',
       term == 'SleepDisturbanceYes' ~ 'Sleep disturbance (PSQI>5)',
+      term == 'OftenLackEnergyNo' ~ 'Does not often feel fatigued',
+      term == 'OftenLackEnergyYes' ~ 'Often feels fatigued'
     )
   )
 
@@ -132,3 +141,4 @@ readr::write_rds(
   x = cox_results,
   file = paste0(filepath, "cox_results_all_variables", suffix)
 )
+

@@ -1,7 +1,7 @@
 
 # Extracting the results from the Cox models
 
-# Run Fatigue
+# Run Exercise
 
 variable = "OftenLackEnergy"
 
@@ -77,7 +77,7 @@ cox_results_fatigue_mice <- extract_cox_results(
   )
 
 # Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Fully adjusted/"
 
 readr::write_rds(
   x = cox_results_fatigue_cc,
