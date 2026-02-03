@@ -25,6 +25,10 @@ editor_options:
   chunk_output_type: console
 ---
 
+# Fatigue
+
+As part of the IBD-control-8 questionnaire administered at study recruitment, patients were asked "In the past 2 week, did you often feel lacking in energy (fatigued)?"; potential responses included "Yes", "No" and "Not sure". In this analysis, our aim was to determine the extent to often feeling fatigued was associated with subsequent patient-reported and objective flares.
+
 ## Setting up in R
 
 ```{r}
@@ -545,6 +549,20 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 ```
 
 ## Data Cleaning
+
+Data cleaning involved the following steps:
+
+-   Remove completely empty rows.
+
+-   Remove participants who did not answer the question.
+
+-   Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+
+-   Remove participants under 18 years of age.
+
+-   Recode reponses from 1, 2, and 3 to "Yes", "No" and "Not sure", respectively.
+
+-   Combine the "Not sure" and "No" categories due to low numbers of "Not sure" responses.
 
 ```{r, load and tidy fatigue data set}
 
