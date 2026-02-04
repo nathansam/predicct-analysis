@@ -280,7 +280,9 @@ tbl$table_body %<>%
     )
   )
 
-tbl
+# Remove empty rows caused by disease specific binary variables
+tbl$table_body %<>% 
+  dplyr::filter(!(variable %in% c('Perianal', 'Surgery') & (label %in% c('No', 'Yes'))))
 
 
 # Save as word
