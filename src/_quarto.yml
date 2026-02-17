@@ -54,6 +54,8 @@ format:
     monofont: "Noto Sans Mono"
 website:
   title: "PREdiCCt analyses"
+  site-url: 'https://constantine-cooke.com'
+  site-path: '/predicct-analysis/'
   twitter-card:
     creator: "@IBDNathan"
     site: "@EdinUni_IGC"
