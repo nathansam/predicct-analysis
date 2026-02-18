@@ -301,7 +301,7 @@ hads %<>%
 
 
 # Survival data
-data_survival_anxiety_soft <- hads %>% 
+data_anxiety_soft <- hads %>% 
   dplyr::select(-tidyselect::starts_with("depression")) %>%
   dplyr::inner_join(
   flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
@@ -309,7 +309,7 @@ data_survival_anxiety_soft <- hads %>%
 ) %>%
   dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
 
-data_survival_anxiety_hard <- hads %>% 
+data_anxiety_hard <- hads %>% 
   dplyr::select(-tidyselect::starts_with("depression")) %>%
   dplyr::inner_join(
     flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
@@ -318,7 +318,7 @@ data_survival_anxiety_hard <- hads %>%
   dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 # Depression
-data_survival_depression_soft <- hads %>% 
+data_depression_soft <- hads %>% 
   dplyr::select(-tidyselect::starts_with("anxiety")) %>%
   dplyr::inner_join(
     flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
@@ -326,7 +326,7 @@ data_survival_depression_soft <- hads %>%
   ) %>%
   dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
 
-data_survival_depression_hard <- hads %>% 
+data_depression_hard <- hads %>% 
   dplyr::select(-tidyselect::starts_with("anxiety")) %>%
   dplyr::inner_join(
     flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
@@ -337,7 +337,7 @@ data_survival_depression_hard <- hads %>%
 
 # Long format
 # Anxiety
-data_survival_anxiety_soft_long <- data_survival_anxiety_soft %>%
+data_anxiety_soft_long <- data_anxiety_soft %>%
   dplyr::rename(anxiety_hads_0 = anxiety_hads) %>%
   tidyr::pivot_longer(
     cols = c(anxiety_hads_0, anxiety_hads_12, anxiety_hads_24),
@@ -346,7 +346,7 @@ data_survival_anxiety_soft_long <- data_survival_anxiety_soft %>%
     values_to = "anxiety_hads"
   )
 
-data_survival_anxiety_hard_long <- data_survival_anxiety_hard %>%
+data_anxiety_hard_long <- data_anxiety_hard %>%
   dplyr::rename(anxiety_hads_0 = anxiety_hads) %>%
   tidyr::pivot_longer(
     cols = c(anxiety_hads_0, anxiety_hads_12, anxiety_hads_24),
@@ -356,7 +356,7 @@ data_survival_anxiety_hard_long <- data_survival_anxiety_hard %>%
   )
 
 # Depression
-data_survival_depression_soft_long <- data_survival_depression_soft %>%
+data_depression_soft_long <- data_depression_soft %>%
   dplyr::rename(depression_hads_0 = depression_hads) %>%
   tidyr::pivot_longer(
     cols = c(depression_hads_0, depression_hads_12, depression_hads_24),
@@ -365,7 +365,7 @@ data_survival_depression_soft_long <- data_survival_depression_soft %>%
     values_to = "depression_hads"
   )
 
-data_survival_depression_hard_long <- data_survival_depression_hard %>%
+data_depression_hard_long <- data_depression_hard %>%
   dplyr::rename(depression_hads_0 = depression_hads) %>%
   tidyr::pivot_longer(
     cols = c(depression_hads_0, depression_hads_12, depression_hads_24),

@@ -25,7 +25,7 @@ custom_theme = theme_minimal() +
 # All IBD
 # Anxiety ####
 # Soft
-plot_anxiety_soft <- data_survival_anxiety_soft_long %>%
+plot_anxiety_soft <- data_anxiety_soft_long %>%
   dplyr::mutate(DiseaseFlareYN = forcats::fct_recode(as.character(DiseaseFlareYN), "Yes" = '1', "No" = '0')) %>%
   dplyr::mutate(month = as.numeric(month)) %>%
   dplyr::group_by(month, DiseaseFlareYN) %>%
@@ -62,7 +62,7 @@ plot_anxiety_soft <- data_survival_anxiety_soft_long %>%
 plot_anxiety_soft
 
 # Hard
-plot_anxiety_hard <- data_survival_anxiety_hard_long %>%
+plot_anxiety_hard <- data_anxiety_hard_long %>%
   dplyr::mutate(DiseaseFlareYN = forcats::fct_recode(as.character(DiseaseFlareYN), "Yes" = '1', "No" = '0')) %>%
   dplyr::mutate(month = as.numeric(month)) %>%
   dplyr::group_by(month, DiseaseFlareYN) %>%
@@ -100,7 +100,7 @@ plot_anxiety_hard
 
 # Depression ####
 # Soft
-plot_depression_soft <- data_survival_depression_soft_long %>%
+plot_depression_soft <- data_depression_soft_long %>%
   dplyr::mutate(DiseaseFlareYN = forcats::fct_recode(as.character(DiseaseFlareYN), "Yes" = '1', "No" = '0')) %>%
   dplyr::mutate(month = as.numeric(month)) %>%
   dplyr::group_by(month, DiseaseFlareYN) %>%
@@ -139,7 +139,7 @@ plot_depression_soft
 
 
 # Hard
-plot_depression_hard <- data_survival_depression_hard_long %>%
+plot_depression_hard <- data_depression_hard_long %>%
   dplyr::mutate(DiseaseFlareYN = forcats::fct_recode(as.character(DiseaseFlareYN), "Yes" = '1', "No" = '0')) %>%
   dplyr::mutate(month = as.numeric(month)) %>%
   dplyr::group_by(month, DiseaseFlareYN) %>%

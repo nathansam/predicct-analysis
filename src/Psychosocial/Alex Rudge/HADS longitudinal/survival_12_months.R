@@ -29,7 +29,7 @@ custom_theme = theme_minimal() +
 
 
 # Survival model with 12 months as the baseline
-data_survival_anxiety_soft_12m <- data_survival_anxiety_soft %>%
+data_anxiety_soft_12m <- data_anxiety_soft %>%
   dplyr::mutate(score_group = cut(
     anxiety_hads_12,
     breaks = c(0, 7, 21),
@@ -45,7 +45,7 @@ data_survival_anxiety_soft_12m <- data_survival_anxiety_soft %>%
     time = time - 365
   )
 
-data_survival_anxiety_hard_12m <- data_survival_anxiety_hard %>%
+data_anxiety_hard_12m <- data_anxiety_hard %>%
   dplyr::mutate(score_group = cut(
     anxiety_hads_12,
     breaks = c(0, 7, 21),
@@ -61,7 +61,7 @@ data_survival_anxiety_hard_12m <- data_survival_anxiety_hard %>%
     time = time - 365
   )
 
-data_survival_depression_soft_12m <- data_survival_depression_soft %>%
+data_depression_soft_12m <- data_depression_soft %>%
   dplyr::mutate(score_group = cut(
     depression_hads_12,
     breaks = c(0, 7, 21),
@@ -77,7 +77,7 @@ data_survival_depression_soft_12m <- data_survival_depression_soft %>%
     time = time - 365
   )
 
-data_survival_depression_hard_12m <- data_survival_depression_hard %>%
+data_depression_hard_12m <- data_depression_hard %>%
   dplyr::mutate(score_group = cut(
     depression_hads_12,
     breaks = c(0, 7, 21),
@@ -97,7 +97,7 @@ data_survival_depression_hard_12m <- data_survival_depression_hard %>%
 # Kaplan-meier
 # Anxiety
 summon_km_curves(
-  data = data_survival_anxiety_soft_12m,
+  data = data_anxiety_soft_12m,
   dependent = dependent,
   title = "Time to patient-reported flare in IBD",
   legend.title = legend.title,
@@ -107,7 +107,7 @@ summon_km_curves(
 )
 
 summon_km_curves(
-  data = data_survival_anxiety_hard_12m,
+  data = data_anxiety_hard_12m,
   dependent = dependent,
   title = "Time to objective flare in IBD",
   legend.title = legend.title,
@@ -118,7 +118,7 @@ summon_km_curves(
 
 # Depression
 summon_km_curves(
-  data = data_survival_depression_soft_12m,
+  data = data_depression_soft_12m,
   dependent = dependent,
   title = "Time to patient-reported flare in IBD",
   legend.title = legend.title,
@@ -128,7 +128,7 @@ summon_km_curves(
 )
 
 summon_km_curves(
-  data = data_survival_depression_hard_12m,
+  data = data_depression_hard_12m,
   dependent = dependent,
   title = "Time to objective flare in IBD",
   legend.title = legend.title,
