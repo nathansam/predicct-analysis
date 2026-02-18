@@ -775,6 +775,10 @@ variables_of_interest <- c(
   "SexualDifficulties",
   "GainNewFamilyMember",
   "NewMortgage",
+  "BusinessReadjust",
+  "ChangeFinancialState",
+  "ChangeLineWork",
+  "FrequencyArguments",  
   "OtherLifeEvent"
 )
 
@@ -801,16 +805,48 @@ lifeevents_counts <- lifeevents %>%
   dplyr::arrange(
     desc(count)
   ) %>%
+  # Rename the variables for the plot
+  dplyr::mutate(
+    Variable = dplyr::case_match(
+      Variable,
+      "MaritalReconcil" ~ "Marital reconciliation",
+      "Dismissal" ~ "Dismissal from work",
+      "SexualDifficulties" ~ "Sexual difficulties",
+      "MaritalSeparation" ~ "Marital separation",
+      "BusinessReadjust" ~ "Business reajustment",
+      "GainNewFamilyMember" ~ "Gain a new family member",
+      "FrequencyArguments" ~ "Change in the frequency of arguments",
+      "NewMortgage" ~ "New mortgage",
+      "PersonalInjury" ~ "Personal injury or illness",
+      "ChangeFinancialState" ~ "Change in financial state",
+      "ChangeLineWork" ~ "Change to a different line of work",
+      "Death" ~ "Death of a spouse/family member/friend",
+      "HealthFamilyMember" ~ "Change in health of family member",
+      "OtherLifeEvent" ~ "Other (please specify)",
+      .default = Variable
+    )
+  ) %>%
   dplyr::mutate(
     Variable = forcats::as_factor(Variable)
   )
 
+
+# Counts per answer
 lifeevents_counts %>%
   ggplot(aes(x = count, y = Variable)) +
-  geom_col(position = "dodge") +
-  xlab("Count") +
-  ylab("Life Event") +
-  theme_minimal()
+  geom_col(position = "dodge", alpha = 0.75) +
+  xlab("Number of responses") +
+  ylab("Items") +
+  ggtitle("Have you had any significant life events in the last month? \n (please tick those that apply)") +
+  theme_minimal(base_size = 12) +
+    theme(
+      # Title
+      plot.title = element_text(size = 12*1.2, hjust = 0.5),
+      plot.subtitle = element_text(size = 12*1.1, hjust = 0.5),
+      # Axis
+      axis.title = element_text(size = 12),
+      axis.text = element_text(size = 12 * 0.9, colour = 'black')
+    )
 ```
 
 ## Missingness

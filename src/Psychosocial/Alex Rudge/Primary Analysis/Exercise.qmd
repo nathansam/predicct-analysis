@@ -37,33 +37,23 @@ Load R packages required.
 #| message: false
 #| warning: false
 set.seed(123)
-library(plyr) # Used for mapping values
-suppressPackageStartupMessages(library(tidyverse))
+library(tidyverse)
+library(magrittr)
 library(readxl) # Read in Excel files
-library(datefixR) # Standardise dates
 library(openxlsx)
-library(tidyr)
-library(ggdist)
-library(rstatix)
 
-suppressPackageStartupMessages(library(table1))
+# Tables
 library(knitr)
 library(pander)
 library(kableExtra)
 
-# Generate flowchart of cohort derivation
-library(DiagrammeR)
-library(DiagrammeRsvg)
-
-# cox-regression
+# Analysis
+library(rstatix)
 library(survival)
 library(survminer)
-library(finalfit)
-
-library(mice)
 library(splines)
+library(mice)
 library(naniar)
-library(ggmice)
 
 ```
 

@@ -21,6 +21,8 @@ editor: visual
 toc: true
 toc-depth: 4
 toc-expand: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Patient Health Questionnaire
@@ -35,33 +37,23 @@ Participants completed the Patient Health Questionnaire-15 (PHQ) upon their recr
 #| message: false
 #| warning: false
 set.seed(123)
-library(plyr) # Used for mapping values
-suppressPackageStartupMessages(library(tidyverse))
+library(tidyverse)
+library(magrittr)
 library(readxl) # Read in Excel files
-library(datefixR) # Standardise dates
 library(openxlsx)
-library(tidyr)
-library(ggdist)
-library(rstatix)
 
-suppressPackageStartupMessages(library(table1))
+# Tables
 library(knitr)
 library(pander)
 library(kableExtra)
 
-# Generate flowchart of cohort derivation
-library(DiagrammeR)
-library(DiagrammeRsvg)
-
-# cox-regression
+# Analysis
+library(rstatix)
 library(survival)
 library(survminer)
-library(finalfit)
-
 library(splines)
 library(mice)
 library(naniar)
-library(ggmice)
 ```
 
 ## Helper functions

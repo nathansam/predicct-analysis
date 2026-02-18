@@ -27,7 +27,7 @@ editor_options:
 
 # Fatigue
 
-As part of the IBD-control-8 questionnaire administered at study recruitment, patients were asked "In the past 2 week, did you often feel lacking in energy (fatigued)?"; potential responses included "Yes", "No" and "Not sure". In this analysis, our aim was to determine the extent to often feeling fatigued was associated with subsequent patient-reported and objective flares.
+As part of the IBD-control-8 questionnaire administered at study recruitment, patients were asked "Over the past month did you: often feel lacking in energy (by often we mean more than half the time)?"; potential responses included "Yes", "No" and "Not sure". In this analysis, our aim was to determine the extent to often feeling fatigued was associated with subsequent patient-reported and objective flares.
 
 ## Setting up in R
 
@@ -37,33 +37,24 @@ As part of the IBD-control-8 questionnaire administered at study recruitment, pa
 #| message: false
 #| warning: false
 set.seed(123)
-library(plyr) # Used for mapping values
-suppressPackageStartupMessages(library(tidyverse))
+library(tidyverse)
+library(magrittr)
 library(readxl) # Read in Excel files
-library(datefixR) # Standardise dates
 library(openxlsx)
-library(tidyr)
-library(ggdist)
-library(rstatix)
 
-suppressPackageStartupMessages(library(table1))
+# Tables
 library(knitr)
 library(pander)
 library(kableExtra)
 
-# Generate flowchart of cohort derivation
-library(DiagrammeR)
-library(DiagrammeRsvg)
-
-# cox-regression
+# Analysis
+library(rstatix)
 library(survival)
 library(survminer)
-library(finalfit)
-
 library(splines)
 library(mice)
 library(naniar)
-library(ggmice)
+
 ```
 
 ## Helper functions
