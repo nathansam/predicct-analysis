@@ -51,8 +51,7 @@ data_anxiety_soft_long_lme <- data_anxiety_soft_long_raw %>%
   dplyr::filter(ParticipantNo %in% id_anxiety_soft) %>%
   # Do not need 24m
   dplyr::filter(month != 24) %>% 
-  dplyr::select(ParticipantNo, month, anxiety_hads, flare0to12) %>%
-  dplyr::mutate(month = as.numeric(month))
+  dplyr::select(ParticipantNo, month, anxiety_hads, flare0to12)
 
 
 # LME
@@ -62,10 +61,53 @@ summary(model)
   
 anova(model)
 
-
 ggplot(data_anxiety_soft_long_lme, aes(x = month, y = anxiety_hads, color = flare0to12, group = flare0to12)) +
   stat_summary(fun = mean, geom = "line") +
   stat_summary(fun = mean, geom = "point") +
   stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) +
   theme_minimal() +
-  labs(title = "Change in Value Over Time by Group")
+  labs(title = "Change in Anxiety over time by flare.")
+
+
+# 12 to 24 months
+
+id_anxiety_soft <- data_anxiety_soft_raw %>%
+  dplyr::filter(
+    # Data at 12m and 24m
+    !is.na(anxiety_hads_12),
+    !is.na(anxiety_hads_24),
+    # Did not flare before 12m or censored before 24m
+    !((DiseaseFlareYN == 0) & (time < 730)),
+    !((DiseaseFlareYN == 1) & (time <= 365))
+  ) %>%
+  dplyr::pull(ParticipantNo) %>%
+  unique()
+
+data_anxiety_soft_long_lme <- data_anxiety_soft_long_raw %>%
+  # Flare between 12 and 24
+  dplyr::mutate(
+    flare12to24 = dplyr::case_when(
+      (DiseaseFlareYN == 1) & (time > 365) ~ "Yes",
+      TRUE ~ "No"
+    )
+  ) %>%
+  # Only patients with data at 12 and 24m
+  dplyr::filter(ParticipantNo %in% id_anxiety_soft) %>%
+  # Do not need 0m
+  dplyr::filter(month != 0) %>% 
+  dplyr::select(ParticipantNo, month, anxiety_hads, flare12to24)
+
+
+# LME
+model <- lmer(anxiety_hads ~ month*flare12to24 + (1|ParticipantNo), data = data_anxiety_soft_long_lme)
+
+summary(model)
+
+anova(model)
+
+ggplot(data_anxiety_soft_long_lme, aes(x = month, y = anxiety_hads, color = flare12to24, group = flare12to24)) +
+  stat_summary(fun = mean, geom = "line") +
+  stat_summary(fun = mean, geom = "point") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.1) +
+  theme_minimal() +
+  labs(title = "Change in Anxiety over time by flare.")
