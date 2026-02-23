@@ -5,7 +5,7 @@ library(patchwork)
 
 # Run data cleaning
 
-setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/HADS longitudinal/")
+setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal data analysis/HADS/")
 
 source("data_cleaning.R")
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")

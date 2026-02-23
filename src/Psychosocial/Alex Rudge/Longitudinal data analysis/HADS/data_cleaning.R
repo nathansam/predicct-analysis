@@ -297,7 +297,7 @@ hads %<>%
   )
 
 hads %<>%
-  dplyr::filter(!(is.na(anxiety_hads) & is.na(depression_hads)))
+  dplyr::filter(!(is.na(anxiety_hads) | is.na(depression_hads)))
 
 
 # Survival data

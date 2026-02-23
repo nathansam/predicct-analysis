@@ -5,7 +5,7 @@ library(patchwork)
 
 # Run data cleaning
 
-setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/HADS longitudinal/")
+setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal data analysis/HADS/")
 
 source("data_cleaning.R")
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
@@ -22,19 +22,19 @@ custom_theme = theme_minimal() +
     legend.position = "top"
   )
 
-# UC
+# CD
 
 data_anxiety_soft_long <- data_anxiety_soft_long %>%
-  dplyr::filter(diagnosis2 == "UC/IBDU")
+  dplyr::filter(diagnosis2 == "CD")
 
 data_anxiety_hard_long <- data_anxiety_hard_long %>%
-  dplyr::filter(diagnosis2 == "UC/IBDU")
+  dplyr::filter(diagnosis2 == "CD")
 
 data_depression_soft_long <- data_depression_soft_long %>%
-  dplyr::filter(diagnosis2 == "UC/IBDU")
+  dplyr::filter(diagnosis2 == "CD")
 
 data_depression_hard_long <- data_depression_hard_long %>%
-  dplyr::filter(diagnosis2 == "UC/IBDU")
+  dplyr::filter(diagnosis2 == "CD")
   
 
 # Anxiety ####
@@ -64,13 +64,13 @@ plot_anxiety_soft <- data_anxiety_soft_long %>%
   geom_point() +
   geom_line() +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2, color = NA) +
-  ylim(0, 8) +
+  ylim(0, 8.5) +
   scale_x_continuous(breaks = c(0, 12, 24)) +
   labs(color = "Patient-reported flare",
        fill = "Patient-reported flare",
        x = "Month",
        y = "Mean Anxiety HADS") +
-  #ggtitle("Anxiety HADS over time in UC/IBDU by patient-reported flare status") +
+  #ggtitle("Anxiety HADS over time in CD by patient-reported flare status") +
   custom_theme
 
 plot_anxiety_soft
@@ -101,13 +101,13 @@ plot_anxiety_hard <- data_anxiety_hard_long %>%
   geom_point() +
   geom_line() +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2, color = NA) +
-  ylim(0, 8) +
+  ylim(0, 8.5) +
   scale_x_continuous(breaks = c(0, 12, 24)) +
   labs(color = "Objective flare",
        fill = "Objective flare",
        x = "Month",
        y = "Mean Anxiety HADS") +
-  #ggtitle("Anxiety HADS over time in UC/IBDU by objective flare status") +
+  #ggtitle("Anxiety HADS over time in CD by objective flare status") +
   custom_theme
 
 plot_anxiety_hard
@@ -139,13 +139,13 @@ plot_depression_soft <- data_depression_soft_long %>%
   geom_point() +
   geom_line() +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2, color = NA) +
-  ylim(0, 6.5) +
+  ylim(0, 7) +
   scale_x_continuous(breaks = c(0, 12, 24)) +
   labs(color = "Patient-reported flare",
        fill = "Patient-reported flare",
        x = "Month",
        y = "Mean Depression HADS") +
-  #ggtitle("Depression HADS over time in UC/IBDU by patient-reported flare status") +
+  #ggtitle("Depression HADS over time in CD by patient-reported flare status") +
   custom_theme
  
 
@@ -181,13 +181,13 @@ plot_depression_hard <- data_depression_hard_long %>%
   geom_ribbon(aes(ymin = lower, ymax = upper),
               alpha = 0.2,
               color = NA) +
-  ylim(0, 6.5) +
+  ylim(0, 7) +
   scale_x_continuous(breaks = c(0, 12, 24)) +
   labs(color = "Objective flare",
        fill = "Objective flare",
        x = "Month",
        y = "Mean Depression HADS") +
-  #ggtitle("Depression HADS over time in UC/IBDU by objective flare status") +
+  #ggtitle("Depression HADS over time in CD by objective flare status") +
   custom_theme
 
 plot_depression_hard
@@ -198,7 +198,7 @@ plot_anxiety_soft + plot_anxiety_hard +
   plot_depression_soft + plot_depression_hard +
   plot_layout(ncol = 2, nrow = 2) +
   plot_annotation(
-    title = "HADS scores over time in UC/IBDU by flare type"
+    title = "HADS scores over time in CD by flare type"
   ) &
   theme(
     plot.title = element_text(hjust = 0.5),
