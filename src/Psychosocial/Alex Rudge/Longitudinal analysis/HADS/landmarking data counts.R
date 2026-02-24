@@ -5,7 +5,7 @@ library(survminer)
 
 # Run data cleaning
 
-setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal data analysis/HADS/")
+setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/")
 
 #source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 source("landmarking data.R")

@@ -5,17 +5,10 @@ library(survminer)
 
 # Run data cleaning
 
-setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal data analysis/HADS/")
+setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/")
 
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 source("landmarking data.R")
-
-# UC data
-
-data_anxiety_soft_uc <- data_anxiety_soft %>% dplyr::filter(diagnosis2 == "UC/IBDU")
-data_anxiety_hard_uc <- data_anxiety_hard %>% dplyr::filter(diagnosis2 == "UC/IBDU")
-data_depression_soft_uc <- data_depression_soft %>% dplyr::filter(diagnosis2 == "UC/IBDU")
-data_depression_hard_uc <- data_depression_hard %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
 # Landmark at 12 months.
 
@@ -40,9 +33,9 @@ custom_theme = theme_minimal() +
 ## Soft ####
 
 summon_km_curves(
-  data = data_anxiety_soft_uc,
+  data = data_anxiety_soft,
   dependent = dependent,
-  title = "Time to patient-reported flare in UC/IBDU",
+  title = "Time to patient-reported flare in IBD",
   xlab = "Time from 12 month landmark (months)",
   legend.title = legend.title,
   legend.labs = legend.labs,
@@ -56,9 +49,9 @@ summon_km_curves(
 ## Hard ####
 
 summon_km_curves(
-  data = data_anxiety_hard_uc,
+  data = data_anxiety_hard,
   dependent = dependent,
-  title = "Time to objective flare in UC/IBDU",
+  title = "Time to objective flare in IBD",
   xlab = "Time from 12 month landmark (months)",
   legend.title = legend.title,
   legend.labs = legend.labs,
@@ -75,9 +68,9 @@ legend.title = 'HADS Depression Score'
 ## Soft ####
 
 summon_km_curves(
-  data = data_depression_soft_uc,
+  data = data_depression_soft,
   dependent = dependent,
-  title = "Time to patient-reported flare in UC/IBDU",
+  title = "Time to patient-reported flare in IBD",
   xlab = "Time from 12 month landmark (months)",
   legend.title = legend.title,
   legend.labs = legend.labs,
@@ -91,9 +84,9 @@ summon_km_curves(
 ## Hard ####
 
 summon_km_curves(
-  data = data_depression_hard_uc,
+  data = data_depression_hard,
   dependent = dependent,
-  title = "Time to objective flare in UC/IBDU",
+  title = "Time to objective flare in IBD",
   xlab = "Time from 12 month landmark (months)",
   legend.title = legend.title,
   legend.labs = legend.labs,

@@ -4,7 +4,7 @@ library(survminer)
 
 # Run data cleaning
 
-setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal data analysis/HADS/")
+setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/")
 
 source("data_cleaning.R")
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
@@ -14,22 +14,22 @@ source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 
 # UC
 # Anxiety
-data_anxiety_soft_cd <- data_anxiety_soft %>% dplyr::filter(diagnosis2 == "CD")
+data_anxiety_soft_uc <- data_anxiety_soft %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
-data_anxiety_soft_long_cd <- data_anxiety_soft_long %>% dplyr::filter(diagnosis2 == "CD")
+data_anxiety_soft_long_uc <- data_anxiety_soft_long %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
-data_anxiety_hard_cd <- data_anxiety_hard %>% dplyr::filter(diagnosis2 == "CD")
+data_anxiety_hard_uc <- data_anxiety_hard %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
-data_anxiety_hard_long_cd <- data_anxiety_hard_long %>% dplyr::filter(diagnosis2 == "CD")
+data_anxiety_hard_long_uc <- data_anxiety_hard_long %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
 # Depression
-data_depression_soft_cd <- data_depression_soft %>% dplyr::filter(diagnosis2 == "CD")
+data_depression_soft_uc <- data_depression_soft %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
-data_depression_soft_long_cd <- data_depression_soft_long %>% dplyr::filter(diagnosis2 == "CD")
+data_depression_soft_long_uc <- data_depression_soft_long %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
-data_depression_hard_cd <- data_depression_hard %>% dplyr::filter(diagnosis2 == "CD")
+data_depression_hard_uc <- data_depression_hard %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
-data_depression_hard_long_cd <- data_depression_hard_long %>% dplyr::filter(diagnosis2 == "CD")
+data_depression_hard_long_uc <- data_depression_hard_long %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
 # Anxiety ####
 ## Soft ####

@@ -6,7 +6,7 @@ library(lmerTest)
 
 # Run data cleaning
 
-setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal data analysis/HADS/")
+setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/")
 
 source("data_cleaning.R")
 
