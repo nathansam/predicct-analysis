@@ -1,0 +1,1130 @@
+---
+title: "Women's Health"
+author:
+  - name: "Maria Teresa Brito"
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: IGC
+bibliography: Baseline.bib   
+---
+
+## Introduction
+
+```{R}
+#| message: false
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(flextable)
+library(readxl)
+library(tidytext)
+
+# Setup data paths
+if (file.exists("/docker")) {
+  # Docker environment
+  data_path <- "data/final/"
+} else {
+  # Native OS (MacOS/Windows detection)
+  if (Sys.info()["sysname"] != "Darwin") {
+    # Windows
+    data_path <- "//cmvm.datastore.ed.ac.uk/igmm/cvallejo-predicct/people/Teresa/PREdiCCt/"
+  } else {
+    # MacOS
+    data_path <- "/Volumes/igmm/cvallejo-predicct/people/Teresa/PREdiCCt/"
+  }
+}
+
+# Load data for descriptive analyses
+data_file_replace_values <- read_excel(
+  paste0(data_path, "Womenshealth replace values 5.5 data cleaning.xlsx")
+)
+```
+
+This page describes women's health characteristics collected by the PREdiCCt study, including pregnancy status, contraception use, menstrual cycle characteristics, and premenstrual syndrome.
+
+## Demographics
+
+### Age
+
+```{R}
+#| label: tbl-wh-age
+#| tbl-cap: "Age distribution in the women's health cohort."
+Age_table <- data_file_replace_values %>%
+  mutate(Age_category = case_when(
+    Age < 16 ~ "<16",
+    Age >= 16 & Age <= 45 ~ "16-45", 
+    Age > 45 ~ ">45"
+  )) %>%
+  filter(!is.na(Age_category)) %>%  
+  count(Age_category, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  arrange(desc(Count))
+
+Age_table_present <- flextable(Age_table) %>% 
+  set_header_labels(Age_category = "Age category") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+Age_table_present
+```
+
+### BMI
+
+```{R}
+#| label: tbl-wh-bmi
+#| tbl-cap: "BMI category distribution in the women's health cohort."
+BMI_table <- data_file_replace_values %>%
+  count(BMIcat, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  filter(!is.na(BMIcat))
+
+BMI_table_present <- flextable(BMI_table) %>% 
+  set_header_labels(BMIcat = "BMI Category") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+BMI_table_present
+```
+
+### Ethnicity
+
+```{R}
+#| label: tbl-wh-ethnicity
+#| tbl-cap: "Ethnicity distribution in the women's health cohort."
+Ethnicity_table <- data_file_replace_values %>%
+  mutate(Ethnicity = if_else(
+    is.na(Ethnicity) | Ethnicity == "", 
+    "No data", 
+    Ethnicity
+  )) %>% 
+  count(Ethnicity, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  arrange(desc(Count))
+
+Ethnicity_table_present <- flextable(Ethnicity_table) %>% 
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+Ethnicity_table_present
+```
+
+### Index of Multiple Deprivation
+
+```{R}
+#| label: tbl-wh-imd
+#| tbl-cap: "IMD distribution in the women's health cohort."
+IMD_table <- data_file_replace_values %>%
+  mutate(IMD = as.character(IMD)) %>% 
+  mutate(IMD = if_else(
+    is.na(IMD) | IMD == "",
+    "No data",
+    IMD
+  )) %>%
+  count(IMD, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1))
+
+IMD_table_present <- flextable(IMD_table) %>% 
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+IMD_table_present
+```
+
+### Smoking Status
+
+```{R}
+#| label: tbl-wh-smoking
+#| tbl-cap: "Smoking status in the women's health cohort."
+Smoking_table <- data_file_replace_values %>%
+  mutate(Smoke = if_else(
+    is.na(Smoke) | Smoke == "",
+    "No data",
+    Smoke
+  )) %>%
+  count(Smoke, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  arrange(desc(Count))
+
+Smoking_table_present <- flextable(Smoking_table) %>% 
+  set_header_labels(Smoke = "Smoking status") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+Smoking_table_present
+```
+
+```{R}
+#| label: tbl-wh-vaping
+#| tbl-cap: "Electronic cigarette use in the women's health cohort."
+Vape_table <- data_file_replace_values %>%
+  mutate(ECigs = if_else(
+    is.na(ECigs) | ECigs == "",
+    "No data",
+    ECigs
+  )) %>%
+  count(ECigs, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  arrange(desc(Count))
+
+Vape_table_present <- flextable(Vape_table) %>% 
+  set_header_labels(ECigs = "Electronic cigarette smoking status") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+Vape_table_present
+```
+
+## Clinical Information
+
+### Diagnosis
+
+```{R}
+#| label: tbl-wh-diagnosis
+#| tbl-cap: "IBD diagnosis distribution in the women's health cohort."
+Dx_table <- data_file_replace_values %>%
+  mutate(diagnosis = if_else(
+    is.na(diagnosis) | diagnosis == "",
+    "No data",
+    diagnosis
+  )) %>%
+  count(diagnosis, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  arrange(desc(Count))
+
+Dx_table_present <- flextable(Dx_table) %>% 
+  set_header_labels(diagnosis = "Diagnosis") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+Dx_table_present
+```
+
+### Time Since Diagnosis
+
+```{R}
+#| label: fig-wh-time-since-dx
+#| fig-cap: "Time since diagnosis in the female PREdiCCt cohort."
+#| warning: false
+timesinceDx_histogram <- data_file_replace_values %>%
+  ggplot(aes(x = IBD_Duration)) +
+  geom_density(alpha = 0.4, fill = "#53278f") +
+  labs(
+    x = "Time since diagnosis in years",
+    y = "Density",
+    title = "Time since diagnosis in the female PREdiCCt cohort"
+  ) +
+  theme_minimal()
+
+timesinceDx_histogram
+```
+
+### Faecal Calprotectin
+
+```{R}
+#| label: fig-wh-fc-dist
+#| fig-cap: "Distribution of faecal calprotectin levels in the female PREdiCCt cohort."
+#| warning: false
+calpro_histogram <- data_file_replace_values %>%
+  ggplot(aes(x = FC)) +
+  geom_density(alpha = 0.4, fill = "#9C072C") +
+  labs(
+    x = "Faecal calprotectin level",
+    y = "Density",
+    title = "Distribution of Faecal Calprotectin levels in the female PREdiCCt cohort"
+  ) +
+  theme_minimal()
+
+calpro_histogram
+```
+
+```{R}
+#| label: tbl-wh-fc-cat
+#| tbl-cap: "Faecal calprotectin categories in the women's health cohort."
+CalproCat_table <- data_file_replace_values %>%
+  count(cat, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  arrange(desc(Count)) %>%
+  filter(!is.na(cat))
+
+CalproCat_table_present <- flextable(CalproCat_table) %>% 
+  set_header_labels(cat = "Calprotectin level") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+CalproCat_table_present
+```
+
+### Biologic Use
+
+```{R}
+#| label: tbl-wh-biologic
+#| tbl-cap: "Biologic therapy use in the women's health cohort."
+BioCat_table <- data_file_replace_values %>%
+  count(Biologic_cat, name = "Count") %>%
+  mutate(Percentage = round(Count / sum(Count) * 100, 1)) %>%
+  arrange(desc(Count)) %>%
+  filter(!is.na(Biologic_cat))
+
+BioCat_table_present <- flextable(BioCat_table) %>% 
+  set_header_labels(Biologic_cat = "Biologic category") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+BioCat_table_present
+```
+
+## Pregnancy and Breastfeeding
+
+```{R}
+#| label: tbl-wh-pregnancy
+#| tbl-cap: "Pregnancy and breastfeeding status in the women's health cohort."
+pregnancy_table <- data_file_replace_values %>%
+  summarise(
+    CurrentlyPregnant = sum(CurrentlyPregnant == "Yes", na.rm = TRUE),
+    MaternityLeave = sum(MaternityLeave == "Yes", na.rm = TRUE),
+    TryingGetPregnant = sum(TryingGetPregnant == "Yes", na.rm = TRUE),
+    PregnancyBreastfeeding = sum(PregnancyBreastfeeding == "Yes", na.rm = TRUE)
+  ) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Count") %>%
+  mutate(Variable = recode(Variable,
+    "CurrentlyPregnant" = "Currently pregnant",
+    "MaternityLeave" = "On maternity leave",
+    "TryingGetPregnant" = "Trying to conceive",
+    "PregnancyBreastfeeding" = "Breastfeeding"
+  ))
+
+Pregnancy_table_present <- flextable(pregnancy_table) %>%
+  set_header_labels(Variable = "Pregnancy Status") %>%
+  align(align = "center", j = c(2), part = "all") %>%
+  autofit()
+
+Pregnancy_table_present
+```
+
+```{R}
+#| label: fig-wh-pregnancy
+#| fig-cap: "Pregnancy and breastfeeding status visualized."
+pregnancy_barchart <- pregnancy_table %>%
+  ggplot(aes(x = Variable, y = Count)) +
+  geom_col(fill = "#53278f", width = 0.5) +
+  geom_text(aes(label = Count), vjust = -0.3) +
+  labs(
+    title = "Pregnancy & breastfeeding",
+    x = "Pregnancy status",
+    y = "Count"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+pregnancy_barchart
+```
+
+## Contraception
+
+```{R}
+#| label: tbl-wh-contraception
+#| tbl-cap: "Contraception methods used in the women's health cohort."
+contraception_table_no_IU_distinction <- data_file_replace_values %>%
+  summarise(
+    Barrier = sum(Barrier == "1", na.rm = TRUE),
+    OralContraception = sum(OralContraception == "1", na.rm = TRUE),
+    Injectable = sum(Injectable == "1", na.rm = TRUE),
+    Implant = sum(Implant == "1", na.rm = TRUE),
+    Sterilised = sum(Sterilised == "1", na.rm = TRUE)
+  ) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Count") %>%
+  mutate(Variable = recode(Variable,
+    "Barrier" = "Barrier",
+    "OralContraception" = "Oral Contraception",
+    "Injectable" = "Injection",
+    "Implant" = "Implant",
+    "Sterilised" = "Sterilised"
+  ))
+
+mirena_copper <- data_file_replace_values %>%
+  count(IntrauterineContraceptionDevice) %>%
+  filter(IntrauterineContraceptionDevice %in% c("Mirena", "Copper")) %>%
+  rename(
+    Variable = IntrauterineContraceptionDevice,
+    Count = n
+  ) %>%
+  mutate(Variable = recode(Variable,
+    "Mirena" = "Mirena IUS",
+    "Copper" = "Copper IUD"
+  ))
+
+contraception_table <- bind_rows(contraception_table_no_IU_distinction, mirena_copper) %>%
+  arrange(Count) %>%
+  mutate(
+    Group = case_when(
+      Variable %in% c("Barrier", "Sterilised", "Copper IUD") ~ "Non-hormonal",
+      Variable %in% c("Oral Contraception", "Injection", "Implant", "Mirena IUS") ~ "Hormonal",
+      TRUE ~ "Other"
+    ),
+    Variable = reorder_within(Variable, Count, Group),
+    Variable = str_remove(Variable, "___.*$")
+  ) %>%
+  arrange(Group, Count) %>%
+  select(Group, Variable, Count)
+
+contraception_ft <- flextable(contraception_table) %>%
+  set_header_labels(
+    Variable = "Contraception Method",
+    Count = "Number of Patients",
+    Group = ""
+  ) %>%
+  merge_v(j = "Group") %>%
+  valign(j = "Group", valign = "top") %>%
+  bold(i = ~ !is.na(Group), j = "Group", bold = TRUE) %>%
+  autofit()
+
+contraception_ft
+```
+
+```{R}
+#| label: fig-wh-contraception
+#| fig-cap: "Contraception methods by type."
+#| fig-width: 10
+contraception_barchart <- contraception_table %>%
+  ggplot(aes(x = Variable, y = Count, fill = Variable)) +
+  geom_col(width = 0.7) +
+  scale_x_reordered() +
+  geom_text(aes(label = Count), vjust = -0.3, size = 3) +
+  facet_wrap(~ Group, scales = "free_x", nrow = 1) +
+  scale_fill_brewer(palette = "Purples") +
+  labs(
+    x = "",
+    y = "Number of Users",
+    title = "Contraception Methods by Type"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+
+contraception_barchart
+```
+
+## Menstrual Characteristics
+
+### Period Pain
+
+```{R}
+#| label: tbl-wh-period-pain
+#| tbl-cap: "Period pain severity in the women's health cohort."
+PeriodPain_table <- data_file_replace_values %>%
+  filter(!is.na(PeriodTypePain), PeriodTypePain != "N/A") %>% 
+  count(PeriodTypePain, name = "Frequency") %>%
+  mutate(Percentage = round(Frequency / sum(Frequency) * 100, 1)) %>%
+  arrange(desc(Frequency))
+
+PeriodPain_table_present <- flextable(PeriodPain_table) %>%
+  set_header_labels(PeriodTypePain = "Period Pain") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+PeriodPain_table_present
+```
+
+### Blood Loss
+
+```{R}
+#| label: tbl-wh-blood-loss
+#| tbl-cap: "Menstrual blood loss in the women's health cohort."
+BloodLoss_table <- data_file_replace_values %>%
+  filter(!is.na(DescribeBloodLoss), DescribeBloodLoss != "N/A") %>% 
+  count(DescribeBloodLoss, name = "Frequency") %>%
+  mutate(Percentage = round(Frequency / sum(Frequency) * 100, 1)) %>%
+  arrange(desc(Frequency))
+
+BloodLoss_table_present <- flextable(BloodLoss_table) %>%
+  set_header_labels(DescribeBloodLoss = "Blood Loss") %>%
+  align(align = "center", j = c(2:3), part = "all") %>%
+  autofit()
+
+BloodLoss_table_present
+```
+
+### Period Length
+
+```{R}
+#| label: fig-wh-period-length
+#| fig-cap: "Reported range of period length (filtered < 20 days)."
+#| fig-height: 8
+
+
+data_file_replace_values <- data_file_replace_values %>%
+  mutate(
+    BleedingShortestDays = as.numeric(BleedingShortestDays),
+    BleedingLongestDays = as.numeric(BleedingLongestDays),
+    UsualNumberDaysPeriod = as.numeric(UsualNumberDaysPeriod)
+  )
+        
+
+
+PeriodLength_graph <- data_file_replace_values %>%
+  select(BleedingShortestDays, BleedingLongestDays, DaysBleedingAverage) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "Measure",
+    values_to = "Days"
+  ) %>%
+  filter(!is.na(Days), Days != 0, Days < 20) %>%
+  mutate(Measure = recode(Measure,
+    "BleedingShortestDays" = "Shortest",
+    "DaysBleedingAverage" = "Average",
+    "BleedingLongestDays" = "Longest"
+  )) %>%
+  ggplot(aes(x = Days, colour = Measure, fill = Measure)) +
+  geom_density(alpha = 0.4) +
+  scale_fill_manual(values = c(
+    "Average" = "#53278f", 
+    "Shortest" = "#07779C", 
+    "Longest" = "#9C072C" 
+  )) +
+  scale_colour_manual(values = c(
+    "Average" = "#53278f",
+    "Shortest" = "#07779C",
+    "Longest" = "#9C072C"
+  )) +
+  labs(
+    x = "Number of Days",
+    y = "Density",
+    title = "Reported range of period length (filtered < 20 days)",
+    colour = "Number of days bleeding",
+    fill = "Number of days bleeding"
+  ) +
+  theme_minimal() +
+  facet_grid(rows = vars(Measure))
+
+PeriodLength_graph
+```
+
+### Cycle Length
+
+```{R}
+#| label: fig-wh-cycle-length-bar
+#| fig-cap: "Patient-reported cycle length."
+cycle_length_barchart <- data_file_replace_values %>%
+  filter(!is.na(UsualNumberDaysPeriod), UsualNumberDaysPeriod != 0) %>%
+  count(UsualNumberDaysPeriod) %>%
+  ggplot(aes(x = UsualNumberDaysPeriod, y = n)) +
+  geom_col(fill = "#53278f") +
+  geom_text(
+    data = . %>% filter(n == max(n)),
+    aes(label = UsualNumberDaysPeriod),
+    vjust = -0.3
+  ) +
+  labs(
+    x = "Usual cycle length in days",
+    y = "Number of patients",
+    title = "Patient-reported cycle length"
+  ) +
+  theme_minimal()
+
+cycle_length_barchart
+```
+
+```{R}
+#| label: fig-wh-cycle-length
+#| fig-cap: "Reported range of cycle length."
+#| fig-height: 8
+CycleLength_graph <- data_file_replace_values %>%
+  select(PeriodShortestDays, PeriodLongestDays, UsualNumberDaysPeriod) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "Measure",
+    values_to = "Days"
+  ) %>%
+  filter(!is.na(Days), Days != 0) %>%
+  mutate(Measure = recode(Measure,
+    "PeriodShortestDays" = "Shortest",
+    "PeriodLongestDays" = "Longest",
+    "UsualNumberDaysPeriod" = "Average"
+  )) %>%
+  ggplot(aes(x = Days, colour = Measure, fill = Measure)) +
+  geom_density(alpha = 0.4) +
+  scale_fill_manual(values = c(
+    "Average" = "#53278f",
+    "Shortest" = "#9a6fb5",
+    "Longest" = "#c4a7d1"
+  )) +
+  scale_colour_manual(values = c(
+    "Average" = "#53278f",
+    "Shortest" = "#c4a7d1",
+    "Longest" = "#9a6fb5"
+  )) +
+  labs(
+    x = "Number of Days",
+    y = "Density",
+    title = "Reported range of cycle length",
+    colour = "Length of cycle in days",
+    fill = "Length of cycle in days"
+  ) +
+  theme_minimal() +
+  facet_grid(rows = vars(Measure))
+
+CycleLength_graph
+```
+
+## Premenstrual Syndrome
+
+```{R}
+#| label: tbl-wh-pms
+#| tbl-cap: "Premenstrual syndrome in the women's health cohort."
+pms_suffer_summary <- data_file_replace_values %>%
+  filter(KnowWhatPMSIs == "Yes", !is.na(SufferPMS)) %>%
+  count(SufferPMS, name = "Count")
+
+pms_active_summary <- data_file_replace_values %>%
+  filter(KnowWhatPMSIs == "Yes", SufferPMS == "Yes") %>%
+  count(PMSDuringActiveIBD, name = "Count", drop = FALSE) %>%
+  mutate(PMSDuringActiveIBD = if_else(
+    is.na(PMSDuringActiveIBD),
+    "No data",
+    PMSDuringActiveIBD
+  ))
+
+pms_table <- tibble::tribble(
+  ~Category, ~Response, ~Count,
+  "Suffers from PMS", "No", as.integer(pms_suffer_summary %>% filter(SufferPMS == "No") %>% pull(Count)),
+  "Suffers from PMS", "Yes", as.integer(pms_suffer_summary %>% filter(SufferPMS == "Yes") %>% pull(Count)),
+  "PMS symptoms during active disease", "Better", as.integer(pms_active_summary %>% filter(PMSDuringActiveIBD == "Better") %>% pull(Count)),
+  "PMS symptoms during active disease", "Worse", as.integer(pms_active_summary %>% filter(PMSDuringActiveIBD == "Worse") %>% pull(Count)),
+  "PMS symptoms during active disease", "The same", as.integer(pms_active_summary %>% filter(PMSDuringActiveIBD == "The same") %>% pull(Count)),
+  "PMS symptoms during active disease", "No data", as.integer(pms_active_summary %>% filter(PMSDuringActiveIBD == "No data") %>% pull(Count))
+)
+
+pms_table_present <- flextable(pms_table) %>%
+  set_header_labels(
+    Category = "PMS Category",
+    Response = "Response",
+    Count = "Count"
+  ) %>%
+  merge_v(j = "Category") %>%
+  padding(i = 3:6, j = "Response", padding.left = 30) %>%
+  bg(i = 3:6, bg = "#f2f0f7") %>%
+  bold(i = 1:2, j = "Response", bold = TRUE) %>%
+  hline(i = 2) %>% 
+  valign(valign = "top") %>%
+  autofit()
+
+pms_table_present
+```
+
+## Faecal Calprotectin Analyses
+
+### Violin Plots
+
+```{R}
+#| message: false
+library(patchwork)
+
+# Load data with FC for violin plots
+demo_fc <- read.csv(paste0(
+  data_path,
+  "Womenshealth replace values 9.0 log(FC) and meno2 and hormonal2.csv"
+)) %>%
+  mutate(FC = as.numeric(FC))
+
+demo_fc$meno2 <- factor(demo_fc$meno2, levels = c("Pre-menopausal", "Post-menopausal"))
+
+# Filter to pre-menopausal for some plots
+demo_premeno_fc <- demo_fc %>%
+  filter(meno2 == "Pre-menopausal")
+```
+
+#### Menopausal Status and FC
+
+```{R}
+#| label: fig-wh-fc-meno
+#| fig-cap: "Faecal calprotectin levels by menopausal status."
+p1 <- ggplot(data = subset(demo_fc, !is.na(meno2)), 
+            aes(x = meno2, y = FC, fill = meno2)) + 
+  geom_violin(trim = FALSE) +
+  labs(x = "Menopausal status", y = "log(FC)") +
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme_bw() +
+  scale_fill_manual(values = c("#b163c1", "#63c1b1")) +
+  theme(legend.position = "none") +
+  ylim(1, 9)
+
+p1
+```
+
+#### Irregular Cycles and FC
+
+```{R}
+#| label: fig-wh-fc-irregular
+#| fig-cap: "Faecal calprotectin levels by cycle regularity (pre-menopausal women)."
+p2 <- ggplot(data = subset(demo_premeno_fc, !is.na(PeriodIrregular)), 
+            aes(x = PeriodIrregular, y = FC, fill = PeriodIrregular)) + 
+  geom_violin(trim = FALSE) +
+  labs(x = "Irregular periods", y = "log(FC)") +
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme_bw() +
+  scale_fill_manual(values = c("#ea9000", "#005aea")) +
+  theme(legend.position = "none") +
+  ylim(1, 9)
+
+p2
+```
+
+#### Rectal Bleeding and FC
+
+```{R}
+#| label: fig-wh-fc-bleeding
+#| fig-cap: "Faecal calprotectin levels by increased rectal bleeding during menses (pre-menopausal women)."
+demo_premeno_fc$PassMoreBlood <- factor(demo_premeno_fc$PassMoreBlood, levels = c("Disagree", "Agree"))
+
+p3 <- ggplot(data = subset(demo_premeno_fc, !is.na(PassMoreBlood)),
+             aes(x = PassMoreBlood, y = FC, fill = PassMoreBlood)) + 
+  geom_violin(trim = FALSE) +
+  labs(x = "Increased rectal bleeding during menses", y = "log(FC)") +
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme_bw() +
+  scale_fill_manual(values = c("#9cbb1e", "#bb1e1e")) +
+  theme(legend.position = "none") +
+  ylim(1, 9)
+
+p3
+```
+
+#### Hormonal Contraception and FC
+
+```{R}
+#| label: fig-wh-fc-contraception
+#| fig-cap: "Faecal calprotectin levels by hormonal contraception use (pre-menopausal women)."
+demo_premeno_fc$hormonal2 <- factor(demo_premeno_fc$hormonal2, levels = c("No", "Yes"))
+
+p4 <- ggplot(data = subset(demo_premeno_fc, !is.na(hormonal2)), 
+            aes(x = hormonal2, y = FC, fill = hormonal2)) + 
+  geom_violin(trim = FALSE) +
+  labs(x = "Use of hormonal contraception", y = "log(FC)") +
+  geom_boxplot(width = 0.1, fill = "white") +
+  theme_bw() +
+  scale_fill_manual(values = c("#00ebff", "#ff0085")) +
+  theme(legend.position = "none") +
+  ylim(1, 9)
+
+p4
+```
+
+#### Combined Violin Plot
+
+```{R}
+#| label: fig-wh-fc-combined
+#| fig-cap: "Baseline FC by demographic factors."
+#| fig-width: 14
+#| fig-height: 7
+patch <- p1 + labs(title = "Baseline FC by demographic factors") | p2 | p3 | p4
+
+patch
+
+# Save combined plot
+dir.create("plots/violin", recursive = TRUE, showWarnings = FALSE)
+plot_path <- "plots/violin/violin"
+
+cairo_pdf(paste0(plot_path, ".pdf"), width = 14, height = 7)
+print(patch, newpage = FALSE)
+dev.off()
+
+png(paste0(plot_path, ".png"), width = 14, height = 7, units = "in", res = 300)
+print(patch, newpage = FALSE)
+dev.off()
+```
+
+### Chi-Square Tests: Associations with FC Category
+
+```{R}
+#| message: false
+library(descr)
+
+# Prepare data for chi-square tests
+demo_chisq <- demo_fc
+demo_chisq$cat <- as.factor(demo_chisq$cat)
+```
+
+#### Menopausal Status
+
+```{R}
+#| label: tbl-wh-chisq-meno
+#| tbl-cap: "Association between menopausal status and FC category."
+demo_chisq$meno2 <- as.factor(demo_chisq$meno2)
+
+CrossTable(
+  demo_chisq$meno2,
+  demo_chisq$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Menopausal status", "FC category")
+)
+```
+
+#### Hormonal Contraception Use (Pre-menopausal)
+
+```{R}
+#| label: tbl-wh-chisq-contraception
+#| tbl-cap: "Association between hormonal contraception use and FC category (pre-menopausal women)."
+demo_chisq_premeno <- demo_chisq %>%
+  filter(meno2 == "Pre-menopausal")
+
+demo_chisq_premeno$hormonal2 <- as.factor(demo_chisq_premeno$hormonal2)
+
+CrossTable(
+  demo_chisq_premeno$hormonal2,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Hormonal contraception use", "FC category")
+)
+```
+
+#### Irregular Periods (Pre-menopausal)
+
+```{R}
+#| label: tbl-wh-chisq-irregular
+#| tbl-cap: "Association between irregular periods and FC category (pre-menopausal women)."
+demo_chisq_premeno$PeriodIrregular <- as.factor(demo_chisq_premeno$PeriodIrregular)
+
+CrossTable(
+  demo_chisq_premeno$PeriodIrregular,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Irregular period", "FC category")
+)
+```
+
+#### Period Pain (Pre-menopausal)
+
+```{R}
+#| label: tbl-wh-chisq-pain
+#| tbl-cap: "Association between dysmenorrhoea and FC category (pre-menopausal women)."
+demo_chisq_premeno$PeriodTypePain <- as.factor(demo_chisq_premeno$PeriodTypePain)
+
+CrossTable(
+  demo_chisq_premeno$PeriodTypePain,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Dysmenorrhoea", "FC category")
+)
+```
+
+#### Blood Loss (Pre-menopausal)
+
+```{R}
+#| label: tbl-wh-chisq-bloodloss
+#| tbl-cap: "Association between menstrual blood loss and FC category (pre-menopausal women)."
+demo_chisq_premeno$DescribeBloodLoss <- as.factor(demo_chisq_premeno$DescribeBloodLoss)
+
+CrossTable(
+  demo_chisq_premeno$DescribeBloodLoss,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Blood loss", "FC category")
+)
+```
+
+#### Passing Clots (Pre-menopausal)
+
+```{R}
+#| label: tbl-wh-chisq-clots
+#| tbl-cap: "Association between passing clots and FC category (pre-menopausal women)."
+demo_chisq_premeno$PassClots <- as.factor(demo_chisq_premeno$PassClots)
+
+CrossTable(
+  demo_chisq_premeno$PassClots,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Pass clots", "FC category")
+)
+```
+
+#### PMS (Pre-menopausal)
+
+```{R}
+#| label: tbl-wh-chisq-pms
+#| tbl-cap: "Association between PMS and FC category (pre-menopausal women who know what PMS is)."
+demo_chisq_premeno_pms <- demo_chisq_premeno %>%
+  filter(KnowWhatPMSIs == "Yes")
+
+demo_chisq_premeno_pms$SufferPMS <- as.factor(demo_chisq_premeno_pms$SufferPMS)
+
+CrossTable(
+  demo_chisq_premeno_pms$SufferPMS,
+  demo_chisq_premeno_pms$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Suffer from PMS", "FC category")
+)
+```
+
+#### IBD Symptoms During Menses (Pre-menopausal)
+
+```{R}
+#| label: tbl-wh-chisq-ibd-bleeding
+#| tbl-cap: "Association between increased rectal bleeding during menses and FC category (pre-menopausal women)."
+demo_chisq_premeno$PassMoreBlood <- as.factor(demo_chisq_premeno$PassMoreBlood)
+
+CrossTable(
+  demo_chisq_premeno$PassMoreBlood,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Pass more blood", "FC category")
+)
+```
+
+```{R}
+#| label: tbl-wh-chisq-ibd-bowel
+#| tbl-cap: "Association between more bowel movements during menses and FC category (pre-menopausal women)."
+demo_chisq_premeno$MoreBowelMovements <- as.factor(demo_chisq_premeno$MoreBowelMovements)
+
+CrossTable(
+  demo_chisq_premeno$MoreBowelMovements,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("More bowel movements", "FC category")
+)
+```
+
+```{R}
+#| label: tbl-wh-chisq-ibd-looser
+#| tbl-cap: "Association between looser bowel movements during menses and FC category (pre-menopausal women)."
+demo_chisq_premeno$LooserBowelMovements <- as.factor(demo_chisq_premeno$LooserBowelMovements)
+
+CrossTable(
+  demo_chisq_premeno$LooserBowelMovements,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Looser bowel movements", "FC category")
+)
+```
+
+```{R}
+#| label: tbl-wh-chisq-ibd-nausea
+#| tbl-cap: "Association between nausea during menses and FC category (pre-menopausal women)."
+demo_chisq_premeno$ProblemsNausea <- as.factor(demo_chisq_premeno$ProblemsNausea)
+
+CrossTable(
+  demo_chisq_premeno$ProblemsNausea,
+  demo_chisq_premeno$cat,
+  digits = 3,
+  expected = TRUE,
+  prop.r = TRUE,
+  prop.c = FALSE,
+  prop.t = TRUE,
+  prop.chisq = FALSE,
+  chisq = TRUE,
+  fisher = TRUE,
+  dnn = c("Nausea", "FC category")
+)
+```
+
+## Summary Tables
+
+```{R}
+#| message: false
+library(table1)
+library(survival)
+
+# Custom rendering function for continuous variables
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+                         digits = 3,
+                         round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
+
+# Load data with survival variables (reuse data_path from earlier)
+demo <- read.csv(paste0(
+  data_path,
+  "Womenshealth replace values 9.0 log(FC) and meno2 and hormonal2.csv"
+)) %>%
+  mutate(
+    DaysSinceLastPeriod = as.numeric(DaysSinceLastPeriod),
+    FC = as.numeric(FC)
+  )
+
+# Transform FC back from log scale
+demo <- demo %>%
+  mutate(FC_exp = exp(FC))
+
+# Create comparison dataset
+# Overall cohort
+comp <- demo
+comp$cohort <- "All"
+
+# Subset to just pre-menopausal from overall cohort
+premeno <- demo %>%
+  filter(
+    Menopause == "No" |
+      (Menopause == "Yes" & Age < 40 & 
+         (FormContraception == "Yes" | PregnancyBreastfeeding == "Yes"))
+  )
+
+premeno$cohort <- "Pre-menopausal"
+comp <- rbind(comp, premeno)
+
+# Subset to just post-menopausal from overall cohort
+postmeno <- demo %>%
+  filter(Menopause == "Yes" &
+         !(Age < 40 & (FormContraception == "Yes" | PregnancyBreastfeeding == "Yes" | HormoneReplacementStillTaking == "Yes"))
+)
+
+postmeno$cohort <- "Post-menopausal"
+comp <- rbind(comp, postmeno)
+
+# Set cohort factor levels
+comp$cohort <- factor(comp$cohort,
+                      levels = c("All", "Pre-menopausal", "Post-menopausal"),
+                      labels = c("Full cohort", "Pre-menopausal cohort", "Post-menopausal cohort")
+)
+
+# Convert numeric variables
+comp <- comp %>%
+  mutate(
+    Age = as.numeric(Age),
+    IBD_Duration = as.numeric(IBD_Duration),
+    IMD = as.numeric(IMD),
+    control_8 = as.numeric(control_8),
+    CReactiveProtein = as.numeric(CReactiveProtein),
+    FC_exp = as.numeric(FC_exp)
+  )
+```
+
+### Table 1: Participant Characteristics by Cohort
+
+```{R}
+#| label: tbl-wh-characteristics
+#| tbl-cap: "Baseline characteristics of the women's health cohort stratified by menopausal status."
+table1(
+  ~ Age +
+    Ethnicity +
+    BMIcat +
+    diagnosis +
+    IBD_Duration +
+    IMD +
+    Smoke +
+    ECigs +
+    control_8 +
+    vas_control +
+    FC_exp +
+    CReactiveProtein +
+    Surgery +
+    Biologic_cat | cohort,
+  data = comp,
+  render.continuous = my.render.cont,
+  overall = FALSE
+)
+```
+
+### Survival Summary
+
+```{R}
+#| label: tbl-wh-survival-summary
+#| tbl-cap: "Survival summary at 2 years for objective flare in the full cohort."
+
+# Calculate survival at 2 years
+demo_survival <- demo %>%
+  mutate(
+    hardflare_time = as.numeric(hardflare_time),
+    hardflare = as.numeric(hardflare)
+  )
+
+surv_summary <- summary(
+  survfit(Surv(hardflare_time, hardflare) ~ 1, data = demo_survival),
+  times = 365.25 * 2 - 1
+)
+
+# Create summary table
+surv_df <- data.frame(
+  Time = surv_summary$time,
+  N_at_risk = surv_summary$n.risk,
+  N_events = surv_summary$n.event,
+  Survival = round(surv_summary$surv, 3),
+  Lower_95_CI = round(surv_summary$lower, 3),
+  Upper_95_CI = round(surv_summary$upper, 3)
+)
+
+knitr::kable(surv_df, col.names = c(
+  "Time (days)",
+  "N at risk",
+  "N events",
+  "Survival probability",
+  "Lower 95% CI",
+  "Upper 95% CI"
+))
+```

@@ -1,0 +1,693 @@
+---
+title: "Women's Health"
+author:
+  - name: "Maria Teresa Brito"
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+    affiliations:
+      - ref: IGC
+bibliography: Survival.bib   
+---
+
+## Introduction
+
+```{R}
+#| message: false
+source("Survival/utils.R")
+
+# Load libraries
+load_libraries()
+
+# Setup data paths
+paths <- set_paths()
+
+# Setup data path for women's health data
+if (file.exists("/docker")) {
+  wh_data_path <- "data/final/"
+} else {
+  if (Sys.info()["sysname"] != "Darwin") {
+    # Windows
+    wh_data_path <- "//cmvm.datastore.ed.ac.uk/igmm/cvallejo-predicct/people/Teresa/PREdiCCt/"
+  } else {
+    # MacOS
+    wh_data_path <- "/Volumes/igmm/cvallejo-predicct/people/Teresa/PREdiCCt/"
+  }
+}
+
+# Load women's health data
+demo <- read.csv(paste0(
+  wh_data_path,
+  "Womenshealth replace values 9.0 log(FC) and meno2 and hormonal2.csv"
+)) %>%
+  mutate(
+    Age = as.numeric(Age),
+    softflare_time = as.numeric(softflare_time),
+    softflare = as.numeric(softflare),
+    hardflare_time = as.numeric(hardflare_time),
+    hardflare = as.numeric(hardflare),
+    IBD_Duration = as.numeric(IBD_Duration),
+    FC = as.numeric(FC)
+  ) %>%
+  mutate(FC = exp(FC))
+
+# Set menopausal status factor levels
+demo$meno2 <- factor(demo$meno2, levels = c("Pre-menopausal", "Post-menopausal"))
+
+# Create hormonal contraception variables
+demo <- demo %>%
+  mutate(
+    hormonal = case_when(
+      Patch == 1 | Ring == 1 | OralContraceptionPill == "COCP" ~ "Combined",
+      OralContraceptionPill == "POP" ~ "POP",
+      Injectable == 1 ~ "Injection",
+      Implant == 1 ~ "Implant",
+      IntrauterineContraceptionDevice == "Mirena" ~ "IUS", 
+      TRUE ~ "None"
+    )
+  ) %>%
+  mutate(
+    hormonal2 = case_when(
+      (hormonal == "Combined" |
+         hormonal == "POP" |
+         hormonal == "Injection" |
+         hormonal == "Implant" |
+         hormonal == "IUS") ~ "Yes",
+      hormonal == "None" ~ "No"
+    )
+  )
+```
+
+This page describes associations between women's health factors and time-to-flare, including menopausal status and hormonal contraception use.
+
+## Menopausal Status
+
+### Crohn's Disease
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+#| warning: false
+
+# Filter to CD patients
+flare.cd.df <- demo %>%
+  filter(diagnosis == "CD")
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(softflare_time, softflare) ~ meno2, data = flare.cd.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Menopausal status",
+  legend.labs = c(
+    "Pre-menopausal",
+    "Post-menopausal"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to patient-reported flare (CD)",
+  break.time.by = 200
+)
+
+dir.create("plots/cd/soft-flare/menopause",
+           recursive = TRUE,
+           showWarnings = FALSE)
+
+plot_path <- "plots/cd/soft-flare/menopause/menopause"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(invisible(dev.off()))
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~ Age + IMD + cat + BMIcat + Smoke + meno2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+#### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(hardflare_time, hardflare) ~ meno2, data = flare.cd.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.cd.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Menopausal status",
+  legend.labs = c(
+    "Pre-menopausal",
+    "Post-menopausal"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to objective flare (CD)",
+  break.time.by = 200
+)
+
+dir.create("plots/cd/hard-flare/menopause",
+           recursive = TRUE,
+           showWarnings = FALSE)
+plot_path <- "plots/cd/hard-flare/menopause/menopause"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~ Age + IMD + cat + BMIcat + Smoke + meno2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+:::
+
+### Ulcerative Colitis
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Filter to UC/IBDU patients
+flare.uc.df <- demo %>%
+  filter(!diagnosis == "CD")
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(softflare_time, softflare) ~ meno2, data = flare.uc.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Menopausal status",
+  legend.labs = c(
+    "Pre-menopausal",
+    "Post-menopausal"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to patient-reported flare (UC/IBDU)",
+  break.time.by = 200
+)
+
+dir.create("plots/uc/soft-flare/menopause",
+           recursive = TRUE,
+           showWarnings = FALSE)
+
+plot_path <- "plots/uc/soft-flare/menopause/menopause"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~ Age + IMD + cat + BMIcat + Smoke + meno2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+#### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(hardflare_time, hardflare) ~ meno2, data = flare.uc.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.uc.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Menopausal status",
+  legend.labs = c(
+    "Pre-menopausal",
+    "Post-menopausal"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to objective flare (UC/IBDU)",
+  break.time.by = 200
+)
+
+dir.create("plots/uc/hard-flare/menopause",
+           recursive = TRUE,
+           showWarnings = FALSE)
+plot_path <- "plots/uc/hard-flare/menopause/menopause"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~ Age + IMD + cat + BMIcat + Smoke + meno2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+:::
+
+### All IBD
+
+::: {.panel-tabset group="followup"}
+
+#### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(softflare_time, softflare) ~ meno2, data = demo)
+
+p <- ggsurvplot(
+  fit,
+  data = demo,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  pval.size = 5,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  fontsize = 6,
+  legend.title = "",
+  legend.labs = c(
+    "Pre-menopausal",
+    "Post-menopausal"
+  ),
+  font.legend = c(10),
+  xlab = "Time from study recruitment (days)",
+  font.x = c(14),
+  font.y = c(14),
+  title = "Time to patient-reported flare stratified by menopausal status",
+  font.title = c(14, "bold"),
+  break.time.by = 200,
+  palette = c("#b163c1", "#63c1b1")
+)
+
+dir.create("plots/ibd/soft-flare/menopause",
+           recursive = TRUE,
+           showWarnings = FALSE)
+
+plot_path <- "plots/ibd/soft-flare/menopause/menopause2"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~ Age + IMD + cat + BMIcat + Smoke + IBD_Duration + meno2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = demo
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+#### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(hardflare_time, hardflare) ~ meno2, data = demo)
+
+p <- ggsurvplot(
+  fit,
+  data = demo,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  pval.size = 5,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  fontsize = 6,
+  legend.title = "",
+  legend.labs = c(
+    "Pre-menopausal",
+    "Post-menopausal"
+  ),
+  font.legend = c(10),
+  xlab = "Time from study recruitment (days)",
+  font.x = c(14),
+  font.y = c(14),
+  title = "Time to objective flare stratified by menopausal status",
+  font.title = c(14, "bold"),
+  break.time.by = 200,
+  palette = c("#b163c1", "#63c1b1")
+)
+
+dir.create("plots/ibd/hard-flare/menopause",
+           recursive = TRUE,
+           showWarnings = FALSE)
+plot_path <- "plots/ibd/hard-flare/menopause/menopause2"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~ Age + IMD + cat + BMIcat + Smoke + IBD_Duration + meno2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = demo
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+:::
+
+## Hormonal Contraception
+
+### Pre-menopausal Cohort
+
+```{R}
+# Filter to pre-menopausal women
+demo_premeno <- demo %>%
+  filter(
+    Menopause == "No" |
+      (Menopause == "Yes" & Age < 40 & 
+         (FormContraception == "Yes" | PregnancyBreastfeeding == "Yes"))
+  )
+```
+
+#### Crohn's Disease
+
+::: {.panel-tabset group="followup"}
+
+##### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Filter to CD patients
+flare.cd.premeno.df <- demo_premeno %>%
+  filter(diagnosis == "CD")
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(softflare_time, softflare) ~ hormonal2, data = flare.cd.premeno.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.cd.premeno.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Use of hormonal contraception",
+  legend.labs = c(
+    "No",
+    "Yes"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to patient-reported flare (CD, pre-menopausal)",
+  break.time.by = 200
+)
+
+dir.create("plots/cd/soft-flare/contraception",
+           recursive = TRUE,
+           showWarnings = FALSE)
+
+plot_path <- "plots/cd/soft-flare/contraception/use"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~ Age + IMD + cat + BMIcat + Smoke + hormonal2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.premeno.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+##### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(hardflare_time, hardflare) ~ hormonal2, data = flare.cd.premeno.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.cd.premeno.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Use of hormonal contraception",
+  legend.labs = c(
+    "No",
+    "Yes"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to objective flare (CD, pre-menopausal)",
+  break.time.by = 200
+)
+
+dir.create("plots/cd/hard-flare/contraception",
+           recursive = TRUE,
+           showWarnings = FALSE)
+plot_path <- "plots/cd/hard-flare/contraception/use"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~ Age + IMD + cat + BMIcat + Smoke + hormonal2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.cd.premeno.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+:::
+
+#### Ulcerative Colitis
+
+::: {.panel-tabset group="followup"}
+
+##### Patient-reported flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Filter to UC/IBDU patients
+flare.uc.premeno.df <- demo_premeno %>%
+  filter(!diagnosis == "CD")
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(softflare_time, softflare) ~ hormonal2, data = flare.uc.premeno.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.uc.premeno.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Use of hormonal contraception",
+  legend.labs = c(
+    "No",
+    "Yes"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to patient-reported flare (UC/IBDU, pre-menopausal)",
+  break.time.by = 200
+)
+
+dir.create("plots/uc/soft-flare/contraception",
+           recursive = TRUE,
+           showWarnings = FALSE)
+
+plot_path <- "plots/uc/soft-flare/contraception/use"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(softflare_time, softflare) ~ Age + IMD + cat + BMIcat + Smoke + hormonal2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.premeno.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+##### Objective flare
+
+```{R}
+#| results: "hold"
+#| output: "asis"
+#| fig-height: 6.5
+
+# Generate Kaplan-Meier survival plot
+fit <- survfit(Surv(hardflare_time, hardflare) ~ hormonal2, data = flare.uc.premeno.df)
+
+p <- ggsurvplot(
+  fit,
+  data = flare.uc.premeno.df,
+  conf.int = TRUE,
+  pval = TRUE,
+  pval.method = TRUE,
+  ggtheme = theme_minimal(),
+  risk.table = TRUE,
+  legend.title = "Use of hormonal contraception",
+  legend.labs = c(
+    "No",
+    "Yes"
+  ),
+  xlab = "Time from study recruitment (days)",
+  title = "Time to objective flare (UC/IBDU, pre-menopausal)",
+  break.time.by = 200
+)
+
+dir.create("plots/uc/hard-flare/contraception",
+           recursive = TRUE,
+           showWarnings = FALSE)
+plot_path <- "plots/uc/hard-flare/contraception/use"
+
+cairo_pdf(paste0(plot_path, ".pdf"))
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+png(paste0(plot_path, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(p, newpage = FALSE)
+invisible(dev.off())
+
+knitr::include_graphics(paste0(plot_path, ".png"))
+
+# Fit Cox model
+fit.me <- coxph(
+  Surv(hardflare_time, hardflare) ~ Age + IMD + cat + BMIcat + Smoke + hormonal2 + frailty(SiteNo),
+  control = coxph.control(outer.max = 20),
+  data = flare.uc.premeno.df
+)
+
+invisible(cox_summary(fit.me, plot_base_path = plot_path))
+```
+
+:::
