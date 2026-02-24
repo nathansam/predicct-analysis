@@ -22,7 +22,16 @@ custom_theme = theme_minimal() +
     legend.position = "top"
   )
 
-# Mean HADS between 0 and 12 months by flare occurring between 0 and 12 months
+# Median somatisation between 0 and 12 months by flare occurring between 0 and 12 months
+
+# CD
+data_soft_long %<>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+data_hard_long %<>%
+  dplyr::filter(diagnosis2 == 'CD')
+
+# Soft ####
 data_soft_long_0to12 <- data_soft_long %>%
   dplyr::mutate(
     flare0to12 = dplyr::case_when(
@@ -36,12 +45,10 @@ data_soft_long_0to12 <- data_soft_long %>%
   dplyr::filter(month != 24) %>%
   dplyr::group_by(month, flare0to12) %>%
   dplyr::summarise(
-    mean_val = mean(TotalPHQ, na.rm = TRUE),
-    sd_val = sd(TotalPHQ, na.rm = TRUE),
+    median = median(TotalPHQ, na.rm = TRUE),
     n_obs = sum(!is.na(TotalPHQ)), # Count only non-NA values
-    se = sd_val / sqrt(n_obs),
-    lower = mean_val - 1.96 * se,
-    upper = mean_val + 1.96 * se,
+    lower = quantile(TotalPHQ, probs = c(0.25), na.rm = TRUE),
+    upper = quantile(TotalPHQ, probs = c(0.75), na.rm = TRUE),
     .groups = "drop"
   ) %>%
   dplyr::mutate(segment = "0 to 12 months") %>%
@@ -64,23 +71,23 @@ data_soft_long_12to24 <- data_soft_long %>%
   dplyr::filter(month != 0) %>%
   dplyr::group_by(month, flare12to24) %>%
   dplyr::summarise(
-    mean_val = mean(TotalPHQ, na.rm = TRUE),
-    sd_val = sd(TotalPHQ, na.rm = TRUE),
+    median = median(TotalPHQ, na.rm = TRUE),
     n_obs = sum(!is.na(TotalPHQ)), # Count only non-NA values
-    se = sd_val / sqrt(n_obs),
-    lower = mean_val - 1.96 * se,
-    upper = mean_val + 1.96 * se,
+    lower = quantile(TotalPHQ, probs = c(0.25), na.rm = TRUE),
+    upper = quantile(TotalPHQ, probs = c(0.75), na.rm = TRUE),
     .groups = "drop"
   ) %>%
   dplyr::mutate(segment = "12 to 24 months") %>%
   dplyr::rename(flare_status = flare12to24)
 
+
+# Plot
 data_soft_long_0to12 %>%
   dplyr::bind_rows(data_soft_long_12to24) %>%
   dplyr::mutate(group = interaction(flare_status, segment)) %>%
   ggplot(aes(
     x = month, 
-    y = mean_val, 
+    y = median, 
     group = group, 
     colour = flare_status,
     fill = flare_status)) +  
@@ -97,13 +104,13 @@ data_soft_long_0to12 %>%
   labs(color = "Patient-reported flare",
        fill = "Patient-reported flare",
        x = "Month",
-       y = "Mean (95% CI) somatisation score") +
+       y = "Median (IQR) somatisation score") +
   #ggtitle("Somatisation over time in IBD by patient-reported flare status") +
   custom_theme
 
 
 
-# Hard
+# Hard ####
 
 data_hard_long_0to12 <- data_hard_long %>%
   dplyr::mutate(
@@ -118,12 +125,10 @@ data_hard_long_0to12 <- data_hard_long %>%
   dplyr::filter(month != 24) %>%
   dplyr::group_by(month, flare0to12) %>%
   dplyr::summarise(
-    mean_val = mean(TotalPHQ, na.rm = TRUE),
-    sd_val = sd(TotalPHQ, na.rm = TRUE),
+    median = median(TotalPHQ, na.rm = TRUE),
     n_obs = sum(!is.na(TotalPHQ)), # Count only non-NA values
-    se = sd_val / sqrt(n_obs),
-    lower = mean_val - 1.96 * se,
-    upper = mean_val + 1.96 * se,
+    lower = quantile(TotalPHQ, probs = c(0.25), na.rm = TRUE),
+    upper = quantile(TotalPHQ, probs = c(0.75), na.rm = TRUE),
     .groups = "drop"
   ) %>%
   dplyr::mutate(segment = "0 to 12 months") %>%
@@ -146,12 +151,10 @@ data_hard_long_12to24 <- data_hard_long %>%
   dplyr::filter(month != 0) %>%
   dplyr::group_by(month, flare12to24) %>%
   dplyr::summarise(
-    mean_val = mean(TotalPHQ, na.rm = TRUE),
-    sd_val = sd(TotalPHQ, na.rm = TRUE),
+    median = median(TotalPHQ, na.rm = TRUE),
     n_obs = sum(!is.na(TotalPHQ)), # Count only non-NA values
-    se = sd_val / sqrt(n_obs),
-    lower = mean_val - 1.96 * se,
-    upper = mean_val + 1.96 * se,
+    lower = quantile(TotalPHQ, probs = c(0.25), na.rm = TRUE),
+    upper = quantile(TotalPHQ, probs = c(0.75), na.rm = TRUE),
     .groups = "drop"
   ) %>%
   dplyr::mutate(segment = "12 to 24 months") %>%
@@ -162,7 +165,7 @@ data_hard_long_0to12 %>%
   dplyr::mutate(group = interaction(flare_status, segment)) %>%
   ggplot(aes(
     x = month, 
-    y = mean_val, 
+    y = median, 
     group = group, 
     colour = flare_status,
     fill = flare_status)) +  
@@ -179,6 +182,6 @@ data_hard_long_0to12 %>%
   labs(color = "Objective flare",
        fill = "Objective flare",
        x = "Month",
-       y = "Mean (95% CI) somatisation score") +
+       y = "Median (IQR) somatisation score") +
   #ggtitle("Somatisation over time in IBD by patient-reported flare status") +
   custom_theme

@@ -97,7 +97,7 @@ data_soft_long_0to12 %>%
   labs(color = "Patient-reported flare",
        fill = "Patient-reported flare",
        x = "Month",
-       y = "Median somatisation score") +
+       "y = Median (IQR) somatisation score") +
   #ggtitle("Somatisation over time in IBD by patient-reported flare status") +
   custom_theme
 
@@ -175,6 +175,6 @@ data_hard_long_0to12 %>%
   labs(color = "Objective flare",
        fill = "Objective flare",
        x = "Month",
-       y = "Median somatisation score") +
+       "y = Median (IQR) somatisation score") +
   #ggtitle("Somatisation over time in IBD by patient-reported flare status") +
   custom_theme

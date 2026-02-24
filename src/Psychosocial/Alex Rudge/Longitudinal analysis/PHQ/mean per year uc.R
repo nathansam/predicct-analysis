@@ -22,7 +22,16 @@ custom_theme = theme_minimal() +
     legend.position = "top"
   )
 
-# Mean HADS between 0 and 12 months by flare occurring between 0 and 12 months
+# Mean between 0 and 12 months by flare occurring between 0 and 12 months
+
+# UC
+data_soft_long %<>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+data_hard_long %<>%
+  dplyr::filter(diagnosis2 == 'UC/IBDU')
+
+
 data_soft_long_0to12 <- data_soft_long %>%
   dplyr::mutate(
     flare0to12 = dplyr::case_when(
