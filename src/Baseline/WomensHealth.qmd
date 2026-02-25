@@ -20,6 +20,21 @@ library(dplyr)
 library(flextable)
 library(readxl)
 library(tidytext)
+library(patchwork)
+library(table1)
+library(survival)
+library(descr)
+
+# Custom rendering function for continuous variables
+my.render.cont <- function(x) {
+  with(
+    stats.apply.rounding(stats.default(x),
+                         digits = 3,
+                         round.integers = FALSE
+    ),
+    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
+  )
+}
 
 # Setup data paths
 if (file.exists("/docker")) {
@@ -42,9 +57,19 @@ data_file_replace_values <- read_excel(
 )
 ```
 
-This page describes women's health characteristics collected by the PREdiCCt study, including pregnancy status, contraception use, menstrual cycle characteristics, and premenstrual syndrome.
+This page describes women's health characteristics collected by the PREdiCCt
+study, including pregnancy status, contraception use, menstrual cycle
+characteristics, and premenstrual syndrome.
+
+The women's health cohort is defined by a subject answering any of the women's
+health related questions. These questions were developed in collaboration with
+gynecological/obstetric colleagues but were not derived from validated
+questionnaires. 
 
 ## Demographics
+
+To provide an overview of the women's health cohort, which will asssist with 
+later interpretaion, we first consider demographic characteristics.
 
 ### Age
 
@@ -208,7 +233,7 @@ Dx_table_present
 #| fig-cap: "Time since diagnosis in the female PREdiCCt cohort."
 #| warning: false
 timesinceDx_histogram <- data_file_replace_values %>%
-  ggplot(aes(x = IBD_Duration)) +
+  ggplot(aes(x = as.numeric(IBD_Duration))) +
   geom_density(alpha = 0.4, fill = "#53278f") +
   labs(
     x = "Time since diagnosis in years",
@@ -227,12 +252,13 @@ timesinceDx_histogram
 #| fig-cap: "Distribution of faecal calprotectin levels in the female PREdiCCt cohort."
 #| warning: false
 calpro_histogram <- data_file_replace_values %>%
-  ggplot(aes(x = FC)) +
+  ggplot(aes(x = exp(exp(as.numeric(FC))))) +
   geom_density(alpha = 0.4, fill = "#9C072C") +
   labs(
     x = "Faecal calprotectin level",
     y = "Density",
-    title = "Distribution of Faecal Calprotectin levels in the female PREdiCCt cohort"
+    title = paste("Distribution of Faecal Calprotectin levels",
+                  "in the female PREdiCCt cohort")
   ) +
   theme_minimal()
 
@@ -454,6 +480,7 @@ BloodLoss_table_present
 #| label: fig-wh-period-length
 #| fig-cap: "Reported range of period length (filtered < 20 days)."
 #| fig-height: 8
+#| warning: false
 
 
 data_file_replace_values <- data_file_replace_values %>%
@@ -621,7 +648,6 @@ pms_table_present
 
 ```{R}
 #| message: false
-library(patchwork)
 
 # Load data with FC for violin plots
 demo_fc <- read.csv(paste0(
@@ -642,6 +668,7 @@ demo_premeno_fc <- demo_fc %>%
 ```{R}
 #| label: fig-wh-fc-meno
 #| fig-cap: "Faecal calprotectin levels by menopausal status."
+#| warning: false
 p1 <- ggplot(data = subset(demo_fc, !is.na(meno2)), 
             aes(x = meno2, y = FC, fill = meno2)) + 
   geom_violin(trim = FALSE) +
@@ -660,8 +687,10 @@ p1
 ```{R}
 #| label: fig-wh-fc-irregular
 #| fig-cap: "Faecal calprotectin levels by cycle regularity (pre-menopausal women)."
-p2 <- ggplot(data = subset(demo_premeno_fc, !is.na(PeriodIrregular)), 
-            aes(x = PeriodIrregular, y = FC, fill = PeriodIrregular)) + 
+#| warning: false
+p2 <- demo_premeno_fc %>%
+  drop_na(PeriodIrregular) %>%
+  ggplot(aes(x = PeriodIrregular, y = FC, fill = PeriodIrregular)) + 
   geom_violin(trim = FALSE) +
   labs(x = "Irregular periods", y = "log(FC)") +
   geom_boxplot(width = 0.1, fill = "white") +
@@ -678,7 +707,9 @@ p2
 ```{R}
 #| label: fig-wh-fc-bleeding
 #| fig-cap: "Faecal calprotectin levels by increased rectal bleeding during menses (pre-menopausal women)."
-demo_premeno_fc$PassMoreBlood <- factor(demo_premeno_fc$PassMoreBlood, levels = c("Disagree", "Agree"))
+#| warning: false
+demo_premeno_fc <- demo_premeno_fc %>%
+  mutate(PassMoreBlood = factor(PassMoreBlood, levels = c("Disagree", "Agree")))
 
 p3 <- ggplot(data = subset(demo_premeno_fc, !is.na(PassMoreBlood)),
              aes(x = PassMoreBlood, y = FC, fill = PassMoreBlood)) + 
@@ -698,6 +729,7 @@ p3
 ```{R}
 #| label: fig-wh-fc-contraception
 #| fig-cap: "Faecal calprotectin levels by hormonal contraception use (pre-menopausal women)."
+#| warning: false
 demo_premeno_fc$hormonal2 <- factor(demo_premeno_fc$hormonal2, levels = c("No", "Yes"))
 
 p4 <- ggplot(data = subset(demo_premeno_fc, !is.na(hormonal2)), 
@@ -720,6 +752,7 @@ p4
 #| fig-cap: "Baseline FC by demographic factors."
 #| fig-width: 14
 #| fig-height: 7
+#| warning: false
 patch <- p1 + labs(title = "Baseline FC by demographic factors") | p2 | p3 | p4
 
 patch
@@ -730,18 +763,17 @@ plot_path <- "plots/violin/violin"
 
 cairo_pdf(paste0(plot_path, ".pdf"), width = 14, height = 7)
 print(patch, newpage = FALSE)
-dev.off()
+invisible(dev.off())
 
 png(paste0(plot_path, ".png"), width = 14, height = 7, units = "in", res = 300)
 print(patch, newpage = FALSE)
-dev.off()
+invisible(dev.off())
 ```
 
 ### Chi-Square Tests: Associations with FC Category
 
 ```{R}
 #| message: false
-library(descr)
 
 # Prepare data for chi-square tests
 demo_chisq <- demo_fc
@@ -800,7 +832,8 @@ CrossTable(
 ```{R}
 #| label: tbl-wh-chisq-irregular
 #| tbl-cap: "Association between irregular periods and FC category (pre-menopausal women)."
-demo_chisq_premeno$PeriodIrregular <- as.factor(demo_chisq_premeno$PeriodIrregular)
+demo_chisq_premeno <- demo_chisq_premeno %>%
+  mutate(PeriodIrregular <- as.factor(PeriodIrregular))
 
 CrossTable(
   demo_chisq_premeno$PeriodIrregular,
@@ -822,7 +855,8 @@ CrossTable(
 ```{R}
 #| label: tbl-wh-chisq-pain
 #| tbl-cap: "Association between dysmenorrhoea and FC category (pre-menopausal women)."
-demo_chisq_premeno$PeriodTypePain <- as.factor(demo_chisq_premeno$PeriodTypePain)
+demo_chisq_premeno <- demo_chisq_premeno %>%
+  mutate(PeriodTypePain <- as.factor(PeriodTypePain))
 
 CrossTable(
   demo_chisq_premeno$PeriodTypePain,
@@ -844,7 +878,8 @@ CrossTable(
 ```{R}
 #| label: tbl-wh-chisq-bloodloss
 #| tbl-cap: "Association between menstrual blood loss and FC category (pre-menopausal women)."
-demo_chisq_premeno$DescribeBloodLoss <- as.factor(demo_chisq_premeno$DescribeBloodLoss)
+demo_chisq_premeno <- demo_chisq_premeno %>%
+  mutate(DescribeBloodLoss = as.factor(DescribeBloodLoss))
 
 CrossTable(
   demo_chisq_premeno$DescribeBloodLoss,
@@ -953,7 +988,8 @@ CrossTable(
 ```{R}
 #| label: tbl-wh-chisq-ibd-looser
 #| tbl-cap: "Association between looser bowel movements during menses and FC category (pre-menopausal women)."
-demo_chisq_premeno$LooserBowelMovements <- as.factor(demo_chisq_premeno$LooserBowelMovements)
+demo_chisq_premeno <- demo_chisq_premeno %>%
+  mutate(LooserBowelMovements = as.factor(LooserBowelMovements))
 
 CrossTable(
   demo_chisq_premeno$LooserBowelMovements,
@@ -973,7 +1009,8 @@ CrossTable(
 ```{R}
 #| label: tbl-wh-chisq-ibd-nausea
 #| tbl-cap: "Association between nausea during menses and FC category (pre-menopausal women)."
-demo_chisq_premeno$ProblemsNausea <- as.factor(demo_chisq_premeno$ProblemsNausea)
+demo_chisq_premeno <- demo_chisq_premeno %>%
+  mutate(ProblemsNausea = as.factor(ProblemsNausea))
 
 CrossTable(
   demo_chisq_premeno$ProblemsNausea,
@@ -994,20 +1031,6 @@ CrossTable(
 
 ```{R}
 #| message: false
-library(table1)
-library(survival)
-
-# Custom rendering function for continuous variables
-my.render.cont <- function(x) {
-  with(
-    stats.apply.rounding(stats.default(x),
-                         digits = 3,
-                         round.integers = FALSE
-    ),
-    c("", "Median (IQR)" = sprintf("%s (%s - %s)", MEDIAN, Q1, Q3))
-  )
-}
-
 # Load data with survival variables (reuse data_path from earlier)
 demo <- read.csv(paste0(
   data_path,
@@ -1048,9 +1071,10 @@ postmeno$cohort <- "Post-menopausal"
 comp <- rbind(comp, postmeno)
 
 # Set cohort factor levels
-comp$cohort <- factor(comp$cohort,
-                      levels = c("All", "Pre-menopausal", "Post-menopausal"),
-                      labels = c("Full cohort", "Pre-menopausal cohort", "Post-menopausal cohort")
+comp$cohort <- factor(
+  comp$cohort,
+  levels = c("All", "Pre-menopausal", "Post-menopausal"),
+  labels = c("Full cohort", "Pre-menopausal cohort", "Post-menopausal cohort")
 )
 
 # Convert numeric variables

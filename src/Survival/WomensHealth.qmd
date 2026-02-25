@@ -137,7 +137,14 @@ knitr::include_graphics(paste0(plot_path, ".png"))
 
 # Fit Cox model
 fit.me <- coxph(
-  Surv(softflare_time, softflare) ~ Age + IMD + cat + BMIcat + Smoke + meno2 + frailty(SiteNo),
+  Surv(softflare_time, softflare) ~
+    Age +
+    IMD +
+    cat +
+    BMIcat +
+    Smoke +
+    meno2 +
+    frailty(SiteNo),
   control = coxph.control(outer.max = 20),
   data = flare.cd.df
 )
