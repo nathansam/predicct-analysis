@@ -5,24 +5,23 @@ library(survminer)
 
 # Run data cleaning
 
-setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/PHQ/")
+setwd("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/Fatigue/")
 
 source("tdc data.R")
-source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
+#source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 
+
+# Time dependent cox model
 
 # CD
 data_soft_merged %<>% dplyr::filter(diagnosis2 == "CD")
 data_hard_merged %<>% dplyr::filter(diagnosis2 == "CD")
 
-# Time dependent cox model
-
-# Anxiety ####
 ## Soft ####
 
 cox_soft <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
-    somatisation +
+    OftenLackEnergy +
     IMD +
     Sex +
     age_decade +
@@ -39,7 +38,7 @@ cox_soft %>%
 
 cox_hard <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
-    somatisation +
+    OftenLackEnergy +
     IMD +
     Sex +
     age_decade +
