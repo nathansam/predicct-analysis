@@ -60,6 +60,10 @@ website:
     creator: "@IBDNathan"
     site: "@EdinUni_IGC"
   open-graph: true
+  google-analytics:
+    tracking-id: "G-J5ZPXBKX77"
+    storage: "cookies"
+    anonymize-ip: true
   sidebar:
     logo: "PREdiCCtlogo.png"
     style: "floating"
