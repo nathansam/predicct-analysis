@@ -14,12 +14,12 @@ source("tdc data.R")
 # Time dependent cox model
 
 # UC
-data_soft_merged %<>% dplyr::filter(diagnosis2 == "UC/IBDU")
-data_hard_merged %<>% dplyr::filter(diagnosis2 == "UC/IBDU")
+data_soft_merged_uc <- data_soft_merged %>% dplyr::filter(diagnosis2 == "UC/IBDU")
+data_hard_merged_uc <- data_hard_merged %>% dplyr::filter(diagnosis2 == "UC/IBDU")
 
 ## Soft ####
 
-cox_soft <- coxph(
+cox_soft_uc <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
     OftenLackEnergy +
     IMD +
@@ -28,15 +28,15 @@ cox_soft <- coxph(
     FC +
     Smoke +
     frailty(SiteNo),
-  data = data_soft_merged
+  data = data_soft_merged_uc
 )
 
-cox_soft %>%
+cox_soft_uc %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
 ## Hard ####
 
-cox_hard <- coxph(
+cox_hard_uc <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
     OftenLackEnergy +
     IMD +
@@ -45,8 +45,8 @@ cox_hard <- coxph(
     FC +
     Smoke +
     frailty(SiteNo),
-  data = data_hard_merged
+  data = data_hard_merged_uc
 )
 
-cox_hard %>%
+cox_hard_uc %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)

@@ -297,6 +297,31 @@ phq %<>%
   )
 
 
+
+# Save phq in long format
+
+phq_long <- phq %>%
+  dplyr::rename(
+    somatisation_0 = somatisation,
+    TotalPHQ_0 = TotalPHQ
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c(somatisation_0, somatisation_12, somatisation_24, TotalPHQ_0, TotalPHQ_12, TotalPHQ_24),
+    names_to = c(".value", "month"),
+    names_sep = "_"
+  ) %>%
+  # Month numeric
+  dplyr::mutate(
+    month = as.numeric(month)
+  )
+
+filepath_save <- '/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Longitudinal analysis/'
+
+readr::write_rds(
+  x = phq_long,
+  file = glue::glue("{filepath_save}phq_long.rds")
+)
+
 # Survival data
 data_soft <- phq %>% 
   dplyr::inner_join(

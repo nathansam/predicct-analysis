@@ -26,7 +26,7 @@ data_soft_long %>%
   dplyr::count(month) %>%
   dplyr::mutate(month = forcats::as_factor(month)) %>%
   ggplot(aes(x = month, y = n)) +
-  geom_col(colour = 'blue',, fill = 'blue', alpha = 0.5) +
+  geom_col(colour = 'blue', fill = 'blue', alpha = 0.5) +
   scale_y_continuous(breaks = seq(0, 2000, 250)) +
   xlab("Month") +
   ylab("Number of participant responses") +

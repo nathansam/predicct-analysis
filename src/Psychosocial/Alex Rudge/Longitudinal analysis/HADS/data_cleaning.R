@@ -297,7 +297,36 @@ hads %<>%
   )
 
 hads %<>%
-  dplyr::filter(!(is.na(anxiety_hads) | is.na(depression_hads)))
+  dplyr::filter(!(is.na(anxiety_hads) & is.na(depression_hads)))
+
+
+# Save hads in long format
+
+hads_long <- hads %>%
+  dplyr::rename(
+    anxiety_0 = anxiety_hads,
+    anxiety_12 = anxiety_hads_12,
+    anxiety_24 = anxiety_hads_24,
+    depression_0 = depression_hads,
+    depression_12 = depression_hads_12,
+    depression_24 = depression_hads_24,
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c(anxiety_0, anxiety_12, anxiety_24, depression_0, depression_12, depression_24),
+    names_to = c(".value", "month"),
+    names_sep = "_"
+  ) %>%
+  # Month numeric
+  dplyr::mutate(
+    month = as.numeric(month)
+  )
+
+filepath_save <- '/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Longitudinal analysis/'
+
+readr::write_rds(
+  x = hads_long,
+  file = glue::glue("{filepath_save}hads_long.rds")
+)
 
 
 # Survival data

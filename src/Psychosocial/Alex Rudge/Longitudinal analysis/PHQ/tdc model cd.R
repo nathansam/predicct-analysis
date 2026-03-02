@@ -12,15 +12,15 @@ source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 
 
 # CD
-data_soft_merged %<>% dplyr::filter(diagnosis2 == "CD")
-data_hard_merged %<>% dplyr::filter(diagnosis2 == "CD")
+data_soft_merged_cd <- data_soft_merged %>% dplyr::filter(diagnosis2 == "CD")
+data_hard_merged_cd <- data_hard_merged %>% dplyr::filter(diagnosis2 == "CD")
 
 # Time dependent cox model
 
 # Anxiety ####
 ## Soft ####
 
-cox_soft <- coxph(
+cox_soft_cd <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
     somatisation +
     IMD +
@@ -29,15 +29,15 @@ cox_soft <- coxph(
     FC +
     Smoke +
     frailty(SiteNo),
-  data = data_soft_merged
+  data = data_soft_merged_cd
 )
 
-cox_soft %>%
+cox_soft_cd %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
 
 ## Hard ####
 
-cox_hard <- coxph(
+cox_hard_cd <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
     somatisation +
     IMD +
@@ -46,8 +46,8 @@ cox_hard <- coxph(
     FC +
     Smoke +
     frailty(SiteNo),
-  data = data_hard_merged
+  data = data_hard_merged_cd
 )
 
-cox_hard %>%
+cox_hard_cd %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
