@@ -186,7 +186,7 @@ tbl <- data_table %>%
       gtsummary::bold_p(q = TRUE)
   ) %>% gtsummary::as_gt() %>%
   gt::tab_spanner(
-    label = gt::md("**12 month questionnaire**"),
+    label = gt::md("**12-month questionnaire**"),
     columns = c(stat_1_1, stat_2_1, stat_1_2, stat_2_2),
     level = 2,
     gather = FALSE

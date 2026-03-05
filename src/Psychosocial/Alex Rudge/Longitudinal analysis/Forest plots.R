@@ -165,26 +165,23 @@ summon_complete_forest <- function(
 
 
   plot_anxiety$plot + 
-    (plot_anxiety$n + 
-       labs(title = 'N') + 
-       theme(plot.title = element_text(size = 12))) +
     (plot_anxiety$hr + 
        labs(title = 'aHR (95% CI)') + 
        theme(plot.title = element_text(size = 12))) + 
     (plot_anxiety$p + 
        labs(title = 'P-value') +
        theme(plot.title = element_text(size = 12))) +
-   plot_depression$plot + plot_depression$n + plot_depression$hr +  plot_depression$p +
-   plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p +
-   plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p +
-   plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p +
-   plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
-   plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
+   plot_depression$plot + plot_depression$hr +  plot_depression$p +
+   plot_somatisation$plot + plot_somatisation$hr + plot_somatisation$p +
+   plot_fatigue$plot + plot_fatigue$hr + plot_fatigue$p +
+   plot_sleep$plot + plot_sleep$hr + plot_sleep$p +
+   plot_exercise$plot + plot_exercise$hr + plot_exercise$p +
+   plot_lifeevents$plot + plot_lifeevents$hr + plot_lifeevents$p +
     patchwork::plot_layout(
-      ncol = 4,
+     ncol = 3,
      guides = 'collect',
      axes = 'collect',
-     width = c(2.5, 0.4, 1.2, 0.5),
+     width = c(2.5, 1.2, 0.5),
      height = c(2,2,3,2,2,2,2)
    ) +
    patchwork::plot_annotation(
