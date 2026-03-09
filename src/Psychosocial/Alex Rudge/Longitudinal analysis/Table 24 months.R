@@ -41,7 +41,8 @@ phq_baseline <- data %>%
     baseline_somatisation = somatisation
     ) %>%
   dplyr::mutate(
-    baseline_somatisation = factor(baseline_somatisation, levels = c('None', 'Mild', 'Mod/Sev'))
+    baseline_somatisation = factor(baseline_somatisation, levels = c('None', 'Mild', 'ModSev')),
+    baseline_somatisation = forcats::fct_recode(baseline_somatisation, "Moderate/Severe" = "ModSev")
   )
 
 # Exercise
