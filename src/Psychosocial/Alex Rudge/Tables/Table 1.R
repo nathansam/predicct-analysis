@@ -115,14 +115,15 @@ data_cohort %<>%
   )
 
 
-# Trick to compare entire cohort to a subset
-data_table <- dplyr::bind_rows(
-  data_cohort %>%
-    dplyr::mutate(cohort = 'predicct'),
-  data_cohort %>%
-    dplyr::filter(psychosocial == 'Yes') %>%
-    dplyr::mutate(cohort = 'psychosocial')
-)
+# Do not compare entire cohort to subset
+data_table <- data_cohort %>%
+  dplyr::mutate(
+    cohort = dplyr::case_when(
+      psychosocial == "Yes" ~ "psychosocial",
+      TRUE ~ "non psychosocial"
+    )
+  ) %>%
+  dplyr::select(-psychosocial)
 
 # Tidy up variables
 # IBD
@@ -144,13 +145,13 @@ data_table %<>%
   dplyr::mutate(
     cohort = dplyr::case_match(
       cohort,
-      'predicct' ~ 'Total PREdiCCt cohort',
-      'psychosocial' ~ 'Psychosocial sub-cohort'
+      'non psychosocial' ~ 'Non-psychosocial',
+      'psychosocial' ~ 'Psychosocial'
     )
   ) %>%
   dplyr::mutate(
     cohort = factor(cohort),
-    cohort = forcats::fct_relevel(cohort, 'Total PREdiCCt cohort')
+    cohort = forcats::fct_relevel(cohort, 'Psychosocial')
   )
 
 # Harvey Bradshaw as categorical
@@ -238,7 +239,9 @@ tbl <- data_table %>%
       ) %>%
       gtsummary::add_p(
         test.args = all_tests("fisher.test") ~ list(simulate.p.value = TRUE, B = 1e5)
-      ) 
+      ) %>%
+      gtsummary::add_q(method = 'fdr') %>%
+      gtsummary::bold_p(q = TRUE)
   ) 
 
 # Fix CD columns 
@@ -284,6 +287,7 @@ tbl$table_body %<>%
 tbl$table_body %<>% 
   dplyr::filter(!(variable %in% c('Perianal', 'Surgery') & (label %in% c('No', 'Yes'))))
 
+tbl
 
 # Save as word
 filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
@@ -291,5 +295,5 @@ filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/P
 tbl %>%
   gtsummary::as_gt() %>%
   gt::gtsave(
-    filename = paste0(filepath, "Table1.docx")
+    filename = paste0(filepath, "Table1 v2.docx")
   )
