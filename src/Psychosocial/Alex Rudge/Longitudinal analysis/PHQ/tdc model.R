@@ -47,3 +47,4 @@ cox_hard <- coxph(
 
 cox_hard %>%
   broom::tidy(exp = TRUE, conf.int = TRUE)
+

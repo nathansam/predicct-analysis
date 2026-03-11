@@ -33,7 +33,7 @@ data_soft_long %>%
   ggtitle("Number of questionnaires completed per month") +
   custom_theme
 
-# Percentage reporting fatigue per month
+# Number reporting fatigue per month
 data_soft_long %>%
   dplyr::count(month, OftenLackEnergy) %>%
   dplyr::mutate(month = forcats::as_factor(month)) %>%
@@ -59,5 +59,4 @@ data_soft_long %>%
   ylab("Number of participants") +
   ggtitle("Number of questionnaires completed per person") +
   custom_theme
-
 

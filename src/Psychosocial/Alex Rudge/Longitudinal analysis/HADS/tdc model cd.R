@@ -12,7 +12,7 @@ source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 
 # Time dependent cox model
 # CD
-data_anxiety_soft_merged_cd <- data_anxiety_soft_merged %<>% dplyr::filter(diagnosis2 == 'CD')
+data_anxiety_soft_merged_cd <- data_anxiety_soft_merged %>% dplyr::filter(diagnosis2 == 'CD')
 data_anxiety_hard_merged_cd <- data_anxiety_hard_merged %>% dplyr::filter(diagnosis2 == 'CD')
 data_depression_soft_merged_cd <- data_depression_soft_merged %>% dplyr::filter(diagnosis2 == 'CD')
 data_depression_hard_merged_cd <- data_depression_hard_merged %>% dplyr::filter(diagnosis2 == 'CD')

@@ -33,7 +33,7 @@ data_soft_long %>%
   ggtitle("Number of questionnaires completed per month") +
   custom_theme
 
-# Percentage
+# By life event
 data_soft_long %>%
   dplyr::count(month, AnyLifeEvents) %>%
   dplyr::mutate(month = forcats::as_factor(month)) %>%

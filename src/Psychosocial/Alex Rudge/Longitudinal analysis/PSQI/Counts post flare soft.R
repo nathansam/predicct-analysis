@@ -52,9 +52,7 @@ data_soft_long %<>%
 data_soft_long %<>%
   dplyr::mutate(month = factor(month))
 
-  
 
-# Anxiety ####
 # No previous flare
 plot_soft_pre <- data_soft_long %>%
   dplyr::filter(

@@ -1,5 +1,6 @@
 library(tidyverse)
 library(magrittr)
+library(survival)
 library(survminer)
 
 # Run data cleaning
