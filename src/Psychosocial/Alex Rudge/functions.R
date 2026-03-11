@@ -264,6 +264,51 @@ extract_cox_results <- function(data,
         c('term', 'variable', 'level', 'estimate', 'std.error', 'statistic', 'df', 'n', 'p.value', 'conf.low', 'conf.high', 'diagnosis2', 'flare_type')))
 }
 
+
+extract_tdc_results <- function(data,
+                                cox_model,
+                                variable,
+                                flare_type,
+                                diagnosis2) {
+  
+  # Calculate sample size
+
+  model_variables <- cox_model %>% formula() %>% all.vars()
+    
+    
+  counts <- data %>%
+    dplyr::select(tidyselect::all_of(c('ParticipantNo', model_variables))) %>%
+    dplyr::filter(complete.cases(.)) %>%
+    dplyr::group_by(!!sym(variable)) %>%
+    dplyr::summarise(
+      n = n_distinct(ParticipantNo)
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::rename(level = variable)
+  
+  data %>%
+    dplyr::pull(variable) %>%
+    levels() %>%
+    # Create tibble to store Cox results including reference level
+    {
+      tibble(term = paste0(variable, .), variable = variable, level = .)
+    } %>%
+    dplyr::left_join(
+      cox_model %>%
+        broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+        dplyr::filter(stringr::str_starts(term, variable)),
+      by = "term"
+    ) %>%
+    # Add sample size
+    dplyr::left_join(counts, by = 'level') %>%
+    # Diagnosis
+    dplyr::mutate(diagnosis2 = diagnosis2, flare_type = flare_type) %>%
+    dplyr::select(
+      tidyselect::any_of(
+        c('term', 'variable', 'level', 'estimate', 'std.error', 'statistic', 'df', 'n', 'p.value', 'conf.low', 'conf.high', 'diagnosis2', 'flare_type')))
+}
+
+
 # Creating KM curves
 summon_km_curves <- function(data,
                              dependent = 1,
@@ -271,7 +316,11 @@ summon_km_curves <- function(data,
                              legend.title = NULL,
                              legend.labs = NULL,
                              palette = NULL,
+                             xlab = "Time from study recruitment (months)",
                              ggtheme = theme_minimal(),
+                             break.time.by = 365/2,  
+                             xscale = 730/24,
+                             xlim = c(0, 750),
                              ...) {
   
   # ggsurvplot
@@ -289,11 +338,11 @@ summon_km_curves <- function(data,
       legend.title = legend.title,
       legend.labs = legend.labs,
       ggtheme = ggtheme,
-      xlab = "Time from study recruitment (months)",
+      xlab = xlab,
       palette = palette,
-      break.time.by = 365/2,  
-      xscale = 730/24,
-      xlim = c(0, 750),
+      break.time.by = break.time.by,  
+      xscale = xscale,
+      xlim = xlim,
       ...
     )
   
