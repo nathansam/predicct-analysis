@@ -53,6 +53,11 @@ data_cohort %<>%
     CReactiveProtein
   )
 
+# Remove all patients < 18
+# Else the age signal could be due to the exclusion of minors.
+data_cohort %<>%
+  dplyr::filter(Age >= 18)
+
 # Rename IBD duration
 data_cohort %<>%
   dplyr::rename(
@@ -145,13 +150,13 @@ data_table %<>%
   dplyr::mutate(
     cohort = dplyr::case_match(
       cohort,
-      'non psychosocial' ~ 'Non-psychosocial',
-      'psychosocial' ~ 'Psychosocial'
+      'non psychosocial' ~ 'Excluded due to missingness',
+      'psychosocial' ~ 'Psychosocial cohort'
     )
   ) %>%
   dplyr::mutate(
     cohort = factor(cohort),
-    cohort = forcats::fct_relevel(cohort, 'Psychosocial')
+    cohort = forcats::fct_relevel(cohort, 'Psychosocial cohort')
   )
 
 # Harvey Bradshaw as categorical
@@ -295,5 +300,5 @@ filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/P
 tbl %>%
   gtsummary::as_gt() %>%
   gt::gtsave(
-    filename = paste0(filepath, "Table1 v2.docx")
+    filename = paste0(filepath, "Table1.docx")
   )
