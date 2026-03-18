@@ -61,9 +61,6 @@ data_survival_hard %>%
 # Total 230 (CD 105, UC/IBDU 125) with hard flare data
 # Cumulative rate: Overall 230/1770 = 13.0%. CD 11.8%, UC 14.2%
 
-# How many missing?
-
-
 
 # Kaplan-Meier
 custom_theme = theme_minimal() + 
@@ -122,10 +119,10 @@ plot
 
 filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/"
 
-ggsave(
-  filename = paste0(filepath_save, "Cumulative events IBD type.pdf"),
-  plot = plot,
-  width = 9.5,
-  height = 5,
-  units = 'in'
-)
+# ggsave(
+#   filename = paste0(filepath_save, "Cumulative events IBD type.pdf"),
+#   plot = plot,
+#   width = 9.5,
+#   height = 5,
+#   units = 'in'
+# )
