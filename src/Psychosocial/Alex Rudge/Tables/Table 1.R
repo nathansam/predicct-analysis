@@ -182,7 +182,17 @@ data_table %<>%
       Mayo %in% c(2, 3, 4) ~ '2-4',
       Mayo %in% c(5, 6) ~ '5-6',
       Mayo %in% c(7, 8, 9) ~ '7-9'
-    ))
+    )) %>%
+  dplyr::mutate(
+    Mayo_cat = factor(Mayo_cat),
+    Mayo_cat = forcats::fct_relevel(
+      Mayo_cat,
+      '0-1',
+      '2-4',
+      '5-6',
+      '7-9'
+    )
+  )
 
 # Table
 variables <- c(
