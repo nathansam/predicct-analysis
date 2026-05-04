@@ -6,13 +6,12 @@ author:
       #- ref: Lothian
   - name: "Alexander Rudge"
     affiliations:
-      #- ref: CGEM
+      #- ref: IGC
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      #- ref: CGEM
-      #- ref: HGU
+      #- ref: IGC
 format: 
   html:
     code-fold: true
@@ -567,17 +566,17 @@ flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 
 Data cleaning involved the following steps:
 
--   Remove completely empty rows.
+- Remove completely empty rows.
 
--   Combine data from different sources: HADS questionnaire responses, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+- Combine data from different sources: HADS questionnaire responses, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
 
--   Remove participants under 18 years of age.
+- Remove participants under 18 years of age.
 
--   Calculate overall anxiety and depression scores based on patient questionnaire responses. Note that in the raw HADS data, the questionnaire responses are coded from 1 to 4, and some are coded inversely (1 is the 'bad' response and 4 the 'good' response). Therefore, to calculate the HADS score the responses were rescaled to between 0 and 3, and inversed where appropriate. The overall anxiety and depression scores were then the sum of the responses.
+- Calculate overall anxiety and depression scores based on patient questionnaire responses. Note that in the raw HADS data, the questionnaire responses are coded from 1 to 4, and some are coded inversely (1 is the 'bad' response and 4 the 'good' response). Therefore, to calculate the HADS score the responses were rescaled to between 0 and 3, and inversed where appropriate. The overall anxiety and depression scores were then the sum of the responses.
 
--   We categorise the anxiety and depression scores into 0-7 (normal) and 8-21 (elevated) for analysis.
+- We categorise the anxiety and depression scores into 0-7 (normal) and 8-21 (elevated) for analysis.
 
--   We exclude patients for whom we could not calculate the HADS score.
+- We exclude patients for whom we could not calculate the HADS score.
 
 ```{r}
 # Exclude cases with missing ParticipantId
@@ -1699,7 +1698,7 @@ cox_anxiety_soft_pool <- with(
   mice::pool()
 
 cox_anxiety_soft_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -1780,7 +1779,7 @@ cox_anxiety_hard_pool <- with(
   mice::pool()
 
 cox_anxiety_hard_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -1860,10 +1859,10 @@ cox_anxiety_soft_uc_pool <- with(cox_anxiety_soft_uc_mice,
      )) %>%
   mice::pool()
 
-cox_anxiety_soft_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_anxiety_soft_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1940,7 +1939,7 @@ cox_anxiety_hard_uc_pool <- with(cox_anxiety_hard_uc_mice,
   mice::pool()
 
 cox_anxiety_hard_uc_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2020,7 +2019,7 @@ cox_anxiety_soft_cd_pool <- with(cox_anxiety_soft_cd_mice,
   mice::pool()
 
 cox_anxiety_soft_cd_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2100,7 +2099,7 @@ cox_anxiety_hard_cd_pool <- with(
   mice::pool()
 
 cox_anxiety_hard_cd_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2189,7 +2188,7 @@ cox_depression_soft_pool <- with(
   mice::pool()
 
 cox_depression_soft_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2268,7 +2267,7 @@ cox_depression_hard_pool <- with(
   mice::pool()
 
 cox_depression_hard_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2349,7 +2348,7 @@ cox_depression_soft_uc_pool <- with(
   mice::pool()
 
 cox_depression_soft_uc_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2429,7 +2428,7 @@ cox_depression_hard_uc_pool <- with(
   mice::pool()
 
 cox_depression_hard_uc_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2510,7 +2509,7 @@ cox_depression_soft_cd_pool <- with(
   mice::pool()
 
 cox_depression_soft_cd_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()
@@ -2589,7 +2588,7 @@ cox_depression_hard_cd_pool <- with(
   mice::pool()
 
 cox_depression_hard_cd_pool %>% 
-  summary(conf.int = TRUE,
+  broom::tidy(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE) %>%
   print_survival_mice()

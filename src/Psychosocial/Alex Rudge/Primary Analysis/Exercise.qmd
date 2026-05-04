@@ -3,16 +3,15 @@ title: "Exercise"
 author:
   - name: "Chiara Cotronei"
     affiliations:
-     # - ref: Lothian
+      #- ref: Lothian
   - name: "Alexander Rudge"
     affiliations:
-     # - ref: CGEM
+      #- ref: IGC
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      #- ref: CGEM
-     # - ref: HGU
+      #- ref: IGC
 format: 
   html:
     code-fold: true
@@ -21,6 +20,8 @@ editor: visual
 toc: true
 toc-depth: 4
 toc-expand: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Exercise
@@ -547,31 +548,31 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 Data cleaning involved the following steps:
 
--   Remove completely empty rows.
+- Remove completely empty rows.
 
--   Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+- Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
 
--   Remove participants under 18 years of age.
+- Remove participants under 18 years of age.
 
--   Excluded 6 participants who did not answer key questions, or provided invalid responses.
+- Excluded 6 participants who did not answer key questions, or provided invalid responses.
 
--   Excluded 10 participants who report 16 or more hours in any one activity, as per WHO guidelines.
+- Excluded 10 participants who report 16 or more hours in any one activity, as per WHO guidelines.
 
--   Correct 2 responses who reported doing moderate work but for 0 days, hours and minutes; exclude 8 participants with missing frequency information.
+- Correct 2 responses who reported doing moderate work but for 0 days, hours and minutes; exclude 8 participants with missing frequency information.
 
--   Exclude 2 participants who reported that they walk or bicycle but with missing frequency information.
+- Exclude 2 participants who reported that they walk or bicycle but with missing frequency information.
 
--   Correct 3 responses who reported doing vigorous activity but for 0 days, hours and minutes; exclude 2 participants with missing frequency information.
+- Correct 3 responses who reported doing vigorous activity but for 0 days, hours and minutes; exclude 2 participants with missing frequency information.
 
--   Correct 7 responses who reported doing moderate activity but for 0 days, hours and minutes; exclude 6 participants with missing frequency information.
+- Correct 7 responses who reported doing moderate activity but for 0 days, hours and minutes; exclude 6 participants with missing frequency information.
 
--   Calculate total minutes of vigorous and moderate exercise per week.
+- Calculate total minutes of vigorous and moderate exercise per week.
 
--   Exclude 10 participants who reported doing more than 6720 minutes of exercise per week.
+- Exclude 10 participants who reported doing more than 6720 minutes of exercise per week.
 
--   Calculate totals METs (Metabolic Equivalents) per week; 1 hour of vigorous exercise equates to 8 METs and 1 hour of moderate exercise equates to 4 METs.
+- Calculate totals METs (Metabolic Equivalents) per week; 1 hour of vigorous exercise equates to 8 METs and 1 hour of moderate exercise equates to 4 METs.
 
--   Identify participants who did not meet minimum exercise requirements, defined as 75 minutes vigorous activity or 150 minutes or moderate activity or 600 METs per week.
+- Identify participants who did not meet minimum exercise requirements, defined as 75 minutes vigorous activity or 150 minutes or moderate activity or 600 METs per week.
 
 ```{r}
 #| echo: false
@@ -1630,10 +1631,11 @@ cox_soft_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_soft_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
 
@@ -1711,10 +1713,11 @@ cox_hard_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_hard_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
 
 #### Ulcerative Colitis
@@ -1794,10 +1797,10 @@ cox_soft_uc_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1877,10 +1880,10 @@ cox_hard_uc_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 
@@ -1961,10 +1964,10 @@ cox_soft_cd_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -2043,10 +2046,10 @@ cox_hard_cd_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 

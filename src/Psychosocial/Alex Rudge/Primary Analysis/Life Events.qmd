@@ -6,13 +6,12 @@ author:
       #- ref: Lothian
   - name: "Alexander Rudge"
     affiliations:
-      #- ref: CGEM
+      #- ref: IGC
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      #- ref: CGEM
-      #- ref: HGU
+      #- ref: IGC
 format: 
   html:
     code-fold: true
@@ -29,41 +28,41 @@ editor_options:
 
 Participants were asked whether they had experienced any significant life events in the month prior to the start of the study. The exact wording and response options of the question were as follows: "Have you had any significant life events in the last month? (please tick those that apply)"
 
--   Death of a spouse/close family member/friend
+- Death of a spouse/close family member/friend
 
--   Divorce
+- Divorce
 
--   Marital separation
+- Marital separation
 
--   Personal injury or illness not related to your IBD
+- Personal injury or illness not related to your IBD
 
--   Marriage
+- Marriage
 
--   Dismissal from work
+- Dismissal from work
 
--   Marital reconciliation
+- Marital reconciliation
 
--   Retirement
+- Retirement
 
--   Change in health of family member
+- Change in health of family member
 
--   Pregnancy
+- Pregnancy
 
--   Sexual difficulties
+- Sexual difficulties
 
--   Gain a new family member
+- Gain a new family member
 
--   Business readjustment
+- Business readjustment
 
--   Change in financial state
+- Change in financial state
 
--   Change to a different line of work
+- Change to a different line of work
 
--   Change in the frequency of arguments
+- Change in the frequency of arguments
 
--   New mortgage
+- New mortgage
 
--   Other (please give details)
+- Other (please give details)
 
 For analysis, patients' responses were used to construct a binary variable indicating whether a patient had experienced a life event in the past month. In this analysis, our aim was to determine the extent to which experiencing a significant life event was associated with subsequent patient-reported and objective flares.
 
@@ -600,13 +599,13 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 Data cleaning involved the following steps:
 
--   Remove completely empty rows.
+- Remove completely empty rows.
 
--   Remove participants who did not complete the questionnaire at all (to avoid assuming a patient did not have a life event when in fact they did not complete the questionnaire).
+- Remove participants who did not complete the questionnaire at all (to avoid assuming a patient did not have a life event when in fact they did not complete the questionnaire).
 
--   Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+- Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
 
--   Remove participants under 18 years of age.
+- Remove participants under 18 years of age.
 
 ```{r}
 # Life event data
@@ -1538,10 +1537,10 @@ cox_soft_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1618,10 +1617,10 @@ cox_hard_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 
@@ -1700,10 +1699,10 @@ cox_soft_uc_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1781,10 +1780,10 @@ cox_hard_uc_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 
@@ -1863,10 +1862,10 @@ cox_soft_cd_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1943,10 +1942,10 @@ cox_hard_cd_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 

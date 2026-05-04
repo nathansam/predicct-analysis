@@ -6,13 +6,12 @@ author:
       #- ref: Lothian
   - name: "Alexander Rudge"
     affiliations:
-      #- ref: CGEM
+      #- ref: IGC
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      #- ref: CGEM
-      #- ref: HGU
+      #- ref: IGC
 format: 
   html:
     code-fold: true
@@ -544,19 +543,19 @@ IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 Data cleaning involved the following steps:
 
--   Remove completely empty rows.
+- Remove completely empty rows.
 
--   Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
+- Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
 
--   Remove participants under 18 years of age.
+- Remove participants under 18 years of age.
 
--   Remove participants who did not answer all PHQ questions.
+- Remove participants who did not answer all PHQ questions.
 
--   Rescale the PHQ responses, as the raw data responses were recorded as 1-4 instead of 0-3.
+- Rescale the PHQ responses, as the raw data responses were recorded as 1-4 instead of 0-3.
 
--   Calculate the somatisation score by summing responses from each PHQ question.
+- Calculate the somatisation score by summing responses from each PHQ question.
 
--   Categorise somatisation score into 0-4 (none), 5-9 (mild), and 10-30 (moderate to severe).
+- Categorise somatisation score into 0-4 (none), 5-9 (mild), and 10-30 (moderate to severe).
 
 ```{r, load and tidy phq data set}
 
@@ -1436,10 +1435,10 @@ cox_soft_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1516,10 +1515,10 @@ cox_hard_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 
@@ -1598,10 +1597,10 @@ cox_soft_uc_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1679,10 +1678,10 @@ cox_hard_uc_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 
@@ -1761,10 +1760,10 @@ cox_soft_cd_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_soft_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 
 ```
@@ -1841,10 +1840,10 @@ cox_hard_cd_pool <- with(
 ) %>%
   mice::pool()
 
-cox_hard_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE) %>%
+cox_hard_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
   print_survival_mice()
 ```
 
