@@ -845,3 +845,57 @@ summon_absolute_risk_factor_boot <- function(data,
   ) 
 }
 
+
+
+# Printing functions for quarto
+
+print_chisq <- function(data) {
+  data %>%
+    knitr::kable(digits = c(0, 2, 4, 0, NA, NA, NA, 4, NA),
+                 col.names = c("n",
+                               "Statistic",
+                               "p",
+                               "df",
+                               "Method",
+                               "Dependent",
+                               "Independent",
+                               "Adjusted p-value",
+                               "Adjusted significance")
+    )
+}
+
+print_survival <- function(data) {
+  data %>%
+    broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+    # Relocate columns
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
+                               "Std. Error",
+                               "Statistic",
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "P-value"),
+                 format.args = list(drop0trailing = TRUE)
+    )
+}
+
+print_survival_mice <- function(data) {
+  data %>%
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
+                               "Std. Error",
+                               "Statistic",
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "P-value"),
+                 format.args = list(drop0trailing = TRUE)
+    )
+}
