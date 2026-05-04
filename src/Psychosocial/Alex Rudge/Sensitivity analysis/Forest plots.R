@@ -4,7 +4,7 @@ library(patchwork)
 
 # Load in data
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Fully adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitivity analysis/"
 
 # Suffix
 suffix <- "cc"
@@ -237,7 +237,7 @@ plot_hr_hard_cd
 
 
 # Save
-filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Fully adjusted/"
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Sensitivity analysis/"
 
 # soft uc
 ggsave(

@@ -4,7 +4,7 @@ library(magrittr)
 
 # Load in all the Cox results
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 # Suffix - cc (complete case) or mice 
 suffix <- "_cc.rds"

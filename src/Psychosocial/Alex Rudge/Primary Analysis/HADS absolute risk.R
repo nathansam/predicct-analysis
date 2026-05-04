@@ -91,7 +91,7 @@ absolute_risk_anxiety <- absolute_risk_anxiety_bootstraps %>%
   )
 
 # Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 readr::write_rds(
   x = absolute_risk_anxiety_bootstraps,
@@ -183,7 +183,7 @@ absolute_risk_depression <- absolute_risk_depression_bootstraps %>%
   )
 
 # Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 readr::write_rds(
   x = absolute_risk_depression_bootstraps,

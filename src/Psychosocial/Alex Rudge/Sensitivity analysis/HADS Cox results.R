@@ -153,7 +153,7 @@ cox_results_hads_depression_mice <- extract_cox_results(
   )
 
 # Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Fully adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitivity analysis/"
 
 readr::write_rds(
   x = cox_results_hads_anxiety_cc,

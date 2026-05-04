@@ -4,7 +4,7 @@ library(magrittr)
 
 # Load in all the Cox results
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 # HADS
 absolute_risk_anxiety <- readr::read_rds(paste0(filepath, "absolute_risk_anxiety.rds"))

@@ -19,6 +19,8 @@ editor_options:
 
 ### Complete case
 
+Missing data handled using a complete case analysis.
+
 ```{r}
 #| echo: false
 #| message: false
@@ -29,7 +31,7 @@ library(patchwork)
 
 # Load in data
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 # Suffix
 suffix <- "cc"
@@ -387,12 +389,14 @@ plot_hr_hard_uc
 
 ## Sensitivity analysis
 
+Assessing the sensitivity of the primary analysis to the decision to use complete cases to handle missingness, and the choice of variables to adjust for in the models.
+
 ### Multiple imputation by chained equations
 
 ```{r}
 # Load in data
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 # Suffix
 suffix <- "mice"
@@ -478,11 +482,13 @@ plot_hr_hard_uc
 
 ### Additional adjustment variables
 
+Additionally adjusting for IBD-control-8 and IBD-control-VAS scores, and whether the participant had experienced a flare in the previous year (self-reported).
+
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Fully adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitivity analysis/"
 
 # Suffix
 suffix <- "cc"
@@ -567,6 +573,8 @@ plot_hr_hard_uc
 ```
 
 ## Full cohort analysis
+
+Patients with Crohn's disease, ulcerative colitis and IBDU analysed together.
 
 ### Complete-case
 

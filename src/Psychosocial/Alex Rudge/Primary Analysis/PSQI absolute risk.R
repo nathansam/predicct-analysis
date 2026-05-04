@@ -85,7 +85,7 @@ absolute_risk <- absolute_risk_bootstraps %>%
 )
 
 # Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Partially adjusted/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 readr::write_rds(
   x = absolute_risk_bootstraps,
