@@ -273,8 +273,8 @@ plot_hr_hard_uc
 
 ```
 
-
 ## Longitudinal analysis
+
 ### Extended Cox model with time-dependent covariates
 
 ```{r}
@@ -384,7 +384,6 @@ plot_hr_hard_uc <- summon_complete_forest(
 plot_hr_hard_uc
 
 ```
-
 
 ## Sensitivity analysis
 
