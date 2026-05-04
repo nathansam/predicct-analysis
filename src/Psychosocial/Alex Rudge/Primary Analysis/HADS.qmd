@@ -850,6 +850,7 @@ We first conduct the analysis in the full cohort, and then separately within the
 
 #### Full Cohort
 
+::: {.panel-tabset}
 ```{r}
 # Select anxiety data
 data_baseline_anxiety <- hads %>%
@@ -870,7 +871,9 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety, 
   dependent = 'score_group', 
   independent = independent)
-
+```
+##### IBD type {.toc-ignore .unnumbered}
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety,
@@ -878,7 +881,9 @@ summon_baseline_plot_discrete(
   dependent = 'score_group',
   independent = 'diagnosis2'
 )
-
+```
+##### Sex {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety,
   stat_tests = statistical_tests,
@@ -886,20 +891,27 @@ summon_baseline_plot_discrete(
   independent = 'Sex'
 )
 
+```
+##### Smoking {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'Smoke'
 )
-
+```
+##### Age {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_anxiety,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'age'
 )
-
+```
+##### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_anxiety,
   stat_tests = statistical_tests,
@@ -909,8 +921,9 @@ summon_baseline_plot_continuous(
 
 ```
 
+:::
 #### Ulcerative Colitis
-
+::: {.panel-tabset}
 ```{r}
 # Select anxiety data and UC patients
 data_baseline_anxiety_uc <- hads %>%
@@ -931,7 +944,9 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety_uc, 
   dependent = 'score_group', 
   independent = independent)
-
+```
+##### Sex {.toc-ignore .unnumbered}
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety_uc,
@@ -939,21 +954,27 @@ summon_baseline_plot_discrete(
   dependent = 'score_group',
   independent = 'Sex'
 )
-
+```
+##### Smoking {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety_uc,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'Smoke'
 )
-
+```
+##### Age {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_anxiety_uc,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'age'
 )
-
+```
+##### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_anxiety_uc,
   stat_tests = statistical_tests,
@@ -962,9 +983,9 @@ summon_baseline_plot_continuous(
 )
 
 ```
-
+:::
 #### Crohn's Disease
-
+::: {.panel-tabset}
 ```{r}
 # Select anxiety data and CD patients
 data_baseline_anxiety_cd <- hads %>%
@@ -979,7 +1000,9 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety_cd, 
   dependent = 'score_group', 
   independent = independent)
-
+```
+##### Sex {.toc-ignore .unnumbered}
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety_cd,
@@ -987,21 +1010,27 @@ summon_baseline_plot_discrete(
   dependent = 'score_group',
   independent = 'Sex'
 )
-
+```
+##### Smoking {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_anxiety_cd,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'Smoke'
 )
-
+```
+##### Age {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_anxiety_cd,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'age'
 )
-
+```
+##### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_anxiety_cd,
   stat_tests = statistical_tests,
@@ -1010,11 +1039,12 @@ summon_baseline_plot_continuous(
 )
 
 ```
-
+:::
 ### Depression
 
 #### Full Cohort
 
+::: {.panel-tabset}
 ```{r}
 # Select depression data
 data_baseline_depression <- hads %>%
@@ -1035,8 +1065,19 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_depression, 
   dependent = 'score_group', 
   independent = independent)
-
+```
+##### IBD type {.toc-ignore .unnumbered}
+```{r}
 # Plots
+summon_baseline_plot_discrete(
+  data = data_baseline_depression,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'diagnosis2'
+)
+```
+##### Sex {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_depression,
   stat_tests = statistical_tests,
@@ -1044,20 +1085,27 @@ summon_baseline_plot_discrete(
   independent = 'Sex'
 )
 
+```
+##### Smoking {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_depression,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'Smoke'
 )
-
+```
+##### Age {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_depression,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'age'
 )
-
+```
+##### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_depression,
   stat_tests = statistical_tests,
@@ -1067,8 +1115,9 @@ summon_baseline_plot_continuous(
 
 ```
 
+:::
 #### Ulcerative Colitis
-
+::: {.panel-tabset}
 ```{r}
 # Select depression data and UC patients
 data_baseline_depression_uc <- hads %>%
@@ -1089,7 +1138,9 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_depression_uc, 
   dependent = 'score_group', 
   independent = independent)
-
+```
+##### Sex {.toc-ignore .unnumbered}
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_depression_uc,
@@ -1097,14 +1148,27 @@ summon_baseline_plot_discrete(
   dependent = 'score_group',
   independent = 'Sex'
 )
-
+```
+##### Smoking {.toc-ignore .unnumbered}
+```{r}
+summon_baseline_plot_discrete(
+  data = data_baseline_depression_uc,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'Smoke'
+)
+```
+##### Age {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_depression_uc,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'age'
 )
-
+```
+##### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_depression_uc,
   stat_tests = statistical_tests,
@@ -1113,9 +1177,9 @@ summon_baseline_plot_continuous(
 )
 
 ```
-
+:::
 #### Crohn's Disease
-
+::: {.panel-tabset}
 ```{r}
 # Select depression data and CD patients
 data_baseline_depression_cd <- hads %>%
@@ -1130,7 +1194,9 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_depression_cd, 
   dependent = 'score_group', 
   independent = independent)
-
+```
+##### Sex {.toc-ignore .unnumbered}
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_depression_cd,
@@ -1138,15 +1204,27 @@ summon_baseline_plot_discrete(
   dependent = 'score_group',
   independent = 'Sex'
 )
-
-
+```
+##### Smoking {.toc-ignore .unnumbered}
+```{r}
+summon_baseline_plot_discrete(
+  data = data_baseline_depression_cd,
+  stat_tests = statistical_tests,
+  dependent = 'score_group',
+  independent = 'Smoke'
+)
+```
+##### Age {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_depression_cd,
   stat_tests = statistical_tests,
   dependent = 'score_group',
   independent = 'age'
 )
-
+```
+##### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_depression_cd,
   stat_tests = statistical_tests,
@@ -1155,6 +1233,7 @@ summon_baseline_plot_continuous(
 )
 
 ```
+:::
 
 ## Survival Analysis
 
@@ -1275,6 +1354,8 @@ summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 
 ```
 
+::: {.panel-tabset}
+###### Age {.toc-ignore .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1282,7 +1363,9 @@ plot_continuous_hr(
   data = data_survival_anxiety_soft, 
   model = cox_age_soft, 
   variable = 'age_decade')
-
+```
+###### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_anxiety_soft, 
@@ -1290,7 +1373,7 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
-
+:::
 ##### Objective flare
 
 ```{r}
@@ -1325,7 +1408,8 @@ summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
-
+::: {.panel-tabset}
+###### Age {.toc-ignore .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1333,7 +1417,9 @@ plot_continuous_hr(
   data = data_survival_anxiety_hard, 
   model = cox_age_hard, 
   variable = 'age_decade')
-
+```
+###### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_anxiety_hard, 
@@ -1341,7 +1427,7 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
-
+:::
 #### Ulcerative Colitis
 
 ##### Patient-reported flare
@@ -1380,6 +1466,8 @@ summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 
 ```
 
+::: {.panel-tabset}
+###### Age{.toc-ignore .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1387,7 +1475,9 @@ plot_continuous_hr(
   data = data_survival_anxiety_soft_uc, 
   model = cox_age_soft_uc, 
   variable = 'age_decade')
-
+```
+###### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_anxiety_soft_uc, 
@@ -1395,6 +1485,7 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
+:::
 
 ##### Objective flare
 
@@ -1478,7 +1569,8 @@ summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 # No, stay with df = 2
 
 ```
-
+::: {.panel-tabset}
+###### Age{.toc-ignore .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1487,7 +1579,9 @@ plot_continuous_hr(
   model = cox_age_hard_uc, 
   variable = 'age_decade',
   splineterm = 'ns(age_decade, df = 4)')
-
+```
+###### Faecal Calprotectin {.toc-ignore .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_anxiety_hard_uc, 
@@ -1495,7 +1589,7 @@ plot_continuous_hr(
   variable = 'FC',
   splineterm = 'ns(FC, df = 2)')
 ```
-
+:::
 #### Crohn's Disease
 
 ##### Patient-reported flare
@@ -1532,7 +1626,8 @@ summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
-
+::: {.panel-tabset}
+###### Age{.toc-ignore .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1540,7 +1635,11 @@ plot_continuous_hr(
   data = data_survival_anxiety_soft_cd, 
   model = cox_age_soft_cd, 
   variable = 'age_decade')
+```
 
+###### Faecal Calprotectin {.toc-ignore .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_anxiety_soft_cd, 
@@ -1548,7 +1647,7 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
-
+:::
 ##### Objective flare
 
 ```{r}
@@ -1583,7 +1682,8 @@ summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
-
+::: {.panel-tabset}
+###### Age{.toc-ignore .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1591,7 +1691,11 @@ plot_continuous_hr(
   data = data_survival_anxiety_hard_cd, 
   model = cox_age_hard_cd, 
   variable = 'age_decade')
+```
 
+###### Faecal Calprotectin {.toc-ignore .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_anxiety_hard_cd, 
@@ -1599,7 +1703,7 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
-
+:::
 ### Results - Anxiety
 
 #### Full Cohort
@@ -1640,7 +1744,9 @@ summon_km_curves(
 
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 
@@ -1662,7 +1768,7 @@ cox_anxiety_soft %>%
 
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1704,7 +1810,7 @@ cox_anxiety_soft_pool %>%
   print_survival_mice()
 
 ```
-
+:::
 ##### Objective flare
 
 ###### Kaplan-Meier
@@ -1723,8 +1829,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
-
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 ```{r}
 # Cox model
 cox_anxiety_hard <- coxph(
@@ -1743,7 +1850,7 @@ cox_anxiety_hard %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1784,7 +1891,7 @@ cox_anxiety_hard_pool %>%
           exponentiate = TRUE) %>%
   print_survival_mice()
 ```
-
+:::
 #### Ulcerative Colitis
 
 ##### Patient-reported flare
@@ -1805,7 +1912,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -1826,7 +1935,7 @@ cox_anxiety_soft_uc %>%
 
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1866,7 +1975,7 @@ cox_anxiety_soft_uc_pool %>%
   print_survival_mice()
 
 ```
-
+:::
 ##### Objective flare
 
 ###### Kaplan-Meier
@@ -1884,7 +1993,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -1904,7 +2015,7 @@ cox_anxiety_hard_uc %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1944,6 +2055,7 @@ cox_anxiety_hard_uc_pool %>%
           exponentiate = TRUE) %>%
   print_survival_mice()
 ```
+:::
 
 #### Crohn's Disease
 
@@ -1964,7 +2076,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -1985,7 +2099,7 @@ cox_anxiety_soft_cd %>%
 
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2025,7 +2139,7 @@ cox_anxiety_soft_cd_pool %>%
   print_survival_mice()
 
 ```
-
+:::
 ##### Objective flare
 
 ###### Kaplan-Meier
@@ -2043,7 +2157,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -2063,7 +2179,7 @@ cox_anxiety_hard_cd %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2104,7 +2220,7 @@ cox_anxiety_hard_cd_pool %>%
           exponentiate = TRUE) %>%
   print_survival_mice()
 ```
-
+:::
 ### Results - Depression
 
 #### Full Cohort
@@ -2131,7 +2247,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -2152,7 +2270,7 @@ cox_depression_soft %>%
 
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2194,7 +2312,7 @@ cox_depression_soft_pool %>%
   print_survival_mice()
 
 ```
-
+:::
 ##### Objective flare
 
 ###### Kaplan-Meier
@@ -2211,7 +2329,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -2231,7 +2351,7 @@ cox_depression_hard %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2272,7 +2392,7 @@ cox_depression_hard_pool %>%
           exponentiate = TRUE) %>%
   print_survival_mice()
 ```
-
+:::
 #### Ulcerative Colitis
 
 ##### Patient-reported flare
@@ -2291,7 +2411,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -2312,7 +2434,7 @@ cox_depression_soft_uc %>%
 
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2354,7 +2476,7 @@ cox_depression_soft_uc_pool %>%
   print_survival_mice()
 
 ```
-
+:::
 ##### Objective flare
 
 ###### Kaplan-Meier
@@ -2371,7 +2493,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -2391,7 +2515,7 @@ cox_depression_hard_uc %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2433,7 +2557,7 @@ cox_depression_hard_uc_pool %>%
           exponentiate = TRUE) %>%
   print_survival_mice()
 ```
-
+:::
 #### Crohn's Disease
 
 ##### Patient-reported flare
@@ -2452,7 +2576,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -2473,7 +2599,7 @@ cox_depression_soft_cd %>%
 
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2515,7 +2641,7 @@ cox_depression_soft_cd_pool %>%
   print_survival_mice()
 
 ```
-
+:::
 ##### Objective flare
 
 ###### Kaplan-Meier
@@ -2532,7 +2658,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+###### Cox proportional hazards model
+::: {.panel-tabset}
+####### Complete case
 
 ```{r}
 # Cox model
@@ -2552,7 +2680,7 @@ cox_depression_hard_cd %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+####### MICE
 
 ```{r}
 # Cox model with MICE
@@ -2593,7 +2721,7 @@ cox_depression_hard_cd_pool %>%
           exponentiate = TRUE) %>%
   print_survival_mice()
 ```
-
+:::
 ## Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
