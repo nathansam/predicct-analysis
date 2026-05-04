@@ -1,12 +1,12 @@
 ---
 title: "Fatigue"
 author:
-  - name: "Chiara Cotronei"
-    affiliations:
-      #- ref: Lothian
   - name: "Alexander Rudge"
     affiliations:
       #- ref: IGC
+  - name: "Chiara Cotronei"
+    affiliations:
+      #- ref: Lothian
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
@@ -24,11 +24,9 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Fatigue
-
 As part of the IBD-control-8 questionnaire administered at study recruitment, patients were asked "Over the past month did you: often feel lacking in energy (by often we mean more than half the time)?"; potential responses included "Yes", "No" and "Not sure". In this analysis, our aim was to determine the extent to often feeling fatigued was associated with subsequent patient-reported and objective flares.
 
-## Setting up in R
+# Setting up in R
 
 ```{r}
 #| label: load-libraries
@@ -538,7 +536,7 @@ flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 ```
 
-## Data Cleaning
+# Data Cleaning
 
 Data cleaning involved the following steps:
 
@@ -732,7 +730,7 @@ fatigue %<>%
   )
 ```
 
-## Missingness
+# Missingness
 
 Visualise missingness in patient characteristics.
 
@@ -764,14 +762,14 @@ data_vis_missingness %>%
 
 ```
 
-## Baseline Analysis
+# Baseline Analysis
 
 We identify associations between fatigue and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
 
 We first conduct the analysis in the full cohort, and then separately within the ulcerative colitis (including IBD unclassified) and Crohn’s disease subgroups.
 
-#### Full Cohort
-
+## Full Cohort
+::: panel-tabset
 ```{r}
 
 data_baseline <- fatigue
@@ -791,6 +789,11 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline, 
   dependent = 'OftenLackEnergy', 
   independent = independent)
+```
+
+### IBD type {.unlisted .unnumbered}
+
+```{r}
 
 # Plots
 summon_baseline_plot_discrete(
@@ -800,12 +803,24 @@ summon_baseline_plot_discrete(
   independent = 'diagnosis2'
 )
 
+```
+
+### Sex {.unlisted .unnumbered}
+
+```{r}
+
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'Sex'
 )
+
+```
+
+### Smoking {.unlisted .unnumbered}
+
+```{r}
 
 summon_baseline_plot_discrete(
   data = data_baseline,
@@ -814,12 +829,24 @@ summon_baseline_plot_discrete(
   independent = 'Smoke'
 )
 
+```
+
+### Age {.unlisted .unnumbered}
+
+```{r}
+
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'age'
 )
+
+```
+
+### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 
 summon_baseline_plot_continuous(
   data = data_baseline,
@@ -829,9 +856,10 @@ summon_baseline_plot_continuous(
 )
 
 ```
+:::
 
-#### Ulcerative Colitis
-
+## Ulcerative Colitis
+::: panel-tabset
 ```{r}
 # Select anxiety data and UC patients
 data_baseline_uc <- fatigue %>%
@@ -853,6 +881,11 @@ statistical_tests <- summon_statistical_test(
   dependent = 'OftenLackEnergy', 
   independent = independent)
 
+```
+
+### Sex {.unlisted .unnumbered}
+
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
@@ -860,21 +893,33 @@ summon_baseline_plot_discrete(
   dependent = 'OftenLackEnergy',
   independent = 'Sex'
 )
+```
 
+### Smoking {.unlisted .unnumbered}
+
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'Smoke'
 )
+```
 
+### Age {.unlisted .unnumbered}
+
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'age'
 )
+```
 
+### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
@@ -883,9 +928,10 @@ summon_baseline_plot_continuous(
 )
 
 ```
+:::
 
-#### Crohn's Disease
-
+## Crohn's Disease
+::: panel-tabset
 ```{r}
 # Select anxiety data and CD patients
 data_baseline_cd <- fatigue %>%
@@ -899,7 +945,11 @@ statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'OftenLackEnergy', 
   independent = independent)
+```
 
+### Sex {.unlisted .unnumbered}
+
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
@@ -907,21 +957,33 @@ summon_baseline_plot_discrete(
   dependent = 'OftenLackEnergy',
   independent = 'Sex'
 )
+```
 
+### Smoking {.unlisted .unnumbered}
+
+```{r}
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'Smoke'
 )
+```
 
+### Age {.unlisted .unnumbered}
+
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'age'
 )
+```
 
+### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 summon_baseline_plot_continuous(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
@@ -930,12 +992,13 @@ summon_baseline_plot_continuous(
 )
 
 ```
+:::
 
-## Survival Analysis
+# Survival Analysis
 
 Associations between fatigue and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level. Participants with missing flare status or time are excluded.
 
-### Data Cleaning
+## Data Cleaning
 
 ```{r}
 # Survival data
@@ -973,11 +1036,11 @@ data_survival_hard_cd <- data_survival_hard %>%
 
 ```
 
-### Shapes of continuous variables
+## Shapes of continuous variables
 
-#### Full Cohort
+### Full Cohort
 
-##### Patient reported flare
+#### Patient reported flare {.unlisted .unnumbered}
 
 ```{r}
 #| eval: true
@@ -1014,6 +1077,8 @@ summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 
 ```
 
+::: {.panel-tabset}
+##### Age {.unlisted .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1021,7 +1086,9 @@ plot_continuous_hr(
   data = data_survival_soft, 
   model = cox_age_soft, 
   variable = 'age_decade')
-
+```
+##### Faecal Calprotectin {.unlisted .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_soft, 
@@ -1029,8 +1096,8 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
-
-##### Objective flare
+:::
+#### Objective flare {.unlisted .unnumbered}
 
 ```{r}
 #| eval: true
@@ -1065,7 +1132,8 @@ summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
-
+::: {.panel-tabset}
+##### Age {.unlisted .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1073,7 +1141,9 @@ plot_continuous_hr(
   data = data_survival_hard, 
   model = cox_age_hard, 
   variable = 'age_decade')
-
+```
+##### Faecal Calprotectin {.unlisted .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_hard, 
@@ -1081,10 +1151,10 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
+:::
+### Ulcerative Colitis
 
-#### Ulcerative Colitis
-
-##### Patient reported flare
+#### Patient reported flare {.unlisted .unnumbered}
 
 ```{r}
 #| eval: true
@@ -1119,7 +1189,8 @@ summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
-
+::: {.panel-tabset}
+##### Age {.unlisted .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1127,7 +1198,9 @@ plot_continuous_hr(
   data = data_survival_soft_uc, 
   model = cox_age_soft_uc, 
   variable = 'age_decade')
-
+```
+##### Faecal Calprotectin {.unlisted .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_soft_uc, 
@@ -1135,8 +1208,8 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
-
-##### Objective flare
+:::
+#### Objective flare {.unlisted .unnumbered}
 
 ```{r}
 #| eval: true
@@ -1198,7 +1271,8 @@ summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 # No, stay with df = 2
 
 ```
-
+::: {.panel-tabset}
+##### Age {.unlisted .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1207,7 +1281,9 @@ plot_continuous_hr(
   model = cox_age_hard_uc, 
   variable = 'age_decade',
   splineterm = 'ns(age_decade, df = 2)')
-
+```
+##### Faecal Calprotectin {.unlisted .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_hard_uc, 
@@ -1216,10 +1292,10 @@ plot_continuous_hr(
   splineterm = 'ns(FC, df = 2)')
 
 ```
+:::
+### Crohn's Disease
 
-#### Crohn's Disease
-
-##### Patient reported flare
+#### Patient reported flare {.unlisted .unnumbered}
 
 ```{r}
 #| eval: true
@@ -1254,7 +1330,8 @@ summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
-
+::: {.panel-tabset}
+##### Age {.unlisted .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1262,7 +1339,9 @@ plot_continuous_hr(
   data = data_survival_soft_cd, 
   model = cox_age_soft_cd, 
   variable = 'age_decade')
-
+```
+##### Faecal Calprotectin {.unlisted .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_soft_cd, 
@@ -1270,8 +1349,8 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
-
-##### Objective flare
+:::
+#### Objective flare {.unlisted .unnumbered}
 
 ```{r}
 #| eval: true
@@ -1306,7 +1385,8 @@ summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
 ```
-
+::: {.panel-tabset}
+##### Age {.unlisted .unnumbered}
 ```{r}
 # Plot shapes
 # Age
@@ -1314,7 +1394,9 @@ plot_continuous_hr(
   data = data_survival_hard_cd, 
   model = cox_age_hard_cd, 
   variable = 'age_decade')
-
+```
+##### Faecal Calprotectin {.unlisted .unnumbered}
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_hard_cd, 
@@ -1322,14 +1404,14 @@ plot_continuous_hr(
   variable = 'FC')
 
 ```
+:::
+## Results
 
-### Results
+### Full Cohort
 
-#### Full Cohort
+#### Patient reported flare
 
-##### Patient reported flare
-
-###### Kaplan-Meier
+##### Kaplan-Meier
 
 ```{r}
 # Plotting Kaplan-Meier curves
@@ -1360,7 +1442,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+##### Cox proportional hazards model
+::: {.panel-tabset}
+###### Complete case
 
 ```{r}
 # Cox model
@@ -1379,11 +1463,10 @@ cox_soft <- coxph(
 cox_soft %>%
   print_survival()
 
-# Test proportional hazards assumption
-cox.zph(cox_soft)
+
 ```
 
-###### Cox proportional hazards model (MICE)
+###### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1425,10 +1508,10 @@ cox_soft_pool %>%
   print_survival_mice()
 
 ```
+:::
+#### Objective flare
 
-##### Objective flare
-
-###### Kaplan-Meier
+##### Kaplan-Meier
 
 ```{r}
 # Kaplan Meier
@@ -1443,7 +1526,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+##### Cox proportional hazards model
+::: {.panel-tabset}
+###### Complete case
 
 ```{r}
 # Cox model
@@ -1463,7 +1548,7 @@ cox_hard %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+###### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1504,12 +1589,12 @@ cox_hard_pool %>%
               exponentiate = TRUE) %>%
   print_survival_mice()
 ```
+:::
+### Ulcerative Colitis
 
-#### Ulcerative Colitis
+#### Patient reported flare
 
-##### Patient reported flare
-
-###### Kaplan-Meier
+##### Kaplan-Meier
 
 ```{r}
 # Kaplan Meier
@@ -1524,7 +1609,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+##### Cox proportional hazards model
+::: {.panel-tabset}
+###### Complete case
 
 ```{r}
 # Cox model
@@ -1543,12 +1630,9 @@ cox_soft_uc <- coxph(
 cox_soft_uc %>%
   print_survival()
 
-# Test PH assumption
-cox.zph(cox_soft_uc)
-
 ```
 
-###### Cox proportional hazards model (MICE)
+###### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1590,10 +1674,10 @@ cox_soft_uc_pool %>%
   print_survival_mice()
 
 ```
+:::
+#### Objective flare
 
-##### Objective flare
-
-###### Kaplan-Meier
+##### Kaplan-Meier
 
 ```{r}
 # Kaplan Meier
@@ -1608,7 +1692,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+##### Cox proportional hazards model
+::: {.panel-tabset}
+###### Complete case
 
 ```{r}
 # Cox model
@@ -1628,7 +1714,7 @@ cox_hard_uc %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+###### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1669,12 +1755,12 @@ cox_hard_uc_pool %>%
               exponentiate = TRUE) %>%
   print_survival_mice()
 ```
+:::
+### Crohn's Disease
 
-#### Crohn's Disease
+#### Patient reported flare.
 
-##### Patient reported flare.
-
-###### Kaplan-Meier
+##### Kaplan-Meier
 
 ```{r}
 # Kaplan Meier
@@ -1689,7 +1775,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+##### Cox proportional hazards model
+::: {.panel-tabset}
+###### Complete case
 
 ```{r}
 # Cox model
@@ -1710,7 +1798,7 @@ cox_soft_cd %>%
 
 ```
 
-###### Cox proportional hazards model (MICE)
+###### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1752,10 +1840,10 @@ cox_soft_cd_pool %>%
   print_survival_mice()
 
 ```
+:::
+#### Objective flare
 
-##### Objective flare
-
-###### Kaplan-Meier
+##### Kaplan-Meier
 
 ```{r}
 # Kaplan Meier
@@ -1770,7 +1858,9 @@ summon_km_curves(
 )
 ```
 
-###### Cox proportional hazards model (complete case)
+##### Cox proportional hazards model
+::: {.panel-tabset}
+###### Complete case
 
 ```{r}
 # Cox model
@@ -1790,7 +1880,7 @@ cox_hard_cd %>%
   print_survival()
 ```
 
-###### Cox proportional hazards model (MICE)
+###### MICE
 
 ```{r}
 # Cox model with MICE
@@ -1831,8 +1921,8 @@ cox_hard_cd_pool %>%
               exponentiate = TRUE) %>%
   print_survival_mice()
 ```
-
-## Reproduction and reproducibility {.appendix}
+:::
+# Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
 
