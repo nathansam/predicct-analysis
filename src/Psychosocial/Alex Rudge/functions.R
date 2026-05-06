@@ -1,6 +1,7 @@
 library(tidyverse)
 library(magrittr)
 library(survival)
+library(survminer)
 library(mice)
 library(splines)
 library(patchwork)
