@@ -756,6 +756,9 @@ summon_absolute_risk_factor <- function(data, model, time, variable) {
   # at a given time point with respect to specified value of the variable from a
   # Cox model
   
+  # Alias for time to avoid clashing
+  t <- time
+  
   # Values of the variable
   values <- data %>%
     dplyr::pull(variable) %>%
@@ -764,32 +767,36 @@ summon_absolute_risk_factor <- function(data, model, time, variable) {
   # Identify the time variable - to differentiate between soft and hard flare models
   time_variable <- all.vars(terms(model))[1]
   
-  results <- purrr::map(
+  # Create data clones 
+  newdata <- purrr::map(
     .x = values,
     .f = function(x) {
-      t <- time 
       
-      newdata <- data %>%
+      data %>%
         # Set values for time and the variable
         dplyr::mutate(!!sym(time_variable) := t, !!sym(variable) := x)
       
-      # Estimate expected for entire population
-      expected <- predict(model, newdata = newdata, type = "expected")
-      
-      # Calculate mean cumulative incidence (1 - survival)
-      absolute_risk <- (1 - exp(-expected)) %>% mean(na.rm = TRUE)
-      
-      # Return as a tibble row
-      tibble(
-        time = time,
-        variable = variable,
-        level = x,
-        absolute_risk = absolute_risk
-      )
     }
   ) %>%
     purrr::list_rbind()
   
+  
+  # Estimate expected for entire population
+  expected <- predict(model, newdata = newdata, type = "expected")
+  
+  # Add to data
+  newdata %<>%
+    dplyr::mutate(expected = expected)
+  
+  # Calculate mean cumulative incidence (1 - survival) across levels
+  results <- newdata %>%
+    dplyr::group_by(!!sym(time_variable), !!sym(variable)) %>%
+    dplyr::summarise(
+      absolute_risk = (1 - exp(-expected)) %>% mean(na.rm = TRUE)
+    )
+  
+  
+  # Return
   return(results)
   
 }
