@@ -150,8 +150,8 @@ data_table %<>%
   dplyr::mutate(
     cohort = dplyr::case_match(
       cohort,
-      'non psychosocial' ~ 'Excluded due to missingness',
-      'psychosocial' ~ 'Psychosocial cohort'
+      'non psychosocial' ~ 'Did not respond to psychosocial questionnaires',
+      'psychosocial' ~ 'Completed a psychosocial questionnaire'
     )
   ) %>%
   dplyr::mutate(
