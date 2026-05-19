@@ -25,7 +25,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Patient Health Questionnaire
+# Fatigue
 
 ## Setting up in R
 
@@ -707,7 +707,7 @@ independent = c('diagnosis2',
 # Dependent variable is OftenLackEnergy
 
 # Statistical tests for each independent variable with OftenLackEnergy
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
   dependent = 'OftenLackEnergy', 
@@ -776,7 +776,7 @@ summon_baseline_plot_continuous(
 #### Ulcerative Colitis/IBD Unclassified
 
 ```{r}
-# Select anxiety data and UC patients
+# Select fatigue data and UC patients
 data_baseline_uc <- fatigue %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -792,7 +792,7 @@ independent = c('age',
 # Dependent variable is OftenLackEnergy
 
 # Statistical tests for each independent variable with OftenLackEnergy
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
   dependent = 'OftenLackEnergy', 
@@ -844,7 +844,7 @@ summon_baseline_plot_continuous(
 )
 
 summon_baseline_plot_continuous(
-  data = data_baseline,
+  data = data_baseline_uc,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'control_8'
@@ -854,14 +854,14 @@ summon_baseline_plot_continuous(
 #### Crohn's Disease
 
 ```{r}
-# Select anxiety data and CD patients
+# Select fatigue data and CD patients
 data_baseline_cd <- fatigue %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is OftenLackEnergy
 
 # Statistical tests for each independent variable with OftenLackEnergy
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'OftenLackEnergy', 
@@ -913,7 +913,7 @@ summon_baseline_plot_continuous(
 )
 
 summon_baseline_plot_continuous(
-  data = data_baseline,
+  data = data_baseline_cd,
   stat_tests = statistical_tests,
   dependent = 'OftenLackEnergy',
   independent = 'control_8'
@@ -1613,7 +1613,7 @@ cox_soft_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
@@ -1783,7 +1783,7 @@ cox_soft_uc_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
@@ -1954,7 +1954,7 @@ cox_soft_cd_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%

@@ -924,7 +924,7 @@ independent = c('diagnosis2',
 # Dependent variable is MinimumExercise
 
 # Statistical tests for each independent variable with MinimumExercise
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
   dependent = 'MinimumExercise', 
@@ -993,7 +993,7 @@ summon_baseline_plot_continuous(
 #### Ulcerative Colitis/IBD Unclassified
 
 ```{r}
-# Select anxiety data and UC patients
+# Select exercise data and UC patients
 data_baseline_uc <- exercise %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -1009,7 +1009,7 @@ independent = c('age',
 # Dependent variable is MinimumExercise
 
 # Statistical tests for each independent variable with MinimumExercise
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
   dependent = 'MinimumExercise', 
@@ -1071,14 +1071,14 @@ summon_baseline_plot_continuous(
 #### Crohn's Disease
 
 ```{r}
-# Select anxiety data and CD patients
+# Select exercise data and CD patients
 data_baseline_cd <- exercise %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is MinimumExercise
 
 # Statistical tests for each independent variable with MinimumExercise
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'MinimumExercise', 
@@ -1820,7 +1820,7 @@ cox_soft_pool <- with(
 ) %>%
   mice::pool()
 
-cox_soft %>% 
+cox_soft_pool %>% 
   summary(conf.int = TRUE,
           conf.level = 0.95,
           exponentiate = TRUE)
@@ -1830,7 +1830,7 @@ cox_soft %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
@@ -2000,7 +2000,7 @@ cox_soft_uc_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%
@@ -2171,7 +2171,7 @@ cox_soft_cd_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ MinimumExercise, data = .) %>%

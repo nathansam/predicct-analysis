@@ -469,7 +469,6 @@ phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
-phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
 smoking <- readRDS(paste0(chiara, "smoking.rds"))
@@ -726,7 +725,7 @@ independent = c('diagnosis2',
 # Dependent variable is somatisation
 
 # Statistical tests for each independent variable with somatisation
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
   dependent = 'somatisation', 
@@ -795,7 +794,7 @@ summon_baseline_plot_continuous(
 #### Ulcerative Colitis/IBD Unclassified
 
 ```{r}
-# Select anxiety data and UC patients
+# Select somatisation data and UC patients
 data_baseline_uc <- phq %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -811,7 +810,7 @@ independent = c('age',
 # Dependent variable is somatisation
 
 # Statistical tests for each independent variable with somatisation
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
   dependent = 'somatisation', 
@@ -863,7 +862,7 @@ summon_baseline_plot_continuous(
 )
 
 summon_baseline_plot_continuous(
-  data = data_baseline,
+  data = data_baseline_uc,
   stat_tests = statistical_tests,
   dependent = 'somatisation',
   independent = 'control_8'
@@ -873,14 +872,14 @@ summon_baseline_plot_continuous(
 #### Crohn's Disease
 
 ```{r}
-# Select anxiety data and CD patients
+# Select somatisation data and CD patients
 data_baseline_cd <- phq %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is somatisation
 
 # Statistical tests for each independent variable with somatisation
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'somatisation', 
@@ -932,7 +931,7 @@ summon_baseline_plot_continuous(
 )
 
 summon_baseline_plot_continuous(
-  data = data_baseline,
+  data = data_baseline_cd,
   stat_tests = statistical_tests,
   dependent = 'somatisation',
   independent = 'control_8'
@@ -1632,7 +1631,7 @@ cox_soft_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
@@ -1802,7 +1801,7 @@ cox_soft_uc_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%
@@ -1973,7 +1972,7 @@ cox_soft_cd_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ somatisation, data = .) %>%

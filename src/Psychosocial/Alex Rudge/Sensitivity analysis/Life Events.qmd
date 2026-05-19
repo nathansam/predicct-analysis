@@ -736,7 +736,7 @@ independent = c('diagnosis2',
 # Dependent variable is AnyLifeEvents
 
 # Statistical tests for each independent variable with AnyLifeEvents
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
   dependent = 'AnyLifeEvents', 
@@ -805,7 +805,7 @@ summon_baseline_plot_continuous(
 #### Ulcerative Colitis/IBD Unclassified
 
 ```{r}
-# Select anxiety data and UC patients
+# Select life events data and UC patients
 data_baseline_uc <- lifeevents %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -821,7 +821,7 @@ independent = c('age',
 # Dependent variable is AnyLifeEvents
 
 # Statistical tests for each independent variable with AnyLifeEvents
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
   dependent = 'AnyLifeEvents', 
@@ -883,14 +883,14 @@ summon_baseline_plot_continuous(
 #### Crohn's Disease
 
 ```{r}
-# Select anxiety data and CD patients
+# Select life events data and CD patients
 data_baseline_cd <- lifeevents %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is AnyLifeEvents
 
 # Statistical tests for each independent variable with AnyLifeEvents
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR correction.
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'AnyLifeEvents', 
@@ -1655,7 +1655,7 @@ cox_soft %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
@@ -1825,7 +1825,7 @@ cox_soft_uc_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
@@ -1996,7 +1996,7 @@ cox_soft_cd_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ AnyLifeEvents, data = .) %>%
