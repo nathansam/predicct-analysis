@@ -761,7 +761,7 @@ independent = c('diagnosis2',
 # Dependent variable is score_group
 
 # Statistical tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety, 
   dependent = 'score_group', 
@@ -847,7 +847,7 @@ independent = c('age',
 # Dependent variable is score_group
 
 # Statistical tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety_uc, 
   dependent = 'score_group', 
@@ -917,7 +917,7 @@ data_baseline_anxiety_cd <- hads %>%
 # Dependent variable is score_group
 
 # Statistical tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_anxiety_cd, 
   dependent = 'score_group', 
@@ -998,7 +998,7 @@ independent = c('diagnosis2',
 # Dependent variable is score_group
 
 # Statistical tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_depression, 
   dependent = 'score_group', 
@@ -1077,7 +1077,7 @@ independent = c('age',
 # Dependent variable is score_group
 
 # Statistical tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_depression_uc, 
   dependent = 'score_group', 
@@ -1140,7 +1140,7 @@ data_baseline_depression_cd <- hads %>%
 # Dependent variable is score_group
 
 # Statistical tests for each independent variable with score_group
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_depression_cd, 
   dependent = 'score_group', 
@@ -1239,7 +1239,7 @@ data_survival_hard <- hads %>% dplyr::inner_join(
   ) %>%
   dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
 
-# Anxiety soft
+# Anxiety hard
 data_survival_anxiety_hard <- data_survival_hard %>%
   dplyr::filter(hads_type == 'anxiety_hads')
 
@@ -1252,7 +1252,7 @@ data_survival_anxiety_hard_cd <- data_survival_anxiety_hard %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 
-# Depression soft
+# Depression hard
 data_survival_depression_hard <- data_survival_hard %>%
   dplyr::filter(hads_type == 'depression_hads')
 
@@ -1446,7 +1446,7 @@ plot_continuous_hr(
 
 # Control
 plot_continuous_hr(
-  data = data_survival_anxiety_soft, 
+  data = data_survival_anxiety_hard, 
   model = cox_vas_hard, 
   variable = 'OverallControl')
 
@@ -1968,7 +1968,7 @@ cox_anxiety_soft_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_anxiety_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
@@ -2137,7 +2137,7 @@ cox_anxiety_soft_uc_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_anxiety_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
@@ -2308,7 +2308,7 @@ cox_anxiety_soft_cd_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_anxiety_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
@@ -2480,7 +2480,7 @@ cox_depression_soft_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_depression_hard %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
@@ -2590,7 +2590,7 @@ cox_depression_soft_uc <- coxph(
     FC +
     flare_group +
     ns(OverallControl, df = 2) +
-    ns(control_8, df = 2) + +
+    ns(control_8, df = 2) +
     Smoke +
     frailty(SiteNo),
   data = data_survival_depression_soft_uc
@@ -2650,7 +2650,7 @@ cox_depression_soft_uc_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_depression_hard_uc %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
@@ -2821,7 +2821,7 @@ cox_depression_soft_cd_pool %>%
 ##### Objective flare
 
 ```{r}
-# Patient reported flare
+# Objective flare
 # Kaplan Meier
 data_survival_depression_hard_cd %>%
   survfit(Surv(time, DiseaseFlareYN) ~ score_group, data = .) %>%
