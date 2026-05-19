@@ -878,7 +878,7 @@ data_vis_missingness %>%
 
 # Baseline Analysis
 
-We identify associations between meeting minimum exercise recommendations and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
+We identify associations between experiencing significant life events and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
 
 We first conduct the analysis in the full cohort, and then separately within the ulcerative colitis (including IBD unclassified) and Crohn’s disease subgroups.
 
@@ -977,7 +977,7 @@ summon_baseline_plot_continuous(
 
 ::: panel-tabset
 ```{r}
-# Select anxiety data and UC patients
+# Select life events data and UC patients
 data_baseline_uc <- lifeevents %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -1050,14 +1050,14 @@ summon_baseline_plot_continuous(
 
 ::: panel-tabset
 ```{r}
-# Select anxiety data and CD patients
+# Select life events data and CD patients
 data_baseline_cd <- lifeevents %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is AnyLifeEvents
 
 # Statistical tests for each independent variable with AnyLifeEvents
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'AnyLifeEvents', 

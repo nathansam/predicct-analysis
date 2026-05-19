@@ -529,7 +529,6 @@ phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
 demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
-phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 demo <- readRDS(paste0(outdir, "demo.RDS"))
 flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
 smoking <- readRDS(paste0(chiara, "smoking.rds"))
@@ -884,7 +883,7 @@ summon_baseline_plot_continuous(
 ## Ulcerative Colitis
 ::: panel-tabset
 ```{r}
-# Select anxiety data and UC patients
+# Select PHQ data and UC patients
 data_baseline_uc <- phq %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -954,14 +953,14 @@ summon_baseline_plot_continuous(
 ## Crohn's Disease
 ::: panel-tabset
 ```{r}
-# Select anxiety data and CD patients
+# Select PHQ data and CD patients
 data_baseline_cd <- phq %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is somatisation
 
 # Statistical tests for each independent variable with somatisation
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'somatisation', 

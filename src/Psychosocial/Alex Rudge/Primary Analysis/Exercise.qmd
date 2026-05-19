@@ -1082,7 +1082,7 @@ summon_baseline_plot_continuous(
 
 ::: panel-tabset
 ```{r}
-# Select anxiety data and UC patients
+# Select exercise data and UC patients
 data_baseline_uc <- exercise %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -1155,14 +1155,14 @@ summon_baseline_plot_continuous(
 
 ::: panel-tabset
 ```{r}
-# Select anxiety data and CD patients
+# Select exercise data and CD patients
 data_baseline_cd <- exercise %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is MinimumExercise
 
 # Statistical tests for each independent variable with MinimumExercise
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'MinimumExercise', 

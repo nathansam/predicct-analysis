@@ -861,7 +861,7 @@ summon_baseline_plot_continuous(
 ## Ulcerative Colitis
 ::: panel-tabset
 ```{r}
-# Select anxiety data and UC patients
+# Select fatigue data and UC patients
 data_baseline_uc <- fatigue %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
@@ -933,14 +933,14 @@ summon_baseline_plot_continuous(
 ## Crohn's Disease
 ::: panel-tabset
 ```{r}
-# Select anxiety data and CD patients
+# Select fatigue data and CD patients
 data_baseline_cd <- fatigue %>%
   dplyr::filter(diagnosis2 == 'CD')
 
 # Dependent variable is OftenLackEnergy
 
 # Statistical tests for each independent variable with OftenLackEnergy
-# With p-values adjusted for multiple testing using holm correction.
+# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
   dependent = 'OftenLackEnergy', 
