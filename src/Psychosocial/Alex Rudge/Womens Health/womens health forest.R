@@ -26,17 +26,10 @@ results %<>%
 
 variables = c(
   'meno2',
-  'Frequency',
-  'PeriodLong',
-  'PeriodIrregular',
-  'DescribeBloodLoss_heavy',
+  'GlobalAUB',
   'PeriodTypePain',
   'SufferPMS',
-  'AbdominalPain_binary',
-  'MoreBowelMovements_binary',
-  'LooserBowelMovements_binary',
-  'PassMoreBlood_binary',
-  'ProblemsNausea_binary',
+  'IBDsymptoms_menses',
   'hormonal2'
 )
 
@@ -80,31 +73,31 @@ plot_uc_hard <- summon_complete_forest_plot(
 # ggsave(
 #   filename = glue("{filepath_data}/Forest_plot_cd_soft.pdf"),
 #   plot = plot_cd_soft,
-#   width = 10,
-#   height = 10,
+#   width = 11,
+#   height = 6,
 #   units = 'in'
 # )
 # 
 # ggsave(
 #   filename = glue("{filepath_data}/Forest_plot_cd_hard.pdf"),
 #   plot = plot_cd_hard,
-#   width = 10,
-#   height = 10,
+#   width = 11,
+#   height = 6,
 #   units = 'in'
 # )
 # 
 # ggsave(
 #   filename = glue("{filepath_data}/Forest_plot_uc_soft.pdf"),
 #   plot = plot_uc_soft,
-#   width = 10,
-#   height = 10,
+#   width = 11,
+#   height = 6,
 #   units = 'in'
 # )
 # 
 # ggsave(
 #   filename = glue("{filepath_data}/Forest_plot_uc_hard.pdf"),
 #   plot = plot_uc_hard,
-#   width = 10,
-#   height = 10,
+#   width = 11,
+#   height = 6,
 #   units = 'in'
 # )

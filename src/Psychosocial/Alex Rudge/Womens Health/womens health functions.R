@@ -53,13 +53,13 @@ custom_theme <-
   theme_minimal() +
   theme(
     # Title
-    plot.title = element_text(size = 12),
-    plot.subtitle = element_text(size = 10),
+    plot.title = element_text(size = 16),
+    plot.subtitle = element_text(size = 14),
     # Axes
     axis.title.y = element_blank(),
-    axis.text.y = element_text(size = 12, colour = 'black'),
-    axis.title.x = element_text(size = 12, colour = 'black'),
-    axis.text.x = element_text(size = 10, colour = 'black')
+    axis.text.y = element_text(size = 16, colour = 'black'),
+    axis.title.x = element_text(size = 16, colour = 'black'),
+    axis.text.x = element_text(size = 14, colour = 'black')
   )
 
 
@@ -113,7 +113,7 @@ summon_forest_plot <- function(data, variable, ibd_type, flare_type){
       x = 0,
       y = forcats::as_factor(term.tidy),
       label = conf.interval.tidy),
-      size = 12,
+      size = 16,
       size.unit = "pt",
       color = 'black'
     ) +
@@ -127,7 +127,7 @@ summon_forest_plot <- function(data, variable, ibd_type, flare_type){
       x = 0,
       y = forcats::as_factor(term.tidy),
       label = p.value.tidy),
-      size = 12,
+      size = 16,
       size.unit = "pt",
       color = 'black'
     ) +
@@ -175,7 +175,7 @@ summon_complete_forest_plot <- function(data,
       ncol = 3,
       guides = 'collect',
       axes = 'collect',
-      width = c(2.5, 1.2, 0.5),
+      width = c(2.2, 1.2, 0.5),
       heights = heights
     )
   
@@ -192,7 +192,7 @@ summon_complete_forest_plot <- function(data,
   patchwork_plots +
     patchwork::plot_annotation(title = title, subtitle = subtitle) &
     theme(
-      plot.title = element_text(size = 14, hjust = 0.5),
+      plot.title = element_text(size = 16, hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
       legend.position = "none",
       plot.margin = margin(0, 0, 3, 0)
