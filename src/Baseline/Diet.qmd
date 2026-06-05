@@ -786,7 +786,7 @@ demo %>%
 ```{R}
 #| label: tbl-drinkIntake
 #| tbl-cap: "ANOVA between artificial/sugar-sweetened beverage intake and FC groups."
-pander(summary(aov(sweetIntake ~ cat, data = demo)))
+pander(summary(aov(drinkIntake ~ cat, data = demo)))
 ```
 
 ### Animal-based products (processed meat)
