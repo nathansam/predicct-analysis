@@ -146,3 +146,10 @@ affiliations:
     city: "Copenhagen"
     country: "Denmark"
     url: "https://www.predictibd.dk/"
+
+
+citation:
+  type: article-journal
+  container-title: "Gut"
+  title: "Associations between demographic, clinical and dietary factors and flares in inflammatory bowel disease: the PRognostic effect of Environmental factors in Crohn’s and Colitis (PREdiCCt) prospective cohort study"
+  doi: "10.1136/gutjnl-2025-337846"
