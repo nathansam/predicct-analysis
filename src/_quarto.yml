@@ -54,8 +54,7 @@ format:
     monofont: "Noto Sans Mono"
 website:
   title: "PREdiCCt analyses"
-  site-url: 'https://constantine-cooke.com'
-  site-path: '/predicct-analysis/'
+  site-url: 'https://constantine-cooke.com/predicct-analysis/'
   twitter-card:
     creator: "@IBDNathan"
     site: "@EdinUni_IGC"
@@ -151,5 +150,39 @@ affiliations:
 citation:
   type: article-journal
   container-title: "Gut"
-  title: "Associations between demographic, clinical and dietary factors and flares in inflammatory bowel disease: the PRognostic effect of Environmental factors in Crohn’s and Colitis (PREdiCCt) prospective cohort study"
+  title: "Associations between demographic, clinical and dietary factors and flares in inflammatory bowel disease: The PRognostic effect of Environmental factors in Crohn’s and Colitis (PREdiCCt) prospective cohort study"
+  author:
+    - "Nathan Constantine-Cooke"
+    - "Beatriz Gros"
+    - "Nikolas Plevris"
+    - "Linda J Williams"
+    - "Gareth-Rhys Jones"
+    - "Janet Kyle"
+    - "Nicholas A Kennedy"
+    - "Victor Velasco-Pardo"
+    - "Alexander Rudge"
+    - "Debbie Alexander"
+    - "Carl A Anderson"
+    - "Maiara Brusco de Freitas"
+    - "Lisa M Derr"
+    - "Lauranne AAP Derikx"
+    - "Sian Gilchrist"
+    - "Paul Henderson"
+    - "Graham W Horgan"
+    - "Peter Irving"
+    - "Christopher A Lamb"
+    - "Luke Jostins-Dean"
+    - "James O Lindsay"
+    - "Jonathan MacDonald"
+    - "Craig Mowat"
+    - "Charles Murray"
+    - "Miles Parkes"
+    - "Spyros I Siakavellas"
+    - "Catalina A Vallejos"
+    - "Daniel R Gaya"
+    - "Jonathan M Rhodes"
+    - "Alexandra M Johnstone"
+    - "Christopher J Weir"
+    - "Charlie W Lees"
+    - "on behalf of the PREdiCCt study group"
   doi: "10.1136/gutjnl-2025-337846"
