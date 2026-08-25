@@ -2,36 +2,78 @@ library(tidyverse)
 library(magrittr)
 library(survival)
 
+# Load psychosocial cohort
+cohort <- readr::read_rds("/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/participants.rds")
 
-# Run HADS data to get a dataset with missing FC
+# Load other variables
+data_cohort_raw <- readr::read_rds(
+  file = "/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-full.rds"
+)
 
-data <- hads %>%
-  # Select anxiety hads
-  dplyr::filter(hads_type == 'anxiety_hads') %>%
-  # Select relevant variables
+# Flares
+flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
+flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
+
+# Select psychosocial cohort
+data_cohort <- data_cohort_raw %>%
+  dplyr::filter(ParticipantNo %in% cohort$ParticipantNo)
+
+
+# Select columns
+data_cohort %<>%
   dplyr::select(
     ParticipantNo,
-    diagnosis2,
-    age,
-    Sex,
-    IMD,
-    FC,
-    flare_group,
-    OverallControl,
-    Smoke,
     SiteNo,
-    score_group
+    diagnosis,
+    diagnosis2,
+    Sex,
+    Age,
+    Ethnicity,
+    BMIcat,
+    IMD,
+    `IBD Duration`,
+    Treatment,
+    Biologic,
+    Smoke,
+    FC,
+    CReactiveProtein,
+    control_8,
+    vas_control
   )
 
+# Rename cols
+data_cohort %<>%
+  dplyr::rename(
+    IBD_duration = `IBD Duration`,
+    OverallControl = vas_control
+  )
+
+
+# Tidy up variables
+# IBD
+data_cohort %<>%
+  dplyr::mutate(IMD = as.character(IMD)) %>%
+  dplyr::mutate(
+    IMD = dplyr::case_match(
+      IMD,
+      '1' ~ '1 (most deprived)',
+      '2' ~ '2',
+      '3' ~ '3',
+      '4' ~ '4',
+      '5' ~ '5 (least deprived)'
+    )
+  )
+
+
 # New column - flag if FC is missing
-data %<>%
+data_cohort %<>%
   dplyr::mutate(missing_fc_flag = is.na(FC)) %>%
   dplyr::mutate(missing_fc_flag = factor(missing_fc_flag)) %>%
   dplyr::mutate(missing_fc_flag = forcats::fct_relevel(missing_fc_flag, "FALSE"))
 
 
 # Number of patients with missing FC
-data %>%
+data_cohort %>%
   dplyr::count(missing_fc_flag) %>%
   dplyr::mutate(p = n/sum(n))
 
@@ -39,15 +81,23 @@ data %>%
 
 # Associations between missing FC and other variables
 
-variables = c('age',
-              'Sex',
-              'flare_group',
-              'Smoke',
-              'OverallControl')
+variables = c(
+  'Age',
+  'Sex',
+  'BMIcat',
+  'Smoke',
+  'IMD',
+  'Ethnicity',
+  'IBD_duration',
+  'control_8',
+  'OverallControl',
+  'CReactiveProtein',
+  'Biologic'
+)
 
 # Using tbl_summary
 
-data %>%
+data_cohort %>%
   gtsummary::tbl_strata(
     strata = diagnosis2,
     .tbl_fun = ~
@@ -57,14 +107,14 @@ data %>%
         include = variables,
         missing_text = 'Missing data',
         label = list(
-          age ~ "Age",
-          flare_group ~ "Flares in previous year",
+          Age ~ "Age",
           Smoke ~ "Smoking",
           OverallControl ~ "VAS Control Score"
         )
       ) %>%
       gtsummary::add_p() %>%
-      gtsummary::bold_p(),
+      gtsummary::bold_p() %>%
+      gtsummary::add_q(),
     .header = "**{strata}**, N = {n}"
   ) %>%
   gtsummary::as_gt() %>%
@@ -91,14 +141,14 @@ data %>%
 
 # Is missingness informative of the outcome?
 
-data_survival_soft <- data %>%
+data_survival_soft <- data_cohort %>%
   dplyr::inner_join(
     flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
     by = 'ParticipantNo'
   ) %>%
   dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
 
-data_survival_hard <- data %>%
+data_survival_hard <- data_cohort %>%
   dplyr::inner_join(
     flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
     by = 'ParticipantNo'

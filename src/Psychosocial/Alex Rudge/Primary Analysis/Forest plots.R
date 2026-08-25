@@ -182,7 +182,7 @@ summon_complete_forest <- function(
    plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
    plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
     patchwork::plot_layout(
-      ncol = 4,
+     ncol = 4,
      guides = 'collect',
      axes = 'collect',
      width = c(2.5, 0.4, 1.2, 0.5),

@@ -49,6 +49,27 @@ data %>%
   ggtitle("Number of questionnaires completed per month") +
   custom_theme
 
+# How many responses per person?
+data %>%
+  dplyr::count(ParticipantNo) %>%
+  dplyr::count(n) %>%
+  dplyr::mutate(n = forcats::as_factor(n)) %>%
+  ggplot(aes(x = n, y = nn)) +
+  geom_col(colour = 'blue', fill = 'blue', alpha = 0.5) +
+  xlab("Number of questionnaires") +
+  ylab("Number of participants") +
+  ggtitle("Number of questionnaires responded to per person") +
+  custom_theme
+
+# Median IQR
+data %>%
+  dplyr::count(ParticipantNo) %>%
+  dplyr::summarise(
+    median = median(n),
+    q25 = quantile(n, 0.25),
+    q75 = quantile(n, 0.75)
+  )
+
 
 # Fatigued per month
 # With percentages as labels?

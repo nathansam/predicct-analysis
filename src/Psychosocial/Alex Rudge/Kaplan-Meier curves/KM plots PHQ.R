@@ -41,7 +41,7 @@ plot_soft_uc
 plot_soft_cd <- summon_km_curves(
   data = data_survival_soft_cd,
   dependent = dependent,
-  title = "Time to patient reported flare in CD",
+  title = "Time to patient-reported flare in CD",
   legend.title = legend.title,
   legend.labs = legend.labs,
   palette = palette,
