@@ -533,29 +533,18 @@ summon_lrt <- function(model, remove = NULL, add = NULL) {
 if (file.exists("/.dockerenv")) {
   # If running in docker
   data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
 } else {
   # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
 
 #read-in data
 #hads is question 42 of the baseline questionnaire
 hads <- read.xlsx(paste0(data.path, "Baseline2022/hads.xlsx"))
-demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
-IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
-smoking <- readRDS(paste0(chiara, "smoking.rds"))
-IMD <- readRDS(paste0(chiara, "IMD.rds"))
-demo <- readRDS(paste0(outdir, "demo.RDS"))
-flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
-IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
-IBD_FC <- readRDS(paste0(chiara, "IBD_FC.RDS"))
+data_common <- readRDS(
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/common_variables.rds"
+)
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 ```
@@ -582,43 +571,9 @@ Data cleaning involved the following steps:
 hads <- hads %>%
   filter(!is.na(ParticipantId))
 
-demographics <- demographics %>% 
-  filter(!is.na(ParticipantId))
-
-IBD <- IBD %>% 
-  filter(!is.na(ParticipantId))
-
-# join demographics
+# Join the common participant-level data.
 hads %<>%
-  dplyr::left_join(demographics %>%
-                     dplyr::select(ParticipantNo, Sex, age, diagnosis),
-                   by = "ParticipantNo")
-
-# Convert diagnosis column to factor with labels
-hads %<>%
-  dplyr::mutate(
-    diagnosis2 = dplyr::case_when(
-      diagnosis == 1 ~ 1,
-      diagnosis == 2 ~ 2,
-      diagnosis == 3 ~ 2,
-      diagnosis == 4 ~ 2
-    )
-  ) %>%
-  dplyr::mutate(
-    diagnosis2 = factor(
-      diagnosis2,
-      levels = c("1", "2"), 
-      labels = c("CD", "UC/IBDU")
-    )
-  )
-
-hads %<>%
-  dplyr::mutate(Sex = factor(
-    Sex,
-    levels = c(1, 2),
-    labels = c("Male", "Female")
-  )
-)
+  dplyr::left_join(data_common, by = "ParticipantNo")
 
 #exclude participants <17, 53 participants excluded, tot 1847
 
@@ -678,82 +633,6 @@ hads %<>%
   dplyr::select(-c(FeelTense:CanEnjoyBookTV))
 
 
-#create age groups
-hads %<>%
-  dplyr::mutate(AgeGroup = cut(
-    age,
-    breaks = c(18, 24, 34, 44, 54, 65, Inf),
-    labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-    include.lowest = TRUE
-  ))
-
-# FC data
-hads <- hads %>% 
-  dplyr::left_join(
-    demo %>% dplyr::select(ParticipantNo, FC, cat), 
-    by = "ParticipantNo")
-
-# Add smoking
-hads %<>% 
-  dplyr::left_join(
-    smoking %>% dplyr::select(ParticipantNo, Smoke), 
-    by = "ParticipantNo")
-
-# Smoke as a factor
-hads %<>%
-  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
-  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
-
-# Add IMD
-hads %<>% 
-  dplyr::left_join(
-    IMD, 
-    by = "ParticipantNo") 
-
-# IMD as a factor
-hads %<>%
-  dplyr::mutate(
-    IMD = as.factor(IMD)
-  )
-
-# Join flare data
-hads <- hads %>% 
-  dplyr::left_join(
-    IBD %>% select(ParticipantNo, FlaresInPastYear), 
-    by = "ParticipantNo"
-    )
-
-#create flare groups
-hads <- hads %>%
-  dplyr::mutate(
-    flare_group = ifelse(FlaresInPastYear == 0, "No flares", "1 or More Flares")
-    )
-
-# make flares into levels
-hads %<>%
-  dplyr::mutate(flare_group = factor(flare_group, levels = c("No flares", "1 or More Flares")))
-
-# IBD control scores
-hads %<>%
-  dplyr::left_join(
-    IBD_C %>% dplyr::select(
-      ParticipantNo,
-      control_score,
-      OverallControl,
-      control_8,
-      control_grouped,
-      vas_control
-    ),
-    by = "ParticipantNo"
-  )
-
-#change control_grouped and vas_control from character into factors
-hads %<>% 
-  dplyr::mutate(control_grouped = factor(control_grouped))
-
-hads %<>% 
-  dplyr::mutate(vas_control = factor(vas_control))
-
 # Pivot longer
 hads <- hads %>%
   tidyr::pivot_longer(
@@ -769,28 +648,6 @@ hads <- hads %>%
       breaks = c(0, 7, 10, 21), 
       labels = c("0-7", "8-10", "11-21"), 
       include.lowest = TRUE)
-  )
-
-# Age in decades
-hads %<>%
-  dplyr::mutate(
-    age_decade = age/10
-  )
-
-
-# FC maximum detectable value is 1250
-hads %<>%
-  dplyr::mutate(
-    FC = dplyr::case_when(
-      FC > 1250 ~ 1250,
-      .default = FC
-    )
-  )
-
-# Log transform FC due to extreme positive skew
-hads %<>%
-  dplyr::mutate(
-    FC = log(FC)
   )
 
 # Filter missing hads scores - 7 anxiety, 6 depression due to not answering all the questions
@@ -1477,7 +1334,6 @@ plot_continuous_hr(
   variable = 'hads_score')
 
 ```
-
 :::
 
 #### Objective flare {.unlisted .unnumbered}
@@ -3474,6 +3330,7 @@ cox_depression_cts_hard_cd_pool %>%
 :::
 
 # Survival - interaction term
+
 Testing the heterogeneity between ulcerative colitis and Crohn's disease by modelling the cohort together with an interaction term between ibd type and anxiety/depression.
 
 ## Anxiety - categorical
@@ -3831,8 +3688,6 @@ cox_depression_cts_hard_interaction_pool %>%
   print_survival_mice()
 ```
 :::
-
-
 
 # Reproduction and reproducibility {.appendix}
 
