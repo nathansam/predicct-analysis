@@ -566,31 +566,19 @@ summon_lrt <- function(model, remove = NULL, add = NULL) {
 if (file.exists("/.dockerenv")) {
   # If running in docker
   data.path <- "data/final/20221004/"
-  redcap.path <- "data/final/20231030/"
-  prefix <- "data/end-of-follow-up/"
-  outdir <- "data/processed"
-  flare.dir <- "data/final/20240308/Followup/"
   chiara <- "data/people/chiara/"
 } else {
   # Run on OS directly
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-  redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-  prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-  outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-  flare.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
-                      "final/20240308/Followup/")
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
 
 lifeevents <- read.xlsx(paste0(data.path, "Baseline2022/lifeevents.xlsx"))
-demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
-demo <- readRDS(paste0(outdir, "demo.RDS"))
-smoking <- readRDS(paste0(chiara, "smoking.rds"))
-IMD <- readRDS(paste0(chiara, "IMD.rds"))
-IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+data_common <- readRDS(
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/common_variables.rds"
+)
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
-IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 ```
 
 # Data Cleaning
@@ -616,143 +604,16 @@ lifeevents <- lifeevents %>%
 lifeevents <- lifeevents %>% 
   dplyr::filter(!is.na(AnyLifeEvents))
 
-# Add demographics
+# Add the common participant-level data.
 lifeevents <- lifeevents %>% 
-  dplyr::left_join(
-    demographics %>% select(ParticipantNo, Sex, diagnosis, age),
-    by = 'ParticipantNo')
+  dplyr::left_join(data_common, by = "ParticipantNo")
 
 # Age
 lifeevents %<>% dplyr::filter(age >= 18)
 
-lifeevents %<>% dplyr::mutate(Sex = factor(
-  Sex,
-  levels = c(1, 2),
-  labels = c("Male", "Female"))
-)
-
 lifeevents %<>%
   dplyr::mutate(AnyLifeEvents = factor(AnyLifeEvents, levels = c(1, 2), labels = c("Yes", "No"))) %>%
   dplyr::mutate(AnyLifeEvents = forcats::fct_relevel(AnyLifeEvents, "No", "Yes"))
-
-lifeevents %<>% dplyr::mutate(AgeGroup = cut(
-  age,
-  breaks = c(18, 24, 34, 44, 54, 65, Inf),
-  labels = c("18-24", "25-34", "35-44", "45-54", "55-64", "65+"),
-  include.lowest = TRUE))
-
-# Recode diagnosis
-lifeevents %<>%
-  dplyr::mutate(
-    diagnosis2 = dplyr::case_when(
-      diagnosis == 1 ~ 1,
-      diagnosis == 2 ~ 2,
-      diagnosis == 3 ~ 2,
-      diagnosis == 4 ~ 2
-    )
-  ) %>%
-  dplyr::mutate(diagnosis2 = factor(
-    diagnosis2,
-    levels = c("1", "2"),
-    labels = c("CD", "UC/IBDU")
-  ))
-
-lifeevents <- lifeevents %>%
-  left_join(
-    IBD %>% select(ParticipantNo, FlaresInPastYear),
-    by = 'ParticipantNo'
-    )
-
-# create flare groups
-lifeevents <- lifeevents %>%
-  mutate(flare_group = ifelse(FlaresInPastYear == 0,
-    "No Flares",
-    "1 or More Flares"
-  ))
-
-# Make flares into levels
-lifeevents %<>% 
-  dplyr::mutate(flare_group = factor(
-    flare_group,
-    levels = c(
-      "No Flares",
-      "1 or More Flares"
-  )
-))
-
-# add FC data
-lifeevents <- lifeevents %>% 
-  dplyr::left_join(
-    demo %>% dplyr::select(ParticipantNo, FC, cat),
-    by = "ParticipantNo")
-
-# Add smoking
-lifeevents %<>% 
-  dplyr::left_join(
-    smoking %>% dplyr::select(ParticipantNo, Smoke), 
-    by = "ParticipantNo")
-
-# Smoke as a factor
-lifeevents %<>%
-  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
-  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
-
-# Add IMD
-lifeevents %<>% 
-  dplyr::left_join(
-    IMD, 
-    by = "ParticipantNo") 
-
-# IMD as a factor
-lifeevents %<>%
-  dplyr::mutate(
-    IMD = as.factor(IMD)
-  )
-
-
-# IBD control scores
-lifeevents %<>%
-  dplyr::left_join(
-    IBD_C %>% dplyr::select(
-      ParticipantNo,
-      control_score,
-      OverallControl,
-      control_8,
-      control_grouped,
-      vas_control
-    ),
-    by = "ParticipantNo"
-  )
-
-#change control_grouped and vas_control from character into factors
-lifeevents %<>% 
-  dplyr::mutate(control_grouped = factor(control_grouped))
-
-lifeevents %<>% 
-  dplyr::mutate(vas_control = factor(vas_control))
-
-
-# Age in decades
-lifeevents %<>%
-  dplyr::mutate(
-    age_decade = age/10
-  )
-
-
-# FC maximum detectable value is 1250
-lifeevents %<>%
-  dplyr::mutate(
-    FC = dplyr::case_when(
-      FC > 1250 ~ 1250,
-      .default = FC
-    )
-  )
-
-# Log transform FC due to extreme positive skew
-lifeevents %<>%
-  dplyr::mutate(
-    FC = log(FC)
-  )
 
 ```
 
@@ -1110,6 +971,7 @@ summon_baseline_plot_continuous(
 
 ```
 :::
+
 # Survival Analysis
 
 Associations between experiencing a life event and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level. Participants with missing flare status or time are excluded.
@@ -1216,6 +1078,7 @@ plot_continuous_hr(
 
 ```
 :::
+
 #### Objective flare {.unlisted .unnumbered}
 
 ```{r}
@@ -1411,6 +1274,7 @@ summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 
 ::: panel-tabset
 ##### Age {.unlisted .unnumbered}
+
 ```{r}
 # Plot shapes
 # Age
@@ -1596,7 +1460,7 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
 
 ```{r}
@@ -1661,6 +1525,7 @@ cox_soft_pool %>%
 
 ```
 :::
+
 #### Objective flare
 
 ##### Kaplan-Meier
@@ -1680,8 +1545,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_hard <- coxph(
@@ -1742,6 +1608,7 @@ cox_hard_pool %>%
   print_survival_mice()
 ```
 :::
+
 ### Ulcerative Colitis
 
 #### Patient reported flare
@@ -1763,8 +1630,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_soft_uc <- coxph(
@@ -1827,6 +1695,7 @@ cox_soft_uc_pool %>%
 
 ```
 :::
+
 #### Objective flare
 
 ##### Kaplan-Meier
@@ -1846,8 +1715,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_hard_uc <- coxph(
@@ -1909,6 +1779,7 @@ cox_hard_uc_pool %>%
   print_survival_mice()
 ```
 :::
+
 ### Crohn's Disease
 
 #### Patient reported flare.
@@ -1930,8 +1801,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_soft_cd <- coxph(
@@ -1994,6 +1866,7 @@ cox_soft_cd_pool %>%
 
 ```
 :::
+
 #### Objective flare
 
 ##### Kaplan-Meier
@@ -2013,8 +1886,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_hard_cd <- coxph(
@@ -2075,6 +1949,7 @@ cox_hard_cd_pool %>%
   print_survival_mice()
 ```
 :::
+
 # Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
