@@ -8,7 +8,7 @@ filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitiv
 
 # Suffix
 suffix <- "cc"
-#suffix <- "mice"
+suffix <- "mice"
 
 suffix_load <- paste0("_", suffix, ".rds")
 suffix_save <- paste0(" ", suffix, '.pdf')
@@ -27,10 +27,6 @@ cox_results %<>%
     significance = forcats::as_factor(significance)
   )
 
-# p.value.tidy bmj or lancet
-cox_results %<>%
-  dplyr::rename(p.value.tidy = p.value.tidy.lancet)
-
 
 # Flare type
 cox_results_soft <- cox_results %>%
@@ -41,19 +37,21 @@ cox_results_hard <- cox_results %>%
 
 # Forest plot 
 
+base_size = 10
+
 # Custom theme
 custom_theme <- 
   theme_minimal() +
   theme(
-    # Title
-    plot.title = element_text(size = 12),
-    plot.subtitle = element_text(size = 10),
-    # Axes
-    axis.title.y = element_blank(),
-    axis.text.y = element_text(size = 12, colour = 'black'),
-    axis.title.x = element_text(size = 12, colour = 'black'),
-    axis.text.x = element_text(size = 10, colour = 'black')
-  )
+  # Title
+  plot.title = element_text(size = base_size + 2),
+  plot.subtitle = element_text(size = base_size - 2),
+  # Axes
+  axis.title.y = element_blank(),
+  axis.text.y = element_text(size = base_size, colour = 'black'),
+  axis.title.x = element_text(size = base_size, colour = 'black'),
+  axis.text.x = element_text(size = base_size - 2, colour = 'black')
+)
 
 # Maximum xlimit
 x_max <- cox_results %>% dplyr::pull(conf.high) %>% max(na.rm = TRUE) %>% ceiling()
@@ -105,7 +103,7 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       x = 0,
       y = forcats::as_factor(term_tidy),
       label = n),
-      size = 12,
+      size = base_size,
       size.unit = "pt",
       color = 'black'
     ) +
@@ -119,10 +117,10 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       x = 0,
       y = forcats::as_factor(term_tidy),
       label = conf.interval.tidy),
-      size = 12,
+      size = base_size,
       size.unit = "pt",
       color = 'black'
-    ) +
+      ) +
     theme_void() +
     theme(plot.title = element_text(hjust = 0.5))
   
@@ -133,10 +131,10 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       x = 0,
       y = forcats::as_factor(term_tidy),
       label = p.value.tidy),
-      size = 12,
+      size = base_size,
       size.unit = "pt",
       color = 'black'
-    ) +
+      ) +
     theme_void() +
     theme(plot.title = element_text(hjust = 0.5))
   
@@ -153,7 +151,7 @@ summon_complete_forest <- function(
     diagnosis2,
     title,
     subtitle = NULL) {
-  
+
   # Patient reported flares in UC
   plot_anxiety <- summon_forest_plot(data, variable = 'score_group_anxiety', diagnosis2 = diagnosis2)
   plot_depression <- summon_forest_plot(data, variable = 'score_group_depression', diagnosis2 = diagnosis2)
@@ -163,40 +161,40 @@ summon_complete_forest <- function(
   plot_exercise <- summon_forest_plot(data, variable = 'MinimumExercise', diagnosis2 = diagnosis2)
   plot_lifeevents <- summon_forest_plot(data, variable = 'AnyLifeEvents', diagnosis2 = diagnosis2)
   
-  
-  
+
+
   plot_anxiety$plot + 
     (plot_anxiety$n + 
        labs(title = 'N') + 
-       theme(plot.title = element_text(size = 12))) +
+       theme(plot.title = element_text(size = base_size))) +
     (plot_anxiety$hr + 
        labs(title = 'aHR (95% CI)') + 
-       theme(plot.title = element_text(size = 12))) + 
+       theme(plot.title = element_text(size = base_size))) + 
     (plot_anxiety$p + 
        labs(title = 'P-value') +
-       theme(plot.title = element_text(size = 12))) +
-    plot_depression$plot + plot_depression$n + plot_depression$hr +  plot_depression$p +
-    plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p +
-    plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p +
-    plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p +
-    plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
-    plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
+       theme(plot.title = element_text(size = base_size))) +
+   plot_depression$plot + plot_depression$n + plot_depression$hr +  plot_depression$p +
+   plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p +
+   plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p +
+   plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p +
+   plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
+   plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
     patchwork::plot_layout(
-      ncol = 4,
-      guides = 'collect',
-      axes = 'collect',
-      width = c(2.5, 0.4, 1.2, 0.5),
-      height = c(2,2,3,2,2,2,2)
-    ) +
-    patchwork::plot_annotation(
+     ncol = 4,
+     guides = 'collect',
+     axes = 'collect',
+     width = c(2.5, 0.4, 1.2, 0.5),
+     height = c(3,3,3,2,2,2,2)
+   ) +
+   patchwork::plot_annotation(
       title = title,
       subtitle = subtitle
-    ) &
+   ) &
     theme(
-      plot.title = element_text(size = 14, hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
+      plot.title = element_text(size = base_size, hjust = 0.5, face = 'bold'),
+     plot.subtitle = element_text(hjust = 0.5),
       legend.position = "none",
-      plot.margin = margin(0, 0, 3, 0))
+     plot.margin = margin(0, 0, 3, 0))
 }
 
 # Soft UC
@@ -239,12 +237,15 @@ plot_hr_hard_cd
 # Save
 filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Sensitivity analysis/"
 
+width = 7
+height = 5
+
 # soft uc
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft uc", suffix_save),
   plot = plot_hr_soft_uc,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
@@ -252,8 +253,8 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft cd", suffix_save),
   plot = plot_hr_soft_cd,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
@@ -261,8 +262,8 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard uc", suffix_save),
   plot = plot_hr_hard_uc,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
@@ -270,8 +271,8 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard cd", suffix_save),
   plot = plot_hr_hard_cd,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
