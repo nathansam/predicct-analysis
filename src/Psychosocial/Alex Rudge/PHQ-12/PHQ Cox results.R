@@ -1,4 +1,6 @@
 
+source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
+
 # Extracting the results from the Cox models
 
 # Run phq

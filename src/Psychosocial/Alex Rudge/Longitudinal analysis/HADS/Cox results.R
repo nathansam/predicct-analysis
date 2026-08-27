@@ -2,6 +2,7 @@
 # Extracting the results from the Cox models
 
 # Run HADS
+source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/tdc model uc.R")
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/tdc model cd.R")
 
@@ -93,4 +94,3 @@ readr::write_rds(
   x = cox_results_hads_depression_cc,
   file = paste0(filepath, "cox_results_hads_depression_cc.rds")
 )
-

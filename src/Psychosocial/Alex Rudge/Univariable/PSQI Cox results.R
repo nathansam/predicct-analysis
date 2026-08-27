@@ -1,4 +1,6 @@
 
+source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
+
 # Extracting the results from the Cox models
 
 # Run psqi
@@ -48,4 +50,3 @@ readr::write_rds(
   x = cox_results_psqi_cc,
   file = paste0(filepath, "cox_results_psqi_cc.rds")
 )
-
