@@ -4,16 +4,16 @@ library(patchwork)
 
 # Load in data
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Extended analysis/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/"
 
 # Suffix
-suffix <- "cc"
+#suffix <- "cc"
 suffix <- "mice"
 
 suffix_load <- paste0("_", suffix, ".rds")
 suffix_save <- paste0(" ", suffix, '.pdf')
 
-cox_results <- readr::read_rds(paste0(filepath, "cox_results_all_variables", suffix_load))
+cox_results <- readr::read_rds(paste0(filepath, "cox_results_all_variables_cts", suffix_load))
 
 # NA estimates as the reference level of 1
 cox_results %<>%
@@ -137,23 +137,9 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       ) +
     theme_void() +
     theme(plot.title = element_text(hjust = 0.5))
-
-  # Q-value
-  q <- data_plot %>%
-    ggplot() +
-    geom_text(aes(
-      x = 0,
-      y = forcats::as_factor(term_tidy),
-      label = q.value.tidy),
-      size = base_size,
-      size.unit = "pt",
-      color = 'black'
-      ) +
-    theme_void() +
-    theme(plot.title = element_text(hjust = 0.5))
   
   # Return
-  list(plot = plot, n = n, hr = hr, p = p, q = q)
+  list(plot = plot, n = n, hr = hr, p = p)
   
 }
 
@@ -167,9 +153,9 @@ summon_complete_forest <- function(
     subtitle = NULL) {
 
   # Patient reported flares in UC
-  plot_anxiety <- summon_forest_plot(data, variable = 'score_group_anxiety', diagnosis2 = diagnosis2)
-  plot_depression <- summon_forest_plot(data, variable = 'score_group_depression', diagnosis2 = diagnosis2)
-  plot_somatisation <- summon_forest_plot(data, variable = 'somatisation', diagnosis2 = diagnosis2)
+  plot_anxiety <- summon_forest_plot(data, variable = 'hads_score_anxiety', diagnosis2 = diagnosis2)
+  plot_depression <- summon_forest_plot(data, variable = 'hads_score_depression', diagnosis2 = diagnosis2)
+  plot_somatisation <- summon_forest_plot(data, variable = 'TotalPHQ', diagnosis2 = diagnosis2)
   plot_fatigue <- summon_forest_plot(data, variable = 'OftenLackEnergy', diagnosis2 = diagnosis2)
   plot_sleep <- summon_forest_plot(data, variable = 'SleepDisturbance', diagnosis2 = diagnosis2)
   plot_exercise <- summon_forest_plot(data, variable = 'MinimumExercise', diagnosis2 = diagnosis2)
@@ -187,21 +173,18 @@ summon_complete_forest <- function(
     (plot_anxiety$p + 
        labs(title = 'P-value') +
        theme(plot.title = element_text(size = base_size))) +
-    (plot_anxiety$q +
-       labs(title = 'Q-value') +
-       theme(plot.title = element_text(size = base_size))) +
-   plot_depression$plot + plot_depression$n + plot_depression$hr + plot_depression$p + plot_depression$q +
-   plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p + plot_somatisation$q +
-   plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p + plot_fatigue$q +
-   plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p + plot_sleep$q +
-   plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p + plot_exercise$q +
-   plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p + plot_lifeevents$q +
+   plot_depression$plot + plot_depression$n + plot_depression$hr +  plot_depression$p +
+   plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p +
+   plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p +
+   plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p +
+   plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
+   plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
     patchwork::plot_layout(
-     ncol = 5,
+     ncol = 4,
      guides = 'collect',
      axes = 'collect',
-     width = c(2.5, 0.4, 1.2, 0.5, 0.5),
-     height = c(3,3,3,2,2,2,2)
+     width = c(2.5, 0.4, 1.2, 0.5),
+     height = c(1,1,1,2,2,2,2)
    ) +
    patchwork::plot_annotation(
       title = title,
@@ -253,13 +236,13 @@ plot_hr_hard_cd
 
 # Save
 filepath_save <- paste0(
-  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Extended analysis/Categorical/",
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Primary analysis/Continuous/",
   toupper(suffix),
   "/"
 )
 
 width = 7
-height = 5
+height = 4
 
 # soft uc
 ggsave(
@@ -306,9 +289,9 @@ cox_results_table <- cox_results %>%
     diagnosis2, 
     # Ordering to match the forest plot ordering
     factor(variable, levels = c(
-      'score_group_anxiety', 
-      'score_group_depression', 
-      'somatisation',
+      'hads_score_anxiety', 
+      'hads_score_depression', 
+      'TotalPHQ',
       'OftenLackEnergy', 
       'SleepDisturbance',
       'MinimumExercise', 

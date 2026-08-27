@@ -216,7 +216,11 @@ plot_hr_hard
 
 
 # Save
-filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Full cohort/"
+filepath_save <- paste0(
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Full cohort/",
+  toupper(suffix),
+  "/"
+)
 
 # soft
 ggsave(
@@ -298,4 +302,3 @@ gt::gtsave(
   data = table_hr_hard,
   filename = paste0(filepath_save, "Data HR forest plot hard", suffix_word)
 )
-

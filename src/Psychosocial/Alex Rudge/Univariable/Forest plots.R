@@ -218,7 +218,11 @@ plot_hr_hard_cd
 
 
 # Save
-filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Univariable/"
+filepath_save <- paste0(
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Univariable/",
+  toupper(suffix),
+  "/"
+)
 
 # soft uc
 ggsave(

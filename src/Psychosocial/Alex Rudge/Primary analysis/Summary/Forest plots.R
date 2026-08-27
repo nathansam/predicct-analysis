@@ -137,9 +137,23 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       ) +
     theme_void() +
     theme(plot.title = element_text(hjust = 0.5))
+
+  # Q-value
+  q <- data_plot %>%
+    ggplot() +
+    geom_text(aes(
+      x = 0,
+      y = forcats::as_factor(term_tidy),
+      label = q.value.tidy),
+      size = base_size,
+      size.unit = "pt",
+      color = 'black'
+      ) +
+    theme_void() +
+    theme(plot.title = element_text(hjust = 0.5))
   
   # Return
-  list(plot = plot, n = n, hr = hr, p = p)
+  list(plot = plot, n = n, hr = hr, p = p, q = q)
   
 }
 
@@ -173,17 +187,20 @@ summon_complete_forest <- function(
     (plot_anxiety$p + 
        labs(title = 'P-value') +
        theme(plot.title = element_text(size = base_size))) +
-   plot_depression$plot + plot_depression$n + plot_depression$hr +  plot_depression$p +
-   plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p +
-   plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p +
-   plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p +
-   plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
-   plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
+    (plot_anxiety$q +
+       labs(title = 'Q-value') +
+       theme(plot.title = element_text(size = base_size))) +
+   plot_depression$plot + plot_depression$n + plot_depression$hr + plot_depression$p + plot_depression$q +
+   plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p + plot_somatisation$q +
+   plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p + plot_fatigue$q +
+   plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p + plot_sleep$q +
+   plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p + plot_exercise$q +
+   plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p + plot_lifeevents$q +
     patchwork::plot_layout(
-     ncol = 4,
+     ncol = 5,
      guides = 'collect',
      axes = 'collect',
-     width = c(2.5, 0.4, 1.2, 0.5),
+     width = c(2.5, 0.4, 1.2, 0.5, 0.5),
      height = c(3,3,3,2,2,2,2)
    ) +
    patchwork::plot_annotation(
@@ -235,7 +252,11 @@ plot_hr_hard_cd
 
 
 # Save
-filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Primary analysis/"
+filepath_save <- paste0(
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Primary analysis/Categorical/",
+  toupper(suffix),
+  "/"
+)
 
 width = 7
 height = 5
