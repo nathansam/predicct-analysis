@@ -387,9 +387,9 @@ plot_hr_hard_uc
 
 ```
 
-## Sensitivity analysis
+## Extended analysis
 
-Assessing the sensitivity of the primary analysis to the decision to use complete cases to handle missingness, and the choice of variables to adjust for in the models.
+Extending the primary analysis by additionally adjusting for IBD-control-8 and IBD-control-VAS scores, and whether the participant had experienced a flare in the previous year.
 
 ### Multiple imputation by chained equations
 
@@ -488,7 +488,7 @@ Additionally adjusting for IBD-control-8 and IBD-control-VAS scores, and whether
 #| echo: false
 #| message: false
 #| warning: false
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitivity analysis/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Extended analysis/"
 
 # Suffix
 suffix <- "cc"

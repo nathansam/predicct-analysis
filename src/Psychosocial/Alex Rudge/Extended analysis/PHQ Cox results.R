@@ -1,12 +1,12 @@
 
 # Extracting the results from the Cox models
 
-# Run lifeevents
+# Run phq
 
-variable = "AnyLifeEvents"
+variable = "somatisation"
 
 # Extract Cox results
-cox_results_lifeevents_cc <- extract_cox_results(
+cox_results_phq_cc <- extract_cox_results(
   data = data_survival_soft_uc,
   cox_model = cox_soft_uc,
   flare_type = 'soft',
@@ -41,7 +41,7 @@ cox_results_lifeevents_cc <- extract_cox_results(
       )
   )
 
-cox_results_lifeevents_mice <- extract_cox_results(
+cox_results_phq_mice <- extract_cox_results(
   data = data_survival_soft_uc,
   cox_model = cox_soft_uc_pool,
   flare_type = 'soft',
@@ -77,15 +77,14 @@ cox_results_lifeevents_mice <- extract_cox_results(
   )
 
 # Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitivity analysis/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Extended analysis/"
 
 readr::write_rds(
-  x = cox_results_lifeevents_cc,
-  file = paste0(filepath, "cox_results_lifeevents_cc.rds")
+  x = cox_results_phq_cc,
+  file = paste0(filepath, "cox_results_phq_cc.rds")
 )
 
 readr::write_rds(
-  x = cox_results_lifeevents_mice,
-  file = paste0(filepath, "cox_results_lifeevents_mice.rds")
+  x = cox_results_phq_mice,
+  file = paste0(filepath, "cox_results_phq_mice.rds")
 )
-

@@ -4,7 +4,7 @@ library(patchwork)
 
 # Load in data
 
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Sensitivity analysis/"
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Extended analysis/"
 
 # Suffix
 suffix <- "cc"
@@ -235,7 +235,7 @@ plot_hr_hard_cd
 
 
 # Save
-filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Sensitivity analysis/"
+filepath_save <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Extended analysis/"
 
 width = 7
 height = 5
