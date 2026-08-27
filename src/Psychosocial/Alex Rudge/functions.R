@@ -265,6 +265,50 @@ extract_cox_results <- function(data,
         c('term', 'variable', 'level', 'estimate', 'std.error', 'statistic', 'df', 'n', 'p.value', 'conf.low', 'conf.high', 'diagnosis2', 'flare_type')))
 }
 
+# Extract results for a continuous variable from a Cox model
+extract_cox_results_cts <- function(data,
+                                    cox_model,
+                                    variable,
+                                    flare_type,
+                                    diagnosis2) {
+  
+  # Calculate sample size
+  if (inherits(cox_model, "mipo")) {
+    n <- data %>%
+      dplyr::pull(variable) %>%
+      sum(!is.na(.))
+    
+  } else {
+    model_variables <- cox_model %>% formula() %>% all.vars()
+    
+    n <- data %>%
+      dplyr::select(tidyselect::all_of(model_variables)) %>%
+      dplyr::filter(complete.cases(.)) %>%
+      nrow()
+  }
+  
+  # A continuous variable has one model term and no reference level
+  cox_model %>%
+    broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+    dplyr::filter(term == variable) %>%
+    dplyr::mutate(
+      variable = variable,
+      level = NA_character_,
+      n = n,
+      diagnosis2 = diagnosis2,
+      flare_type = flare_type
+    ) %>%
+    dplyr::select(
+      tidyselect::any_of(
+        c('term', 'variable', 'level', 'estimate', 'std.error', 'statistic',
+          'df', 'n', 'p.value', 'conf.low', 'conf.high', 'diagnosis2',
+          'flare_type')
+      )
+    )
+}
+
+
+
 
 extract_tdc_results <- function(data,
                                 cox_model,
@@ -544,9 +588,6 @@ summon_absolute_risk_factor <- function(data, model, time, variable) {
   # at a given time point with respect to specified value of the variable from a
   # Cox model
   
-  # Alias for time to avoid clashing
-  t <- time
-  
   # Values of the variable
   values <- data %>%
     dplyr::pull(variable) %>%
@@ -556,9 +597,11 @@ summon_absolute_risk_factor <- function(data, model, time, variable) {
   time_variable <- all.vars(terms(model))[1]
   
   # Create data clones 
-  newdata <- purrr::map(
+  newdata <- tidyr::crossing(time, values) %$%
+    purrr::map2(
     .x = values,
-    .f = function(x) {
+    .y = time,
+    .f = function(x, t) {
       
       data %>%
         # Set values for time and the variable
