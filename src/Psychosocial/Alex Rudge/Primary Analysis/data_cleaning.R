@@ -73,13 +73,14 @@ data_common <- data_common %>%
   left_join(IBD_clean, by = "ParticipantNo") %>%
   mutate(
     flare_group = factor(
-      if_else(
+      case_when(
         FlaresInPastYear == 0,
-        "No Flares",
-        "1 or More Flares",
-        missing = NA_character_
+          "No Flares",
+        FlaresInPastYear == 1 ~ "1 Flare",
+        FlaresInPastYear >= 2 ~ "2 or More Flares",
+        .default = NA_character_
       ),
-      levels = c("No Flares", "1 or More Flares")
+      levels = c("No Flares", "1 Flare", "2 or More Flares")
     )
   )
 
