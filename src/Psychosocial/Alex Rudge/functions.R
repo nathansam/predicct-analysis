@@ -293,7 +293,7 @@ extract_cox_results_cts <- function(data,
     dplyr::filter(term == variable) %>%
     dplyr::mutate(
       variable = variable,
-      level = NA_character_,
+      level = "Unit increase",
       n = n,
       diagnosis2 = diagnosis2,
       flare_type = flare_type

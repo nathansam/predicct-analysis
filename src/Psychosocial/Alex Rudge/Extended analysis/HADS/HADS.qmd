@@ -1254,7 +1254,7 @@ plot_continuous_hr(
   data = data_survival_anxiety_soft, 
   model = cox_vas_soft, 
   variable = 'OverallControl',
-  splineterm = 'ns(OverallControl, df = 3)')
+  splineterm = 'ns(OverallControl, df = 2)')
 
 # Control-8
 plot_continuous_hr(

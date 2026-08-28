@@ -315,92 +315,92 @@ ggsave(
 )
 
 # Raw data as a separate table for publication
-cox_results_table <- cox_results %>%
-  dplyr::arrange(
-    flare_type,
-    diagnosis2,
-    factor(variable, levels = c(
-      'hads_score_anxiety',
-      'hads_score_depression',
-      'TotalPHQ',
-      'OftenLackEnergy',
-      'SleepDisturbance',
-      'MinimumExercise',
-      'AnyLifeEvents'
-    ))
-  ) %>%
-  dplyr::select(
-    diagnosis2,
-    flare_type,
-    term_tidy,
-    n,
-    conf.interval.tidy,
-    p.value.tidy
-  )
-
-# 4 separate tables
-table_hr_soft_uc <- cox_results_table %>%
-  dplyr::filter(diagnosis2 == 'UC/IBDU', flare_type == 'soft') %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-table_hr_soft_cd <- cox_results_table %>%
-  dplyr::filter(diagnosis2 == 'CD', flare_type == 'soft') %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-table_hr_hard_uc <- cox_results_table %>%
-  dplyr::filter(diagnosis2 == 'UC/IBDU', flare_type == 'hard') %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-table_hr_hard_cd <- cox_results_table %>%
-  dplyr::filter(diagnosis2 == 'CD', flare_type == 'hard') %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-suffix_word <- paste0(" ", suffix, '.docx')
-
-gt::gtsave(
-  data = table_hr_soft_uc,
-  filename = paste0(filepath_save, "Data HR forest plot soft uc", suffix_word)
-)
-
-gt::gtsave(
-  data = table_hr_soft_cd,
-  filename = paste0(filepath_save, "Data HR forest plot soft cd", suffix_word)
-)
-
-gt::gtsave(
-  data = table_hr_hard_uc,
-  filename = paste0(filepath_save, "Data HR forest plot hard uc", suffix_word)
-)
-
-gt::gtsave(
-  data = table_hr_hard_cd,
-  filename = paste0(filepath_save, "Data HR forest plot hard cd", suffix_word)
-)
+# cox_results_table <- cox_results %>%
+#   dplyr::arrange(
+#     flare_type,
+#     diagnosis2,
+#     factor(variable, levels = c(
+#       'hads_score_anxiety',
+#       'hads_score_depression',
+#       'TotalPHQ',
+#       'OftenLackEnergy',
+#       'SleepDisturbance',
+#       'MinimumExercise',
+#       'AnyLifeEvents'
+#     ))
+#   ) %>%
+#   dplyr::select(
+#     diagnosis2,
+#     flare_type,
+#     term_tidy,
+#     n,
+#     conf.interval.tidy,
+#     p.value.tidy
+#   )
+#
+# # 4 separate tables
+# table_hr_soft_uc <- cox_results_table %>%
+#   dplyr::filter(diagnosis2 == 'UC/IBDU', flare_type == 'soft') %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# table_hr_soft_cd <- cox_results_table %>%
+#   dplyr::filter(diagnosis2 == 'CD', flare_type == 'soft') %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# table_hr_hard_uc <- cox_results_table %>%
+#   dplyr::filter(diagnosis2 == 'UC/IBDU', flare_type == 'hard') %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# table_hr_hard_cd <- cox_results_table %>%
+#   dplyr::filter(diagnosis2 == 'CD', flare_type == 'hard') %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# suffix_word <- paste0(" ", suffix, '.docx')
+#
+# gt::gtsave(
+#   data = table_hr_soft_uc,
+#   filename = paste0(filepath_save, "Data HR forest plot soft uc", suffix_word)
+# )
+#
+# gt::gtsave(
+#   data = table_hr_soft_cd,
+#   filename = paste0(filepath_save, "Data HR forest plot soft cd", suffix_word)
+# )
+#
+# gt::gtsave(
+#   data = table_hr_hard_uc,
+#   filename = paste0(filepath_save, "Data HR forest plot hard uc", suffix_word)
+# )
+#
+# gt::gtsave(
+#   data = table_hr_hard_cd,
+#   filename = paste0(filepath_save, "Data HR forest plot hard cd", suffix_word)
+# )

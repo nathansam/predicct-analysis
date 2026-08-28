@@ -300,6 +300,23 @@ print_survival <- function(data) {
                  )
 }
 
+print_survival_mice <- function(data) {
+  data %>%
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
+                               "Std. Error",
+                               "Statistic",
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "P-value"),
+                 format.args = list(drop0trailing = TRUE)
+                 )
+}
+
 plot_continuous_hr <- function(data, model, variable, splineterm = NULL){
   
   # Plotting continuous Hazard Ratio curves
@@ -1904,6 +1921,476 @@ cox_hard_cd_pool %>%
           conf.level = 0.95,
           exponentiate = TRUE)
 ```
+
+# Survival analysis - continuous
+
+The categorical somatisation analysis is repeated using the continuous PHQ-15 score (`TotalPHQ`) as the primary exposure.
+
+## Results - continuous PHQ score
+
+### Full Cohort
+
+#### Patient-reported flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+# Cox model using the continuous PHQ score
+cox_phq_cts_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 2) +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+cox_phq_cts_soft %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_soft_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_soft_pool <- with(
+  cox_phq_cts_soft_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      ns(OverallControl, df = 2) +
+      control_8 +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_soft_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+#### Objective flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+cox_phq_cts_hard %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_hard_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_hard_pool <- with(
+  cox_phq_cts_hard_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      OverallControl +
+      control_8 +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_hard_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+### Ulcerative Colitis
+
+#### Patient-reported flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 2) +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+cox_phq_cts_soft_uc %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_soft_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_soft_uc_pool <- with(
+  cox_phq_cts_soft_uc_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      ns(OverallControl, df = 2) +
+      control_8 +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_soft_uc_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+#### Objective flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    ns(age_decade, df = 2) +
+    ns(FC, df = 2) +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+cox_phq_cts_hard_uc %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# MICE does not support splines during imputation, so use the
+# unsplined variables for the imputation model.
+cox_phq_cts_hard_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_hard_uc_pool <- with(
+  cox_phq_cts_hard_uc_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      ns(age_decade, df = 2) +
+      ns(FC, df = 2) +
+      flare_group +
+      OverallControl +
+      control_8 +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_hard_uc_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+### Crohn's Disease
+
+#### Patient-reported flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    ns(OverallControl, df = 2) +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+cox_phq_cts_soft_cd %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_soft_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_soft_cd_pool <- with(
+  cox_phq_cts_soft_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      ns(OverallControl, df = 2) +
+      control_8 +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_soft_cd_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+#### Objective flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+cox_phq_cts_hard_cd %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_hard_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_hard_cd_pool <- with(
+  cox_phq_cts_hard_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      flare_group +
+      OverallControl +
+      control_8 +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_hard_cd_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
 
 ## Reproduction and reproducibility {.appendix}
 

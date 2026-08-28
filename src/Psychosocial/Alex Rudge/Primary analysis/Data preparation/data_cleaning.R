@@ -74,8 +74,7 @@ data_common <- data_common %>%
   mutate(
     flare_group = factor(
       case_when(
-        FlaresInPastYear == 0,
-          "No Flares",
+        FlaresInPastYear == 0 ~ "No Flares",
         FlaresInPastYear == 1 ~ "1 Flare",
         FlaresInPastYear >= 2 ~ "2 or More Flares",
         .default = NA_character_

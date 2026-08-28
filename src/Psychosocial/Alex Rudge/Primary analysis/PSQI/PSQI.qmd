@@ -1310,6 +1310,7 @@ summon_lrt(cox_fc_hard_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 
 ::: panel-tabset
 ##### Age {.unlisted .unnumbered}
+
 ```{r}
 # Plot shapes
 # Age
@@ -1492,7 +1493,7 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
 
 ```{r}
@@ -1557,6 +1558,7 @@ cox_soft_pool %>%
 
 ```
 :::
+
 #### Objective flare
 
 ##### Kaplan-Meier
@@ -1576,8 +1578,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_hard <- coxph(
@@ -1638,6 +1641,7 @@ cox_hard_pool %>%
   print_survival_mice()
 ```
 :::
+
 ### Ulcerative Colitis
 
 #### Patient reported flare
@@ -1659,8 +1663,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_soft_uc <- coxph(
@@ -1722,6 +1727,7 @@ cox_soft_uc_pool %>%
   print_survival_mice()
 ```
 :::
+
 #### Objective flare
 
 ##### Kaplan-Meier
@@ -1741,8 +1747,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_hard_uc <- coxph(
@@ -1804,6 +1811,7 @@ cox_hard_uc_pool %>%
   print_survival_mice()
 ```
 :::
+
 ### Crohn's Disease
 
 #### Patient reported flare
@@ -1825,8 +1833,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_soft_cd <- coxph(
@@ -1889,6 +1898,7 @@ cox_soft_cd_pool %>%
 
 ```
 :::
+
 #### Objective flare
 
 ##### Kaplan-Meier
@@ -1908,8 +1918,9 @@ summon_km_curves(
 
 ##### Cox proportional hazards model
 
-:::::::: panel-tabset
+::: panel-tabset
 ###### Complete case
+
 ```{r}
 # Cox model
 cox_hard_cd <- coxph(
@@ -1970,6 +1981,7 @@ cox_hard_cd_pool %>%
   print_survival_mice()
 ```
 :::
+
 # Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
