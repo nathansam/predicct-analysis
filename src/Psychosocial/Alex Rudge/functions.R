@@ -10,7 +10,7 @@ library(patchwork)
 # Functions for the analysis
 
 summon_statistical_test <- function(data, dependent, independent) {
-  
+
   # Chi square tests/Fisher's exact test/Wilcox/Kruskal-Wallis
   # for the dependent variable vs each independent variable
   # Dependent variables must be discrete
@@ -307,7 +307,35 @@ extract_cox_results_cts <- function(data,
     )
 }
 
+# Extract interaction terms from a Cox model
+extract_cox_interaction_results <- function(cox_model,
+                                            flare_type,
+                                            variable = "score_group",
+                                            diagnosis = "diagnosis2") {
+  interaction_pattern <- paste0(
+    "(^|:)", variable, "[^:]*:", diagnosis,
+    "|(^|:)", diagnosis, "[^:]*:", variable
+  )
 
+  cox_model %>%
+    broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+    dplyr::filter(stringr::str_detect(term, interaction_pattern)) %>%
+    dplyr::mutate(flare_type = flare_type) %>%
+    dplyr::select(
+      tidyselect::any_of(
+        c(
+          "term",
+          "estimate",
+          "std.error",
+          "statistic",
+          "p.value",
+          "conf.low",
+          "conf.high",
+          "flare_type"
+        )
+      )
+    )
+}
 
 
 extract_tdc_results <- function(data,
