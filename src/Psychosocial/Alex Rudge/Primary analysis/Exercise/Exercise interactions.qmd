@@ -1,0 +1,282 @@
+---
+title: "Exercise interaction analysis"
+author:
+  - name: "Alexander Rudge"
+  - name: "Chiara Cotronei"
+  - name: "Nathan Constantine-Cooke"
+    corresponding: true
+    url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
+format:
+  html:
+    code-fold: true
+    code-tools: true
+editor: visual
+toc: true
+toc-depth: 4
+toc-expand: true
+editor_options:
+  chunk_output_type: console
+---
+
+This document tests whether associations between meeting minimum exercise recommendations and subsequent flares differ by diagnosis and age.
+
+# Setting up in R
+
+```{r}
+#| message: false
+#| warning: false
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, warning = TRUE)
+options(dplyr.summarise.inform = FALSE)
+
+if (file.exists("../../functions.R")) {
+  source("../../functions.R")
+} else if (file.exists("../functions.R")) {
+  source("../functions.R")
+} else if (file.exists("Alex Rudge/functions.R")) {
+  source("Alex Rudge/functions.R")
+} else {
+  source("src/Psychosocial/Alex Rudge/functions.R")
+}
+
+library(tidyverse)
+library(survival)
+library(mice)
+library(splines)
+```
+
+# Load data
+
+```{r}
+if (file.exists("/.dockerenv")) {
+  alex_data <- "data/people/Alex/Predicct2/Data/"
+  chiara <- "data/people/chiara/"
+} else {
+  alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
+  chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+}
+
+exercise <- readr::read_rds(paste0(alex_data, "Exercise.rds"))
+flares_soft <- readr::read_rds(paste0(chiara, "flares_soft.RDS"))
+flares_hard <- readr::read_rds(paste0(chiara, "flares_hard.RDS"))
+
+data_survival_soft <- exercise %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
+
+data_survival_hard <- exercise %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
+```
+
+# Interaction with diagnosis
+
+The models include an interaction between minimum-exercise category and `diagnosis2` to test whether the association with subsequent flares differs between UC/IBDU and CD.
+
+## Patient-reported flare
+
+```{r}
+cox_soft_interaction <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * diagnosis2 + IMD + Sex + age_decade + FC + Smoke + frailty(SiteNo),
+  data = data_survival_soft
+)
+
+cox_soft_interaction %>% print_survival()
+
+cox_soft_interaction_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * diagnosis2 + IMD + Sex + age_decade + FC + Smoke + frailty(SiteNo),
+  data = data_survival_soft,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_soft_interaction_pool <- with(
+  cox_soft_interaction_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MinimumExercise * diagnosis2 + IMD + Sex + age_decade + FC + Smoke + frailty(SiteNo)
+  )
+) %>% mice::pool()
+
+cox_soft_interaction_pool %>%
+  broom::tidy(conf.int = TRUE, conf.level = 0.95, exponentiate = TRUE) %>%
+  print_survival_mice()
+```
+
+## Objective flare
+
+```{r}
+cox_hard_interaction <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * diagnosis2 + IMD + Sex + age_decade + FC + Smoke + frailty(SiteNo),
+  data = data_survival_hard
+)
+
+cox_hard_interaction %>% print_survival()
+
+cox_hard_interaction_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * diagnosis2 + IMD + Sex + age_decade + FC + Smoke + frailty(SiteNo),
+  data = data_survival_hard,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_hard_interaction_pool <- with(
+  cox_hard_interaction_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MinimumExercise * diagnosis2 + IMD + Sex + age_decade + FC + Smoke + frailty(SiteNo)
+  )
+) %>% mice::pool()
+
+cox_hard_interaction_pool %>%
+  broom::tidy(conf.int = TRUE, conf.level = 0.95, exponentiate = TRUE) %>%
+  print_survival_mice()
+```
+
+# Interaction with age
+
+The exercise models are stratified by diagnosis and include an interaction between minimum-exercise category and age decade. `diagnosis2` defines the strata and is not included in these model formulas.
+
+```{r}
+data_survival_soft_uc <- data_survival_soft %>% dplyr::filter(diagnosis2 == "UC/IBDU")
+data_survival_soft_cd <- data_survival_soft %>% dplyr::filter(diagnosis2 == "CD")
+data_survival_hard_uc <- data_survival_hard %>% dplyr::filter(diagnosis2 == "UC/IBDU")
+data_survival_hard_cd <- data_survival_hard %>% dplyr::filter(diagnosis2 == "CD")
+```
+
+## UC/IBDU — patient-reported flare
+
+```{r}
+cox_soft_uc_age_interaction <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+cox_soft_uc_age_interaction %>% print_survival()
+
+cox_soft_uc_age_interaction_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_soft_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_soft_uc_age_interaction_pool <- with(
+  cox_soft_uc_age_interaction_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo)
+  )
+) %>% mice::pool()
+
+cox_soft_uc_age_interaction_pool %>%
+  broom::tidy(conf.int = TRUE, conf.level = 0.95, exponentiate = TRUE) %>%
+  print_survival_mice()
+```
+
+## CD — patient-reported flare
+
+```{r}
+cox_soft_cd_age_interaction <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+cox_soft_cd_age_interaction %>% print_survival()
+
+cox_soft_cd_age_interaction_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_soft_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_soft_cd_age_interaction_pool <- with(
+  cox_soft_cd_age_interaction_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo)
+  )
+) %>% mice::pool()
+
+cox_soft_cd_age_interaction_pool %>%
+  broom::tidy(conf.int = TRUE, conf.level = 0.95, exponentiate = TRUE) %>%
+  print_survival_mice()
+```
+
+## UC/IBDU — objective flare
+
+```{r}
+cox_hard_uc_age_interaction <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+cox_hard_uc_age_interaction %>% print_survival()
+
+cox_hard_uc_age_interaction_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_hard_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_hard_uc_age_interaction_pool <- with(
+  cox_hard_uc_age_interaction_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo)
+  )
+) %>% mice::pool()
+
+cox_hard_uc_age_interaction_pool %>%
+  broom::tidy(conf.int = TRUE, conf.level = 0.95, exponentiate = TRUE) %>%
+  print_survival_mice()
+```
+
+## CD — objective flare
+
+```{r}
+cox_hard_cd_age_interaction <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+cox_hard_cd_age_interaction %>% print_survival()
+
+cox_hard_cd_age_interaction_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo),
+  data = data_survival_hard_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_hard_cd_age_interaction_pool <- with(
+  cox_hard_cd_age_interaction_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      MinimumExercise * age_decade + IMD + Sex + FC + Smoke + frailty(SiteNo)
+  )
+) %>% mice::pool()
+
+cox_hard_cd_age_interaction_pool %>%
+  broom::tidy(conf.int = TRUE, conf.level = 0.95, exponentiate = TRUE) %>%
+  print_survival_mice()
+```

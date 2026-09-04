@@ -1,3 +1,8 @@
+qmd_code <- tempfile(fileext = ".R")
+knitr::purl("/Users/arudge/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Extended analysis/HADS/HADS interactions.qmd", output = qmd_code, documentation = 0)
+source(qmd_code, local = .GlobalEnv)
+unlink(qmd_code)
+
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
 
 # Extract the score_group x diagnosis2 interaction terms from the HADS Cox models.
@@ -64,27 +69,4 @@ cox_results_hads_depression_interaction_mice <- dplyr::bind_rows(
     variable = "score_group",
     diagnosis = "diagnosis2"
   )
-)
-
-# Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Extended analysis/"
-
-readr::write_rds(
-  x = cox_results_hads_anxiety_interaction_cc,
-  file = paste0(filepath, "cox_results_hads_anxiety_interaction_cc.rds")
-)
-
-readr::write_rds(
-  x = cox_results_hads_depression_interaction_cc,
-  file = paste0(filepath, "cox_results_hads_depression_interaction_cc.rds")
-)
-
-readr::write_rds(
-  x = cox_results_hads_anxiety_interaction_mice,
-  file = paste0(filepath, "cox_results_hads_anxiety_interaction_mice.rds")
-)
-
-readr::write_rds(
-  x = cox_results_hads_depression_interaction_mice,
-  file = paste0(filepath, "cox_results_hads_depression_interaction_mice.rds")
 )

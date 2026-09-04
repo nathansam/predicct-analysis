@@ -1,5 +1,5 @@
 qmd_code <- tempfile(fileext = ".R")
-knitr::purl("/Users/arudge/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Extended analysis/HADS/HADS interactions.qmd", output = qmd_code, documentation = 0)
+knitr::purl("/Users/arudge/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Primary analysis/HADS/HADS interactions.qmd", output = qmd_code, documentation = 0)
 source(qmd_code, local = .GlobalEnv)
 unlink(qmd_code)
 
