@@ -477,6 +477,7 @@ lifeevents <- lifeevents %>%
 
 # Add the common participant-level data.
 lifeevents <- lifeevents %>% 
+  dplyr::select(-SiteNo) %>%
   dplyr::left_join(data_common, by = "ParticipantNo")
 
 # Age
@@ -509,14 +510,6 @@ variables_of_interest <- c(
   "NewMortgage",
   "OtherLifeEvent"
 )
-
-#counts of events
-lifeevents %<>%
-  dplyr::rowwise() %>%
-  dplyr::mutate(
-    NumberEvents = sum(c_across(8:25), na.rm = TRUE)
-  ) %>%
-  dplyr::ungroup()
 
 # Count the number of each type of event
 lifeevents_counts <- lifeevents %>%
@@ -553,7 +546,7 @@ lifeevents_counts %>%
 data_vis_missingness <- lifeevents %>%
   # Select relevant variables
   dplyr::select(
-    diagnosis,
+    diagnosis2,
     age,
     Sex,
     IMD,

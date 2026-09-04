@@ -507,6 +507,7 @@ fatigue <- fatigue %>%
 
 # Add the common participant-level data.
 fatigue <- fatigue %>%
+  dplyr::select(-SiteNo) %>%
   left_join(data_common, by = "ParticipantNo")
 
 #exclude <18 yo = 53 participants (1899 -> 1846)
@@ -522,7 +523,7 @@ fatigue %<>% dplyr::filter(age >= 18)
 data_vis_missingness <- fatigue %>%
   # Select relevant variables
   dplyr::select(
-    diagnosis,
+    diagnosis2,
     age,
     Sex,
     IMD,

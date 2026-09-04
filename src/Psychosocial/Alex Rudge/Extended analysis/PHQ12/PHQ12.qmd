@@ -513,7 +513,7 @@ phq %<>%
 # Add all PHQ-15 columns to make final score
 phq <- phq %>% 
   mutate(
-    TotalPHQ = StomachPain +
+    TotalPHQ = #StomachPain +
       BackPain +
       PainInArms +
       MenstrualCramps +
@@ -524,8 +524,8 @@ phq <- phq %>%
       HeartPound +
       ShortnessBreath +
       SexualIntercourse +
-      ConstipationDiarrhoea +
-      NauseaIndigestion +
+      #ConstipationDiarrhoea +
+      #NauseaIndigestion +
       FeelingTired +
       TroubleSleeping)
 

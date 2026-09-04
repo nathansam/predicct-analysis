@@ -6,8 +6,8 @@ library(patchwork)
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Extended analysis/"
 
 # Suffix
-#suffix <- "cc"
-suffix <- "mice"
+suffix <- "cc"
+#suffix <- "mice"
 
 suffix_load <- paste0("_", suffix, ".rds")
 suffix_save <- paste0(" ", suffix, '.pdf')

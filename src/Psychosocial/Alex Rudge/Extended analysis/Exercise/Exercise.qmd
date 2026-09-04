@@ -485,6 +485,7 @@ exercise <- physicalactivity %>%
 
 # Add the common participant-level data.
 exercise <- exercise %>%
+  dplyr::select(-SiteNo) %>%
   dplyr::inner_join(data_common, by = "ParticipantNo")
 
 # exclude <18 yo = 53 participants (1910 -> 1857)
@@ -733,7 +734,7 @@ exercise <- exercise %>% dplyr::filter(ExerciseMins < 6720)
 data_vis_missingness <- exercise %>%
   # Select relevant variables
   dplyr::select(
-    diagnosis,
+    diagnosis2,
     age,
     Sex,
     IMD,

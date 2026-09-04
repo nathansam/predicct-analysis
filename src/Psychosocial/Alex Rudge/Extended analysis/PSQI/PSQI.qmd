@@ -476,6 +476,7 @@ psqi <- psqi %>%
 
 # Add the common participant-level data.
 psqi <- psqi %>% 
+  dplyr::select(-SiteNo) %>%
   left_join(data_common, by = "ParticipantNo")
 
 #exclude <18 yo = 53 participants (1907 -> 1854)
@@ -686,7 +687,7 @@ psqi %<>%
 data_vis_missingness <- psqi %>%
   # Select relevant variables
   dplyr::select(
-    diagnosis,
+    diagnosis2,
     age,
     Sex,
     IMD,
