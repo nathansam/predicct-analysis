@@ -90,3 +90,11 @@ cox_results_exercise_interaction_age_mice <- dplyr::bind_rows(
     diagnosis = "age_decade"
   ) %>% dplyr::mutate(diagnosis2 = "CD")
 )
+
+# Save
+filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Primary analysis/Interactions/"
+
+readr::write_rds(
+  x = cox_results_exercise_interaction_age_mice,
+  file = paste0(filepath, "cox_results_exercise_interaction_age_mice.rds")
+)
