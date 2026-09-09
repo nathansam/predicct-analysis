@@ -25,51 +25,55 @@ custom_theme = theme_minimal() +
     plot.tag = element_text(size = 12)
   )
 
-palette <- c("#FFA500", "#0072B2", "#009E73", "grey")
+palette <- c("#009E73", "#0072B2", "#FFA500", "grey")
 
 
+# Hard
 # Complete for missing
-data_hard_long %<>%
+data_hard_long_counts <- data_hard_long %>%
   tidyr::complete(ParticipantNo, month)
 
 # Fill in the DiseaseFlare and time
-data_hard_long %<>%
+data_hard_long_counts %<>%
   dplyr::group_by(ParticipantNo) %>%
   tidyr::fill(DiseaseFlareYN, time) %>%
   dplyr::ungroup()
 
+
+
 # Post flare flag
-data_hard_long %<>%
+data_hard_long_counts %<>%
   dplyr::mutate(
     post_flare_flag = (DiseaseFlareYN == 1 & time < as.numeric(month)*365/12)
-    ) %>%
+  ) %>%
   # still at risk
   dplyr::mutate(
     at_risk_flag = (time >= as.numeric(month)*365/12)
   )
 
 # Month
-data_hard_long %<>%
+data_hard_long_counts %<>%
   dplyr::mutate(month = factor(month))
 
-data_hard_long %<>%
+data_hard_long_counts %<>%
   dplyr::mutate(
     somatisation = forcats::fct_recode(
       somatisation, "Moderate/Severe" = "ModSev"
     )
   )
 
-  
 
-# Anxiety ####
+
 # No previous flare
-plot_hard_pre <- data_hard_long %>%
+plot_hard_pre <- data_hard_long_counts %>%
   dplyr::filter(
     month != 0,
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
     somatisation = forcats::fct_na_value_to_level(somatisation, "Missing"),
-    somatisation = forcats::fct_relevel(somatisation, "Missing")
+    somatisation = forcats::fct_relevel(
+      somatisation, "Missing", "Moderate/Severe", "Mild", "None"
+    )
   ) %>%
   dplyr::count(month, somatisation) %>%
   # Calculate percentage
@@ -101,7 +105,7 @@ plot_hard_pre <- data_hard_long %>%
   scale_fill_manual(
     values = palette,
     breaks = c("None", "Mild", "Moderate/Severe", "Missing")  
-    ) +
+  ) +
   labs(
     fill = "Somatisation",
     tag = "Still at risk of objective flare"
@@ -110,16 +114,20 @@ plot_hard_pre <- data_hard_long %>%
   ylab("Count") +
   custom_theme
 
+
 plot_hard_pre
 
+
 # Post flare
-plot_hard_post <- data_hard_long %>%
+plot_hard_post <- data_hard_long_counts %>%
   dplyr::filter(
     month != 0,
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
     somatisation = forcats::fct_na_value_to_level(somatisation, "Missing"),
-    somatisation = forcats::fct_relevel(somatisation, "Missing")
+    somatisation = forcats::fct_relevel(
+      somatisation, "Missing", "Moderate/Severe", "Mild", "None"
+    )
   ) %>%
   dplyr::count(month, somatisation) %>%
   # Calculate percentage

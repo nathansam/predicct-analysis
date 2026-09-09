@@ -23,8 +23,6 @@ Load R packages required.
 #| warning: false
 library(tidyverse)
 library(magrittr)
-library(readxl)
-library(openxlsx)
 library(survival)
 library(patchwork)
 
@@ -56,305 +54,54 @@ print_survival <- function(data) {
 ## Load data
 
 ```{r}
-# Filepaths
-data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
-redcap.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20231030/"
-prefix <- "/Volumes/igmm/cvallejo-predicct/predicct/end-of-follow-up/"
-outdir <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
-flare.dir <- paste0("/Volumes/igmm/cvallejo-predicct/predicct/",
-                    "final/20240308/Followup/")
 chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data"
 
 
 # Load data
-phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
-phq_followup <- read.xlsx(paste0(data.path, "Followup/phq.xlsx"))
+phq <- readr::read_rds(
+  glue::glue("{alex_data}/PHQ.rds")
+)
+phq_followup <- readr::read_rds(
+  glue::glue("{alex_data}/phq_followup.rds")
+)
 
-health <- read.xlsx(paste0(data.path, "Baseline2022/health.xlsx"))
-demographics <- read.xlsx(paste0(data.path, "Baseline2022/demographics2022.xlsx"))
-IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
-phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
-demo <- readRDS(paste0(outdir, "demo.RDS"))
-flares <- readRDS(paste0(outdir, "flares/cutoff-flares.RDS"))
-smoking <- readRDS(paste0(chiara, "smoking.rds"))
-IMD <- readRDS(paste0(chiara, "IMD.rds"))
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
-IBD_C <- readRDS(paste0(chiara, "IBD_C.RDS"))
 
 
 ```
 
-## Data cleaning
+## Prepare longitudinal data
 
 ```{r}
-# Data cleaning
-
 phq <- phq %>% 
   filter(!is.na(ParticipantId))
-
-#add age and sex data from demographics
-phq <- phq %>%
-  left_join(
-    demographics %>% select(ParticipantNo, Sex, age, diagnosis), 
-    by  = "ParticipantNo")
-
-# Recode diagnosis
-phq %<>%
-  dplyr::mutate(
-    diagnosis2 = dplyr::case_when(
-      diagnosis == 1 ~ 1,
-      diagnosis == 2 ~ 2,
-      diagnosis == 3 ~ 2,
-      diagnosis == 4 ~ 2
-    )
-  ) %>%
-  dplyr::mutate(diagnosis2 = factor(
-    diagnosis2,
-    levels = c("1", "2"),
-    labels = c("CD", "UC/IBDU")
-  ))
-
-#exclude <18 yo = 53 participants (1899 -> 1846)
-phq %<>% dplyr::filter(age >= 18)
-
-#make sex into level
-phq %<>% dplyr::mutate(Sex = factor(
-  Sex,
-  levels = c(1, 2),
-  labels = c("Male", "Female"))
-)
-
-# Age groups
-phq %<>%
-  dplyr::mutate(AgeGroup = cut(age, 
-                               breaks = c(18, 24, 34, 44, 54, 65, Inf), 
-                               labels = c("18-24",
-                                          "25-34",
-                                          "35-44",
-                                          "45-54",
-                                          "55-64",
-                                          "65+"),
-                               include.lowest = TRUE))
-
-#add flare data, FC, smoking
-#flare data from IBD data set
-phq <- phq %>% 
-  left_join(
-    IBD %>% select(ParticipantNo, FlaresInPastYear),
-    by = 'ParticipantNo')
-
-
-#create flare groups
-phq <- phq %>%
-  mutate(flare_group = ifelse(FlaresInPastYear == 0,
-                              "No Flares",
-                              "1 or More Flares"))
-
-#make flares into levels
-phq %<>% 
-  dplyr::mutate(
-    flare_group = factor(flare_group,
-                         levels = c( "No Flares", "1 or More Flares"))
-  )
-
-# FC data
-phq <- phq %>% 
-  dplyr::left_join(
-    demo %>% dplyr::select(ParticipantNo, FC, cat), 
-    by = "ParticipantNo")
-
-# Add smoking
-phq %<>% 
-  dplyr::left_join(
-    smoking %>% dplyr::select(ParticipantNo, Smoke), 
-    by = "ParticipantNo")
-
-# Smoke as a factor
-phq %<>%
-  dplyr::mutate(Smoke = forcats::as_factor(Smoke)) %>%
-  dplyr::mutate(Smoke = forcats::fct_relevel(Smoke, 'Never', 'Previous', 'Current'))
-
-# Add IMD
-phq %<>% 
-  dplyr::left_join(
-    IMD, 
-    by = "ParticipantNo") 
-
-# IMD as a factor
-phq %<>%
-  dplyr::mutate(
-    IMD = as.factor(IMD)
-  )
-
-
-# IBD control scores
-phq %<>%
-  dplyr::left_join(
-    IBD_C %>% dplyr::select(
-      ParticipantNo,
-      control_score,
-      OverallControl,
-      control_8,
-      control_grouped,
-      vas_control
-    ),
-    by = "ParticipantNo"
-  )
-
-#change control_grouped and vas_control from character into factors
-phq %<>% 
-  dplyr::mutate(control_grouped = factor(control_grouped))
-
-phq %<>% 
-  dplyr::mutate(vas_control = factor(vas_control))
-
-
-# PHQ numbering scale was shifted by 1 - fix here
-phq %<>%
-  dplyr::mutate(
-    dplyr::across(
-      .cols = StomachPain:TroubleSleeping,
-      .fns = ~. - 1)
-  )
-
-# Menstrual cramps replace NA with 0 (Men)
-phq %<>%
-  tidyr::replace_na(
-    list(MenstrualCramps = 0)
-  )
-
-# Add all PHQ-15 columns to make final score
-phq <- phq %>% 
-  mutate(
-    TotalPHQ = StomachPain +
-      BackPain +
-      PainInArms +
-      MenstrualCramps +
-      Headaches +
-      ChestPain +
-      Dizziness +
-      FaintingSpells +
-      HeartPound +
-      ShortnessBreath +
-      SexualIntercourse +
-      ConstipationDiarrhoea +
-      NauseaIndigestion +
-      FeelingTired +
-      TroubleSleeping)
-
-# Remove patients with any missing values
-phq %<>%
-  dplyr::filter(!is.na(TotalPHQ))
-
-
-# Make new variable for no, mild, moderate and severe levels of somatisation
-phq <- phq %>% 
-  mutate(
-    somatisation = cut(
-      TotalPHQ, 
-      breaks = c(0, 4, 9, 30), 
-      labels = c("None", "Mild", "ModSev"), 
-      include.lowest = TRUE)
-  )
-
-# Clean longitudinal phq
-phq_followup <- phq_followup %>% 
-  filter(!is.na(ParticipantId))
-
-# PHQ numbering scale was shifted by 1 - fix here
-phq_followup %<>%
-  dplyr::mutate(
-    dplyr::across(
-      .cols = StomachPain:TroubleSleeping,
-      .fns = ~. - 1)
-  )
-
-# Menstrual cramps replace NA with 0 (Men)
-phq_followup %<>%
-  tidyr::replace_na(
-    list(MenstrualCramps = 0)
-  )
-
-# Add all PHQ-15 columns to make final score
-phq_followup <- phq_followup %>% 
-  mutate(
-    TotalPHQ = StomachPain +
-      BackPain +
-      PainInArms +
-      MenstrualCramps +
-      Headaches +
-      ChestPain +
-      Dizziness +
-      FaintingSpells +
-      HeartPound +
-      ShortnessBreath +
-      SexualIntercourse +
-      ConstipationDiarrhoea +
-      NauseaIndigestion +
-      FeelingTired +
-      TroubleSleeping)
-
-# Remove patients with any missing values
-phq_followup %<>%
-  dplyr::filter(!is.na(TotalPHQ))
-
-
-# Make new variable for no, mild, moderate and severe levels of somatisation
-phq_followup <- phq_followup %>% 
-  mutate(
-    somatisation = cut(
-      TotalPHQ, 
-      breaks = c(0, 4, 9, 30), 
-      labels = c("None", "Mild", "ModSev"), 
-      include.lowest = TRUE)
-  )
 
 # Join longitudinal and baseline
-
-phq_followup %<>%
-  dplyr::select(
-    ParticipantNo, TotalPHQ, somatisation, Q_month
-  )
-
-# Pivot wider
-phq_followup %<>%
-  tidyr::pivot_wider(names_from = Q_month, values_from = c(TotalPHQ, somatisation))
-
 phq %<>%
   dplyr::left_join(
     phq_followup, by = "ParticipantNo"
   )
 
-# Remove unneeded columns
-phq %<>%
-  dplyr::select(-c(StomachPain:counter))
-
-# Age in decades
-phq %<>%
-  dplyr::mutate(
-    age_decade = age/10
-  )
+# Survival data
+data_soft <- phq %>%
+  dplyr::inner_join(
+    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::rename(DiseaseFlareYN = softflare, time = softflare_time)
 
 
-# FC maximum detectable value is 1250
-phq %<>%
-  dplyr::mutate(
-    FC = dplyr::case_when(
-      FC > 1250 ~ 1250,
-      .default = FC
-    )
-  )
-
-# Log transform FC due to extreme positive skew
-phq %<>%
-  dplyr::mutate(
-    FC = log(FC)
-  )
+data_hard <- phq %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
+    by = 'ParticipantNo'
+  ) %>%
+  dplyr::rename(DiseaseFlareYN = hardflare, time = hardflare_time)
 
 
-
-# Save phq in long format
+# Create generic long-format PHQ data
 
 phq_long <- phq %>%
   dplyr::rename(
@@ -371,49 +118,34 @@ phq_long <- phq %>%
     month = as.numeric(month)
   )
 
-filepath_save <- '/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Longitudinal analysis/'
-
-readr::write_rds(
-  x = phq_long,
-  file = glue::glue("{filepath_save}phq_long.rds")
-)
-
-# Survival data
-data_soft <- phq %>% 
+# Add soft-flare information to the long-format PHQ data
+data_soft_long <- phq_long %>%
   dplyr::inner_join(
-    flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
-    by = 'ParticipantNo'
+    flares_soft %>% dplyr::select(
+      ParticipantNo,
+      softflare,
+      softflare_time
+    ),
+    by = "ParticipantNo"
   ) %>%
-  dplyr::mutate(DiseaseFlareYN = softflare, time = softflare_time)
-
-data_hard <- phq %>%
-  dplyr::inner_join(
-    flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
-    by = 'ParticipantNo'
-  ) %>%
-  dplyr::mutate(DiseaseFlareYN = hardflare, time = hardflare_time)
-
-# Long form
-data_soft_long_counts <- data_soft %>%
   dplyr::rename(
-    somatisation_0 = somatisation,
-    TotalPHQ_0 = TotalPHQ
-    ) %>%
-  tidyr::pivot_longer(
-    cols = c(somatisation_0, somatisation_12, somatisation_24, TotalPHQ_0, TotalPHQ_12, TotalPHQ_24),
-    names_to = c(".value", "month"),
-    names_sep = "_"
+    DiseaseFlareYN = softflare,
+    time = softflare_time
   )
 
-data_hard_long_counts <- data_hard %>%
-  dplyr::rename(
-    somatisation_0 = somatisation,
-    TotalPHQ_0 = TotalPHQ
+# Add hard-flare information to the long-format PHQ data
+data_hard_long <- phq_long %>%
+  dplyr::inner_join(
+    flares_hard %>% dplyr::select(
+      ParticipantNo,
+      hardflare,
+      hardflare_time
+    ),
+    by = "ParticipantNo"
   ) %>%
-  tidyr::pivot_longer(
-    cols = c(somatisation_0, somatisation_12, somatisation_24, TotalPHQ_0, TotalPHQ_12, TotalPHQ_24),
-    names_to = c(".value", "month"),
-    names_sep = "_"
+  dplyr::rename(
+    DiseaseFlareYN = hardflare,
+    time = hardflare_time
   )
 ```
 
@@ -433,7 +165,7 @@ custom_theme = theme_minimal() +
     plot.tag = element_text(size = 12)
   )
 
-palette <- c("#FFA500", "#0072B2", "#009E73", "grey")
+palette <- c("#009E73", "#0072B2", "#FFA500", "grey")
 
 
 # Complete for missing
@@ -467,9 +199,6 @@ data_soft_long_counts %<>%
     )
   )
 
-  
-
-# Anxiety ####
 # No previous flare
 plot_soft_pre <- data_soft_long_counts %>%
   dplyr::filter(
@@ -477,7 +206,9 @@ plot_soft_pre <- data_soft_long_counts %>%
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
     somatisation = forcats::fct_na_value_to_level(somatisation, "Missing"),
-    somatisation = forcats::fct_relevel(somatisation, "Missing")
+    somatisation = forcats::fct_relevel(
+      somatisation, "Missing", "Moderate/Severe", "Mild", "None"
+    )
   ) %>%
   dplyr::count(month, somatisation) %>%
   # Calculate percentage
@@ -526,7 +257,9 @@ plot_soft_post <- data_soft_long_counts %>%
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
     somatisation = forcats::fct_na_value_to_level(somatisation, "Missing"),
-    somatisation = forcats::fct_relevel(somatisation, "Missing")
+    somatisation = forcats::fct_relevel(
+      somatisation, "Missing", "Moderate/Severe", "Mild", "None"
+    )
   ) %>%
   dplyr::count(month, somatisation) %>%
   # Calculate percentage
@@ -567,6 +300,11 @@ plot_soft_post <- data_soft_long_counts %>%
   ylab("Count") +
   custom_theme
 
+
+
+
+
+
 # Hard
 # Complete for missing
 data_hard_long_counts <- data_hard_long %>%
@@ -577,6 +315,8 @@ data_hard_long_counts %<>%
   dplyr::group_by(ParticipantNo) %>%
   tidyr::fill(DiseaseFlareYN, time) %>%
   dplyr::ungroup()
+
+
 
 # Post flare flag
 data_hard_long_counts %<>%
@@ -601,7 +341,6 @@ data_hard_long_counts %<>%
 
   
 
-# Anxiety ####
 # No previous flare
 plot_hard_pre <- data_hard_long_counts %>%
   dplyr::filter(
@@ -609,7 +348,9 @@ plot_hard_pre <- data_hard_long_counts %>%
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
     somatisation = forcats::fct_na_value_to_level(somatisation, "Missing"),
-    somatisation = forcats::fct_relevel(somatisation, "Missing")
+    somatisation = forcats::fct_relevel(
+      somatisation, "Missing", "Moderate/Severe", "Mild", "None"
+    )
   ) %>%
   dplyr::count(month, somatisation) %>%
   # Calculate percentage
@@ -650,7 +391,6 @@ plot_hard_pre <- data_hard_long_counts %>%
   ylab("Count") +
   custom_theme
 
-
 # Post flare
 plot_hard_post <- data_hard_long_counts %>%
   dplyr::filter(
@@ -658,7 +398,9 @@ plot_hard_post <- data_hard_long_counts %>%
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
     somatisation = forcats::fct_na_value_to_level(somatisation, "Missing"),
-    somatisation = forcats::fct_relevel(somatisation, "Missing")
+    somatisation = forcats::fct_relevel(
+      somatisation, "Missing", "Moderate/Severe", "Mild", "None"
+    )
   ) %>%
   dplyr::count(month, somatisation) %>%
   # Calculate percentage
@@ -719,14 +461,15 @@ plot_soft_pre + plot_hard_pre + plot_soft_post + plot_hard_post +
 ```{r}
 data_soft_static <- data_soft %>%
   dplyr::select(
-    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD, time, DiseaseFlareYN
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    flare_group, OverallControl, control_8, time, DiseaseFlareYN
   ) %>%
   # Remove people with time 0
   dplyr::filter(
     time > 0
   )
 
-data_soft_td <- data_soft_long_counts %>%
+data_soft_td <- data_soft_long %>%
   dplyr::select(
     ParticipantNo, month, somatisation
   ) %>%
@@ -752,19 +495,18 @@ data_soft_merged <- tmerge(
   )
 
 
-
-
 ## Hard ####
 data_hard_static <- data_hard %>%
   dplyr::select(
-    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD, time, DiseaseFlareYN
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    flare_group, OverallControl, control_8, time, DiseaseFlareYN
   ) %>%
   # Remove people with time 0
   dplyr::filter(
     time > 0
   )
 
-data_hard_td <- data_hard_long_counts %>%
+data_hard_td <- data_hard_long %>%
   dplyr::select(
     ParticipantNo, month, somatisation
   ) %>%
@@ -893,4 +635,115 @@ cox_hard_uc <- coxph(
 cox_hard_uc %>%
   print_survival()
 
+```
+
+
+### Results - Extended analysis
+
+#### Crohn's disease
+
+```{r}
+data_soft_merged_cd_extended <- data_soft_merged %>%
+  dplyr::filter(diagnosis2 == "CD")
+
+data_hard_merged_cd_extended <- data_hard_merged %>%
+  dplyr::filter(diagnosis2 == "CD")
+```
+
+##### Patient-reported flare
+
+```{r}
+cox_soft_cd_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    somatisation +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_soft_merged_cd_extended
+)
+
+cox_soft_cd_extended %>%
+  print_survival()
+```
+
+##### Objective flare
+
+```{r}
+cox_hard_cd_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    somatisation +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_hard_merged_cd_extended
+)
+
+cox_hard_cd_extended %>%
+  print_survival()
+```
+
+#### Ulcerative colitis
+
+```{r}
+data_soft_merged_uc_extended <- data_soft_merged %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
+
+data_hard_merged_uc_extended <- data_hard_merged %>%
+  dplyr::filter(diagnosis2 == "UC/IBDU")
+```
+
+##### Patient-reported flare
+
+```{r}
+cox_soft_uc_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    somatisation +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_soft_merged_uc_extended
+)
+
+cox_soft_uc_extended %>%
+  print_survival()
+```
+
+##### Objective flare
+
+```{r}
+cox_hard_uc_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    somatisation +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_hard_merged_uc_extended
+)
+
+cox_hard_uc_extended %>%
+  print_survival()
 ```
