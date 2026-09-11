@@ -1,18 +1,17 @@
 ---
-title: "Fatigue"
+title: "Patient Health Questionnaire (PHQ)"
 author:
+  - name: "Alexander Rudge"
+    affiliations:
+      #- ref: IGC
   - name: "Chiara Cotronei"
     affiliations:
       #- ref: Lothian
-  - name: "Alexander Rudge"
-    affiliations:
-      #- ref: CGEM
   - name: "Nathan Constantine-Cooke"
     corresponding: true
     url: https://scholar.google.com/citations?user=2emHWR0AAAAJ&hl=en&oi=ao
     affiliations:
-      #- ref: CGEM
-      #- ref: HGU
+      #- ref: IGC
 format: 
   html:
     code-fold: true
@@ -25,9 +24,11 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Fatigue
+# Patient Health Questionnaire
 
-## Setting up in R
+Participants completed the Patient Health Questionnaire-15 (PHQ) upon their recruitment to the study, which was used to assess the patient's physical somatisation severity. In this analysis, our aim was to determine the extent to which somatisation is associated with subsequent patient-reported and objective flares.
+
+# Setting up in R
 
 ```{r}
 #| label: load-libraries
@@ -35,33 +36,23 @@ editor_options:
 #| message: false
 #| warning: false
 set.seed(123)
-library(plyr) # Used for mapping values
-suppressPackageStartupMessages(library(tidyverse))
+library(tidyverse)
+library(magrittr)
 library(readxl) # Read in Excel files
-library(datefixR) # Standardise dates
 library(openxlsx)
-library(tidyr)
-library(ggdist)
-library(rstatix)
 
-suppressPackageStartupMessages(library(table1))
+# Tables
 library(knitr)
 library(pander)
 library(kableExtra)
 
-# Generate flowchart of cohort derivation
-library(DiagrammeR)
-library(DiagrammeRsvg)
-
-# cox-regression
+# Analysis
+library(rstatix)
 library(survival)
 library(survminer)
-library(finalfit)
-
 library(splines)
 library(mice)
 library(naniar)
-library(ggmice)
 ```
 
 ## Helper functions
@@ -237,6 +228,53 @@ summon_baseline_plot_continuous <- function(data, stat_tests, dependent, indepen
   
 }
 
+# Creating KM curves
+summon_km_curves <- function(data,
+                             dependent = 1,
+                             title = NULL,
+                             legend.title = NULL,
+                             legend.labs = NULL,
+                             palette = NULL,
+                             ggtheme = theme_minimal(),
+                             ...) {
+  
+  # ggsurvplot
+  plot_surv <- data %>%
+    survfit(as.formula(paste0("Surv(time, DiseaseFlareYN) ~ ", dependent)), 
+            data = .) %>%
+    ggsurvplot(
+      .,
+      data = data,
+      conf.int = TRUE,
+      risk.table = TRUE,
+      #pval = TRUE,
+      #pval.method = TRUE,
+      title = title,
+      legend.title = legend.title,
+      legend.labs = legend.labs,
+      ggtheme = ggtheme,
+      xlab = "Time from study recruitment (months)",
+      palette = palette,
+      break.time.by = 365/2,  
+      xscale = 730/24,
+      xlim = c(0, 750),
+      ...
+    )
+  
+  # Customise the plot and table separately
+  
+  plot_surv$plot <- plot_surv$plot +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      axis.title.x = element_blank()
+    )
+  
+  plot_surv$table <- plot_surv$table + ylab("")
+  
+  plot_surv
+  
+}
+
 # Function to perform coxph with mice for missing data
 coxph_mice <- function(formula, data, ...){
   
@@ -289,14 +327,36 @@ print_chisq <- function(data) {
 print_survival <- function(data) {
   data %>%
     broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
-    knitr::kable(digits = 3,
-                 col.names = c("Covariate",
-                               "Estimate",
+    # Relocate columns
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
                                "Std. Error",
                                "Statistic",
-                               "p value",
-                               "Lower CI",
-                               "Upper CI")
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "P-value"),
+                 format.args = list(drop0trailing = TRUE)
+                 )
+}
+
+print_survival_mice <- function(data) {
+  data %>%
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    # 3 significant figures
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(col.names = c("Covariate",
+                               "Hazard Ratio",
+                               "Std. Error",
+                               "Statistic",
+                               "Lower 95% CI",
+                               "Upper 95% CI",
+                               "P-value"),
+                 format.args = list(drop0trailing = TRUE)
                  )
 }
 
@@ -455,84 +515,103 @@ if (file.exists("/.dockerenv")) {
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
-alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data"
 
-IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
+phq <- read.xlsx(paste0(data.path, "Baseline2022/phq.xlsx"))
 data_common <- readRDS(
   "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/common_variables.rds"
 )
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
-
-# Psychosocial cohort
-participants <- readr::read_rds(
-  glue::glue("{alex_data}/participants.rds")
-)
 ```
 
-## Data Cleaning
+# Data Cleaning
 
-```{r, load and tidy fatigue data set}
-# Fatigue question from IBD control score
-fatigue <- IBD %>%
-  dplyr::select(
-    ParticipantId,
-    ParticipantNo,
-    SiteNo,
-    OftenLackEnergy)
+Data cleaning involved the following steps:
 
-# Exclude missing OftenLackEnergy
+- Remove completely empty rows.
 
-fatigue %<>%
-  dplyr::filter(
-    !is.na(OftenLackEnergy)
-  )
+- Combine data from different sources: exercise, demographics, faecal calprotectin (FC) measurements, index of multiple deprivation (IMD), flare history, and IBD control scores.
 
-fatigue %<>%
-  dplyr::mutate(
-    OftenLackEnergy = dplyr::case_match(
-      OftenLackEnergy,
-      1 ~ 'Yes',
-      2 ~ 'No',
-      3 ~ 'Not sure'
-    ) 
-  ) %>%
-  # Group "Not sure" with "No" due to low counts
-  dplyr::mutate(
-    OftenLackEnergy = dplyr::case_when(
-      OftenLackEnergy == 'Not sure' ~ 'No',
-      TRUE ~ OftenLackEnergy
-    )
-  ) %>%
-  dplyr::mutate(
-    OftenLackEnergy = forcats::fct_relevel(OftenLackEnergy, 'No', 'Yes')
-  )
+- Remove participants under 18 years of age.
 
-fatigue <- fatigue %>% 
+- Remove participants who did not answer all PHQ questions.
+
+- Rescale the PHQ responses, as the raw data responses were recorded as 1-4 instead of 0-3.
+
+- Calculate the somatisation score by summing responses from each PHQ question.
+
+- Categorise somatisation score into 0-4 (none), 5-9 (mild), and 10-30 (moderate to severe).
+
+```{r, load and tidy phq data set}
+
+phq <- phq %>% 
   filter(!is.na(ParticipantId))
 
 # Add the common participant-level data.
-fatigue <- fatigue %>%
+phq <- phq %>%
   dplyr::select(-SiteNo) %>%
   left_join(data_common, by = "ParticipantNo")
 
 #exclude <18 yo = 53 participants (1899 -> 1846)
-fatigue %<>% dplyr::filter(age >= 18)
+phq %<>% dplyr::filter(age >= 18)
 
-# In psychosocial cohort
-fatigue %<>%
-  dplyr::filter(
-    ParticipantNo %in% participants$ParticipantNo
+# PHQ numbering scale was shifted by 1 - fix here
+phq %<>%
+  dplyr::mutate(
+    dplyr::across(
+      .cols = StomachPain:TroubleSleeping,
+      .fns = ~. - 1)
   )
 
+# Menstrual cramps replace NA with 0 (Men)
+phq %<>%
+  tidyr::replace_na(
+    list(MenstrualCramps = 0)
+  )
+
+# Add all PHQ-15 columns to make final score
+phq <- phq %>% 
+  mutate(
+    TotalPHQ = #StomachPain +
+      BackPain +
+      PainInArms +
+      MenstrualCramps +
+      Headaches +
+      ChestPain +
+      Dizziness +
+      FaintingSpells +
+      HeartPound +
+      ShortnessBreath +
+      SexualIntercourse +
+      #ConstipationDiarrhoea +
+      #NauseaIndigestion +
+      FeelingTired +
+      TroubleSleeping)
+
+# Remove patients with any missing values
+phq %<>%
+  dplyr::filter(!is.na(TotalPHQ))
+
+
+# Make new variable for no, mild, moderate and severe levels of somatisation
+phq <- phq %>% 
+  mutate(
+    somatisation = cut(
+      TotalPHQ, 
+      breaks = c(0, 4, 9, 30), 
+      labels = c("None", "Mild", "ModSev"), 
+      include.lowest = TRUE)
+  )
 ```
 
-## Missingness
+# Missingness
+
+Visualise missingness in patient characteristics.
 
 ```{r}
 # Visualise missingness
 
-data_vis_missingness <- fatigue %>%
+data_vis_missingness <- phq %>%
   # Select relevant variables
   dplyr::select(
     diagnosis2,
@@ -544,7 +623,7 @@ data_vis_missingness <- fatigue %>%
     OverallControl,
     Smoke,
     SiteNo,
-    OftenLackEnergy
+    somatisation
   )
 
 # Number of missing values per variable
@@ -557,249 +636,252 @@ data_vis_missingness %>%
 
 ```
 
-## Baseline Analysis
+# Baseline Analysis
 
-#### Full Cohort
+We identify associations between somatisation and patient's baseline characteristics. The statistical significance of the baseline associations was assessed using Chi-squared tests for categorical variables, or Fisher’s exact tests if any expected counts were less than 5. For continuous variables, Wilcoxon tests were used when the psychosocial variable was binary, and Kruskal-Wallis tests when the psychosocial variable had more than 2 categories. P-values were adjusted for multiple testing by controlling the false discovery rate using the Benjamini-Hochberg method. Missingness is addressed using pairwise deletion, whereby observations with missing values in any variable involved in a given test are excluded.
 
+We first conduct the analysis in the full cohort, and then separately within the ulcerative colitis (including IBD unclassified) and Crohn’s disease subgroups.
+
+## Full Cohort
+
+::: panel-tabset
 ```{r}
 
-data_baseline <- fatigue
+data_baseline <- phq
 
 # Independent variables
 independent = c('diagnosis2',
                 'age',
                 'Sex',
-                'flare_group',
                 'FC',
-                'Smoke',
-                'OverallControl',
-                'control_8')
+                'Smoke')
 
-# Dependent variable is OftenLackEnergy
+# Dependent variable is somatisation
 
-# Statistical tests for each independent variable with OftenLackEnergy
-# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
+# Statistical tests for each independent variable with somatisation
+# With p-values adjusted for multiple testing.
 statistical_tests <- summon_statistical_test(
   data = data_baseline, 
-  dependent = 'OftenLackEnergy', 
+  dependent = 'somatisation', 
   independent = independent)
 
-statistical_tests
+```
+
+### IBD type {.unlisted .unnumbered}
+
+```{r}
 
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
+  dependent = 'somatisation',
   independent = 'diagnosis2'
 )
 
+```
+
+### Sex {.unlisted .unnumbered}
+
+```{r}
+
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
+  dependent = 'somatisation',
   independent = 'Sex'
 )
 
-summon_baseline_plot_discrete(
-  data = data_baseline,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'flare_group'
-)
+```
+
+### Smoking {.unlisted .unnumbered}
+
+```{r}
 
 summon_baseline_plot_discrete(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
+  dependent = 'somatisation',
   independent = 'Smoke'
 )
 
+```
+
+### Age {.unlisted .unnumbered}
+
+```{r}
+
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
+  dependent = 'somatisation',
   independent = 'age'
 )
 
+```
+
+### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
+
 summon_baseline_plot_continuous(
   data = data_baseline,
   stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
+  dependent = 'somatisation',
   independent = 'FC'
 )
 
-summon_baseline_plot_continuous(
-  data = data_baseline,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'OverallControl'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'control_8'
-)
 ```
+:::
 
-#### Ulcerative Colitis/IBD Unclassified
+## Ulcerative Colitis
 
+::: panel-tabset
 ```{r}
-# Select fatigue data and UC patients
-data_baseline_uc <- fatigue %>%
+# Select PHQ data and UC patients
+data_baseline_uc <- phq %>%
   dplyr::filter(diagnosis2 == 'UC/IBDU')
 
 # Independent variables
 independent = c('age',
                 'Sex',
-                'flare_group',
                 'FC',
-                'Smoke',
-                'OverallControl',
-                'control_8')
+                'Smoke')
 
-# Dependent variable is OftenLackEnergy
+# Dependent variable is somatisation
 
-# Statistical tests for each independent variable with OftenLackEnergy
-# With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
+# Statistical tests for each independent variable with somatisation
+# With p-values adjusted for multiple testing
+
 statistical_tests <- summon_statistical_test(
   data = data_baseline_uc, 
-  dependent = 'OftenLackEnergy', 
+  dependent = 'somatisation', 
   independent = independent)
+```
 
-statistical_tests
+### Sex {.unlisted .unnumbered}
 
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_uc,
   stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
+  dependent = 'somatisation',
   independent = 'Sex'
-)
-
-summon_baseline_plot_discrete(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'flare_group'
-)
-
-summon_baseline_plot_discrete(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'Smoke'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'age'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'FC'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'OverallControl'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_uc,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'control_8'
 )
 ```
 
-#### Crohn's Disease
+### Smoking {.unlisted .unnumbered}
 
 ```{r}
-# Select fatigue data and CD patients
-data_baseline_cd <- fatigue %>%
+summon_baseline_plot_discrete(
+  data = data_baseline_uc,
+  stat_tests = statistical_tests,
+  dependent = 'somatisation',
+  independent = 'Smoke'
+)
+```
+
+### Age {.unlisted .unnumbered}
+
+```{r}
+summon_baseline_plot_continuous(
+  data = data_baseline_uc,
+  stat_tests = statistical_tests,
+  dependent = 'somatisation',
+  independent = 'age'
+)
+```
+
+### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
+summon_baseline_plot_continuous(
+  data = data_baseline_uc,
+  stat_tests = statistical_tests,
+  dependent = 'somatisation',
+  independent = 'FC'
+)
+
+```
+:::
+
+## Crohn's Disease
+
+::: panel-tabset
+```{r}
+# Select PHQ data and CD patients
+data_baseline_cd <- phq %>%
   dplyr::filter(diagnosis2 == 'CD')
 
-# Dependent variable is OftenLackEnergy
+# Dependent variable is somatisation
 
-# Statistical tests for each independent variable with OftenLackEnergy
+# Statistical tests for each independent variable with somatisation
 # With p-values adjusted for multiple testing using FDR (Benjamini-Hochberg).
 statistical_tests <- summon_statistical_test(
   data = data_baseline_cd, 
-  dependent = 'OftenLackEnergy', 
+  dependent = 'somatisation', 
   independent = independent)
+```
 
-statistical_tests
+### Sex {.unlisted .unnumbered}
 
+```{r}
 # Plots
 summon_baseline_plot_discrete(
   data = data_baseline_cd,
   stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
+  dependent = 'somatisation',
   independent = 'Sex'
-)
-
-summon_baseline_plot_discrete(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'flare_group'
-)
-
-summon_baseline_plot_discrete(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'Smoke'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'age'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'FC'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'OverallControl'
-)
-
-summon_baseline_plot_continuous(
-  data = data_baseline_cd,
-  stat_tests = statistical_tests,
-  dependent = 'OftenLackEnergy',
-  independent = 'control_8'
 )
 ```
 
-## Survival Analysis
+### Smoking {.unlisted .unnumbered}
 
-### Data Cleaning
+```{r}
+summon_baseline_plot_discrete(
+  data = data_baseline_cd,
+  stat_tests = statistical_tests,
+  dependent = 'somatisation',
+  independent = 'Smoke'
+)
+```
+
+### Age {.unlisted .unnumbered}
+
+```{r}
+summon_baseline_plot_continuous(
+  data = data_baseline_cd,
+  stat_tests = statistical_tests,
+  dependent = 'somatisation',
+  independent = 'age'
+)
+```
+
+### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
+summon_baseline_plot_continuous(
+  data = data_baseline_cd,
+  stat_tests = statistical_tests,
+  dependent = 'somatisation',
+  independent = 'FC'
+)
+
+```
+:::
+
+# Survival Analysis
+
+Associations between level of somatisation and the rates of patient-reported and objective flares are assessed using multivariable Cox proportional hazard models. Each model adjusted for biological sex, age, smoking status, IMD, and FC (natural log transformed), and included hospital site as a frailty term. Continuous variables (age and FC) were modelled using natural cubic splines, with degrees of freedom determined using likelihood ratio tests at a 95% significance level. Participants with missing flare status or time are excluded.
+
+## Data Cleaning
 
 ```{r}
 # Survival data
-# Join fatigue with flare data
+# Join phq with flare data
 # Patient reported
-data_survival_soft <- fatigue %>% dplyr::inner_join(
+data_survival_soft <- phq %>% dplyr::inner_join(
   flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
   by = 'ParticipantNo'
 ) %>%
@@ -815,7 +897,7 @@ data_survival_soft_cd <- data_survival_soft %>%
 
 
 # Hard flares
-data_survival_hard <- fatigue %>% dplyr::inner_join(
+data_survival_hard <- phq %>% dplyr::inner_join(
   flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
   by = 'ParticipantNo'
 ) %>%
@@ -831,13 +913,19 @@ data_survival_hard_cd <- data_survival_hard %>%
 
 ```
 
-### Shapes of continuous variables
+## Shapes of continuous variables
 
-#### Full Cohort
+### Full Cohort
 
-##### Patient reported flare
+#### Patient reported flare {.unlisted .unnumbered}
 
 ```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Cox with continuous variables
 # Age
@@ -864,43 +952,25 @@ cox_fc_soft <- coxph(
 summon_lrt(cox_fc_soft, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_vas_soft <- coxph(
+# Total PHQ score
+cox_totalphq_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OverallControl +
+    TotalPHQ +
     frailty(SiteNo),
   data = data_survival_soft
 )
 
-# Spline for control
-summon_lrt(cox_vas_soft, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# Yes
-
-# OverallControl
-cox_vas_soft <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    ns(OverallControl, df = 2) +
-    frailty(SiteNo),
-  data = data_survival_soft
+# Spline for Total PHQ score
+summon_lrt(
+  cox_totalphq_soft,
+  remove = 'TotalPHQ',
+  add = 'ns(TotalPHQ, df = 2)'
 )
-
-# Spline for control
-summon_lrt(cox_vas_soft, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
-# No, 2 is sufficient
-
-# Control 8
-cox_control8_soft <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    control_8 +
-    frailty(SiteNo),
-  data = data_survival_soft
-)
-
-# Spline
-summon_lrt(cox_control8_soft, remove = 'control_8', add = 'ns(control_8, df = 2)')
-# No
 
 ```
+
+::: panel-tabset
+##### Age {.unlisted .unnumbered}
 
 ```{r}
 # Plot shapes
@@ -909,30 +979,39 @@ plot_continuous_hr(
   data = data_survival_soft, 
   model = cox_age_soft, 
   variable = 'age_decade')
+```
 
+##### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_soft, 
   model = cox_fc_soft, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_soft, 
-  model = cox_vas_soft, 
-  variable = 'OverallControl',
-  splineterm = 'ns(OverallControl, df = 2)')
-
-# Control 8
-plot_continuous_hr(
-  data = data_survival_soft, 
-  model = cox_control8_soft, 
-  variable = 'control_8')
 ```
 
-##### Objective flare
+##### Total PHQ score {.unlisted .unnumbered}
 
 ```{r}
+# Total PHQ score
+plot_continuous_hr(
+  data = data_survival_soft,
+  model = cox_totalphq_soft,
+  variable = 'TotalPHQ')
+```
+:::
+
+#### Objective flare {.unlisted .unnumbered}
+
+```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Age
 cox_age_hard <- coxph(
@@ -958,29 +1037,25 @@ cox_fc_hard <- coxph(
 summon_lrt(cox_fc_hard, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_vas_hard <- coxph(
+# Total PHQ score
+cox_totalphq_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OverallControl +
+    TotalPHQ +
     frailty(SiteNo),
   data = data_survival_hard
 )
 
-# Spline for control
-summon_lrt(cox_vas_hard, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# No
-
-# Control 8
-cox_control8_hard <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    control_8 +
-    frailty(SiteNo),
-  data = data_survival_hard
+# Spline for Total PHQ score
+summon_lrt(
+  cox_totalphq_hard,
+  remove = 'TotalPHQ',
+  add = 'ns(TotalPHQ, df = 2)'
 )
 
-# Spline
-summon_lrt(cox_control8_hard, remove = 'control_8', add = 'ns(control_8, df = 2)')
 ```
+
+::: panel-tabset
+##### Age {.unlisted .unnumbered}
 
 ```{r}
 # Plot shapes
@@ -989,31 +1064,42 @@ plot_continuous_hr(
   data = data_survival_hard, 
   model = cox_age_hard, 
   variable = 'age_decade')
+```
 
+##### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_hard, 
   model = cox_fc_hard, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_hard, 
-  model = cox_vas_hard, 
-  variable = 'OverallControl')
-
-# Control 8
-plot_continuous_hr(
-  data = data_survival_hard, 
-  model = cox_control8_hard, 
-  variable = 'control_8')
 ```
 
-#### Ulcerative Colitis
-
-##### Patient reported flare
+##### Total PHQ score {.unlisted .unnumbered}
 
 ```{r}
+# Total PHQ score
+plot_continuous_hr(
+  data = data_survival_hard,
+  model = cox_totalphq_hard,
+  variable = 'TotalPHQ')
+```
+:::
+
+### Ulcerative Colitis
+
+#### Patient reported flare {.unlisted .unnumbered}
+
+```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
+
 # Age
 cox_age_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
@@ -1038,41 +1124,25 @@ cox_fc_soft_uc <- coxph(
 summon_lrt(cox_fc_soft_uc, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_vas_soft_uc <- coxph(
+# Total PHQ score
+cox_totalphq_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OverallControl +
+    TotalPHQ +
     frailty(SiteNo),
   data = data_survival_soft_uc
 )
 
-# Spline for control
-summon_lrt(cox_vas_soft_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# Yes
-
-# OverallControl
-cox_vas_soft_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    ns(OverallControl, df = 2) +
-    frailty(SiteNo),
-  data = data_survival_soft_uc
+# Spline for Total PHQ score
+summon_lrt(
+  cox_totalphq_soft_uc,
+  remove = 'TotalPHQ',
+  add = 'ns(TotalPHQ, df = 2)'
 )
 
-summon_lrt(cox_vas_soft_uc, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
-# No, df = 2 is sufficient
-
-# Control 8
-cox_control8_soft_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    control_8 +
-    frailty(SiteNo),
-  data = data_survival_soft_uc
-)
-
-# Spline
-summon_lrt(cox_control8_soft_uc, remove = 'control_8', add = 'ns(control_8, df = 2)')
-# No
 ```
+
+::: panel-tabset
+##### Age {.unlisted .unnumbered}
 
 ```{r}
 # Plot shapes
@@ -1081,30 +1151,40 @@ plot_continuous_hr(
   data = data_survival_soft_uc, 
   model = cox_age_soft_uc, 
   variable = 'age_decade')
+```
 
+##### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_soft_uc, 
   model = cox_fc_soft_uc, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_soft_uc, 
-  model = cox_vas_soft_uc, 
-  variable = 'OverallControl',
-  splineterm = 'ns(OverallControl, df = 2)')
-
-# Control 8
-plot_continuous_hr(
-  data = data_survival_soft_uc, 
-  model = cox_control8_soft_uc, 
-  variable = 'control_8')
 ```
 
-##### Objective flare
+##### Total PHQ score {.unlisted .unnumbered}
 
 ```{r}
+# Total PHQ score
+plot_continuous_hr(
+  data = data_survival_soft_uc,
+  model = cox_totalphq_soft_uc,
+  variable = 'TotalPHQ')
+```
+:::
+
+#### Objective flare {.unlisted .unnumbered}
+
+```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
+
 
 # Age
 cox_age_hard_uc <- coxph(
@@ -1156,31 +1236,25 @@ cox_fc_hard_uc <- coxph(
 summon_lrt(cox_fc_hard_uc, remove = 'ns(FC, df = 2)', add = 'ns(FC, df = 3)')
 # No, stay with df = 2
 
-
-# OverallControl
-cox_vas_hard_uc <- coxph(
+# Total PHQ score
+cox_totalphq_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OverallControl +
+    TotalPHQ +
     frailty(SiteNo),
   data = data_survival_hard_uc
 )
 
-# Spline for control
-summon_lrt(cox_vas_hard_uc, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# No
-
-# Control 8
-cox_control8_hard_uc <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    control_8 +
-    frailty(SiteNo),
-  data = data_survival_hard_uc
+# Spline for Total PHQ score
+summon_lrt(
+  cox_totalphq_hard_uc,
+  remove = 'TotalPHQ',
+  add = 'ns(TotalPHQ, df = 2)'
 )
-
-# Spline
-summon_lrt(cox_control8_hard_uc, remove = 'control_8', add = 'ns(control_8, df = 2)')
 
 ```
+
+::: panel-tabset
+##### Age {.unlisted .unnumbered}
 
 ```{r}
 # Plot shapes
@@ -1190,7 +1264,11 @@ plot_continuous_hr(
   model = cox_age_hard_uc, 
   variable = 'age_decade',
   splineterm = 'ns(age_decade, df = 2)')
+```
 
+##### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_hard_uc, 
@@ -1198,24 +1276,30 @@ plot_continuous_hr(
   variable = 'FC',
   splineterm = 'ns(FC, df = 2)')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_hard_uc, 
-  model = cox_vas_hard_uc, 
-  variable = 'OverallControl')
-
-# Control 8
-plot_continuous_hr(
-  data = data_survival_hard_uc, 
-  model = cox_control8_hard_uc, 
-  variable = 'control_8')
 ```
 
-#### Crohn's Disease
-
-##### Patient reported flare
+##### Total PHQ score {.unlisted .unnumbered}
 
 ```{r}
+# Total PHQ score
+plot_continuous_hr(
+  data = data_survival_hard_uc,
+  model = cox_totalphq_hard_uc,
+  variable = 'TotalPHQ')
+```
+:::
+
+### Crohn's Disease
+
+#### Patient reported flare {.unlisted .unnumbered}
+
+```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Age
 cox_age_soft_cd <- coxph(
@@ -1241,41 +1325,25 @@ cox_fc_soft_cd <- coxph(
 summon_lrt(cox_fc_soft_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_vas_soft_cd <- coxph(
+# Total PHQ score
+cox_totalphq_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OverallControl +
+    TotalPHQ +
     frailty(SiteNo),
   data = data_survival_soft_cd
 )
 
-# Spline for control
-summon_lrt(cox_vas_soft_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# Yes
-
-# OverallControl
-cox_vas_soft_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    ns(OverallControl, df = 2) +
-    frailty(SiteNo),
-  data = data_survival_soft_cd
+# Spline for Total PHQ score
+summon_lrt(
+  cox_totalphq_soft_cd,
+  remove = 'TotalPHQ',
+  add = 'ns(TotalPHQ, df = 2)'
 )
-
-summon_lrt(cox_vas_soft_cd, remove = 'ns(OverallControl, df = 2)', add = 'ns(OverallControl, df = 3)')
-# No, df = 2 is sufficient
-
-# Control 8
-cox_control8_soft_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    control_8 +
-    frailty(SiteNo),
-  data = data_survival_soft_cd
-)
-
-# Spline
-summon_lrt(cox_control8_soft_cd, remove = 'control_8', add = 'ns(control_8, df = 2)')
 
 ```
+
+::: panel-tabset
+##### Age {.unlisted .unnumbered}
 
 ```{r}
 # Plot shapes
@@ -1284,30 +1352,39 @@ plot_continuous_hr(
   data = data_survival_soft_cd, 
   model = cox_age_soft_cd, 
   variable = 'age_decade')
+```
 
+##### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_soft_cd, 
   model = cox_fc_soft_cd, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_soft_cd, 
-  model = cox_vas_soft_cd, 
-  variable = 'OverallControl',
-  splineterm = 'ns(OverallControl, df = 2)')
-
-# Control 8
-plot_continuous_hr(
-  data = data_survival_soft_cd, 
-  model = cox_control8_soft_cd, 
-  variable = 'control_8')
 ```
 
-##### Objective flare
+##### Total PHQ score {.unlisted .unnumbered}
 
 ```{r}
+# Total PHQ score
+plot_continuous_hr(
+  data = data_survival_soft_cd,
+  model = cox_totalphq_soft_cd,
+  variable = 'TotalPHQ')
+```
+:::
+
+#### Objective flare {.unlisted .unnumbered}
+
+```{r}
+#| eval: true
+#| echo: true
+#| results: hide
+#| warning: false
+#| message: false
+
 
 # Age
 cox_age_hard_cd <- coxph(
@@ -1333,29 +1410,25 @@ cox_fc_hard_cd <- coxph(
 summon_lrt(cox_fc_hard_cd, remove = 'FC', add = 'ns(FC, df = 2)')
 # No
 
-# OverallControl
-cox_vas_hard_cd <- coxph(
+# Total PHQ score
+cox_totalphq_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OverallControl +
+    TotalPHQ +
     frailty(SiteNo),
   data = data_survival_hard_cd
 )
 
-# Spline for control
-summon_lrt(cox_vas_hard_cd, remove = 'OverallControl', add = 'ns(OverallControl, df = 2)')
-# No
-
-# Control 8
-cox_control8_hard_cd <- coxph(
-  Surv(time, DiseaseFlareYN) ~
-    control_8 +
-    frailty(SiteNo),
-  data = data_survival_hard_cd
+# Spline for Total PHQ score
+summon_lrt(
+  cox_totalphq_hard_cd,
+  remove = 'TotalPHQ',
+  add = 'ns(TotalPHQ, df = 2)'
 )
 
-# Spline
-summon_lrt(cox_control8_hard_cd, remove = 'control_8', add = 'ns(control_8, df = 2)')
 ```
+
+::: panel-tabset
+##### Age {.unlisted .unnumbered}
 
 ```{r}
 # Plot shapes
@@ -1364,67 +1437,81 @@ plot_continuous_hr(
   data = data_survival_hard_cd, 
   model = cox_age_hard_cd, 
   variable = 'age_decade')
+```
 
+##### Faecal Calprotectin {.unlisted .unnumbered}
+
+```{r}
 # FC
 plot_continuous_hr(
   data = data_survival_hard_cd, 
   model = cox_fc_hard_cd, 
   variable = 'FC')
 
-# Control
-plot_continuous_hr(
-  data = data_survival_hard_cd, 
-  model = cox_vas_hard_cd, 
-  variable = 'OverallControl')
-
-# Control 8
-plot_continuous_hr(
-  data = data_survival_hard_cd, 
-  model = cox_control8_hard_cd, 
-  variable = 'control_8')
 ```
 
-Summary:
-
-Full cohort, soft, control df = 2, hard, no.
-
-UC, soft, control df = 2. Hard, age df = 2, FC df = 2.
-
-CD, soft, control df = 2. Hard, no splines.
-
-### Models
-
-#### Full Cohort
-
-##### Patient reported flare
+##### Total PHQ score {.unlisted .unnumbered}
 
 ```{r}
-# Patient reported flare
-# Kaplan Meier
-data_survival_soft %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'OftenLackEnergy',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+# Total PHQ score
+plot_continuous_hr(
+  data = data_survival_hard_cd,
+  model = cox_totalphq_hard_cd,
+  variable = 'TotalPHQ')
+```
+:::
 
+## Results
+
+### Full Cohort
+
+#### Patient reported flare
+
+##### Kaplan-Meier
+
+```{r}
+# Plotting Kaplan-Meier curves
+okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+legend.title = 'Somatisation'
+legend.labs = c('None', 'Mild', 'Moderate/severe')
+palette = okabe_ito
+dependent = 'somatisation'
+
+custom_theme = theme_minimal() + 
+  theme(
+    title = element_text(size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 12),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 14)
+  )
+
+summon_km_curves(
+  data = data_survival_soft,
+  dependent = dependent,
+  title = "Time to patient-reported flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
 # Cox model
 cox_soft <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft
@@ -1435,19 +1522,18 @@ cox_soft %>%
 
 ```
 
+###### MICE
+
 ```{r}
 # Cox model with MICE
 # Run the mice
 cox_soft_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft,
@@ -1460,56 +1546,57 @@ cox_soft_pool <- with(
   cox_soft_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      OftenLackEnergy +
+      somatisation +
       IMD +
       Sex +
       age_decade +
       FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
-      control_8 +
       Smoke +
       frailty(SiteNo)
   )
 ) %>%
   mice::pool()
 
-cox_soft_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_soft_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
+:::
 
-##### Objective flare
+#### Objective flare
+
+##### Kaplan-Meier
 
 ```{r}
-# Objective flare
 # Kaplan Meier
-data_survival_hard %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'OftenLackEnergy',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_hard,
+  dependent = dependent,
+  title = "Time to objective flare in IBD",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
 
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
 # Cox model
 cox_hard <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard
@@ -1519,19 +1606,18 @@ cox_hard %>%
   print_survival()
 ```
 
+###### MICE
+
 ```{r}
 # Cox model with MICE
 # Run the mice
 cox_hard_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard,
@@ -1544,57 +1630,58 @@ cox_hard_pool <- with(
   cox_hard_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      OftenLackEnergy +
+      somatisation +
       IMD +
       Sex +
       age_decade +
       FC +
-      flare_group +
-      OverallControl +
-      control_8 +
       Smoke +
       frailty(SiteNo)
   )
 ) %>%
   mice::pool()
 
-cox_hard_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_hard_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
+:::
 
-#### Ulcerative Colitis
+### Ulcerative Colitis
 
-##### Patient reported flare
+#### Patient reported flare
+
+##### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
 # Kaplan Meier
-data_survival_soft_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'OftenLackEnergy',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_soft_uc,
+  dependent = dependent,
+  title = "Time to patient-reported flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
 
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
 # Cox model
 cox_soft_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_uc
@@ -1605,19 +1692,18 @@ cox_soft_uc %>%
 
 ```
 
+###### MICE
+
 ```{r}
 # Cox model with MICE
 # Run the mice
 cox_soft_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_uc,
@@ -1630,56 +1716,57 @@ cox_soft_uc_pool <- with(
   cox_soft_uc_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      OftenLackEnergy +
+      somatisation +
       IMD +
       Sex +
       age_decade +
       FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
-      control_8 +
       Smoke +
       frailty(SiteNo)
   )
 ) %>%
   mice::pool()
 
-cox_soft_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_soft_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
+:::
 
-##### Objective flare
+#### Objective flare
+
+##### Kaplan-Meier
 
 ```{r}
-# Objective flare
 # Kaplan Meier
-data_survival_hard_uc %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard_uc, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'OftenLackEnergy',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_hard_uc,
+  dependent = dependent,
+  title = "Time to objective flare in ulcerative colitis",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
 
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
 # Cox model
 cox_hard_uc <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     ns(age_decade, df = 2) +
     ns(FC, df = 2) +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_uc
@@ -1689,20 +1776,19 @@ cox_hard_uc %>%
   print_survival()
 ```
 
+###### MICE
+
 ```{r}
 # Cox model with MICE
 # Run the mice
 # Note: mice does not support splines so I cannot impute using a spline.
 cox_hard_uc_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_uc,
@@ -1715,57 +1801,58 @@ cox_hard_uc_pool <- with(
   cox_hard_uc_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      OftenLackEnergy +
+      somatisation +
       IMD +
       Sex +
       ns(age_decade, df = 2) +
       ns(FC, df = 2) +
-      flare_group +
-      OverallControl +
-      control_8 +
       Smoke +
       frailty(SiteNo)
   )
 ) %>%
   mice::pool()
 
-cox_hard_uc_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_hard_uc_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
 ```
+:::
 
-#### Crohn's Disease
+### Crohn's Disease
 
-##### Patient reported flare.
+#### Patient reported flare.
+
+##### Kaplan-Meier
 
 ```{r}
-# Patient reported flare
 # Kaplan Meier
-data_survival_soft_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_soft_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'OftenLackEnergy',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_soft_cd,
+  dependent = dependent,
+  title = "Time to patient-reported flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
 
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
 # Cox model
 cox_soft_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    ns(OverallControl, df = 2) +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_cd
@@ -1776,19 +1863,18 @@ cox_soft_cd %>%
 
 ```
 
+###### MICE
+
 ```{r}
 # Cox model with MICE
 # Run the mice
 cox_soft_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_soft_cd,
@@ -1801,56 +1887,57 @@ cox_soft_cd_pool <- with(
   cox_soft_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      OftenLackEnergy +
+      somatisation +
       IMD +
       Sex +
       age_decade +
       FC +
-      flare_group +
-      ns(OverallControl, df = 2) +
-      control_8 +
       Smoke +
       frailty(SiteNo)
   )
 ) %>%
   mice::pool()
 
-cox_soft_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_soft_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
 
 ```
+:::
 
-##### Objective flare
+#### Objective flare
+
+##### Kaplan-Meier
 
 ```{r}
-# Objective flare
 # Kaplan Meier
-data_survival_hard_cd %>%
-  survfit(Surv(time, DiseaseFlareYN) ~ OftenLackEnergy, data = .) %>%
-  ggsurvplot(
-    ., 
-    data = data_survival_hard_cd, 
-    conf.int = TRUE, 
-    risk.table = TRUE,
-    pval = TRUE,
-    pval.method = TRUE,
-    legend.title = 'OftenLackEnergy',
-    xlab = "Time from study recruitment (days)",
-    ggtheme = theme_minimal())
+summon_km_curves(
+  data = data_survival_hard_cd,
+  dependent = dependent,
+  title = "Time to objective flare in Crohn's disease",
+  legend.title = legend.title,
+  legend.labs = legend.labs,
+  palette = palette,
+  ggtheme = custom_theme
+)
+```
 
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
 # Cox model
 cox_hard_cd <- coxph(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_cd
@@ -1860,19 +1947,18 @@ cox_hard_cd %>%
   print_survival()
 ```
 
+###### MICE
+
 ```{r}
 # Cox model with MICE
 # Run the mice
 cox_hard_cd_mice <- coxph_mice(
   Surv(time, DiseaseFlareYN) ~
-    OftenLackEnergy +
+    somatisation +
     IMD +
     Sex +
     age_decade +
     FC +
-    flare_group +
-    OverallControl +
-    control_8 +
     Smoke +
     frailty(SiteNo),
   data = data_survival_hard_cd,
@@ -1885,27 +1971,442 @@ cox_hard_cd_pool <- with(
   cox_hard_cd_mice,
   coxph(
     Surv(time, DiseaseFlareYN) ~
-      OftenLackEnergy +
+      somatisation +
       IMD +
       Sex +
       age_decade +
       FC +
-      flare_group +
-      OverallControl +
-      control_8 +
       Smoke +
       frailty(SiteNo)
   )
 ) %>%
   mice::pool()
 
-cox_hard_cd_pool %>% 
-  summary(conf.int = TRUE,
-          conf.level = 0.95,
-          exponentiate = TRUE)
+cox_hard_cd_pool %>%
+  broom::tidy(conf.int = TRUE,
+              conf.level = 0.95,
+              exponentiate = TRUE) %>%
+  print_survival_mice()
+```
+:::
+
+# Survival analysis - continuous
+
+The categorical somatisation analysis is repeated using the continuous PHQ-15 score (`TotalPHQ`) as the primary exposure.
+
+## Results - continuous PHQ score
+
+### Full Cohort
+
+#### Patient-reported flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+# Cox model using the continuous PHQ score
+cox_phq_cts_soft <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft
+)
+
+cox_phq_cts_soft %>%
+  print_survival()
 ```
 
-## Reproduction and reproducibility {.appendix}
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_soft_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_soft_pool <- with(
+  cox_phq_cts_soft_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_soft_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+#### Objective flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_hard <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard
+)
+
+cox_phq_cts_hard %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_hard_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_hard_pool <- with(
+  cox_phq_cts_hard_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_hard_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+### Ulcerative Colitis
+
+#### Patient-reported flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_soft_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc
+)
+
+cox_phq_cts_soft_uc %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_soft_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_soft_uc_pool <- with(
+  cox_phq_cts_soft_uc_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_soft_uc_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+#### Objective flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_hard_uc <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    ns(age_decade, df = 2) +
+    ns(FC, df = 2) +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc
+)
+
+cox_phq_cts_hard_uc %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# MICE does not support splines during imputation, so use the
+# unsplined variables for the imputation model.
+cox_phq_cts_hard_uc_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_uc,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_hard_uc_pool <- with(
+  cox_phq_cts_hard_uc_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      ns(age_decade, df = 2) +
+      ns(FC, df = 2) +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_hard_uc_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+### Crohn's Disease
+
+#### Patient-reported flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_soft_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd
+)
+
+cox_phq_cts_soft_cd %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_soft_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_soft_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_soft_cd_pool <- with(
+  cox_phq_cts_soft_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_soft_cd_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+#### Objective flare
+
+##### Cox proportional hazards model
+
+::: panel-tabset
+###### Complete case
+
+```{r}
+cox_phq_cts_hard_cd <- coxph(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd
+)
+
+cox_phq_cts_hard_cd %>%
+  print_survival()
+```
+
+###### MICE
+
+```{r}
+# Cox model with MICE
+cox_phq_cts_hard_cd_mice <- coxph_mice(
+  Surv(time, DiseaseFlareYN) ~
+    TotalPHQ +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    Smoke +
+    frailty(SiteNo),
+  data = data_survival_hard_cd,
+  m = 20,
+  printFlag = FALSE
+)
+
+cox_phq_cts_hard_cd_pool <- with(
+  cox_phq_cts_hard_cd_mice,
+  coxph(
+    Surv(time, DiseaseFlareYN) ~
+      TotalPHQ +
+      IMD +
+      Sex +
+      age_decade +
+      FC +
+      Smoke +
+      frailty(SiteNo)
+  )
+) %>%
+  mice::pool()
+
+cox_phq_cts_hard_cd_pool %>%
+  broom::tidy(
+    conf.int = TRUE,
+    conf.level = 0.95,
+    exponentiate = TRUE
+  ) %>%
+  print_survival_mice()
+```
+:::
+
+# Reproduction and reproducibility {.appendix}
 
 <details class="appendix">
 

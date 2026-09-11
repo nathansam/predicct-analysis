@@ -134,7 +134,7 @@ cox_results %<>%
 # Multiple testing
 # Adjust p values using Benjamini-Hochberg, separately for UC/IBDU and CD
 cox_results %<>%
-  dplyr::group_by(diagnosis2) %>%
+  dplyr::group_by(diagnosis2, flare_type) %>%
   dplyr::mutate(
     q.value = stats::p.adjust(p.value, method = "BH")
   ) %>%

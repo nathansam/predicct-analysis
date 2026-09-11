@@ -7,9 +7,9 @@ library(magrittr)
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Extended analysis FC 250/"
 
 # Suffix - cc (complete case) or mice 
-suffix <- "_cc.rds"
+#suffix <- "_cc.rds"
 
-#suffix <- "_mice.rds"
+suffix <- "_mice.rds"
 
 for (suffix in c("_cc.rds", "_mice.rds")){
 
@@ -152,9 +152,9 @@ cox_results %<>%
   )
 
 # Save
-# readr::write_rds(
-#   x = cox_results,
-#   file = paste0(filepath, "cox_results_all_variables", suffix)
-# )
+readr::write_rds(
+  x = cox_results,
+  file = paste0(filepath, "cox_results_all_variables", suffix)
+)
 
 }

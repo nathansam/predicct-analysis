@@ -526,9 +526,11 @@ if (file.exists("/.dockerenv")) {
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
 
+alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
+
 psqi <- read.xlsx(paste0(data.path, "Baseline2022/psqi.xlsx"))
-data_common <- readRDS(
-  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/common_variables.rds"
+data_common <- readr::read_rds(
+  glue::glue("{alex_data}common_variables.rds")
 )
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
@@ -562,6 +564,7 @@ psqi <- psqi %>%
 
 # Add the common participant-level data.
 psqi <- psqi %>% 
+  dplyr::select(-SiteNo) %>%
   left_join(data_common, by = "ParticipantNo")
 
 #exclude <18 yo = 53 participants (1907 -> 1854)
@@ -772,7 +775,7 @@ psqi %<>%
 data_vis_missingness <- psqi %>%
   # Select relevant variables
   dplyr::select(
-    diagnosis,
+    diagnosis2,
     age,
     Sex,
     IMD,

@@ -10,7 +10,7 @@ okabe_ito <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00",
 
 # HADS Anxiety ####
 legend.title = 'HADS anxiety score'
-legend.labs = c('0-7', '8-21')
+legend.labs = c('0-7', '8-10', '11-21')
 palette = okabe_ito
 dependent = 'score_group'
 
@@ -133,7 +133,7 @@ ggsave(
 
 # HADS Depression ####
 legend.title = 'HADS depression score'
-legend.labs = c('0-7', '8-21')
+legend.labs = c('0-7', '8-10', '11-21')
 palette = okabe_ito
 dependent = 'score_group'
 

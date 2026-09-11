@@ -26,8 +26,9 @@ data_baseline_anxiety_table <- data_baseline_anxiety %>%
   dplyr::mutate(
     flare_group = forcats::fct_recode(
       flare_group,
-      "None" = "No flares",
-      "At least one" = "1 or More Flares"
+      "None" = "No Flares",
+      "One" = "1 Flare",
+      "Two or more" = "2 or More Flares"
   )) %>%
   dplyr::mutate(IMD = as.character(IMD)) %>%
   dplyr::mutate(
@@ -57,7 +58,7 @@ tbl_anxiety <- data_baseline_anxiety_table %>%
           Smoke ~ "Smoking",
           IMD ~ 'Index of Multiple Deprivation',
           FC ~ 'Fecal Calprotectin',
-          flare_group ~ "Flares in previous year",
+          flare_group ~ "Flares in the previous year",
           OverallControl ~ "IBD-Control-VAS score",
           control_8 ~ "IBD-Control-8 score"
         )
@@ -105,8 +106,9 @@ data_baseline_depression_table <- data_baseline_depression %>%
   dplyr::mutate(
     flare_group = forcats::fct_recode(
       flare_group,
-      "None" = "No flares",
-      "At least one" = "1 or More Flares"
+      "None" = "No Flares",
+      "One" = "1 Flare",
+      "Two or more" = "2 or More Flares"
     )) %>%
   dplyr::mutate(IMD = as.character(IMD)) %>%
   dplyr::mutate(
@@ -135,7 +137,7 @@ tbl_depression <- data_baseline_depression_table %>%
           Smoke ~ "Smoking",
           IMD ~ 'Index of Multiple Deprivation',
           FC ~ 'Fecal Calprotectin',
-          flare_group ~ "Flares in previous year",
+          flare_group ~ "Flares in the previous year",
           OverallControl ~ "IBD-Control-VAS score",
           control_8 ~ "IBD-Control-8 score"
         )
@@ -171,17 +173,27 @@ tbl_depression
 
 
 
-# Save to word
+# Save as Word and HTML
 filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
 
-# # Anxiety
-# tbl_anxiety %>%
-#   gt::gtsave(
-#     filename = paste0(filepath, "Baseline associations HADS anxiety.docx")
-#   )
-# 
-# # Depression
-# tbl_depression %>%
-#   gt::gtsave(
-#     filename = paste0(filepath, "Baseline associations HADS depression.docx")
-#   )
+# Anxiety
+tbl_anxiety %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations HADS anxiety.docx")
+  )
+
+tbl_anxiety %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations HADS anxiety.html")
+  )
+
+# Depression
+tbl_depression %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations HADS depression.docx")
+  )
+
+tbl_depression %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations HADS depression.html")
+  )

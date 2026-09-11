@@ -27,7 +27,8 @@ data_baseline_table <- data_baseline %>%
     flare_group = forcats::fct_recode(
       flare_group,
       "None" = "No Flares",
-      "At least one" = "1 or More Flares"
+      "One" = "1 Flare",
+      "Two or more" = "2 or More Flares"
   )) %>%
   dplyr::mutate(IMD = as.character(IMD)) %>%
   dplyr::mutate(
@@ -57,7 +58,7 @@ tbl <- data_baseline_table %>%
           Smoke ~ "Smoking",
           IMD ~ 'Index of Multiple Deprivation',
           FC ~ 'Fecal Calprotectin',
-          flare_group ~ "Flares in previous year",
+          flare_group ~ "Flares in the previous year",
           OverallControl ~ "IBD-Control-VAS score",
           control_8 ~ "IBD-Control-8 score"
         )
@@ -92,11 +93,15 @@ tbl <- data_baseline_table %>%
 tbl
 
 
-# Save to word
+# Save as Word and HTML
 filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
 
-# Anxiety
 tbl %>%
   gt::gtsave(
     filename = paste0(filepath, "Baseline associations PSQI.docx")
+  )
+
+tbl %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations PSQI.html")
   )

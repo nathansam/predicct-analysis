@@ -9,11 +9,6 @@ library(glue)
 
 filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
-# Participants
-participants <- readr::read_rds(
-  glue::glue("{filepath}participants.rds")
-)
-
 hads <- readr::read_rds(
   glue::glue("{filepath}hads.rds")
 )
@@ -38,13 +33,19 @@ psqi <- readr::read_rds(
   glue::glue("{filepath}PSQI.rds")
 )
 
+# All participants completing at least one psychosocial questionnaire
+participants <- dplyr::bind_rows(
+  hads %>% dplyr::select(diagnosis2, ParticipantNo),
+  phq %>% dplyr::select(diagnosis2, ParticipantNo),
+  exercise %>% dplyr::select(diagnosis2, ParticipantNo),
+  lifeevents %>% dplyr::select(diagnosis2, ParticipantNo),
+  psqi %>% dplyr::select(diagnosis2, ParticipantNo),
+) %>%
+  dplyr::distinct(diagnosis2, ParticipantNo)
+
+
 # Other common variables
 common_variables <- readr::read_rds("/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/common_variables.rds")
-
-# Site number from demographics
-demographics <- readxl::read_xlsx(
-  "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/Baseline2022/demographics2022.xlsx"
-)
 
 # Only select participantno and psychosocial variable for each file
 
@@ -86,14 +87,9 @@ data <- participants %<>%
   dplyr::left_join(lifeevents) %>%
   dplyr::left_join(psqi)
 
-# Add demographic variables
-demographics %<>%
-  dplyr::select(ParticipantNo, SiteNo)
-
+# Add common participant-level variables
 data %<>%
-  dplyr::left_join(common_variables, by = 'ParticipantNo') %>%
-  dplyr::left_join(demographics, by = 'ParticipantNo')
-
+  dplyr::left_join(common_variables, by = 'ParticipantNo')
 
 
 # Save

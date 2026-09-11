@@ -1979,7 +1979,6 @@ cox_anxiety_soft <- coxph(
     ns(OverallControl, df = 2) +
     control_8 +
     Smoke +
-    Biologic +
     frailty(SiteNo),
   data = data_survival_anxiety_soft
 )

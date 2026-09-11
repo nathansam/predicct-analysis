@@ -2847,6 +2847,9 @@ cox_depression_soft_cd <- coxph(
 cox_depression_soft_cd %>%
   print_survival()
 
+# Test proportional hazards
+cox.zph(cox_depression_soft_cd) %>% plot()
+
 ```
 
 ```{r}

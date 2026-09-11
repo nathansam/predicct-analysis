@@ -29,7 +29,6 @@ qmd_code <- tempfile(fileext = ".R")
 knitr::purl("HADS/HADS.qmd", output = qmd_code, documentation = 0)
 source(qmd_code, local = .GlobalEnv)
 source("HADS/HADS Cox results.R", local = .GlobalEnv)
-source("HADS/HADS continuous Cox results.R", local = .GlobalEnv)
 unlink(qmd_code)
 rm(list = ls(envir = .GlobalEnv, all.names = TRUE), envir = .GlobalEnv)
 
@@ -46,7 +45,6 @@ qmd_code <- tempfile(fileext = ".R")
 knitr::purl("PHQ/PHQ.qmd", output = qmd_code, documentation = 0)
 source(qmd_code, local = .GlobalEnv)
 source("PHQ/PHQ Cox results.R", local = .GlobalEnv)
-source("PHQ/PHQ continuous Cox results.R", local = .GlobalEnv)
 unlink(qmd_code)
 rm(list = ls(envir = .GlobalEnv, all.names = TRUE), envir = .GlobalEnv)
 
@@ -60,6 +58,5 @@ rm(list = ls(envir = .GlobalEnv, all.names = TRUE), envir = .GlobalEnv)
 
 # Combine the variable-specific Cox results
 source("Summary/Cox results for all variables.R", local = .GlobalEnv)
-source("Summary continuous/Cox results for all variables.R", local = .GlobalEnv)
 
 toc()

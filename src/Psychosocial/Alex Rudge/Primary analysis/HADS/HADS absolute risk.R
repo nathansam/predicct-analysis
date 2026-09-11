@@ -49,7 +49,7 @@ absolute_risk_anxiety_hard_uc <- summon_absolute_risk_factor_boot(
   model = cox_anxiety_hard_uc,
   time = 730,
   variable = 'score_group',
-  nboot = 1000
+  nboot = 100
 ) %>%
   dplyr::mutate(
     variable = 'anxiety',

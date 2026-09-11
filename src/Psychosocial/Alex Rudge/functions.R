@@ -334,7 +334,8 @@ extract_cox_interaction_results <- function(cox_model,
           "flare_type"
         )
       )
-    )
+    ) %>%
+    as_tibble()
 }
 
 

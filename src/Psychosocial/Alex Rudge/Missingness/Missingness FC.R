@@ -1,75 +1,67 @@
 library(tidyverse)
 library(magrittr)
-library(survival)
+library(gtsummary)
 
-# Load psychosocial cohort
-cohort <- readr::read_rds("/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/participants.rds")
 
-# Load other variables
-data_cohort_raw <- readr::read_rds(
-  file = "/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-full.rds"
+# Comparing the psychosocial cohort to the entire Predicct cohort
+
+alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
+chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
+
+# Load common participant-level variables
+data_cohort <- readr::read_rds(
+  file = glue::glue("{alex_data}common_variables.rds")
+)
+
+# Psychosocial cohort
+participants <- readr::read_rds(
+  file = glue::glue("{alex_data}participants.rds")
 )
 
 # Flares
-flares_soft <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_soft.RDS")
-flares_hard <- readRDS("/Volumes/igmm/cvallejo-predicct/people/chiara/flares_hard.RDS")
+flares_soft <- readr::read_rds(
+  glue::glue("{chiara}flares_soft.RDS")
+)
+flares_hard <- readr::read_rds(
+  glue::glue("{chiara}flares_hard.RDS")
+)
 
+
+# Data cleaning
 # Select psychosocial cohort
-data_cohort <- data_cohort_raw %>%
-  dplyr::filter(ParticipantNo %in% cohort$ParticipantNo)
-
-
-# Select columns
 data_cohort %<>%
-  dplyr::select(
-    ParticipantNo,
-    SiteNo,
-    diagnosis,
-    diagnosis2,
-    Sex,
-    Age,
-    Ethnicity,
-    BMIcat,
-    IMD,
-    `IBD Duration`,
-    Treatment,
-    Biologic,
-    Smoke,
-    FC,
-    CReactiveProtein,
-    control_8,
-    vas_control
-  )
+  dplyr::filter(ParticipantNo %in% participants$ParticipantNo)
 
-# Rename cols
+# Clean IMD labels to match Table 1
 data_cohort %<>%
-  dplyr::rename(
-    IBD_duration = `IBD Duration`,
-    OverallControl = vas_control
-  )
-
-
-# Tidy up variables
-# IBD
-data_cohort %<>%
-  dplyr::mutate(IMD = as.character(IMD)) %>%
   dplyr::mutate(
     IMD = dplyr::case_match(
-      IMD,
+      as.character(IMD),
       '1' ~ '1 (most deprived)',
       '2' ~ '2',
       '3' ~ '3',
       '4' ~ '4',
       '5' ~ '5 (least deprived)'
+    ),
+    IMD = factor(
+      IMD,
+      levels = c(
+        '1 (most deprived)',
+        '2',
+        '3',
+        '4',
+        '5 (least deprived)'
+      )
     )
   )
 
-
 # New column - flag if FC is missing
 data_cohort %<>%
-  dplyr::mutate(missing_fc_flag = is.na(FC)) %>%
-  dplyr::mutate(missing_fc_flag = factor(missing_fc_flag)) %>%
-  dplyr::mutate(missing_fc_flag = forcats::fct_relevel(missing_fc_flag, "FALSE"))
+  dplyr::mutate(
+    missing_fc_flag = dplyr::if_else(is.na(FC), "Yes", "No"),
+    missing_fc_flag = factor(missing_fc_flag),
+    missing_fc_flag = forcats::fct_relevel(missing_fc_flag, "No")
+  )
 
 
 # Number of patients with missing FC
@@ -82,13 +74,12 @@ data_cohort %>%
 # Associations between missing FC and other variables
 
 variables = c(
-  'Age',
+  'age',
   'Sex',
-  'BMIcat',
-  'Smoke',
   'IMD',
-  'Ethnicity',
+  'Smoke',
   'IBD_duration',
+  'flare_group',
   'control_8',
   'OverallControl',
   'CReactiveProtein',
@@ -97,7 +88,7 @@ variables = c(
 
 # Using tbl_summary
 
-data_cohort %>%
+tbl <- data_cohort %>%
   gtsummary::tbl_strata(
     strata = diagnosis2,
     .tbl_fun = ~
@@ -107,19 +98,26 @@ data_cohort %>%
         include = variables,
         missing_text = 'Missing data',
         label = list(
-          Age ~ "Age",
-          Smoke ~ "Smoking",
-          OverallControl ~ "VAS Control Score"
+          age ~ 'Age (years)',
+          Sex ~ 'Sex',
+          IMD ~ 'Index of multiple deprivation',
+          Smoke ~ 'Smoking status',
+          IBD_duration ~ 'IBD duration (years)',
+          flare_group ~ 'Flares in past year',
+          control_8 ~ 'IBD-Control-8',
+          OverallControl ~ 'IBD-Control-VAS',
+          CReactiveProtein ~ 'C-reactive protein (mg/L)',
+          Biologic ~ 'Biologic use'
         )
       ) %>%
       gtsummary::add_p() %>%
-      gtsummary::bold_p() %>%
-      gtsummary::add_q(),
+      gtsummary::add_q() %>%
+      gtsummary::bold_p(q = TRUE),
     .header = "**{strata}**, N = {n}"
   ) %>%
   gtsummary::as_gt() %>%
   gt::tab_spanner(
-    label = gt::md("**Missing FC**"),
+    label = gt::md("**Baseline FC missing**"),
     columns = c(stat_1_1, stat_2_1, stat_1_2, stat_2_2),
     level = 2,
     gather = FALSE
@@ -135,7 +133,20 @@ data_cohort %>%
                       2 ~ 1))
   
   tbl
-  }
+  }; tbl
+
+# Save table as Word and HTML
+filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
+
+tbl %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations missing FC.docx")
+  )
+
+tbl %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Baseline associations missing FC.html")
+  )
 
 
 

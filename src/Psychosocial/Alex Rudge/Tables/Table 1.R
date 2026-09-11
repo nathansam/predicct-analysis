@@ -5,23 +5,21 @@ library(gtsummary)
 
 # Comparing the psychosocial cohort to the entire Predicct cohort
 
+# Paths to PREdiCCt data
+processed <- "/Volumes/igmm/cvallejo-predicct/predicct/processed/"
+alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/"
 
 # Load in the Predicct cohort
 data_cohort <- readr::read_rds(
-  file = "/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-full.rds"
+  file = glue::glue("{alex_data}common_variables.rds")
 )
 
 data_cd <- readr::read_rds(
-  file = "/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-cd.rds"
+  file = glue::glue("{processed}demo-cd.rds")
 )
 
 data_uc <- readr::read_rds(
-  file = "/Volumes/igmm/cvallejo-predicct/predicct/processed/demo-uc.rds"
-)
-
-# Control scores
-data_control <- readr::read_rds(
-  file = "/Volumes/igmm/cvallejo-predicct/people/chiara/IBD_C.rds"
+  file = glue::glue("{processed}demo-uc.rds")
 )
 
 
@@ -30,7 +28,7 @@ data_control <- readr::read_rds(
 # Load participants
 
 participants <- readr::read_rds(
-  file = "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/participants.rds"
+  file = glue::glue("{alex_data}participants.rds")
 )
 
 # Select relevant columns
@@ -38,31 +36,25 @@ data_cohort %<>%
   dplyr::select(
     ParticipantNo,
     SiteNo,
-    diagnosis,
     diagnosis2,
     Sex,
-    Age,
+    age,
     Ethnicity,
     BMIcat,
     IMD,
-    `IBD Duration`,
-    Treatment,
+    IBD_duration,
     Biologic,
     Smoke,
-    FC,
-    CReactiveProtein
+    FC_raw,
+    CReactiveProtein,
+    OverallControl,
+    control_8
   )
 
 # Remove all patients < 18
 # Else the age signal could be due to the exclusion of minors.
 data_cohort %<>%
-  dplyr::filter(Age >= 18)
-
-# Rename IBD duration
-data_cohort %<>%
-  dplyr::rename(
-    IBD_duration = `IBD Duration`
-  )
+  dplyr::filter(age >= 18)
 
 # Flag if a patient is in the psychosocial cohort
 data_cohort %<>%
@@ -77,14 +69,6 @@ data_cohort %<>%
 data_cohort %>%
   dplyr::count(psychosocial)
 
-
-# Control score
-data_cohort %<>%
-  dplyr::left_join(
-    data_control %>%
-      dplyr::select(ParticipantNo, OverallControl, control_8),
-    by = "ParticipantNo"
-  )
 
 # Crohn's specific variables
 data_cd %<>%
@@ -150,13 +134,13 @@ data_table %<>%
   dplyr::mutate(
     cohort = dplyr::case_match(
       cohort,
-      'non psychosocial' ~ 'Did not respond to psychosocial questionnaires',
-      'psychosocial' ~ 'Completed a psychosocial questionnaire'
+      'non psychosocial' ~ 'No',
+      'psychosocial' ~ 'Yes'
     )
   ) %>%
   dplyr::mutate(
     cohort = factor(cohort),
-    cohort = forcats::fct_relevel(cohort, 'Psychosocial cohort')
+    cohort = forcats::fct_relevel(cohort, 'Yes')
   )
 
 # Harvey Bradshaw as categorical
@@ -196,13 +180,13 @@ data_table %<>%
 
 # Table
 variables <- c(
-  'Age',
+  'age',
   'Sex',
   'BMIcat',
   'Smoke',
   'IMD',
   'Ethnicity',
-  'FC',
+  'FC_raw',
   'IBD_duration',
   'control_8',
   'OverallControl',
@@ -231,14 +215,14 @@ tbl <- data_table %>%
         include = variables,
         missing_text = 'Missing data',
         label = list(
-          Age ~ "Age (years)",
+          age ~ "Age (years)",
           Sex ~ 'Sex',
           BMIcat ~ 'Body mass index',
           Smoke ~ 'Smoking status',
           Ethnicity ~ "Ethnicity",
           IMD ~ 'Index of multiple deprivation',
-          IBD_duration ~ 'IBD Duration (years)',
-          FC ~ 'Fecal calprotectin (ug/g)',
+          IBD_duration ~ 'IBD duration (years)',
+          FC_raw ~ 'Fecal calprotectin (ug/g)',
           control_8 ~ 'IBD-Control-8',
           OverallControl ~ 'IBD-Control-VAS',
           CReactiveProtein ~ 'C-reactive protein (mg/L)',
@@ -257,7 +241,7 @@ tbl <- data_table %>%
       ) %>%
       gtsummary::add_q(method = 'fdr') %>%
       gtsummary::bold_p(q = TRUE)
-  ) 
+  )
 
 # Fix CD columns 
 tbl$table_body %<>%
@@ -302,13 +286,39 @@ tbl$table_body %<>%
 tbl$table_body %<>% 
   dplyr::filter(!(variable %in% c('Perianal', 'Surgery') & (label %in% c('No', 'Yes'))))
 
+# Convert to gt after editing the gtsummary table body
+tbl <- tbl %>%
+  gtsummary::as_gt() %>%
+  gt::tab_spanner(
+    label = gt::md("**Completed a psychosocial questionnaire**"),
+    columns = c(stat_1_1, stat_2_1, stat_1_2, stat_2_2),
+    level = 2,
+    gather = FALSE
+  ) %>%
+  {tbl <- .
+
+  # Swap spanner hierarchy
+  tbl$`_spanners` <- tbl$`_spanners` %>%
+    dplyr::mutate(spanner_level =
+                    dplyr::case_match(
+                      spanner_level,
+                      1 ~ 2,
+                      2 ~ 1))
+
+  tbl
+  }
+
 tbl
 
-# Save as word
+# Save as Word and HTML
 filepath <- "/Users/arudge/Library/CloudStorage/OneDrive-UniversityofEdinburgh/Predicct/Tables/"
 
 tbl %>%
-  gtsummary::as_gt() %>%
   gt::gtsave(
     filename = paste0(filepath, "Table1.docx")
+  )
+
+tbl %>%
+  gt::gtsave(
+    filename = paste0(filepath, "Table1.html")
   )

@@ -549,6 +549,7 @@ phq <- phq %>%
 
 # Add the common participant-level data.
 phq <- phq %>%
+  dplyr::select(-SiteNo) %>%
   left_join(data_common, by = "ParticipantNo")
 
 #exclude <18 yo = 53 participants (1899 -> 1846)
@@ -613,7 +614,7 @@ Visualise missingness in patient characteristics.
 data_vis_missingness <- phq %>%
   # Select relevant variables
   dplyr::select(
-    diagnosis,
+    diagnosis2,
     age,
     Sex,
     IMD,

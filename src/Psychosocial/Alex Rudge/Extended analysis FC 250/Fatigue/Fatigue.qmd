@@ -457,9 +457,15 @@ if (file.exists("/.dockerenv")) {
 }
 
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
-data_common <- readRDS(
+
+data_common <- readr::read_rds(
   "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/common_variables.rds"
 )
+
+participants <- readr::read_rds(
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/participants.rds"
+)
+
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 ```
@@ -513,6 +519,11 @@ fatigue <- fatigue %>%
 #exclude <18 yo = 53 participants (1899 -> 1846)
 fatigue %<>% dplyr::filter(age >= 18)
 
+# In psychosocial cohort
+fatigue %<>%
+  dplyr::filter(
+    ParticipantNo %in% participants$ParticipantNo
+  )
 
 # Baseline FC < 250
 fatigue %<>%

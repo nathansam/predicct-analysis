@@ -24,8 +24,9 @@ data_baseline_table <- data_baseline %>%
   dplyr::mutate(
     flare_group = forcats::fct_recode(
       flare_group,
-      "None" = "No flares",
-      "At least one" = "1 or More Flares"
+      "None" = "No Flares",
+      "One" = "1 Flare",
+      "Two or more" = "2 or More Flares"
   ))
   
 # Physical component
@@ -41,7 +42,7 @@ data_baseline_table %>%
         missing_text = 'Missing data',
         label = list(
           age ~ "Age",
-          flare_group ~ "Flares in previous year",
+          flare_group ~ "Flares in the previous year",
           FC ~ 'Fecal Calprotectin',
           Smoke ~ "Smoking",
           OverallControl ~ "VAS Control Score"
@@ -86,7 +87,7 @@ data_baseline_table %>%
         missing_text = 'Missing data',
         label = list(
           age ~ "Age",
-          flare_group ~ "Flares in previous year",
+          flare_group ~ "Flares in the previous year",
           FC ~ 'Fecal Calprotectin',
           Smoke ~ "Smoking",
           OverallControl ~ "VAS Control Score"

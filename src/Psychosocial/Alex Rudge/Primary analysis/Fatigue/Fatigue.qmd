@@ -514,6 +514,7 @@ if (file.exists("/.dockerenv")) {
   data.path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20221004/"
   chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 }
+alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data"
 
 IBD <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx"))
 data_common <- readRDS(
@@ -521,6 +522,11 @@ data_common <- readRDS(
 )
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
 flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
+
+# Psychosocial cohort
+participants <- readr::read_rds(
+  glue::glue("{alex_data}/participants.rds")
+)
 ```
 
 # Data Cleaning
@@ -581,10 +587,17 @@ fatigue <- fatigue %>%
 
 # Add the common participant-level data.
 fatigue <- fatigue %>%
+  dplyr::select(-SiteNo) %>%
   left_join(data_common, by = "ParticipantNo")
 
 #exclude <18 yo = 53 participants (1899 -> 1846)
 fatigue %<>% dplyr::filter(age >= 18)
+
+# In psychosocial cohort
+fatigue %<>%
+  dplyr::filter(
+    ParticipantNo %in% participants$ParticipantNo
+  )
 
 ```
 
@@ -598,7 +611,7 @@ Visualise missingness in patient characteristics.
 data_vis_missingness <- fatigue %>%
   # Select relevant variables
   dplyr::select(
-    diagnosis,
+    diagnosis2,
     age,
     Sex,
     IMD,
