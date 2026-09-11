@@ -1,0 +1,723 @@
+---
+title: "Recurrent event analysis with time-varying covariates (Poisson / negative binomial)"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+toc: true
+toc-depth: 4
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Recurrent-event analogue of `Longitudinal analysis/{HADS,PHQ,PSQI,Exercise,
+Fatigue,Life Events}/`'s extended Cox models with a time-dependent
+covariate. Those files treat each psychosocial measure as time-varying
+(last-observation-carried-forward across assessments, via
+`survival::tmerge()`/`tdc()`) but only model the *first* flare, via
+`Surv(tstart, tstop, endpoint) ~ score_group + ... + frailty(SiteNo)`.
+
+This file keeps the same time-varying-exposure idea but models *all* flare
+episodes (from `build_event_counts.R`), via person-period Poisson/negative
+binomial regression instead of Cox:
+
+$$Y_{ij} \mid b_i, s_{k(i)} \sim \text{Poisson}(\mu_{ij}), \qquad
+\log(\mu_{ij}) = \log(t_{ij}) + \beta_0 + \boldsymbol\beta_1^\top \mathbf{x}_{ij}
++ \boldsymbol\beta_2^\top \mathbf{z}_i + b_i + s_{k(i)}$$
+
+where $Y_{ij}$ is the number of flares in participant $i$'s $j$-th interval
+(bounded by their assessment months and a 730.5-day/2-year cutoff, matching
+the cutoff used throughout this repo's other flare definitions), $t_{ij}$ is
+that interval's length (an offset, not a covariate), $\mathbf{x}_{ij}$ is the
+time-varying exposure category active during the interval, $b_i$ is a
+per-participant random intercept (playing the same role
+`frailty`/`cluster(ParticipantNo)` plays in the Cox version - it's what
+makes this valid for *recurrent*, correlated events rather than one
+independent row per person), and $s_{k(i)}$ is the per-site random intercept
+used everywhere else in this repo. Six exposures are covered (HADS anxiety,
+HADS depression, PHQ somatisation, PSQI sleep disturbance, Exercise, Fatigue,
+Life Events), each broken down into Full Cohort/Crohn's Disease/Ulcerative
+Colitis-IBDU x patient-reported/objective flare, matching `Poisson
+Analysis.qmd`'s structure.
+
+**Known simplifications, worth revisiting before treating this as final:**
+
+- **FC held fixed at baseline**, not time-varying - matches every other
+  model in this repo (Cox and static Poisson alike), not a deliberate
+  choice specific to this file.
+- **No withdrawal-date filtering** - same known gap as `build_event_counts.R`.
+- **Sex/age/Smoke/IMD/FC/SiteNo come from `build_event_counts.R`'s shared
+  `covariates` object throughout**, not from each exposure's own
+  `data_cleaning.R` (which computes its own copies) - kept deliberately
+  consistent with the rest of this repo's recurrent analysis rather than
+  exposure-specific.
+- Flare episode dates are pulled directly from `build_event_counts.R`'s
+  objects - any future change to that file's endpoint definitions flows
+  through here automatically.
+- **PHQ/PSQI/Exercise's `data_cleaning.R` write an RDS file** to a shared
+  `people/Alex/...` path as a side effect of being sourced (pre-existing
+  behaviour of those scripts, not introduced here) - comment those lines out
+  locally first if you don't want that write to fire.
+- Model-fitting/reporting is done through small shared helper functions
+  (`fit_recurrent_tdc`, `run_cell`) rather than every cell being written out
+  fully independently (unlike `Poisson Analysis.qmd`'s explicit style) -
+  a deliberate trade-off given the combinatorial size here (7 exposure
+  scores x 2 flare types x 3 diagnosis groups = 42 cells).
+
+## Setup
+
+```{r}
+#| message: false
+source("poisson_helpers.R")  # -> event_counts_soft/hard, covariates, glmer_control,
+                              # and (transitively) build_event_counts.R's
+                              # episode-date objects, demo_tbl, population_cohort
+
+# covariates deliberately excludes diagnosis2 (see build_event_counts.R's own
+# comment) - add it back for the diagnosis-subgroup filtering below.
+covariates_dx <- covariates %>%
+  dplyr::left_join(population_cohort %>% dplyr::select(ParticipantNo, diagnosis2), by = "ParticipantNo")
+```
+
+## Flare episode dates
+
+All soft/hard flare dates per participant (not just the first) - the same
+objects `build_event_counts.R` uses to build `event_counts_soft/hard`, just
+kept at the individual-episode level instead of summed to a count.
+
+```{r}
+soft_episode_dates <- dplyr::bind_rows(
+  episodes_soft_portal %>% dplyr::select(ParticipantNo, episode_date),
+  qflare_episodes,
+  imputed_soft %>% dplyr::transmute(ParticipantNo, episode_date = flare_start_date)
+)
+
+# eos_objective_episodes is exactly "every hard flare date" (first + further,
+# already censored at 730.5 days) - it's only named for its other use as the
+# imputation candidate pool in build_event_counts.R.
+hard_episode_dates <- eos_objective_episodes %>%
+  dplyr::select(ParticipantNo, episode_date = flare_start_date)
+
+entry_dates <- demo_tbl %>% dplyr::select(ParticipantNo, entry_date)
+```
+
+## Person-period interval builder
+
+Builds one row per participant per interval between consecutive assessments
+of the time-varying exposure (last-observation-carried-forward for any
+missed assessment), censored at 730.5 days. `Y` = number of flares landing
+in that interval, `t` = interval length in days (the offset). Generic across
+exposures - works whether the assessment schedule is fixed (HADS/PHQ/PSQI/
+Exercise/Life Events, months 0/12/24) or monthly (Fatigue).
+
+```{r}
+build_person_period <- function(cohort, episode_dates, exposure_long, entry_dates, cutoff_days = 730.5) {
+  exposure_locf <- exposure_long %>%
+    dplyr::semi_join(cohort, by = "ParticipantNo") %>%
+    # Guards against a zero-length interval (log(0) in the offset) if a
+    # participant has a duplicate row for the same assessment month.
+    dplyr::distinct(ParticipantNo, month, .keep_all = TRUE) %>%
+    dplyr::arrange(ParticipantNo, month) %>%
+    dplyr::group_by(ParticipantNo) %>%
+    tidyr::fill(score_group, .direction = "down") %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(!is.na(score_group)) %>%  # no assessment yet to carry forward
+    dplyr::mutate(interval_start = month * 365 / 12) %>%
+    dplyr::filter(interval_start < cutoff_days)
+
+  # Next assessment (or the cutoff, for the last one) closes each interval -
+  # the same "carried forward until superseded" logic tdc() implements,
+  # built directly instead of via tmerge.
+  person_period <- exposure_locf %>%
+    dplyr::group_by(ParticipantNo) %>%
+    dplyr::arrange(interval_start, .by_group = TRUE) %>%
+    dplyr::mutate(interval_stop = dplyr::lead(interval_start, default = cutoff_days)) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(entry_dates, by = "ParticipantNo") %>%
+    dplyr::mutate(t = interval_stop - interval_start)
+
+  # Count flares landing in each interval (fan-out join: one row per
+  # participant-interval-episode combination, then collapse to a count).
+  events_per_interval <- person_period %>%
+    dplyr::select(ParticipantNo, interval_start, interval_stop, entry_date) %>%
+    dplyr::left_join(episode_dates, by = "ParticipantNo") %>%
+    dplyr::mutate(
+      event_day = as.numeric(as.Date(episode_date) - as.Date(entry_date)),
+      in_interval = !is.na(event_day) & event_day >= interval_start & event_day < interval_stop
+    ) %>%
+    dplyr::group_by(ParticipantNo, interval_start, interval_stop) %>%
+    dplyr::summarise(Y = sum(in_interval), .groups = "drop")
+
+  person_period %>%
+    dplyr::left_join(events_per_interval, by = c("ParticipantNo", "interval_start", "interval_stop")) %>%
+    dplyr::mutate(Y = tidyr::replace_na(Y, 0))
+}
+```
+
+## Model-fitting and reporting helpers
+
+`run_cell()` fits one exposure/flare-type/diagnosis-group cell, prints the
+AIC comparison and tidied NB rate ratios (auto-printed as the chunk's
+result), and appends the `score_group` rows to the global `rate_ratios`
+accumulator (used by the combined forest plot at the end) - one line per
+cell below rather than each of the 42 cells repeating this in full.
+
+```{r}
+fit_recurrent_tdc <- function(data) {
+  f <- Y ~ score_group + Sex + age_decade + Smoke + IMD + FC +
+    (1 | ParticipantNo) + (1 | SiteNo) + offset(log(t))
+  list(
+    poisson = lme4::glmer(f, data = data, family = poisson, control = glmer_control),
+    nb = lme4::glmer.nb(f, data = data, control = glmer_control)
+  )
+}
+
+# A model "failed to converge" means lme4's own post-fit check flagged it
+# (fit@optinfo$conv$lme4$messages non-NULL) - NOT the same as a singular fit
+# (boundary (singular) fit), which is a valid degenerate solution (a
+# variance component at zero), not a convergence failure.
+model_converged <- function(fit) {
+  is.null(fit@optinfo$conv$lme4$messages)
+}
+
+rate_ratios <- tibble::tibble()
+
+run_cell <- function(pp, dx, exposure, outcome, diagnosis_label) {
+  d <- if (dx == "Full") pp else dplyr::filter(pp, diagnosis2 == dx)
+  fit <- fit_recurrent_tdc(d)
+  poisson_ok <- model_converged(fit$poisson)
+  nb_ok <- model_converged(fit$nb)
+
+  cat("n =", nrow(d),
+      "| Poisson AIC:", if (poisson_ok) round(AIC(fit$poisson), 1) else "NA (failed to converge)",
+      "| NB AIC:", if (nb_ok) round(AIC(fit$nb), 1) else "NA (failed to converge)", "\n\n")
+
+  # Prefers NB (this repo's usual choice); falls back to Poisson if NB
+  # failed to converge but Poisson didn't; discards the term entirely if
+  # NEITHER converged. model_fit tags which model actually produced the
+  # reported rate ratio, so the combined forest plot can show it.
+  if (nb_ok) {
+    tidy <- fit$nb %>% broom.mixed::tidy(exponentiate = TRUE, conf.int = TRUE) %>% dplyr::mutate(model_fit = "NB")
+  } else if (poisson_ok) {
+    cat("NB failed to converge - falling back to Poisson for this cell.\n\n")
+    tidy <- fit$poisson %>% broom.mixed::tidy(exponentiate = TRUE, conf.int = TRUE) %>% dplyr::mutate(model_fit = "Poisson")
+  } else {
+    cat("Both Poisson and NB failed to converge for this cell - rate ratio not reported.\n\n")
+    return(invisible(NULL))
+  }
+
+  rate_ratios <<- dplyr::bind_rows(
+    rate_ratios,
+    tidy %>%
+      dplyr::filter(stringr::str_starts(term, "score_group")) %>%
+      dplyr::mutate(exposure = exposure, outcome = outcome, diagnosis = diagnosis_label)
+  )
+  tidy
+}
+```
+
+## HADS (anxiety and depression)
+
+Same item recoding and composite-score formulas as
+`Longitudinal analysis/HADS/HADS.qmd` - reproduced here rather than sourced,
+since that file also builds first-event survival data we don't need.
+
+```{r}
+#| message: false
+hads_items <- c(
+  "FeelTense", "FrightenedFeelingSomethingAwful", "WorryingThoughts", "SitAtEase",
+  "FrightenedFeelingButterflies", "FeelRestless", "SuddenFeelingsPanic",
+  "EnjoyThings", "CanLaugh", "FeelCheerful", "FeelSlowedDown",
+  "LostInterestAppearance", "LookForward", "CanEnjoyBookTV"
+)
+inverse_coded_items <- c(
+  "FeelTense", "FrightenedFeelingSomethingAwful", "WorryingThoughts", "FeelCheerful",
+  "FeelSlowedDown", "LostInterestAppearance", "FeelRestless", "SuddenFeelingsPanic"
+)
+
+score_hads <- function(df) {
+  df %>%
+    dplyr::mutate(dplyr::across(tidyselect::all_of(hads_items), ~ . - 1)) %>%
+    dplyr::mutate(dplyr::across(tidyselect::all_of(inverse_coded_items), ~ 3 - .)) %>%
+    dplyr::mutate(
+      anxiety_hads = FeelTense + FrightenedFeelingSomethingAwful + WorryingThoughts +
+        SitAtEase + FrightenedFeelingButterflies + FeelRestless + SuddenFeelingsPanic,
+      depression_hads = EnjoyThings + CanLaugh + FeelCheerful + FeelSlowedDown +
+        LostInterestAppearance + LookForward + CanEnjoyBookTV
+    )
+}
+
+hads_baseline_raw <- readxl::read_xlsx(paste0(data.path, "Baseline2022/hads.xlsx")) %>%
+  dplyr::filter(!is.na(ParticipantId))
+hads_followup_raw <- readxl::read_xlsx(paste0(data.path, "Followup/hads.xlsx")) %>%
+  dplyr::filter(!is.na(ParticipantId))
+
+# One row per participant per assessment month (0/12/24) - month 0 from the
+# baseline file, months 12/24 (Q_month) from the follow-up file.
+hads_long <- dplyr::bind_rows(
+  score_hads(hads_baseline_raw) %>% dplyr::transmute(ParticipantNo, month = 0, anxiety_hads, depression_hads),
+  score_hads(hads_followup_raw) %>% dplyr::transmute(ParticipantNo, month = Q_month, anxiety_hads, depression_hads)
+)
+
+# Same breakpoints as the Cox version.
+anxiety_long <- hads_long %>%
+  dplyr::transmute(
+    ParticipantNo, month,
+    score_group = cut(anxiety_hads, breaks = c(0, 7, 21), labels = c("0-7", "8-21"), include.lowest = TRUE)
+  )
+depression_long <- hads_long %>%
+  dplyr::transmute(
+    ParticipantNo, month,
+    score_group = cut(depression_hads, breaks = c(0, 7, 21), labels = c("0-7", "8-21"), include.lowest = TRUE)
+  )
+
+pp_anxiety_soft <- build_person_period(population_cohort, soft_episode_dates, anxiety_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_anxiety_hard <- build_person_period(population_cohort, hard_episode_dates, anxiety_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_depression_soft <- build_person_period(population_cohort, soft_episode_dates, depression_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_depression_hard <- build_person_period(population_cohort, hard_episode_dates, depression_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+```
+
+### Anxiety
+
+#### Full Cohort
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_anxiety_soft, "Full", "Anxiety", "Patient-reported flare", "Full Cohort")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_anxiety_hard, "Full", "Anxiety", "Objective flare", "Full Cohort")
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_anxiety_soft, "CD", "Anxiety", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_anxiety_hard, "CD", "Anxiety", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_anxiety_soft, "UC/IBDU", "Anxiety", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_anxiety_hard, "UC/IBDU", "Anxiety", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+### Depression
+
+#### Full Cohort
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_depression_soft, "Full", "Depression", "Patient-reported flare", "Full Cohort")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_depression_hard, "Full", "Depression", "Objective flare", "Full Cohort")
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_depression_soft, "CD", "Depression", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_depression_hard, "CD", "Depression", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_depression_soft, "UC/IBDU", "Depression", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_depression_hard, "UC/IBDU", "Depression", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## PHQ (somatisation)
+
+Sourced directly from `Longitudinal analysis/PHQ/data_cleaning.R` rather
+than reproduced by hand - PHQ-15 scoring is compact but there's no benefit
+to retyping it. `phq_long` is that file's own long-format output
+(`ParticipantNo`, `month`, `somatisation`), used as-is. Note this also
+writes an RDS to a shared path as a side effect (see Introduction).
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/PHQ/data_cleaning.R")
+
+phq_score_long <- phq_long %>%
+  dplyr::transmute(ParticipantNo, month, score_group = somatisation)
+
+pp_phq_soft <- build_person_period(population_cohort, soft_episode_dates, phq_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_phq_hard <- build_person_period(population_cohort, hard_episode_dates, phq_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+```
+
+#### Full Cohort
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_phq_soft, "Full", "Somatisation", "Patient-reported flare", "Full Cohort")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_phq_hard, "Full", "Somatisation", "Objective flare", "Full Cohort")
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_phq_soft, "CD", "Somatisation", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_phq_hard, "CD", "Somatisation", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_phq_soft, "UC/IBDU", "Somatisation", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_phq_hard, "UC/IBDU", "Somatisation", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## PSQI (sleep disturbance)
+
+Sourced from `Longitudinal analysis/PSQI/data_cleaning.R` - the 7-component
+PSQI score involves bespoke per-participant data corrections (typo fixes,
+non-24h clock entries) not worth re-deriving by hand. `psqi` is that file's
+own long-format output. Also writes an RDS as a side effect.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/PSQI/data_cleaning.R")
+
+psqi_score_long <- psqi %>%
+  dplyr::transmute(ParticipantNo, month, score_group = SleepDisturbance)
+
+pp_psqi_soft <- build_person_period(population_cohort, soft_episode_dates, psqi_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_psqi_hard <- build_person_period(population_cohort, hard_episode_dates, psqi_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+```
+
+#### Full Cohort
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_psqi_soft, "Full", "Sleep disturbance", "Patient-reported flare", "Full Cohort")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_psqi_hard, "Full", "Sleep disturbance", "Objective flare", "Full Cohort")
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_psqi_soft, "CD", "Sleep disturbance", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_psqi_hard, "CD", "Sleep disturbance", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_psqi_soft, "UC/IBDU", "Sleep disturbance", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_psqi_hard, "UC/IBDU", "Sleep disturbance", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Exercise
+
+Sourced from `Longitudinal analysis/Exercise/data_cleaning.R` - extensive
+manually-corrected exclusions (implausible hours, inconsistent yes/no
+answers) not worth re-deriving by hand. `exercise` is that file's own
+long-format output (`MinimumExercise`: meets WHO minimum activity
+guidelines). Also writes an RDS as a side effect.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/Exercise/data_cleaning.R")
+
+exercise_score_long <- exercise %>%
+  dplyr::transmute(ParticipantNo, month, score_group = MinimumExercise)
+
+pp_exercise_soft <- build_person_period(population_cohort, soft_episode_dates, exercise_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_exercise_hard <- build_person_period(population_cohort, hard_episode_dates, exercise_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+```
+
+#### Full Cohort
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_exercise_soft, "Full", "Exercise", "Patient-reported flare", "Full Cohort")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_exercise_hard, "Full", "Exercise", "Objective flare", "Full Cohort")
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_exercise_soft, "CD", "Exercise", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_exercise_hard, "CD", "Exercise", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_exercise_soft, "UC/IBDU", "Exercise", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_exercise_hard, "UC/IBDU", "Exercise", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Fatigue
+
+Sourced from `Longitudinal analysis/Fatigue/data_cleaning.R`. Unlike the
+other exposures, fatigue (`OftenLackEnergy`) is assessed every month via the
+monthly follow-up questionnaire, not just at 0/12/24 - `build_person_period()`
+handles this the same way regardless, since it derives intervals from
+whatever assessment months are actually present.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/Fatigue/data_cleaning.R")
+
+fatigue_score_long <- fatigue %>%
+  dplyr::transmute(ParticipantNo, month, score_group = OftenLackEnergy)
+
+pp_fatigue_soft <- build_person_period(population_cohort, soft_episode_dates, fatigue_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_fatigue_hard <- build_person_period(population_cohort, hard_episode_dates, fatigue_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+```
+
+#### Full Cohort
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_fatigue_soft, "Full", "Fatigue", "Patient-reported flare", "Full Cohort")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_fatigue_hard, "Full", "Fatigue", "Objective flare", "Full Cohort")
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_fatigue_soft, "CD", "Fatigue", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_fatigue_hard, "CD", "Fatigue", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_fatigue_soft, "UC/IBDU", "Fatigue", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_fatigue_hard, "UC/IBDU", "Fatigue", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Life Events
+
+Sourced from `Longitudinal analysis/Life Events/data_cleaning.R`. `AnyLifeEvents`
+is already binary (No/Yes), no cut-point needed.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/Life Events/data_cleaning.R")
+
+lifeevents_score_long <- lifeevents %>%
+  dplyr::transmute(ParticipantNo, month, score_group = AnyLifeEvents)
+
+pp_lifeevents_soft <- build_person_period(population_cohort, soft_episode_dates, lifeevents_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+pp_lifeevents_hard <- build_person_period(population_cohort, hard_episode_dates, lifeevents_score_long, entry_dates) %>%
+  dplyr::left_join(covariates_dx, by = "ParticipantNo")
+```
+
+#### Full Cohort
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_lifeevents_soft, "Full", "Any life event", "Patient-reported flare", "Full Cohort")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_lifeevents_hard, "Full", "Any life event", "Objective flare", "Full Cohort")
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_lifeevents_soft, "CD", "Any life event", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_lifeevents_hard, "CD", "Any life event", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cell(pp_lifeevents_soft, "UC/IBDU", "Any life event", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cell(pp_lifeevents_hard, "UC/IBDU", "Any life event", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Combined rate ratio forest plot
+
+All seven exposure scores together, split by flare type and diagnosis group
+- the same structure `Poisson Analysis.qmd` uses. Uses the NB fit where it
+converged; falls back to Poisson (shown as a triangle instead of a circle,
+and labelled) for any cell where NB failed to converge but Poisson didn't -
+see `run_cell()` in Setup. A cell is absent entirely if neither converged.
+
+```{r}
+#| fig-width: 10
+#| fig-height: 12
+rate_ratios %>%
+  dplyr::mutate(
+    label = paste0(exposure, ": ", term, " [", model_fit, "]"),
+    significant = conf.low > 1 | conf.high < 1,
+    diagnosis = factor(diagnosis, levels = c("Full Cohort", "Crohn's Disease", "Ulcerative Colitis/IBDU"))
+  ) %>%
+  ggplot2::ggplot(ggplot2::aes(x = estimate, y = label, colour = significant, shape = model_fit)) +
+  ggplot2::geom_vline(xintercept = 1, linetype = "dashed", colour = "grey50") +
+  ggplot2::geom_pointrange(ggplot2::aes(xmin = conf.low, xmax = conf.high)) +
+  ggplot2::scale_x_log10() +
+  ggplot2::scale_colour_manual(values = c(`TRUE` = "#0F8B8D", `FALSE` = "grey60"), guide = "none") +
+  ggplot2::scale_shape_manual(values = c(NB = 16, Poisson = 17), name = "Model used") +
+  ggplot2::facet_grid(diagnosis ~ outcome) +
+  ggplot2::labs(x = "Adjusted rate ratio (95% CI, log scale)", y = NULL) +
+  ggplot2::theme_minimal()
+```
+
+# Reproduction and reproducibility {.appendix}
+
+<details class="appendix">
+
+<summary>Session info</summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>

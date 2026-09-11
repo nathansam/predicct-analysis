@@ -54,6 +54,62 @@ forest plot at the end.
 
 ```{r}
 rate_ratios <- tibble::tibble()
+
+# A model "failed to converge" means lme4's own post-fit check flagged it
+# (fit@optinfo$conv$lme4$messages non-NULL) - NOT the same as a singular fit
+# (boundary (singular) fit), which is a valid degenerate solution (a
+# variance component at zero), not a convergence failure.
+model_converged <- function(fit) {
+  is.null(fit@optinfo$conv$lme4$messages)
+}
+
+aic_or_na <- function(fit) {
+  if (model_converged(fit)) round(AIC(fit), 1) else "NA (failed to converge)"
+}
+
+# Swapped in for every broom.mixed::tidy(<nb model>, conf.int = TRUE,
+# exponentiate = TRUE) call below. Prefers the NB rate ratio (this repo's
+# usual choice); falls back to Poisson's if NB failed to converge but
+# Poisson didn't; discards the term entirely (empty tibble, which flows
+# harmlessly through each cell's existing filter()/mutate() chain) if
+# NEITHER model converged. Every non-empty result is tagged with a
+# `model_fit` column so the combined forest plot can show which model
+# actually produced each rate ratio.
+safe_tidy <- function(nb_fit, poisson_fit) {
+  if (model_converged(nb_fit)) {
+    broom.mixed::tidy(nb_fit, conf.int = TRUE, exponentiate = TRUE) %>%
+      dplyr::mutate(model_fit = "NB")
+  } else if (model_converged(poisson_fit)) {
+    cat("  NB failed to converge - falling back to Poisson for this term.\n")
+    broom.mixed::tidy(poisson_fit, conf.int = TRUE, exponentiate = TRUE) %>%
+      dplyr::mutate(model_fit = "Poisson")
+  } else {
+    cat("  Both Poisson and NB failed to converge - rate ratio not reported for this term.\n")
+    tibble::tibble()
+  }
+}
+```
+
+## Number of events per individual
+
+Distribution of flare episode counts per participant (see `Events per
+individual.R` for the standalone version of this, including dispersion
+diagnostics and the diagnosis2-only model demo).
+
+```{r}
+#| fig-height: 4
+plot_event_distribution <- function(event_counts, title) {
+  event_counts %>%
+    dplyr::count(n_events) %>%
+    ggplot2::ggplot(ggplot2::aes(x = factor(n_events), y = n)) +
+    ggplot2::geom_col(fill = "#0F8B8D") +
+    ggplot2::geom_text(ggplot2::aes(label = n), vjust = -0.4, size = 3.2) +
+    ggplot2::labs(title = title, x = "Number of flare events", y = "Number of participants") +
+    ggplot2::theme_minimal()
+}
+
+plot_event_distribution(event_counts_soft, "Distribution of patient-reported flare episodes per individual")
+plot_event_distribution(event_counts_hard, "Distribution of objective flare episodes per individual")
 ```
 
 ## HADS (anxiety and depression)
@@ -122,15 +178,15 @@ nb_anxiety_soft_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_anxiety_soft_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_soft_full_unadj), 1), "/", round(AIC(nb_anxiety_soft_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_soft_full_adj), 1), "/", round(AIC(nb_anxiety_soft_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_soft_full_unadj), "/", aic_or_na(nb_anxiety_soft_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_soft_full_adj), "/", aic_or_na(nb_anxiety_soft_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_anxiety_soft_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_soft_full_unadj, poisson_anxiety_soft_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_anxiety_soft_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_soft_full_adj, poisson_anxiety_soft_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -160,15 +216,15 @@ nb_anxiety_hard_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_anxiety_hard_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_hard_full_unadj), 1), "/", round(AIC(nb_anxiety_hard_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_hard_full_adj), 1), "/", round(AIC(nb_anxiety_hard_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_hard_full_unadj), "/", aic_or_na(nb_anxiety_hard_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_hard_full_adj), "/", aic_or_na(nb_anxiety_hard_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_anxiety_hard_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_hard_full_unadj, poisson_anxiety_hard_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_anxiety_hard_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_hard_full_adj, poisson_anxiety_hard_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -200,15 +256,15 @@ nb_anxiety_soft_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_anxiety_soft_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_soft_cd_unadj), 1), "/", round(AIC(nb_anxiety_soft_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_soft_cd_adj), 1), "/", round(AIC(nb_anxiety_soft_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_soft_cd_unadj), "/", aic_or_na(nb_anxiety_soft_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_soft_cd_adj), "/", aic_or_na(nb_anxiety_soft_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_anxiety_soft_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_soft_cd_unadj, poisson_anxiety_soft_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_anxiety_soft_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_soft_cd_adj, poisson_anxiety_soft_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -238,15 +294,15 @@ nb_anxiety_hard_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_anxiety_hard_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_hard_cd_unadj), 1), "/", round(AIC(nb_anxiety_hard_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_hard_cd_adj), 1), "/", round(AIC(nb_anxiety_hard_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_hard_cd_unadj), "/", aic_or_na(nb_anxiety_hard_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_hard_cd_adj), "/", aic_or_na(nb_anxiety_hard_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_anxiety_hard_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_hard_cd_unadj, poisson_anxiety_hard_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_anxiety_hard_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_hard_cd_adj, poisson_anxiety_hard_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -278,15 +334,15 @@ nb_anxiety_soft_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_anxiety_soft_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_soft_uc_unadj), 1), "/", round(AIC(nb_anxiety_soft_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_soft_uc_adj), 1), "/", round(AIC(nb_anxiety_soft_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_soft_uc_unadj), "/", aic_or_na(nb_anxiety_soft_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_soft_uc_adj), "/", aic_or_na(nb_anxiety_soft_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_anxiety_soft_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_soft_uc_unadj, poisson_anxiety_soft_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_anxiety_soft_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_soft_uc_adj, poisson_anxiety_soft_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -316,15 +372,15 @@ nb_anxiety_hard_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_anxiety_hard_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_hard_uc_unadj), 1), "/", round(AIC(nb_anxiety_hard_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_anxiety_hard_uc_adj), 1), "/", round(AIC(nb_anxiety_hard_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_hard_uc_unadj), "/", aic_or_na(nb_anxiety_hard_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_anxiety_hard_uc_adj), "/", aic_or_na(nb_anxiety_hard_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_anxiety_hard_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_hard_uc_unadj, poisson_anxiety_hard_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_anxiety_hard_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_anxiety_hard_uc_adj, poisson_anxiety_hard_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "anxiety_score_group")) %>%
     dplyr::mutate(exposure = "Anxiety", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -358,15 +414,15 @@ nb_depression_soft_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_depression_soft_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_depression_soft_full_unadj), 1), "/", round(AIC(nb_depression_soft_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_depression_soft_full_adj), 1), "/", round(AIC(nb_depression_soft_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_depression_soft_full_unadj), "/", aic_or_na(nb_depression_soft_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_depression_soft_full_adj), "/", aic_or_na(nb_depression_soft_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_depression_soft_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_soft_full_unadj, poisson_depression_soft_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_depression_soft_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_soft_full_adj, poisson_depression_soft_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -396,15 +452,15 @@ nb_depression_hard_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_depression_hard_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_depression_hard_full_unadj), 1), "/", round(AIC(nb_depression_hard_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_depression_hard_full_adj), 1), "/", round(AIC(nb_depression_hard_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_depression_hard_full_unadj), "/", aic_or_na(nb_depression_hard_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_depression_hard_full_adj), "/", aic_or_na(nb_depression_hard_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_depression_hard_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_hard_full_unadj, poisson_depression_hard_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_depression_hard_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_hard_full_adj, poisson_depression_hard_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -436,15 +492,15 @@ nb_depression_soft_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_depression_soft_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_depression_soft_cd_unadj), 1), "/", round(AIC(nb_depression_soft_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_depression_soft_cd_adj), 1), "/", round(AIC(nb_depression_soft_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_depression_soft_cd_unadj), "/", aic_or_na(nb_depression_soft_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_depression_soft_cd_adj), "/", aic_or_na(nb_depression_soft_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_depression_soft_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_soft_cd_unadj, poisson_depression_soft_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_depression_soft_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_soft_cd_adj, poisson_depression_soft_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -474,15 +530,15 @@ nb_depression_hard_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_depression_hard_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_depression_hard_cd_unadj), 1), "/", round(AIC(nb_depression_hard_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_depression_hard_cd_adj), 1), "/", round(AIC(nb_depression_hard_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_depression_hard_cd_unadj), "/", aic_or_na(nb_depression_hard_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_depression_hard_cd_adj), "/", aic_or_na(nb_depression_hard_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_depression_hard_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_hard_cd_unadj, poisson_depression_hard_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_depression_hard_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_hard_cd_adj, poisson_depression_hard_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -514,15 +570,15 @@ nb_depression_soft_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_depression_soft_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_depression_soft_uc_unadj), 1), "/", round(AIC(nb_depression_soft_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_depression_soft_uc_adj), 1), "/", round(AIC(nb_depression_soft_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_depression_soft_uc_unadj), "/", aic_or_na(nb_depression_soft_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_depression_soft_uc_adj), "/", aic_or_na(nb_depression_soft_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_depression_soft_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_soft_uc_unadj, poisson_depression_soft_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_depression_soft_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_soft_uc_adj, poisson_depression_soft_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -552,15 +608,15 @@ nb_depression_hard_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_depression_hard_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_depression_hard_uc_unadj), 1), "/", round(AIC(nb_depression_hard_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_depression_hard_uc_adj), 1), "/", round(AIC(nb_depression_hard_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_depression_hard_uc_unadj), "/", aic_or_na(nb_depression_hard_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_depression_hard_uc_adj), "/", aic_or_na(nb_depression_hard_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_depression_hard_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_hard_uc_unadj, poisson_depression_hard_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_depression_hard_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_depression_hard_uc_adj, poisson_depression_hard_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "depression_score_group")) %>%
     dplyr::mutate(exposure = "Depression", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -615,15 +671,15 @@ nb_somatisation_soft_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_somatisation_soft_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_soft_full_unadj), 1), "/", round(AIC(nb_somatisation_soft_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_soft_full_adj), 1), "/", round(AIC(nb_somatisation_soft_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_soft_full_unadj), "/", aic_or_na(nb_somatisation_soft_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_soft_full_adj), "/", aic_or_na(nb_somatisation_soft_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_somatisation_soft_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_soft_full_unadj, poisson_somatisation_soft_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_somatisation_soft_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_soft_full_adj, poisson_somatisation_soft_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -653,15 +709,15 @@ nb_somatisation_hard_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_somatisation_hard_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_hard_full_unadj), 1), "/", round(AIC(nb_somatisation_hard_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_hard_full_adj), 1), "/", round(AIC(nb_somatisation_hard_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_hard_full_unadj), "/", aic_or_na(nb_somatisation_hard_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_hard_full_adj), "/", aic_or_na(nb_somatisation_hard_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_somatisation_hard_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_hard_full_unadj, poisson_somatisation_hard_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_somatisation_hard_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_hard_full_adj, poisson_somatisation_hard_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -693,15 +749,15 @@ nb_somatisation_soft_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_somatisation_soft_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_soft_cd_unadj), 1), "/", round(AIC(nb_somatisation_soft_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_soft_cd_adj), 1), "/", round(AIC(nb_somatisation_soft_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_soft_cd_unadj), "/", aic_or_na(nb_somatisation_soft_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_soft_cd_adj), "/", aic_or_na(nb_somatisation_soft_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_somatisation_soft_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_soft_cd_unadj, poisson_somatisation_soft_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_somatisation_soft_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_soft_cd_adj, poisson_somatisation_soft_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -731,15 +787,15 @@ nb_somatisation_hard_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_somatisation_hard_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_hard_cd_unadj), 1), "/", round(AIC(nb_somatisation_hard_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_hard_cd_adj), 1), "/", round(AIC(nb_somatisation_hard_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_hard_cd_unadj), "/", aic_or_na(nb_somatisation_hard_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_hard_cd_adj), "/", aic_or_na(nb_somatisation_hard_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_somatisation_hard_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_hard_cd_unadj, poisson_somatisation_hard_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_somatisation_hard_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_hard_cd_adj, poisson_somatisation_hard_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -771,15 +827,15 @@ nb_somatisation_soft_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_somatisation_soft_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_soft_uc_unadj), 1), "/", round(AIC(nb_somatisation_soft_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_soft_uc_adj), 1), "/", round(AIC(nb_somatisation_soft_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_soft_uc_unadj), "/", aic_or_na(nb_somatisation_soft_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_soft_uc_adj), "/", aic_or_na(nb_somatisation_soft_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_somatisation_soft_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_soft_uc_unadj, poisson_somatisation_soft_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_somatisation_soft_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_soft_uc_adj, poisson_somatisation_soft_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -809,15 +865,15 @@ nb_somatisation_hard_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_somatisation_hard_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_hard_uc_unadj), 1), "/", round(AIC(nb_somatisation_hard_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_somatisation_hard_uc_adj), 1), "/", round(AIC(nb_somatisation_hard_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_hard_uc_unadj), "/", aic_or_na(nb_somatisation_hard_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_somatisation_hard_uc_adj), "/", aic_or_na(nb_somatisation_hard_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_somatisation_hard_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_hard_uc_unadj, poisson_somatisation_hard_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_somatisation_hard_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_somatisation_hard_uc_adj, poisson_somatisation_hard_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "somatisation")) %>%
     dplyr::mutate(exposure = "Somatisation", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -938,15 +994,15 @@ nb_sleep_soft_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_sleep_soft_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_sleep_soft_full_unadj), 1), "/", round(AIC(nb_sleep_soft_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_sleep_soft_full_adj), 1), "/", round(AIC(nb_sleep_soft_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_soft_full_unadj), "/", aic_or_na(nb_sleep_soft_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_soft_full_adj), "/", aic_or_na(nb_sleep_soft_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_sleep_soft_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_soft_full_unadj, poisson_sleep_soft_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_sleep_soft_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_soft_full_adj, poisson_sleep_soft_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -976,15 +1032,15 @@ nb_sleep_hard_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_sleep_hard_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_sleep_hard_full_unadj), 1), "/", round(AIC(nb_sleep_hard_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_sleep_hard_full_adj), 1), "/", round(AIC(nb_sleep_hard_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_hard_full_unadj), "/", aic_or_na(nb_sleep_hard_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_hard_full_adj), "/", aic_or_na(nb_sleep_hard_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_sleep_hard_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_hard_full_unadj, poisson_sleep_hard_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_sleep_hard_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_hard_full_adj, poisson_sleep_hard_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -1016,15 +1072,15 @@ nb_sleep_soft_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_sleep_soft_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_sleep_soft_cd_unadj), 1), "/", round(AIC(nb_sleep_soft_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_sleep_soft_cd_adj), 1), "/", round(AIC(nb_sleep_soft_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_soft_cd_unadj), "/", aic_or_na(nb_sleep_soft_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_soft_cd_adj), "/", aic_or_na(nb_sleep_soft_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_sleep_soft_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_soft_cd_unadj, poisson_sleep_soft_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_sleep_soft_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_soft_cd_adj, poisson_sleep_soft_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1054,15 +1110,15 @@ nb_sleep_hard_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_sleep_hard_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_sleep_hard_cd_unadj), 1), "/", round(AIC(nb_sleep_hard_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_sleep_hard_cd_adj), 1), "/", round(AIC(nb_sleep_hard_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_hard_cd_unadj), "/", aic_or_na(nb_sleep_hard_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_hard_cd_adj), "/", aic_or_na(nb_sleep_hard_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_sleep_hard_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_hard_cd_unadj, poisson_sleep_hard_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_sleep_hard_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_hard_cd_adj, poisson_sleep_hard_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1094,15 +1150,15 @@ nb_sleep_soft_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_sleep_soft_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_sleep_soft_uc_unadj), 1), "/", round(AIC(nb_sleep_soft_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_sleep_soft_uc_adj), 1), "/", round(AIC(nb_sleep_soft_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_soft_uc_unadj), "/", aic_or_na(nb_sleep_soft_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_soft_uc_adj), "/", aic_or_na(nb_sleep_soft_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_sleep_soft_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_soft_uc_unadj, poisson_sleep_soft_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_sleep_soft_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_soft_uc_adj, poisson_sleep_soft_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1132,15 +1188,15 @@ nb_sleep_hard_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_sleep_hard_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_sleep_hard_uc_unadj), 1), "/", round(AIC(nb_sleep_hard_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_sleep_hard_uc_adj), 1), "/", round(AIC(nb_sleep_hard_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_hard_uc_unadj), "/", aic_or_na(nb_sleep_hard_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_sleep_hard_uc_adj), "/", aic_or_na(nb_sleep_hard_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_sleep_hard_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_hard_uc_unadj, poisson_sleep_hard_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_sleep_hard_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_sleep_hard_uc_adj, poisson_sleep_hard_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "SleepDisturbance")) %>%
     dplyr::mutate(exposure = "Sleep disturbance", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1237,15 +1293,15 @@ nb_exercise_soft_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_exercise_soft_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_exercise_soft_full_unadj), 1), "/", round(AIC(nb_exercise_soft_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_exercise_soft_full_adj), 1), "/", round(AIC(nb_exercise_soft_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_soft_full_unadj), "/", aic_or_na(nb_exercise_soft_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_soft_full_adj), "/", aic_or_na(nb_exercise_soft_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_exercise_soft_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_soft_full_unadj, poisson_exercise_soft_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_exercise_soft_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_soft_full_adj, poisson_exercise_soft_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -1275,15 +1331,15 @@ nb_exercise_hard_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_exercise_hard_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_exercise_hard_full_unadj), 1), "/", round(AIC(nb_exercise_hard_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_exercise_hard_full_adj), 1), "/", round(AIC(nb_exercise_hard_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_hard_full_unadj), "/", aic_or_na(nb_exercise_hard_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_hard_full_adj), "/", aic_or_na(nb_exercise_hard_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_exercise_hard_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_hard_full_unadj, poisson_exercise_hard_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_exercise_hard_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_hard_full_adj, poisson_exercise_hard_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -1315,15 +1371,15 @@ nb_exercise_soft_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_exercise_soft_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_exercise_soft_cd_unadj), 1), "/", round(AIC(nb_exercise_soft_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_exercise_soft_cd_adj), 1), "/", round(AIC(nb_exercise_soft_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_soft_cd_unadj), "/", aic_or_na(nb_exercise_soft_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_soft_cd_adj), "/", aic_or_na(nb_exercise_soft_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_exercise_soft_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_soft_cd_unadj, poisson_exercise_soft_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_exercise_soft_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_soft_cd_adj, poisson_exercise_soft_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1353,15 +1409,15 @@ nb_exercise_hard_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_exercise_hard_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_exercise_hard_cd_unadj), 1), "/", round(AIC(nb_exercise_hard_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_exercise_hard_cd_adj), 1), "/", round(AIC(nb_exercise_hard_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_hard_cd_unadj), "/", aic_or_na(nb_exercise_hard_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_hard_cd_adj), "/", aic_or_na(nb_exercise_hard_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_exercise_hard_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_hard_cd_unadj, poisson_exercise_hard_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_exercise_hard_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_hard_cd_adj, poisson_exercise_hard_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1393,15 +1449,15 @@ nb_exercise_soft_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_exercise_soft_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_exercise_soft_uc_unadj), 1), "/", round(AIC(nb_exercise_soft_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_exercise_soft_uc_adj), 1), "/", round(AIC(nb_exercise_soft_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_soft_uc_unadj), "/", aic_or_na(nb_exercise_soft_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_soft_uc_adj), "/", aic_or_na(nb_exercise_soft_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_exercise_soft_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_soft_uc_unadj, poisson_exercise_soft_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_exercise_soft_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_soft_uc_adj, poisson_exercise_soft_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1431,15 +1487,15 @@ nb_exercise_hard_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_exercise_hard_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_exercise_hard_uc_unadj), 1), "/", round(AIC(nb_exercise_hard_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_exercise_hard_uc_adj), 1), "/", round(AIC(nb_exercise_hard_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_hard_uc_unadj), "/", aic_or_na(nb_exercise_hard_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_exercise_hard_uc_adj), "/", aic_or_na(nb_exercise_hard_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_exercise_hard_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_hard_uc_unadj, poisson_exercise_hard_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_exercise_hard_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_exercise_hard_uc_adj, poisson_exercise_hard_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "MinimumExercise")) %>%
     dplyr::mutate(exposure = "Not meeting activity recommendations", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1490,15 +1546,15 @@ nb_fatigue_soft_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_fatigue_soft_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_soft_full_unadj), 1), "/", round(AIC(nb_fatigue_soft_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_soft_full_adj), 1), "/", round(AIC(nb_fatigue_soft_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_soft_full_unadj), "/", aic_or_na(nb_fatigue_soft_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_soft_full_adj), "/", aic_or_na(nb_fatigue_soft_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_fatigue_soft_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_soft_full_unadj, poisson_fatigue_soft_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_fatigue_soft_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_soft_full_adj, poisson_fatigue_soft_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -1528,15 +1584,15 @@ nb_fatigue_hard_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_fatigue_hard_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_hard_full_unadj), 1), "/", round(AIC(nb_fatigue_hard_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_hard_full_adj), 1), "/", round(AIC(nb_fatigue_hard_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_hard_full_unadj), "/", aic_or_na(nb_fatigue_hard_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_hard_full_adj), "/", aic_or_na(nb_fatigue_hard_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_fatigue_hard_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_hard_full_unadj, poisson_fatigue_hard_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_fatigue_hard_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_hard_full_adj, poisson_fatigue_hard_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -1568,15 +1624,15 @@ nb_fatigue_soft_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_fatigue_soft_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_soft_cd_unadj), 1), "/", round(AIC(nb_fatigue_soft_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_soft_cd_adj), 1), "/", round(AIC(nb_fatigue_soft_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_soft_cd_unadj), "/", aic_or_na(nb_fatigue_soft_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_soft_cd_adj), "/", aic_or_na(nb_fatigue_soft_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_fatigue_soft_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_soft_cd_unadj, poisson_fatigue_soft_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_fatigue_soft_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_soft_cd_adj, poisson_fatigue_soft_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1606,15 +1662,15 @@ nb_fatigue_hard_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_fatigue_hard_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_hard_cd_unadj), 1), "/", round(AIC(nb_fatigue_hard_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_hard_cd_adj), 1), "/", round(AIC(nb_fatigue_hard_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_hard_cd_unadj), "/", aic_or_na(nb_fatigue_hard_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_hard_cd_adj), "/", aic_or_na(nb_fatigue_hard_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_fatigue_hard_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_hard_cd_unadj, poisson_fatigue_hard_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_fatigue_hard_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_hard_cd_adj, poisson_fatigue_hard_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1646,15 +1702,15 @@ nb_fatigue_soft_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_fatigue_soft_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_soft_uc_unadj), 1), "/", round(AIC(nb_fatigue_soft_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_soft_uc_adj), 1), "/", round(AIC(nb_fatigue_soft_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_soft_uc_unadj), "/", aic_or_na(nb_fatigue_soft_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_soft_uc_adj), "/", aic_or_na(nb_fatigue_soft_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_fatigue_soft_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_soft_uc_unadj, poisson_fatigue_soft_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_fatigue_soft_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_soft_uc_adj, poisson_fatigue_soft_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1684,15 +1740,15 @@ nb_fatigue_hard_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_fatigue_hard_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_hard_uc_unadj), 1), "/", round(AIC(nb_fatigue_hard_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_fatigue_hard_uc_adj), 1), "/", round(AIC(nb_fatigue_hard_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_hard_uc_unadj), "/", aic_or_na(nb_fatigue_hard_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_fatigue_hard_uc_adj), "/", aic_or_na(nb_fatigue_hard_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_fatigue_hard_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_hard_uc_unadj, poisson_fatigue_hard_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_fatigue_hard_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_fatigue_hard_uc_adj, poisson_fatigue_hard_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "OftenLackEnergy")) %>%
     dplyr::mutate(exposure = "Fatigue", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1742,15 +1798,15 @@ nb_lifeevents_soft_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_lifeevents_soft_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_soft_full_unadj), 1), "/", round(AIC(nb_lifeevents_soft_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_soft_full_adj), 1), "/", round(AIC(nb_lifeevents_soft_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_soft_full_unadj), "/", aic_or_na(nb_lifeevents_soft_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_soft_full_adj), "/", aic_or_na(nb_lifeevents_soft_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_lifeevents_soft_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_soft_full_unadj, poisson_lifeevents_soft_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_lifeevents_soft_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_soft_full_adj, poisson_lifeevents_soft_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Patient-reported flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -1780,15 +1836,15 @@ nb_lifeevents_hard_full_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_lifeevents_hard_full),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_hard_full_unadj), 1), "/", round(AIC(nb_lifeevents_hard_full_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_hard_full_adj), 1), "/", round(AIC(nb_lifeevents_hard_full_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_hard_full_unadj), "/", aic_or_na(nb_lifeevents_hard_full_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_hard_full_adj), "/", aic_or_na(nb_lifeevents_hard_full_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_lifeevents_hard_full_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_hard_full_unadj, poisson_lifeevents_hard_full_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Unadjusted"),
-  broom.mixed::tidy(nb_lifeevents_hard_full_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_hard_full_adj, poisson_lifeevents_hard_full_adj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Objective flare", diagnosis = "Full Cohort", model = "Adjusted")
 )
@@ -1820,15 +1876,15 @@ nb_lifeevents_soft_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_lifeevents_soft_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_soft_cd_unadj), 1), "/", round(AIC(nb_lifeevents_soft_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_soft_cd_adj), 1), "/", round(AIC(nb_lifeevents_soft_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_soft_cd_unadj), "/", aic_or_na(nb_lifeevents_soft_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_soft_cd_adj), "/", aic_or_na(nb_lifeevents_soft_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_lifeevents_soft_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_soft_cd_unadj, poisson_lifeevents_soft_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_lifeevents_soft_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_soft_cd_adj, poisson_lifeevents_soft_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Patient-reported flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1858,15 +1914,15 @@ nb_lifeevents_hard_cd_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_lifeevents_hard_cd),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_hard_cd_unadj), 1), "/", round(AIC(nb_lifeevents_hard_cd_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_hard_cd_adj), 1), "/", round(AIC(nb_lifeevents_hard_cd_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_hard_cd_unadj), "/", aic_or_na(nb_lifeevents_hard_cd_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_hard_cd_adj), "/", aic_or_na(nb_lifeevents_hard_cd_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_lifeevents_hard_cd_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_hard_cd_unadj, poisson_lifeevents_hard_cd_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Unadjusted"),
-  broom.mixed::tidy(nb_lifeevents_hard_cd_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_hard_cd_adj, poisson_lifeevents_hard_cd_adj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Objective flare", diagnosis = "Crohn's Disease", model = "Adjusted")
 )
@@ -1898,15 +1954,15 @@ nb_lifeevents_soft_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_lifeevents_soft_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_soft_uc_unadj), 1), "/", round(AIC(nb_lifeevents_soft_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_soft_uc_adj), 1), "/", round(AIC(nb_lifeevents_soft_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_soft_uc_unadj), "/", aic_or_na(nb_lifeevents_soft_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_soft_uc_adj), "/", aic_or_na(nb_lifeevents_soft_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_lifeevents_soft_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_soft_uc_unadj, poisson_lifeevents_soft_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_lifeevents_soft_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_soft_uc_adj, poisson_lifeevents_soft_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Patient-reported flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1936,15 +1992,15 @@ nb_lifeevents_hard_uc_adj <- lme4::glmer.nb(
 )
 
 cat("n =", nrow(data_lifeevents_hard_uc),
-    "| Unadjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_hard_uc_unadj), 1), "/", round(AIC(nb_lifeevents_hard_uc_unadj), 1),
-    "| Adjusted Poisson/NB AIC:", round(AIC(poisson_lifeevents_hard_uc_adj), 1), "/", round(AIC(nb_lifeevents_hard_uc_adj), 1), "\n")
+    "| Unadjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_hard_uc_unadj), "/", aic_or_na(nb_lifeevents_hard_uc_unadj),
+    "| Adjusted Poisson/NB AIC:", aic_or_na(poisson_lifeevents_hard_uc_adj), "/", aic_or_na(nb_lifeevents_hard_uc_adj), "\n")
 
 rate_ratios <- dplyr::bind_rows(
   rate_ratios,
-  broom.mixed::tidy(nb_lifeevents_hard_uc_unadj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_hard_uc_unadj, poisson_lifeevents_hard_uc_unadj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Unadjusted"),
-  broom.mixed::tidy(nb_lifeevents_hard_uc_adj, conf.int = TRUE, exponentiate = TRUE) %>%
+  safe_tidy(nb_lifeevents_hard_uc_adj, poisson_lifeevents_hard_uc_adj) %>%
     dplyr::filter(stringr::str_starts(term, "AnyLifeEvents")) %>%
     dplyr::mutate(exposure = "Any life event", outcome = "Objective flare", diagnosis = "Ulcerative Colitis/IBDU", model = "Adjusted")
 )
@@ -1965,18 +2021,23 @@ rate_ratios %>%
   dplyr::rename(rate_ratio = estimate, lower = conf.low, upper = conf.high) %>%
   dplyr::filter(model == "Adjusted") %>%
   dplyr::mutate(
-    label = paste0(exposure, ": ", term),
+    # model_fit ("NB" or "Poisson") shown on every row - NB failed to
+    # converge and Poisson was used instead for any row tagged "Poisson"
+    # (see safe_tidy() in Setup); a term is absent entirely if neither
+    # model converged.
+    label = paste0(exposure, ": ", term, " [", model_fit, "]"),
     significant = lower > 1 | upper < 1,
     # Character "diagnosis" sorts alphabetically (Crohn's Disease, Full
     # Cohort, Ulcerative...) putting Full Cohort in the middle - force it
     # to the top instead.
     diagnosis = factor(diagnosis, levels = c("Full Cohort", "Crohn's Disease", "Ulcerative Colitis/IBDU"))
   ) %>%
-  ggplot2::ggplot(ggplot2::aes(x = rate_ratio, y = label, colour = significant)) +
+  ggplot2::ggplot(ggplot2::aes(x = rate_ratio, y = label, colour = significant, shape = model_fit)) +
   ggplot2::geom_vline(xintercept = 1, linetype = "dashed", colour = "grey50") +
   ggplot2::geom_pointrange(ggplot2::aes(xmin = lower, xmax = upper)) +
   ggplot2::scale_x_log10() +
   ggplot2::scale_colour_manual(values = c(`TRUE` = "#0F8B8D", `FALSE` = "grey60"), guide = "none") +
+  ggplot2::scale_shape_manual(values = c(NB = 16, Poisson = 17), name = "Model used") +
   ggplot2::facet_grid(diagnosis ~ outcome) +
   ggplot2::labs(x = "Adjusted rate ratio (95% CI, log scale)", y = NULL) +
   ggplot2::theme_minimal()
@@ -1993,7 +2054,8 @@ rate_ratios %>%
     Term = term,
     `Flare type` = outcome,
     `Diagnosis group` = diagnosis,
-    `Rate ratio (95% CI)` = sprintf("%.2f (%.2f–%.2f)", rate_ratio, lower, upper)
+    `Rate ratio (95% CI)` = sprintf("%.2f (%.2f–%.2f)", rate_ratio, lower, upper),
+    `Model used` = model_fit
   ) %>%
   dplyr::arrange(`Diagnosis group`, `Flare type`, Exposure) %>%
   knitr::kable()

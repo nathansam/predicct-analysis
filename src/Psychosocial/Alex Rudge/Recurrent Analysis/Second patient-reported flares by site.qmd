@@ -1,0 +1,200 @@
+---
+title: "Patients, first and second patient-reported flares by recruitment site"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+For each recruitment site (`SiteNo`): the number of patients, the number
+who reached a **first** patient-reported (soft) flare, and the number who
+reached a **second** one - all within the standard 730.5-day (2-year)
+follow-up window used throughout this repository. Patient-reported flares
+only (no objective/hard flares here). Soft-flare episode dates combine the
+portal, Qflare, and hard-flare-imputed routes (see `build_event_counts.R`).
+
+```{r}
+#| message: false
+source("poisson_helpers.R")  # -> population_cohort, covariates, demo_tbl,
+                              # and build_event_counts.R's episode-date objects
+```
+
+## Flare episode dates
+
+```{r}
+soft_episode_dates <- dplyr::bind_rows(
+  episodes_soft_portal %>% dplyr::select(ParticipantNo, episode_date),
+  qflare_episodes,
+  imputed_soft %>% dplyr::transmute(ParticipantNo, episode_date = flare_start_date)
+)
+
+entry_dates <- demo_tbl %>% dplyr::select(ParticipantNo, entry_date)
+```
+
+## First- and second-flare identification
+
+Ranks each participant's soft-flare episodes chronologically; the 1st/2nd
+one counts only if it lands within the 730.5-day cutoff (matching how "did
+they reach the Nth flare" is defined in `Time to Nth Flare KM plots.qmd`).
+
+```{r}
+cutoff_days <- 730.5
+
+ranked_soft_flares <- soft_episode_dates %>%
+  dplyr::semi_join(population_cohort, by = "ParticipantNo") %>%
+  dplyr::group_by(ParticipantNo) %>%
+  dplyr::arrange(episode_date, .by_group = TRUE) %>%
+  dplyr::mutate(flare_rank = dplyr::row_number()) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(flare_rank <= 2) %>%
+  dplyr::left_join(entry_dates, by = "ParticipantNo") %>%
+  dplyr::mutate(days_from_entry = as.numeric(as.Date(episode_date) - as.Date(entry_date))) %>%
+  dplyr::filter(days_from_entry >= 0, days_from_entry <= cutoff_days)
+
+first_flare_status <- ranked_soft_flares %>% dplyr::filter(flare_rank == 1)
+second_flare_status <- ranked_soft_flares %>% dplyr::filter(flare_rank == 2)
+
+flares_by_site <- population_cohort %>%
+  dplyr::select(ParticipantNo) %>%
+  dplyr::left_join(covariates %>% dplyr::select(ParticipantNo, SiteNo), by = "ParticipantNo") %>%
+  dplyr::mutate(
+    had_first_flare = ParticipantNo %in% first_flare_status$ParticipantNo,
+    had_second_flare = ParticipantNo %in% second_flare_status$ParticipantNo
+  ) %>%
+  dplyr::filter(!is.na(SiteNo))
+
+site_summary <- flares_by_site %>%
+  dplyr::group_by(SiteNo) %>%
+  dplyr::summarise(
+    n_cohort = dplyr::n(),
+    n_first_flare = sum(had_first_flare),
+    n_second_flare = sum(had_second_flare),
+    proportion = n_second_flare / n_cohort,
+    # ratio_first_of_cohort: of all patients at this site, what fraction
+    # reached a first flare. ratio_second_of_first: of patients at this
+    # site who reached a first flare, what fraction went on to a second -
+    # NA (not 0) when nobody at the site reached a first flare, since the
+    # ratio is undefined there rather than genuinely zero.
+    ratio_first_of_cohort = n_first_flare / n_cohort,
+    ratio_second_of_first = dplyr::if_else(n_first_flare > 0, n_second_flare / n_first_flare, NA_real_),
+    .groups = "drop"
+  )
+```
+
+## Patients, 1st and 2nd flares per site
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+site_summary %>%
+  tidyr::pivot_longer(
+    cols = c(n_cohort, n_first_flare, n_second_flare),
+    names_to = "category", values_to = "count"
+  ) %>%
+  dplyr::mutate(
+    category = factor(
+      category,
+      levels = c("n_cohort", "n_first_flare", "n_second_flare"),
+      labels = c("Patients", "1st patient-reported flare", "2nd patient-reported flare")
+    )
+  ) %>%
+  ggplot2::ggplot(ggplot2::aes(x = forcats::fct_reorder(SiteNo, count, .fun = max, .desc = TRUE), y = count, fill = category)) +
+  ggplot2::geom_col(position = ggplot2::position_dodge2(preserve = "single")) +
+  ggplot2::scale_fill_manual(values = c("#333333", "#0F8B8D", "#F2A541"), name = NULL) +
+  ggplot2::labs(
+    title = "Patients, 1st and 2nd patient-reported flares, by recruitment site",
+    x = "Recruitment site", y = "Count"
+  ) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1), legend.position = "top")
+```
+
+## Proportion per site
+
+Raw counts alone can just reflect site size - this shows what fraction of
+each site's own cohort reached a second flare.
+
+```{r}
+#| fig-width: 9
+#| fig-height: 5
+site_summary %>%
+  ggplot2::ggplot(ggplot2::aes(x = forcats::fct_reorder(SiteNo, proportion, .desc = TRUE), y = proportion)) +
+  ggplot2::geom_col(fill = "#0F8B8D") +
+  ggplot2::geom_text(ggplot2::aes(label = scales::percent(proportion, accuracy = 0.1)), vjust = -0.4, size = 3.2) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::labs(
+    title = "Proportion of each site's cohort reaching a second patient-reported flare",
+    x = "Recruitment site", y = "Proportion with a 2nd patient-reported flare"
+  ) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
+```
+
+## First-flare and second-flare ratios per site
+
+Two different denominators, shown side by side: **1st flare / patients**
+(of everyone at this site, what fraction ever reached a first
+patient-reported flare) versus **2nd flare / 1st flare** (of those who did,
+what fraction went on to a second one - i.e. progression risk, conditional
+on already having flared once).
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+site_summary %>%
+  tidyr::pivot_longer(
+    cols = c(ratio_first_of_cohort, ratio_second_of_first),
+    names_to = "ratio_type", values_to = "ratio"
+  ) %>%
+  dplyr::mutate(
+    ratio_type = factor(
+      ratio_type,
+      levels = c("ratio_first_of_cohort", "ratio_second_of_first"),
+      labels = c("1st flare / patients", "2nd flare / 1st flare")
+    )
+  ) %>%
+  ggplot2::ggplot(ggplot2::aes(x = forcats::fct_reorder(SiteNo, ratio, .fun = max, .desc = TRUE), y = ratio, fill = ratio_type)) +
+  ggplot2::geom_col(position = ggplot2::position_dodge2(preserve = "single")) +
+  ggplot2::scale_y_continuous(labels = scales::percent) +
+  ggplot2::scale_fill_manual(values = c("#0F8B8D", "#F2A541"), name = NULL) +
+  ggplot2::labs(
+    title = "First-flare and second-flare ratios, by recruitment site",
+    x = "Recruitment site", y = "Ratio"
+  ) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1), legend.position = "top")
+```
+
+## Table
+
+```{r}
+site_summary %>%
+  dplyr::arrange(dplyr::desc(n_second_flare)) %>%
+  dplyr::transmute(
+    Site = SiteNo,
+    `N (cohort)` = n_cohort,
+    `N (1st flare)` = n_first_flare,
+    `N (2nd flare)` = n_second_flare,
+    `1st flare / patients` = scales::percent(ratio_first_of_cohort, accuracy = 0.1),
+    `2nd flare / 1st flare` = ifelse(is.na(ratio_second_of_first), "-", scales::percent(ratio_second_of_first, accuracy = 0.1))
+  ) %>%
+  knitr::kable()
+```
+
+# Reproduction and reproducibility {.appendix}
+
+<details class="appendix">
+
+<summary>Session info</summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>

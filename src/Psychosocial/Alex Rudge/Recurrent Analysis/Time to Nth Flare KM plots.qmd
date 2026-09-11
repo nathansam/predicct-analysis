@@ -1,0 +1,334 @@
+---
+title: "Time to 1st/2nd/3rd/4th flare - cumulative incidence curves"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+toc: true
+toc-depth: 3
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Recurrent-event view of flare risk: instead of "time to first flare"
+(`Survival/Soft-hard-flares.qmd`), this shows time from study entry to the
+**1st, 2nd, 3rd, and 4th** flare, overlaid on the same axes to show how the
+cumulative probability of having reached each flare count evolves over
+follow-up. Curves are plotted as cumulative incidence (1 - KM survival, so
+they rise from 0 rather than fall from 1 - hence "increasing").
+
+Done separately for patient-reported (soft) and objective (hard) flares,
+and separately for the Full Cohort, Crohn's Disease, and Ulcerative
+Colitis/IBDU - 6 panels, each with 4 overlaid curves (24 curves total).
+
+**Definitions, matching the rest of this repo's recurrent analysis:**
+
+- Flare episode dates: soft = portal route (`episodes_soft_portal`) + Qflare
+  route (`qflare_episodes`) + hard-flare-imputed route (`imputed_soft`),
+  exactly as combined in `Poisson Analysis - Time-varying
+  covariates.qmd`. Hard = `eos_objective_episodes` (first + further
+  objective flares).
+- Time to the Nth flare = days from `entry_date` to that flare's date,
+  ranked chronologically per participant within each flare type.
+- Follow-up is censored at 730.5 days (2 years), the same cutoff used
+  throughout this repo - a participant who hasn't reached N flares by then
+  is censored at 730.5, not at their last observed questionnaire (no
+  reliable per-participant "true" end-of-follow-up date is available - see
+  `build_event_counts.R`'s header on the unresolved withdrawal-date gap).
+
+Requires `survival` and `broom`.
+
+```{r}
+#| message: false
+source("poisson_helpers.R")  # -> event_counts_soft/hard, population_cohort,
+                              # demo_tbl, and (transitively) build_event_counts.R's
+                              # episode-date objects: episodes_soft_portal,
+                              # qflare_episodes, imputed_soft, eos_objective_episodes
+```
+
+## Flare episode dates and entry dates
+
+Same construction as `Poisson Analysis - Time-varying covariates.qmd`.
+
+```{r}
+soft_episode_dates <- dplyr::bind_rows(
+  episodes_soft_portal %>% dplyr::select(ParticipantNo, episode_date),
+  qflare_episodes,
+  imputed_soft %>% dplyr::transmute(ParticipantNo, episode_date = flare_start_date)
+)
+
+hard_episode_dates <- eos_objective_episodes %>%
+  dplyr::select(ParticipantNo, episode_date = flare_start_date)
+
+entry_dates <- demo_tbl %>% dplyr::select(ParticipantNo, entry_date)
+```
+
+## Nth-flare survival data builder
+
+For each participant and each flare number 1..`max_n`, produces one row:
+`time` = days from entry to that flare (or the 730.5-day cutoff if they
+never reached it), `event` = 1 if they reached it within the cutoff, 0
+otherwise.
+
+```{r}
+build_nth_flare_data <- function(cohort, episode_dates, entry_dates, max_n = 4, cutoff_days = 730.5) {
+  ranked_episodes <- episode_dates %>%
+    dplyr::semi_join(cohort, by = "ParticipantNo") %>%
+    dplyr::group_by(ParticipantNo) %>%
+    dplyr::arrange(episode_date, .by_group = TRUE) %>%
+    dplyr::mutate(flare_rank = dplyr::row_number()) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(flare_rank <= max_n)
+
+  purrr::map_dfr(seq_len(max_n), function(n) {
+    nth <- ranked_episodes %>%
+      dplyr::filter(flare_rank == n) %>%
+      dplyr::left_join(entry_dates, by = "ParticipantNo") %>%
+      dplyr::transmute(ParticipantNo, event_time = as.numeric(as.Date(episode_date) - as.Date(entry_date)))
+
+    cohort %>%
+      dplyr::select(ParticipantNo) %>%
+      dplyr::left_join(nth, by = "ParticipantNo") %>%
+      dplyr::mutate(
+        flare_number = factor(n, levels = seq_len(max_n)),
+        reached_in_time = !is.na(event_time) & event_time >= 0 & event_time <= cutoff_days,
+        time = dplyr::if_else(reached_in_time, event_time, cutoff_days),
+        event = dplyr::if_else(reached_in_time, 1L, 0L)
+      ) %>%
+      dplyr::select(ParticipantNo, flare_number, time, event)
+  })
+}
+```
+
+## Plot builder
+
+```{r}
+plot_nth_flare_cuminc <- function(nth_flare_data, title) {
+  fit <- survival::survfit(survival::Surv(time, event) ~ flare_number, data = nth_flare_data)
+  broom::tidy(fit) %>%
+    dplyr::mutate(
+      flare_number = stringr::str_remove(strata, "flare_number="),
+      cum_incidence = 1 - estimate,
+      cum_incidence_low = 1 - conf.high,
+      cum_incidence_high = 1 - conf.low
+    ) %>%
+    ggplot2::ggplot(ggplot2::aes(x = time, y = cum_incidence, colour = flare_number, fill = flare_number)) +
+    ggplot2::geom_step(linewidth = 0.7) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = cum_incidence_low, ymax = cum_incidence_high), alpha = 0.12, colour = NA) +
+    ggplot2::scale_colour_brewer(palette = "Set1", name = "Flare number") +
+    ggplot2::scale_fill_brewer(palette = "Set1", guide = "none") +
+    ggplot2::coord_cartesian(ylim = c(0, 1)) +
+    ggplot2::labs(title = title, x = "Days since entry", y = "Cumulative incidence") +
+    ggplot2::theme_minimal()
+}
+
+cohort_full <- population_cohort
+cohort_cd <- population_cohort %>% dplyr::filter(diagnosis2 == "CD")
+cohort_uc <- population_cohort %>% dplyr::filter(diagnosis2 == "UC/IBDU")
+
+# Site 11 only - population_cohort itself has no SiteNo, so join it from
+# covariates first. Reported cohort sizes below (n = ...) matter more than
+# usual here, since restricting to one site on top of a diagnosis split can
+# leave very few participants for the later flare numbers.
+site_lookup <- covariates %>% dplyr::select(ParticipantNo, SiteNo)
+cohort_site11_full <- population_cohort %>%
+  dplyr::inner_join(site_lookup, by = "ParticipantNo") %>%
+  dplyr::filter(SiteNo == "11")
+cohort_site11_cd <- cohort_site11_full %>% dplyr::filter(diagnosis2 == "CD")
+cohort_site11_uc <- cohort_site11_full %>% dplyr::filter(diagnosis2 == "UC/IBDU")
+
+cat("Site 11 cohort sizes - Full:", nrow(cohort_site11_full),
+    "| CD:", nrow(cohort_site11_cd), "| UC/IBDU:", nrow(cohort_site11_uc), "\n")
+```
+
+## Patient-reported (soft) flare
+
+### Full Cohort
+
+```{r}
+#| fig-height: 5
+nth_soft_full <- build_nth_flare_data(cohort_full, soft_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_soft_full, "Patient-reported flare - Full Cohort")
+```
+
+### Crohn's Disease
+
+```{r}
+#| fig-height: 5
+nth_soft_cd <- build_nth_flare_data(cohort_cd, soft_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_soft_cd, "Patient-reported flare - Crohn's Disease")
+```
+
+### Ulcerative Colitis/IBDU
+
+```{r}
+#| fig-height: 5
+nth_soft_uc <- build_nth_flare_data(cohort_uc, soft_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_soft_uc, "Patient-reported flare - Ulcerative Colitis/IBDU")
+```
+
+## Objective (hard) flare
+
+### Full Cohort
+
+```{r}
+#| fig-height: 5
+nth_hard_full <- build_nth_flare_data(cohort_full, hard_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_hard_full, "Objective flare - Full Cohort")
+```
+
+### Crohn's Disease
+
+```{r}
+#| fig-height: 5
+nth_hard_cd <- build_nth_flare_data(cohort_cd, hard_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_hard_cd, "Objective flare - Crohn's Disease")
+```
+
+### Ulcerative Colitis/IBDU
+
+```{r}
+#| fig-height: 5
+nth_hard_uc <- build_nth_flare_data(cohort_uc, hard_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_hard_uc, "Objective flare - Ulcerative Colitis/IBDU")
+```
+
+## All 6 panels together
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+dplyr::bind_rows(
+  nth_soft_full %>% dplyr::mutate(diagnosis = "Full Cohort", outcome = "Patient-reported flare"),
+  nth_soft_cd %>% dplyr::mutate(diagnosis = "Crohn's Disease", outcome = "Patient-reported flare"),
+  nth_soft_uc %>% dplyr::mutate(diagnosis = "Ulcerative Colitis/IBDU", outcome = "Patient-reported flare"),
+  nth_hard_full %>% dplyr::mutate(diagnosis = "Full Cohort", outcome = "Objective flare"),
+  nth_hard_cd %>% dplyr::mutate(diagnosis = "Crohn's Disease", outcome = "Objective flare"),
+  nth_hard_uc %>% dplyr::mutate(diagnosis = "Ulcerative Colitis/IBDU", outcome = "Objective flare")
+) %>%
+  dplyr::mutate(diagnosis = factor(diagnosis, levels = c("Full Cohort", "Crohn's Disease", "Ulcerative Colitis/IBDU"))) %>%
+  dplyr::group_by(diagnosis, outcome) %>%
+  dplyr::group_modify(~ {
+    fit <- survival::survfit(survival::Surv(time, event) ~ flare_number, data = .x)
+    broom::tidy(fit) %>%
+      dplyr::mutate(
+        flare_number = stringr::str_remove(strata, "flare_number="),
+        cum_incidence = 1 - estimate
+      )
+  }) %>%
+  dplyr::ungroup() %>%
+  ggplot2::ggplot(ggplot2::aes(x = time, y = cum_incidence, colour = flare_number)) +
+  ggplot2::geom_step(linewidth = 0.7) +
+  ggplot2::scale_colour_brewer(palette = "Set1", name = "Flare number") +
+  ggplot2::coord_cartesian(ylim = c(0, 1)) +
+  ggplot2::facet_grid(diagnosis ~ outcome) +
+  ggplot2::labs(x = "Days since entry", y = "Cumulative incidence") +
+  ggplot2::theme_minimal()
+```
+
+# Site 11 only
+
+Same 6 panels (plus combined view) as above, restricted to participants
+recruited at site 11. Diagnosis-split panels are based on small numbers at
+this single site (`n` is reported in each panel title); estimates for the
+later flare numbers should be interpreted with this in mind.
+
+## Patient-reported (soft) flare - Site 11
+
+### Full Cohort
+
+```{r}
+#| fig-height: 5
+nth_soft_site11_full <- build_nth_flare_data(cohort_site11_full, soft_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_soft_site11_full, paste0("Patient-reported flare - Site 11, Full Cohort (n = ", nrow(cohort_site11_full), ")"))
+```
+
+### Crohn's Disease
+
+```{r}
+#| fig-height: 5
+nth_soft_site11_cd <- build_nth_flare_data(cohort_site11_cd, soft_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_soft_site11_cd, paste0("Patient-reported flare - Site 11, Crohn's Disease (n = ", nrow(cohort_site11_cd), ")"))
+```
+
+### Ulcerative Colitis/IBDU
+
+```{r}
+#| fig-height: 5
+nth_soft_site11_uc <- build_nth_flare_data(cohort_site11_uc, soft_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_soft_site11_uc, paste0("Patient-reported flare - Site 11, Ulcerative Colitis/IBDU (n = ", nrow(cohort_site11_uc), ")"))
+```
+
+## Objective (hard) flare - Site 11
+
+### Full Cohort
+
+```{r}
+#| fig-height: 5
+nth_hard_site11_full <- build_nth_flare_data(cohort_site11_full, hard_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_hard_site11_full, paste0("Objective flare - Site 11, Full Cohort (n = ", nrow(cohort_site11_full), ")"))
+```
+
+### Crohn's Disease
+
+```{r}
+#| fig-height: 5
+nth_hard_site11_cd <- build_nth_flare_data(cohort_site11_cd, hard_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_hard_site11_cd, paste0("Objective flare - Site 11, Crohn's Disease (n = ", nrow(cohort_site11_cd), ")"))
+```
+
+### Ulcerative Colitis/IBDU
+
+```{r}
+#| fig-height: 5
+nth_hard_site11_uc <- build_nth_flare_data(cohort_site11_uc, hard_episode_dates, entry_dates)
+plot_nth_flare_cuminc(nth_hard_site11_uc, paste0("Objective flare - Site 11, Ulcerative Colitis/IBDU (n = ", nrow(cohort_site11_uc), ")"))
+```
+
+## All 6 panels together - Site 11 only
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+dplyr::bind_rows(
+  nth_soft_site11_full %>% dplyr::mutate(diagnosis = "Full Cohort", outcome = "Patient-reported flare"),
+  nth_soft_site11_cd %>% dplyr::mutate(diagnosis = "Crohn's Disease", outcome = "Patient-reported flare"),
+  nth_soft_site11_uc %>% dplyr::mutate(diagnosis = "Ulcerative Colitis/IBDU", outcome = "Patient-reported flare"),
+  nth_hard_site11_full %>% dplyr::mutate(diagnosis = "Full Cohort", outcome = "Objective flare"),
+  nth_hard_site11_cd %>% dplyr::mutate(diagnosis = "Crohn's Disease", outcome = "Objective flare"),
+  nth_hard_site11_uc %>% dplyr::mutate(diagnosis = "Ulcerative Colitis/IBDU", outcome = "Objective flare")
+) %>%
+  dplyr::mutate(diagnosis = factor(diagnosis, levels = c("Full Cohort", "Crohn's Disease", "Ulcerative Colitis/IBDU"))) %>%
+  dplyr::group_by(diagnosis, outcome) %>%
+  dplyr::group_modify(~ {
+    fit <- survival::survfit(survival::Surv(time, event) ~ flare_number, data = .x)
+    broom::tidy(fit) %>%
+      dplyr::mutate(
+        flare_number = stringr::str_remove(strata, "flare_number="),
+        cum_incidence = 1 - estimate
+      )
+  }) %>%
+  dplyr::ungroup() %>%
+  ggplot2::ggplot(ggplot2::aes(x = time, y = cum_incidence, colour = flare_number)) +
+  ggplot2::geom_step(linewidth = 0.7) +
+  ggplot2::scale_colour_brewer(palette = "Set1", name = "Flare number") +
+  ggplot2::coord_cartesian(ylim = c(0, 1)) +
+  ggplot2::facet_grid(diagnosis ~ outcome) +
+  ggplot2::labs(x = "Days since entry", y = "Cumulative incidence", title = "Site 11 only") +
+  ggplot2::theme_minimal()
+```
+
+# Reproduction and reproducibility {.appendix}
+
+<details class="appendix">
+
+<summary>Session info</summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>

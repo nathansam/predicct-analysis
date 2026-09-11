@@ -12,7 +12,14 @@
 # Constantine-Cooke's reference definition (Survival/Soft-hard-flares.qmd),
 # DiseaseControlled missing but a worsening date was still given, which is
 # treated as an implicit "No". Flare date = reported worsening date
-# (DiseaseWorsenedDate), else questionnaire date (ActualDate).
+# (DiseaseWorsenedDate), else questionnaire date (ActualDate) - the
+# reference definition's middle fallback tier (earliest of outpatient
+# appointment/hospital admission/IBD team call/surgery date) is NOT
+# implemented here, as those fields' names in monthly.xlsx are unknown.
+# A flare dated before study entry is dropped (reference step 1); flares
+# used for soft-flare imputation (4b) are censored at 2 years from entry
+# (reference steps 4/6). Post-withdrawal questionnaires are NOT filtered out
+# (reference step 3) - the withdrawal-date field's source is unknown.
 #
 # Objective flare: CRP >= 5 mg/L and/or FC >= 250 ug/g plus new/escalated IBD
 # therapy, ascertained via (1) a portal flare triggering confirmatory stool
@@ -53,6 +60,16 @@ monthly <- readxl::read_xlsx(paste0(data.path, "Followup/monthlyQ.xlsx"))
 # ---- 3. Objective (hard) flares -----------------------------------------------
 
 furtherflares <- readxl::read_xlsx(paste0(prefix, "EOF_furtherflares.xlsx")) %>%
+  # Twenty rows have FlareStartDate but no FlareEndDate (we impute FlareStartDate)
+  dplyr::mutate(
+    FlareEndDate = case_when(
+      FlareEndDate == "." ~ FlareStartDate,
+      .default = FlareEndDate
+    )
+  ) %>%
+  # Three rows have neither FlareStartDate nor FlareEndDate (we filter those out)
+  dplyr::filter(FlareEndDate != ".") %>%
+  filter(QuestionnaireId != ".") %>%
   dplyr::mutate(
     QuestionnaireId = as.numeric(QuestionnaireId),
     FlareStartDate = as.Date(as.numeric(FlareStartDate), origin = "1899-12-30"),
@@ -106,16 +123,23 @@ monthly$DiseaseControlled <- ifelse(
 )
 
 monthly_soft <- monthly %>%
+  dplyr::left_join(demo_tbl %>% dplyr::select(ParticipantNo, entry_date), by = "ParticipantNo") %>%
   dplyr::arrange(ParticipantNo, Q_month) %>%
   dplyr::group_by(ParticipantNo) %>%
   dplyr::mutate(
     # DiseaseControlled == "No" is the explicit answer; a missing answer with
     # a worsening date still given is treated as an implicit "No" too, per
     # Survival/Soft-hard-flares.qmd's reference definition.
-    soft_flare_month = dplyr::coalesce(DiseaseControlled == "No", FALSE) |
+    soft_flare_raw = dplyr::coalesce(DiseaseControlled == "No", FALSE) |
       (is.na(DiseaseControlled) & !is.na(DiseaseWorsenedDate)),
-    # as.Date() here too - same POSIXct/Date mixing hazard as episode_date below.
+    # as.Date(), not POSIXct - mixing the two in a later subtraction silently
+    # returns epoch-seconds minus epoch-days instead of erroring.
     worsened_date_only = as.Date(DiseaseWorsenedDate),
+    episode_date = as.Date(dplyr::if_else(!is.na(DiseaseWorsenedDate), DiseaseWorsenedDate, ActualDate)),
+    # Reference definition step 1 (Survival/Soft-hard-flares.qmd): a flare
+    # dated before study entry is a data artifact, not a real in-study flare -
+    # drop it (equivalent to recoding disease as controlled) rather than count it.
+    soft_flare_month = soft_flare_raw & (is.na(entry_date) | episode_date >= as.Date(entry_date)),
     month_adjacent = dplyr::lag(soft_flare_month, default = FALSE) &
       (Q_month - dplyr::lag(Q_month) == 1),
     # A distinct reported worsening date on an adjacent flagged month means the
@@ -126,28 +150,75 @@ monthly_soft <- monthly %>%
       !is.na(worsened_date_only) & !is.na(dplyr::lag(worsened_date_only)) &
       worsened_date_only != dplyr::lag(worsened_date_only),
     prev_adjacent_flare = month_adjacent & !new_worsening_date,
-    new_episode = soft_flare_month & !prev_adjacent_flare,
-    # as.Date(), not POSIXct - mixing the two in a later subtraction silently
-    # returns epoch-seconds minus epoch-days instead of erroring.
-    episode_date = as.Date(dplyr::if_else(!is.na(DiseaseWorsenedDate), DiseaseWorsenedDate, ActualDate))
+    new_episode = soft_flare_month & !prev_adjacent_flare
   ) %>%
   dplyr::ungroup()
 
 episodes_soft_portal <- monthly_soft %>%
   dplyr::filter(new_episode) %>%
   dplyr::select(ParticipantNo, Q_month, episode_date)
+# > sum(monthly_soft %>% dplyr::group_by(ParticipantNo) %>%
+#     dplyr::summarise(f = any(new_episode)) %>% dplyr::pull(f))
+# [1] 471 # portal route only, before adding the Qflare/hard-flare episodes below
 
-n_soft_flares <- monthly_soft %>%
-  dplyr::group_by(ParticipantNo) %>%
-  dplyr::summarise(n_events = sum(new_episode, na.rm = TRUE), .groups = "drop")
+# ---- 4b. Soft flares Cox's own questionnaire route finds that this build's
+# from-scratch monthlyQ.xlsx reconstruction above doesn't (Qflare) -----------
+#
+# 64 participants have Qflare == 1 in all-flares.xlsx (same 20240308 pull
+# used for the Cox analysis) with no corresponding episode above - confirmed
+# (see "Compare soft flares vs Cox data.R" / "Check missing-vs-Qflare
+# overlap.R") to fully explain that gap, not partially. Qflare appears to
+# implement Constantine-Cooke's complete reference definition, including the
+# "middle fallback tier" (earliest of outpatient appointment/hospital
+# admission/IBD team call/surgery date) this build has no field names for
+# (see the file header), and/or draws on a newer monthlyQ.xlsx pull than the
+# 20221004 one used above. Rather than guess at those fields, Qflare/
+# Qflare_time is treated as ground truth for whether/when that flare
+# happened, and folded in as one more episode candidate alongside the portal
+# route above and the hard-flare route below - not a replacement for either,
+# since a participant can still have further episodes only those other
+# routes catch.
+if (file.exists("/.dockerenv")) {
+  all_flare_path <- "data/final/20240308/Followup/"
+} else {
+  all_flare_path <- "/Volumes/igmm/cvallejo-predicct/predicct/final/20240308/Followup/"
+}
 
-event_counts_soft <- population_cohort %>%
-  dplyr::left_join(n_soft_flares, by = "ParticipantNo") %>%
-  dplyr::mutate(n_events = tidyr::replace_na(n_events, 0))
-# > sum(event_counts_soft$n_events >= 1)
-# [1] 471 # This is before imputing hard flare -> soft flare
+qflare_candidates <- readxl::read_xlsx(
+  paste0(all_flare_path, "all-flares.xlsx"),
+  na = ".", sheet = 1
+) %>%
+  dplyr::transmute(ParticipantNo = as.character(ParticipantNo), Qflare = Qflare == 1, Qflare_time) %>%
+  dplyr::filter(Qflare) %>%
+  dplyr::left_join(demo_tbl %>% dplyr::select(ParticipantNo, entry_date), by = "ParticipantNo") %>%
+  dplyr::transmute(ParticipantNo, episode_date = as.Date(entry_date) + Qflare_time) %>%
+  dplyr::semi_join(population_cohort, by = "ParticipantNo")
 
-# ---- 4b. Soft flares imputed from route-2 objective flares ------------------
+# Same +/-30 day tolerance as the hard-flare imputation below: a portal
+# report and Cox's own questionnaire-route date won't line up exactly even
+# when they're the same underlying flare.
+qflare_episodes <- qflare_candidates %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    has_portal_match = any(
+      episodes_soft_portal$ParticipantNo == ParticipantNo &
+        abs(as.numeric(episodes_soft_portal$episode_date - episode_date)) <= 30
+    )
+  ) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(!has_portal_match) %>%
+  dplyr::select(ParticipantNo, episode_date)
+
+# All accepted soft-flare episodes so far (portal + Qflare) - the hard-flare
+# imputation below checks against this combined set, not portal alone, so a
+# hard flare that's really the same event as a Qflare-derived one isn't
+# double counted.
+soft_episodes_accepted <- dplyr::bind_rows(
+  episodes_soft_portal %>% dplyr::select(ParticipantNo, episode_date),
+  qflare_episodes
+)
+
+# ---- 4c. Soft flares imputed from route-2 objective flares -------------------
 #
 # hardflare_time is a duration (days from entry), not a date - convert via
 # demo_tbl$entry_date before comparing to FlareStartDate.
@@ -159,32 +230,40 @@ flare_dates_hard <- flares_hard %>%
 eos_objective_episodes <- dplyr::bind_rows(
   flare_dates_hard,
   furtherflares_linked %>% dplyr::select(ParticipantNo, flare_start_date = FlareStartDate)
-)
+) %>%
+  dplyr::left_join(demo_tbl %>% dplyr::select(ParticipantNo, entry_date), by = "ParticipantNo") %>%
+  # Reference definition steps 4/6 (Survival/Soft-hard-flares.qmd): censor at
+  # 2 years (730.5 days) from entry - same cutoff constant used there. Only
+  # the portal route is naturally bounded by Q_month (<=24); objective flares
+  # used for imputation have no such bound, so this needs to be explicit.
+  dplyr::filter(is.na(entry_date) | as.numeric(flare_start_date - as.Date(entry_date)) <= 730.5) %>%
+  dplyr::select(-entry_date)
 
-# +/- 30 days: a portal report and the clinician-recorded date won't line up
-# exactly even for the same flare.
+# +/- 30 days: a portal/Qflare report and the clinician-recorded date won't
+# line up exactly even for the same flare.
 imputed_soft <- eos_objective_episodes %>%
   dplyr::rowwise() %>%
   dplyr::mutate(
     has_portal_match = any(
-      episodes_soft_portal$ParticipantNo == ParticipantNo &
-        abs(as.numeric(episodes_soft_portal$episode_date - flare_start_date)) <= 30
+      soft_episodes_accepted$ParticipantNo == ParticipantNo &
+        abs(as.numeric(soft_episodes_accepted$episode_date - flare_start_date)) <= 30
     )
   ) %>%
   dplyr::ungroup() %>%
   dplyr::filter(!has_portal_match)
 
-n_imputed_soft <- imputed_soft %>%
-  dplyr::count(ParticipantNo, name = "n_imputed")
+# ---- 4d. Final soft-flare episode counts, all three routes combined ---------
+n_soft_flares <- dplyr::bind_rows(
+  soft_episodes_accepted,
+  imputed_soft %>% dplyr::transmute(ParticipantNo, episode_date = flare_start_date)
+) %>%
+  dplyr::count(ParticipantNo, name = "n_events")
 
-event_counts_soft <- event_counts_soft %>%
-  dplyr::left_join(n_imputed_soft, by = "ParticipantNo") %>%
-  dplyr::mutate(
-    n_imputed = tidyr::replace_na(n_imputed, 0),
-    n_events = n_events + n_imputed
-  )
-# > sum(event_counts_soft$n_events >= 1)
-# [1] 590 # A few dozen short of what is reported in the paper
+event_counts_soft <- population_cohort %>%
+  dplyr::left_join(n_soft_flares, by = "ParticipantNo") %>%
+  dplyr::mutate(n_events = tidyr::replace_na(n_events, 0))
+# Re-run "Compare soft flares vs Cox data.R" after this change to confirm
+# sum(event_counts_soft$n_events >= 1) now lands at/near the paper's 638.
 
 # ---- 5. Adjustment covariates ---------------------------------------------------
 #

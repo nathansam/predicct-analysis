@@ -1,0 +1,592 @@
+---
+title: "Does change in disease activity over time affect outcomes?"
+format:
+  html:
+    code-fold: true
+    code-tools: true
+toc: true
+toc-depth: 4
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+This analysis addresses whether change in disease activity over time is
+associated with subsequent flare outcomes, using IBD-Control-VAS
+(`OverallControl`) as the measure of disease activity. Unlike `control_8`
+(the 8-item IBD-Control sub-scale), which is only available as a single
+baseline value per participant, `OverallControl` is collected both at
+baseline (`Baseline2022/IBD.xlsx`) and monthly during follow-up
+(`monthlyQ.xlsx`), making it the only IBD-Control measure that can be
+modelled as a genuinely time-varying covariate.
+
+`OverallControl` is added as a **time-dependent confounder** to each of the
+main analysis's extended Cox models (`Longitudinal analysis/{HADS,PHQ,PSQI,
+Exercise,Fatigue,Life Events}/`), rather than modelled as a standalone
+exposure. Every risk factor already covered by the main analysis is
+re-fitted here with time-dependent `OverallControl` added alongside its own
+time-dependent exposure, for Crohn's Disease and Ulcerative Colitis/IBDU
+separately, for both patient-reported and objective flare - the same
+structure and covariate set as the reference models (`IMD + Sex +
+age_decade + FC + Smoke + frailty(SiteNo)`), with `OverallControl_per10`
+added to each formula. `OverallControl` enters per 10-point change (of the
+0-100 scale) for an interpretable hazard ratio.
+
+```{r}
+#| message: false
+library(survival)
+source("poisson_helpers.R")  # -> population_cohort, covariates, demo_tbl,
+                              # monthly, chiara, data.path
+```
+
+## Helper functions
+
+```{r}
+# Takes already-tidied, already-filtered data (not the raw model) -
+# run_cox_cell() below tidies each fit once and filters to the risk
+# factor's own term(s), so confounders (including OverallControl, which is
+# fitted for adjustment only) never reach this table.
+print_survival <- function(tidy_data) {
+  tidy_data %>%
+    dplyr::select(term, estimate, std.error, statistic, conf.low, conf.high, p.value) %>%
+    dplyr::mutate(dplyr::across(.cols = where(is.numeric), .fns = ~ signif(.x, 3))) %>%
+    dplyr::mutate(p.value = as.character(p.value)) %>%
+    knitr::kable(
+      col.names = c("Covariate", "Hazard Ratio", "Std. Error", "Statistic", "Lower 95% CI", "Upper 95% CI", "P-value"),
+      format.args = list(drop0trailing = TRUE)
+    )
+}
+
+covariates_dx <- covariates %>%
+  dplyr::left_join(population_cohort %>% dplyr::select(ParticipantNo, diagnosis2), by = "ParticipantNo")
+```
+
+## IBD-Control-VAS over time - baseline and monthly follow-up
+
+```{r}
+overall_control_baseline <- read.xlsx(paste0(data.path, "Baseline2022/IBD.xlsx")) %>%
+  dplyr::filter(!is.na(ParticipantId), !is.na(OverallControl)) %>%
+  dplyr::transmute(ParticipantNo, month = 0, OverallControl)
+
+overall_control_followup <- monthly %>%
+  dplyr::filter(!is.na(OverallControl)) %>%
+  dplyr::transmute(ParticipantNo, month = Q_month, OverallControl)
+
+overall_control_long <- dplyr::bind_rows(overall_control_baseline, overall_control_followup) %>%
+  dplyr::distinct(ParticipantNo, month, .keep_all = TRUE)
+```
+
+## Trajectory figure
+
+Mean `OverallControl` (with 95% CI) at each assessed month, by diagnosis
+group. 0-100 scale, higher = better control.
+
+```{r}
+#| fig-width: 9
+#| fig-height: 5
+overall_control_long %>%
+  dplyr::left_join(population_cohort %>% dplyr::select(ParticipantNo, diagnosis2), by = "ParticipantNo") %>%
+  dplyr::filter(!is.na(diagnosis2), month <= 24) %>%
+  dplyr::group_by(diagnosis2, month) %>%
+  dplyr::summarise(
+    mean_control = mean(OverallControl, na.rm = TRUE),
+    se = sd(OverallControl, na.rm = TRUE) / sqrt(dplyr::n()),
+    n = dplyr::n(),
+    .groups = "drop"
+  ) %>%
+  dplyr::mutate(ci_low = mean_control - 1.96 * se, ci_high = mean_control + 1.96 * se) %>%
+  ggplot2::ggplot(ggplot2::aes(x = month, y = mean_control, colour = diagnosis2, fill = diagnosis2)) +
+  ggplot2::geom_ribbon(ggplot2::aes(ymin = ci_low, ymax = ci_high), alpha = 0.15, colour = NA) +
+  ggplot2::geom_line(linewidth = 0.8) +
+  ggplot2::geom_point(size = 1.5) +
+  ggplot2::scale_colour_brewer(palette = "Set1", name = "Diagnosis") +
+  ggplot2::scale_fill_brewer(palette = "Set1", guide = "none") +
+  ggplot2::coord_cartesian(ylim = c(0, 100)) +
+  ggplot2::labs(
+    title = "IBD-Control-VAS over time, by diagnosis group",
+    x = "Month", y = "Mean OverallControl (0-100, higher = better control)"
+  ) +
+  ggplot2::theme_minimal()
+```
+
+## Base survival endpoint
+
+`flares_soft.RDS`/`flares_hard.RDS` provide the first-flare survival
+endpoint (`time`, `DiseaseFlareYN`), the same source used for the main
+analysis's Cox models. Built before sourcing any risk factor's
+`data_cleaning.R` below, since some of those scripts also define
+`flares_soft`/`flares_hard` as a side effect - harmless (identical source
+files, reloaded), but this keeps the base data unambiguous.
+
+```{r}
+flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
+flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
+
+cox_base_soft <- covariates_dx %>%
+  dplyr::inner_join(flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time), by = "ParticipantNo") %>%
+  dplyr::transmute(
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    time = softflare_time, DiseaseFlareYN = softflare
+  ) %>%
+  dplyr::filter(time > 0)
+
+cox_base_hard <- covariates_dx %>%
+  dplyr::inner_join(flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time), by = "ParticipantNo") %>%
+  dplyr::transmute(
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    time = hardflare_time, DiseaseFlareYN = hardflare
+  ) %>%
+  dplyr::filter(time > 0)
+
+overall_control_td <- overall_control_long %>%
+  dplyr::arrange(ParticipantNo, month) %>%
+  dplyr::group_by(ParticipantNo) %>%
+  tidyr::fill(OverallControl, .direction = "down") %>%
+  dplyr::ungroup() %>%
+  dplyr::transmute(ParticipantNo, day = month * 365 / 12, OverallControl_per10 = OverallControl / 10)
+```
+
+## Model-fitting and reporting helpers
+
+Each risk factor's own time-dependent score keeps a generic `score_group`
+name (matching the recurrent-event analogue in `Poisson Analysis -
+Time-varying covariates.qmd`), so one set of helpers covers every exposure
+below.
+
+```{r}
+# (ParticipantNo, month, score_group) -> the day-based, LOCF-filled format
+# tdc() needs.
+exposure_to_day <- function(exposure_long) {
+  exposure_long %>%
+    dplyr::distinct(ParticipantNo, month, .keep_all = TRUE) %>%
+    dplyr::arrange(ParticipantNo, month) %>%
+    dplyr::group_by(ParticipantNo) %>%
+    tidyr::fill(score_group, .direction = "down") %>%
+    dplyr::ungroup() %>%
+    dplyr::transmute(ParticipantNo, day = as.numeric(month) * 365 / 12, score_group)
+}
+
+# Start-stop Cox dataset for one flare type, adding both the risk factor's
+# own time-dependent score and OverallControl_per10 as a second
+# time-dependent confounder.
+build_cox_td <- function(cox_base, exposure_day) {
+  tmerge(cox_base, cox_base, id = ParticipantNo, endpoint = event(time, DiseaseFlareYN)) %>%
+    tmerge(data2 = exposure_day, id = ParticipantNo, score_group = tdc(day, score_group)) %>%
+    tmerge(data2 = overall_control_td, id = ParticipantNo, OverallControl_per10 = tdc(day, OverallControl_per10))
+}
+
+cox_hazard_ratios <- tibble::tibble()
+
+run_cox_cell <- function(data_merged, dx, exposure_name, outcome_label, diagnosis_label) {
+  d <- data_merged %>% dplyr::filter(diagnosis2 == dx)
+  fit <- coxph(
+    Surv(tstart, tstop, endpoint) ~
+      score_group + OverallControl_per10 + IMD + Sex + age_decade + FC + Smoke + frailty(SiteNo),
+    data = d
+  )
+  cat("n =", dplyr::n_distinct(d$ParticipantNo), "\n\n")
+
+  # OverallControl_per10 and the other covariates are fitted for adjustment
+  # only - only the risk factor's own term(s) are reported or plotted.
+  tidy_exposure_only <- fit %>%
+    broom::tidy(exponentiate = TRUE, conf.int = TRUE) %>%
+    dplyr::filter(stringr::str_starts(term, "score_group"))
+
+  cox_hazard_ratios <<- dplyr::bind_rows(
+    cox_hazard_ratios,
+    tidy_exposure_only %>% dplyr::mutate(exposure = exposure_name, outcome = outcome_label, diagnosis = diagnosis_label)
+  )
+
+  tidy_exposure_only %>% print_survival()
+}
+```
+
+## HADS (anxiety and depression)
+
+Same item recoding and composite-score formulas as
+`Longitudinal analysis/HADS/HADS.qmd`.
+
+```{r}
+#| message: false
+hads_items <- c(
+  "FeelTense", "FrightenedFeelingSomethingAwful", "WorryingThoughts", "SitAtEase",
+  "FrightenedFeelingButterflies", "FeelRestless", "SuddenFeelingsPanic",
+  "EnjoyThings", "CanLaugh", "FeelCheerful", "FeelSlowedDown",
+  "LostInterestAppearance", "LookForward", "CanEnjoyBookTV"
+)
+inverse_coded_items <- c(
+  "FeelTense", "FrightenedFeelingSomethingAwful", "WorryingThoughts", "FeelCheerful",
+  "FeelSlowedDown", "LostInterestAppearance", "FeelRestless", "SuddenFeelingsPanic"
+)
+
+score_hads <- function(df) {
+  df %>%
+    dplyr::mutate(dplyr::across(tidyselect::all_of(hads_items), ~ . - 1)) %>%
+    dplyr::mutate(dplyr::across(tidyselect::all_of(inverse_coded_items), ~ 3 - .)) %>%
+    dplyr::mutate(
+      anxiety_hads = FeelTense + FrightenedFeelingSomethingAwful + WorryingThoughts +
+        SitAtEase + FrightenedFeelingButterflies + FeelRestless + SuddenFeelingsPanic,
+      depression_hads = EnjoyThings + CanLaugh + FeelCheerful + FeelSlowedDown +
+        LostInterestAppearance + LookForward + CanEnjoyBookTV
+    )
+}
+
+hads_baseline_raw <- readxl::read_xlsx(paste0(data.path, "Baseline2022/hads.xlsx")) %>%
+  dplyr::filter(!is.na(ParticipantId))
+hads_followup_raw <- readxl::read_xlsx(paste0(data.path, "Followup/hads.xlsx")) %>%
+  dplyr::filter(!is.na(ParticipantId))
+
+hads_long <- dplyr::bind_rows(
+  score_hads(hads_baseline_raw) %>% dplyr::transmute(ParticipantNo, month = 0, anxiety_hads, depression_hads),
+  score_hads(hads_followup_raw) %>% dplyr::transmute(ParticipantNo, month = Q_month, anxiety_hads, depression_hads)
+)
+
+anxiety_long <- hads_long %>%
+  dplyr::transmute(
+    ParticipantNo, month,
+    score_group = cut(anxiety_hads, breaks = c(0, 7, 21), labels = c("0-7", "8-21"), include.lowest = TRUE)
+  )
+depression_long <- hads_long %>%
+  dplyr::transmute(
+    ParticipantNo, month,
+    score_group = cut(depression_hads, breaks = c(0, 7, 21), labels = c("0-7", "8-21"), include.lowest = TRUE)
+  )
+
+anxiety_day <- exposure_to_day(anxiety_long)
+depression_day <- exposure_to_day(depression_long)
+
+data_soft_anxiety <- build_cox_td(cox_base_soft, anxiety_day)
+data_hard_anxiety <- build_cox_td(cox_base_hard, anxiety_day)
+data_soft_depression <- build_cox_td(cox_base_soft, depression_day)
+data_hard_depression <- build_cox_td(cox_base_hard, depression_day)
+```
+
+### Anxiety
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_anxiety, "CD", "Anxiety", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_anxiety, "CD", "Anxiety", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_anxiety, "UC/IBDU", "Anxiety", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_anxiety, "UC/IBDU", "Anxiety", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+### Depression
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_depression, "CD", "Depression", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_depression, "CD", "Depression", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_depression, "UC/IBDU", "Depression", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_depression, "UC/IBDU", "Depression", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## PHQ (somatisation)
+
+Sourced from `Longitudinal analysis/PHQ/data_cleaning.R`. `phq_long` is
+that file's own long-format output.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/PHQ/data_cleaning.R")
+
+phq_score_long <- phq_long %>%
+  dplyr::transmute(ParticipantNo, month, score_group = somatisation)
+phq_day <- exposure_to_day(phq_score_long)
+
+data_soft_phq <- build_cox_td(cox_base_soft, phq_day)
+data_hard_phq <- build_cox_td(cox_base_hard, phq_day)
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_phq, "CD", "Somatisation", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_phq, "CD", "Somatisation", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_phq, "UC/IBDU", "Somatisation", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_phq, "UC/IBDU", "Somatisation", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## PSQI (sleep disturbance)
+
+Sourced from `Longitudinal analysis/PSQI/data_cleaning.R`. `psqi` is that
+file's own long-format output.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/PSQI/data_cleaning.R")
+
+psqi_score_long <- psqi %>%
+  dplyr::transmute(ParticipantNo, month, score_group = SleepDisturbance)
+psqi_day <- exposure_to_day(psqi_score_long)
+
+data_soft_psqi <- build_cox_td(cox_base_soft, psqi_day)
+data_hard_psqi <- build_cox_td(cox_base_hard, psqi_day)
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_psqi, "CD", "Sleep disturbance", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_psqi, "CD", "Sleep disturbance", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_psqi, "UC/IBDU", "Sleep disturbance", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_psqi, "UC/IBDU", "Sleep disturbance", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Exercise
+
+Sourced from `Longitudinal analysis/Exercise/data_cleaning.R`. `exercise`
+is that file's own long-format output (`MinimumExercise`: meets WHO minimum
+activity guidelines).
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/Exercise/data_cleaning.R")
+
+exercise_score_long <- exercise %>%
+  dplyr::transmute(ParticipantNo, month, score_group = MinimumExercise)
+exercise_day <- exposure_to_day(exercise_score_long)
+
+data_soft_exercise <- build_cox_td(cox_base_soft, exercise_day)
+data_hard_exercise <- build_cox_td(cox_base_hard, exercise_day)
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_exercise, "CD", "Exercise", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_exercise, "CD", "Exercise", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_exercise, "UC/IBDU", "Exercise", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_exercise, "UC/IBDU", "Exercise", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Fatigue
+
+Sourced from `Longitudinal analysis/Fatigue/data_cleaning.R`. Unlike the
+other exposures, fatigue (`OftenLackEnergy`) is assessed every month via
+the monthly follow-up questionnaire, not just at 0/12/24 -
+`exposure_to_day()` handles this the same way regardless.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/Fatigue/data_cleaning.R")
+
+fatigue_score_long <- fatigue %>%
+  dplyr::transmute(ParticipantNo, month, score_group = OftenLackEnergy)
+fatigue_day <- exposure_to_day(fatigue_score_long)
+
+data_soft_fatigue <- build_cox_td(cox_base_soft, fatigue_day)
+data_hard_fatigue <- build_cox_td(cox_base_hard, fatigue_day)
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_fatigue, "CD", "Fatigue", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_fatigue, "CD", "Fatigue", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_fatigue, "UC/IBDU", "Fatigue", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_fatigue, "UC/IBDU", "Fatigue", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Life Events
+
+Sourced from `Longitudinal analysis/Life Events/data_cleaning.R`.
+`AnyLifeEvents` is already binary (No/Yes), no cut-point needed.
+
+```{r}
+#| message: false
+source("../Longitudinal analysis/Life Events/data_cleaning.R")
+
+lifeevents_score_long <- lifeevents %>%
+  dplyr::transmute(ParticipantNo, month, score_group = AnyLifeEvents)
+lifeevents_day <- exposure_to_day(lifeevents_score_long)
+
+data_soft_lifeevents <- build_cox_td(cox_base_soft, lifeevents_day)
+data_hard_lifeevents <- build_cox_td(cox_base_hard, lifeevents_day)
+```
+
+#### Crohn's Disease
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_lifeevents, "CD", "Any life event", "Patient-reported flare", "Crohn's Disease")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_lifeevents, "CD", "Any life event", "Objective flare", "Crohn's Disease")
+```
+
+#### Ulcerative Colitis/IBDU
+
+##### Patient-reported flare
+
+```{r}
+run_cox_cell(data_soft_lifeevents, "UC/IBDU", "Any life event", "Patient-reported flare", "Ulcerative Colitis/IBDU")
+```
+
+##### Objective flare
+
+```{r}
+run_cox_cell(data_hard_lifeevents, "UC/IBDU", "Any life event", "Objective flare", "Ulcerative Colitis/IBDU")
+```
+
+## Combined forest plot
+
+Each risk factor's own hazard ratio, adjusted for the main analysis's usual
+confounders (`IMD`, `Sex`, `age_decade`, `FC`, `Smoke`, `frailty(SiteNo)`)
+plus time-dependent `OverallControl`. `cox_hazard_ratios` only ever
+contains each risk factor's own term(s) - confounders, including
+`OverallControl_per10`, are fitted for adjustment only and never enter this
+table (see `run_cox_cell()` in Setup).
+
+```{r}
+#| fig-width: 10
+#| fig-height: 10
+cox_hazard_ratios %>%
+  dplyr::mutate(
+    label = paste0(exposure, ": ", term),
+    significant = conf.low > 1 | conf.high < 1,
+    diagnosis = factor(diagnosis, levels = c("Crohn's Disease", "Ulcerative Colitis/IBDU"))
+  ) %>%
+  ggplot2::ggplot(ggplot2::aes(x = estimate, y = label, colour = significant)) +
+  ggplot2::geom_vline(xintercept = 1, linetype = "dashed", colour = "grey50") +
+  ggplot2::geom_pointrange(ggplot2::aes(xmin = conf.low, xmax = conf.high)) +
+  ggplot2::scale_x_log10() +
+  ggplot2::scale_colour_manual(values = c(`TRUE` = "#0F8B8D", `FALSE` = "grey60"), guide = "none") +
+  ggplot2::facet_grid(diagnosis ~ outcome) +
+  ggplot2::labs(x = "Adjusted hazard ratio (95% CI, log scale)", y = NULL) +
+  ggplot2::theme_minimal()
+```
+
+# Reproduction and reproducibility {.appendix}
+
+<details class="appendix">
+
+<summary>Session info</summary>
+
+```{R Session info}
+#| echo: false
+pander::pander(sessionInfo())
+```
+
+</details>
