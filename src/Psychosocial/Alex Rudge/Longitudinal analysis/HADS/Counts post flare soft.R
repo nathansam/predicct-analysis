@@ -25,15 +25,15 @@ custom_theme = theme_minimal() +
     plot.tag = element_text(size = 12)
   )
 
-palette <- c("#FFA500", "#0072B2", "grey", "#009E73")
+palette <- c("#FFA500", "#0072B2", "#009E73", "grey")
 
 data_anxiety_soft_long %<>% 
   # Anxiety groups
   dplyr::mutate(
     score_group = cut(
       anxiety_hads, 
-      breaks = c(0, 7, 21), 
-      labels = c("0-7", "8-21"), 
+      breaks = c(0, 7, 10, 21),
+      labels = c("0-7", "8-10", "11-21"),
       include.lowest = TRUE)
   )
 
@@ -42,8 +42,8 @@ data_depression_soft_long %<>%
   dplyr::mutate(
     score_group = cut(
       depression_hads, 
-      breaks = c(0, 7, 21), 
-      labels = c("0-7", "8-21"), 
+      breaks = c(0, 7, 10, 21),
+      labels = c("0-7", "8-10", "11-21"),
       include.lowest = TRUE)
   )
 
@@ -74,8 +74,11 @@ plot_anxiety_soft_pre <- data_anxiety_soft_long %>%
     month != 0,
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
+    month = factor(month, levels = c(12, 24))
+  ) %>%
+  dplyr::mutate(
     score_group = forcats::fct_na_value_to_level(score_group, "Missing"),
-    score_group = forcats::fct_relevel(score_group, "Missing")
+    score_group = forcats::fct_relevel(score_group, "Missing", "11-21", "8-10", "0-7")
   ) %>%
   dplyr::count(month, score_group) %>%
   # Calculate percentage
@@ -106,7 +109,7 @@ plot_anxiety_soft_pre <- data_anxiety_soft_long %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("0-7", "8-21", "Missing")
+    breaks = c("0-7", "8-10", "11-21", "Missing")
   ) +
   labs(
     fill = "Anxiety HADS",
@@ -124,8 +127,11 @@ plot_anxiety_soft_post <- data_anxiety_soft_long %>%
     month != 0,
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
+    month = factor(month, levels = c(12, 24))
+  ) %>%
+  dplyr::mutate(
     score_group = forcats::fct_na_value_to_level(score_group, "Missing"),
-    score_group = forcats::fct_relevel(score_group, "Missing")
+    score_group = forcats::fct_relevel(score_group, "Missing", "11-21", "8-10", "0-7")
   ) %>%
   dplyr::count(month, score_group) %>%
   # Calculate percentage
@@ -156,7 +162,7 @@ plot_anxiety_soft_post <- data_anxiety_soft_long %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("0-7", "8-21", "Missing")
+    breaks = c("0-7", "8-10", "11-21", "Missing")
   ) +
   labs(
     fill = "Anxiety HADS",
@@ -175,8 +181,11 @@ plot_depression_soft_pre <- data_depression_soft_long %>%
     month != 0,
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
+    month = factor(month, levels = c(12, 24))
+  ) %>%
+  dplyr::mutate(
     score_group = forcats::fct_na_value_to_level(score_group, "Missing"),
-    score_group = forcats::fct_relevel(score_group, "Missing")
+    score_group = forcats::fct_relevel(score_group, "Missing", "11-21", "8-10", "0-7")
   ) %>%
   dplyr::count(month, score_group) %>%
   # Calculate percentage
@@ -207,7 +216,7 @@ plot_depression_soft_pre <- data_depression_soft_long %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("0-7", "8-21", "Missing")
+    breaks = c("0-7", "8-10", "11-21", "Missing")
   ) +
   labs(
     fill = "Depression HADS",
@@ -225,8 +234,11 @@ plot_depression_soft_post <- data_depression_soft_long %>%
     month != 0,
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
+    month = factor(month, levels = c(12, 24))
+  ) %>%
+  dplyr::mutate(
     score_group = forcats::fct_na_value_to_level(score_group, "Missing"),
-    score_group = forcats::fct_relevel(score_group, "Missing")
+    score_group = forcats::fct_relevel(score_group, "Missing", "11-21", "8-10", "0-7")
   ) %>%
   dplyr::count(month, score_group) %>%
   # Calculate percentage
@@ -257,7 +269,7 @@ plot_depression_soft_post <- data_depression_soft_long %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("0-7", "8-21", "Missing")
+    breaks = c("0-7", "8-10", "11-21", "Missing")
   ) +
   labs(
     fill = "Depression HADS",
@@ -270,12 +282,3 @@ plot_depression_soft_post <- data_depression_soft_long %>%
 plot_depression_soft_post
 
 
-
-# Combine
-plot_anxiety_soft_pre + plot_depression_soft_pre +
-  plot_anxiety_soft_post + plot_depression_soft_post +
-  patchwork::plot_layout(
-    ncol = 2, axes = 'collect'
-  )
-
-# Save 8.5x7.5 landscape

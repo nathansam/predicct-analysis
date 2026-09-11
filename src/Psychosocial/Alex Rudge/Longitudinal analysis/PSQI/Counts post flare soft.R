@@ -60,7 +60,7 @@ plot_soft_pre <- data_soft_long %>%
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
     SleepDisturbance = forcats::fct_na_value_to_level(SleepDisturbance, "Missing"),
-    SleepDisturbance = forcats::fct_relevel(SleepDisturbance, "Missing")
+    SleepDisturbance = forcats::fct_relevel(SleepDisturbance, "Missing", "Yes", "No")
   ) %>%
   dplyr::count(month, SleepDisturbance) %>%
   # Calculate percentage
@@ -110,7 +110,7 @@ plot_soft_post <- data_soft_long %>%
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
     SleepDisturbance = forcats::fct_na_value_to_level(SleepDisturbance, "Missing"),
-    SleepDisturbance = forcats::fct_relevel(SleepDisturbance, "Missing")
+    SleepDisturbance = forcats::fct_relevel(SleepDisturbance, "Missing", "Yes", "No")
   ) %>%
   dplyr::count(month, SleepDisturbance) %>%
   # Calculate percentage

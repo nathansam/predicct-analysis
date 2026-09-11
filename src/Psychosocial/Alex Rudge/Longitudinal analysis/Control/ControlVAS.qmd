@@ -12,7 +12,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Fatigue
+# IBD-Control-VAS
 
 ## Setting up in R
 
@@ -62,19 +62,18 @@ chiara <- "/Volumes/igmm/cvallejo-predicct/people/chiara/"
 alex_data <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data"
 
 
-# Baseline fatigue
-fatigue <- readr::read_rds(
-  glue::glue("{alex_data}/Fatigue.rds")
-)
-
-# Psychosocial cohort
-participants <- readr::read_rds(
-  glue::glue("{alex_data}/participants.rds")
+# Baseline control
+control <- readr::read_rds(
+  glue::glue("{alex_data}/control.rds")
 )
 
 # Monthly questionnaires
-fatigue_followup <- read.xlsx(
-  paste0(data.path, "Followup/monthlyQ.xlsx")
+control_followup <- readr::read_rds(
+  glue::glue("{alex_data}/control_followup.rds")
+)
+
+common_variables <- readr::read_rds(
+  file.path(alex_data, "common_variables.rds")
 )
 
 flares_hard <- readRDS(paste0(chiara, "flares_hard.RDS"))
@@ -84,61 +83,55 @@ flares_soft <- readRDS(paste0(chiara, "flares_soft.RDS"))
 ## Data cleaning
 
 ```{r}
-# In psychosocial cohort
-fatigue %<>%
-  dplyr::filter(
-    ParticipantNo %in% participants$ParticipantNo
-  )
-
-# Monthly fatigue
-fatigue_followup %<>%
-  dplyr::select(ParticipantNo, OftenLackEnergy, Q_month) %>%
-  # Remove NA energy
-  dplyr::filter(!is.na(OftenLackEnergy)) %>%
-  dplyr::mutate(
-    OftenLackEnergy = dplyr::case_match(
-      OftenLackEnergy,
-      1 ~ "Yes",
-      2 ~ "No",
-      3 ~ "Not sure"
-    )
-  ) %>%
-  # Group "Not sure" with "No" due to low counts
-  dplyr::mutate(
-    OftenLackEnergy = dplyr::case_when(
-      OftenLackEnergy == "Not sure" ~ "No",
-      TRUE ~ OftenLackEnergy
-    )
-  ) %>%
-  dplyr::mutate(
-    OftenLackEnergy = forcats::fct_relevel(OftenLackEnergy, "No", "Yes")
-  )
-
 # Combine with baseline
 
 # Only include those with a value at baseline
-fatigue_followup %<>%
-  dplyr::filter(ParticipantNo %in% fatigue$ParticipantNo)
+control_followup %<>%
+  dplyr::filter(ParticipantNo %in% control$ParticipantNo)
 
-fatigue %<>%
+control %<>%
   dplyr::mutate(Q_month = 0) %>%
-  dplyr::bind_rows(fatigue_followup) %>%
+  dplyr::bind_rows(control_followup) %>%
   dplyr::rename(month = Q_month) %>%
   dplyr::group_by(ParticipantNo) %>%
   tidyr::fill(SiteNo) %>%
   dplyr::ungroup() %>%
-  dplyr::arrange(ParticipantNo, month)
+  dplyr::arrange(ParticipantNo, month) %>%
+  dplyr::left_join(
+    common_variables %>%
+      dplyr::select(
+        ParticipantNo,
+        diagnosis2,
+        age_decade,
+        Sex,
+        IMD,
+        FC,
+        Smoke
+      ),
+    by = "ParticipantNo"
+  ) %>%
+  dplyr::mutate(
+    OverallControl_grouped = dplyr::case_when(
+      OverallControl >= 85 ~ ">=85",
+      OverallControl < 85 ~ "<85",
+      TRUE ~ NA_character_
+    ),
+    OverallControl_grouped = factor(
+      OverallControl_grouped,
+      levels = c("<85", ">=85")
+    )
+  )
 
 
 # Survival data
-data_soft_long <- fatigue %>%
+data_soft_long <- control %>%
   dplyr::inner_join(
     flares_soft %>% dplyr::select(ParticipantNo, softflare, softflare_time),
     by = "ParticipantNo"
   ) %>%
   dplyr::rename(DiseaseFlareYN = softflare, time = softflare_time)
 
-data_hard_long <- fatigue %>%
+data_hard_long <- control %>%
   dplyr::inner_join(
     flares_hard %>% dplyr::select(ParticipantNo, hardflare, hardflare_time),
     by = "ParticipantNo"
@@ -198,14 +191,14 @@ plot_soft_pre <- data_soft_long_counts %>%
     month != 0,
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
-    OftenLackEnergy = forcats::fct_na_value_to_level(OftenLackEnergy, "Missing"),
-    OftenLackEnergy = forcats::fct_relevel(OftenLackEnergy, "Missing", "Yes", "No")
+    OverallControl_grouped = forcats::fct_na_value_to_level(OverallControl_grouped, "Missing"),
+    OverallControl_grouped = forcats::fct_relevel(OverallControl_grouped, "Missing", "<85", ">=85")
   ) %>%
-  dplyr::count(month, OftenLackEnergy) %>%
+  dplyr::count(month, OverallControl_grouped) %>%
   # Calculate percentage
   dplyr::group_by(month) %>%
   dplyr::mutate(
-    p = n/sum(n[OftenLackEnergy != "Missing"]),
+    p = n/sum(n[OverallControl_grouped != "Missing"]),
     mid = rev(cumsum(rev(n))) - n/2,
   ) %>%
   dplyr::ungroup() %>%
@@ -214,11 +207,11 @@ plot_soft_pre <- data_soft_long_counts %>%
   ) %>%
   dplyr::mutate(
     percent = dplyr::case_when(
-      OftenLackEnergy == "Missing" ~ NA,
+      OverallControl_grouped == "Missing" ~ NA,
       TRUE ~ percent
     )
   ) %>%
-  ggplot(aes(x = month, y = n, fill = OftenLackEnergy)) +
+  ggplot(aes(x = month, y = n, fill = OverallControl_grouped)) +
   geom_col(width = 0.8, alpha = 0.5) +
   geom_text(
     aes(x = month, y = mid, label = percent),
@@ -230,10 +223,10 @@ plot_soft_pre <- data_soft_long_counts %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("No", "Yes", "Missing")
+    breaks = c("<85", ">=85", "Missing")
   ) +
   labs(
-    fill = "Fatigue",
+    fill = "IBD-Control-VAS",
     tag = "Still at risk of patient-reported flare"
   ) +
   xlab("Month") +
@@ -248,14 +241,14 @@ plot_soft_post <- data_soft_long_counts %>%
     month != 0,
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
-    OftenLackEnergy = forcats::fct_na_value_to_level(OftenLackEnergy, "Missing"),
-    OftenLackEnergy = forcats::fct_relevel(OftenLackEnergy, "Missing", "Yes", "No")
+    OverallControl_grouped = forcats::fct_na_value_to_level(OverallControl_grouped, "Missing"),
+    OverallControl_grouped = forcats::fct_relevel(OverallControl_grouped, "Missing", "<85", ">=85")
   ) %>%
-  dplyr::count(month, OftenLackEnergy) %>%
+  dplyr::count(month, OverallControl_grouped) %>%
   # Calculate percentage
   dplyr::group_by(month) %>%
   dplyr::mutate(
-    p = n/sum(n[OftenLackEnergy != "Missing"]),
+    p = n/sum(n[OverallControl_grouped != "Missing"]),
     mid = rev(cumsum(rev(n))) - n/2,
   ) %>%
   dplyr::ungroup() %>%
@@ -264,11 +257,11 @@ plot_soft_post <- data_soft_long_counts %>%
   ) %>%
   dplyr::mutate(
     percent = dplyr::case_when(
-      OftenLackEnergy == "Missing" ~ NA,
+      OverallControl_grouped == "Missing" ~ NA,
       TRUE ~ percent
     )
   ) %>%
-  ggplot(aes(x = month, y = n, fill = OftenLackEnergy)) +
+  ggplot(aes(x = month, y = n, fill = OverallControl_grouped)) +
   geom_col(width = 0.8, alpha = 0.5) +
   geom_text(
     aes(x = month, y = mid, label = percent),
@@ -280,10 +273,10 @@ plot_soft_post <- data_soft_long_counts %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("No", "Yes", "Missing")
+    breaks = c("<85", ">=85", "Missing")
   ) +
   labs(
-    fill = "Fatigue",
+    fill = "IBD-Control-VAS",
     tag = "Post patient-reported flare"
   ) +
   xlab("Month") +
@@ -317,21 +310,21 @@ data_hard_long_counts %<>%
   dplyr::mutate(month = factor(month))
   
 
-# Anxiety ####
+# Control-VAS ####
 # No previous flare
 plot_hard_pre <- data_hard_long_counts %>%
   dplyr::filter(
     month != 0,
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
-    OftenLackEnergy = forcats::fct_na_value_to_level(OftenLackEnergy, "Missing"),
-    OftenLackEnergy = forcats::fct_relevel(OftenLackEnergy, "Missing", "Yes", "No")
+    OverallControl_grouped = forcats::fct_na_value_to_level(OverallControl_grouped, "Missing"),
+    OverallControl_grouped = forcats::fct_relevel(OverallControl_grouped, "Missing", "<85", ">=85")
   ) %>%
-  dplyr::count(month, OftenLackEnergy) %>%
+  dplyr::count(month, OverallControl_grouped) %>%
   # Calculate percentage
   dplyr::group_by(month) %>%
   dplyr::mutate(
-    p = n/sum(n[OftenLackEnergy != "Missing"]),
+    p = n/sum(n[OverallControl_grouped != "Missing"]),
     mid = rev(cumsum(rev(n))) - n/2,
   ) %>%
   dplyr::ungroup() %>%
@@ -340,11 +333,11 @@ plot_hard_pre <- data_hard_long_counts %>%
   ) %>%
   dplyr::mutate(
     percent = dplyr::case_when(
-      OftenLackEnergy == "Missing" ~ NA,
+      OverallControl_grouped == "Missing" ~ NA,
       TRUE ~ percent
     )
   ) %>%
-  ggplot(aes(x = month, y = n, fill = OftenLackEnergy)) +
+  ggplot(aes(x = month, y = n, fill = OverallControl_grouped)) +
   geom_col(width = 0.8, alpha = 0.5) +
   geom_text(
     aes(x = month, y = mid, label = percent),
@@ -356,10 +349,10 @@ plot_hard_pre <- data_hard_long_counts %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("No", "Yes", "Missing")
+    breaks = c("<85", ">=85", "Missing")
   ) +
   labs(
-    fill = "Fatigue",
+    fill = "IBD-Control-VAS",
     tag = "Still at risk of objective flare"
   ) +
   xlab("Month") +
@@ -373,14 +366,14 @@ plot_hard_post <- data_hard_long_counts %>%
     month != 0,
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
-    OftenLackEnergy = forcats::fct_na_value_to_level(OftenLackEnergy, "Missing"),
-    OftenLackEnergy = forcats::fct_relevel(OftenLackEnergy, "Missing", "Yes", "No")
+    OverallControl_grouped = forcats::fct_na_value_to_level(OverallControl_grouped, "Missing"),
+    OverallControl_grouped = forcats::fct_relevel(OverallControl_grouped, "Missing", "<85", ">=85")
   ) %>%
-  dplyr::count(month, OftenLackEnergy) %>%
+  dplyr::count(month, OverallControl_grouped) %>%
   # Calculate percentage
   dplyr::group_by(month) %>%
   dplyr::mutate(
-    p = n/sum(n[OftenLackEnergy != "Missing"]),
+    p = n/sum(n[OverallControl_grouped != "Missing"]),
     mid = rev(cumsum(rev(n))) - n/2,
   ) %>%
   dplyr::ungroup() %>%
@@ -389,11 +382,11 @@ plot_hard_post <- data_hard_long_counts %>%
   ) %>%
   dplyr::mutate(
     percent = dplyr::case_when(
-      OftenLackEnergy == "Missing" ~ NA,
+      OverallControl_grouped == "Missing" ~ NA,
       TRUE ~ percent
     )
   ) %>%
-  ggplot(aes(x = month, y = n, fill = OftenLackEnergy)) +
+  ggplot(aes(x = month, y = n, fill = OverallControl_grouped)) +
   geom_col(width = 0.8, alpha = 0.5) +
   geom_text(
     aes(x = month, y = mid, label = percent),
@@ -405,10 +398,10 @@ plot_hard_post <- data_hard_long_counts %>%
   ) +
   scale_fill_manual(
     values = palette,
-    breaks = c("No", "Yes", "Missing")
+    breaks = c("<85", ">=85", "Missing")
   ) +
   labs(
-    fill = "Fatigue",
+    fill = "IBD-Control-VAS",
     tag = "Post objective flare"
   ) +
   xlab("Month") +
@@ -445,12 +438,12 @@ data_soft_static <- data_soft_long %>%
 
 data_soft_td <- data_soft_long %>%
   dplyr::select(
-    ParticipantNo, month, OftenLackEnergy
+    ParticipantNo, month, OverallControl
   ) %>%
   # Last observation carried forward
   dplyr::arrange(ParticipantNo, month) %>%
   dplyr::group_by(ParticipantNo) %>%
-  tidyr::fill(OftenLackEnergy, .direction = "down") %>%
+  tidyr::fill(OverallControl, .direction = "down") %>%
   # Convert month to days to match time
   dplyr::mutate(
     month = as.numeric(month),
@@ -465,7 +458,7 @@ data_soft_merged <- tmerge(
   tmerge(
     data2 = data_soft_td,
     id = ParticipantNo,
-    OftenLackEnergy = tdc(day, OftenLackEnergy)
+    OverallControl = tdc(day, OverallControl)
   )
 
 
@@ -487,12 +480,12 @@ data_hard_static <- data_hard_long %>%
 
 data_hard_td <- data_hard_long %>%
   dplyr::select(
-    ParticipantNo, month, OftenLackEnergy
+    ParticipantNo, month, OverallControl
   ) %>%
   # Last observation carried forward
   dplyr::arrange(ParticipantNo, month) %>%
   dplyr::group_by(ParticipantNo) %>%
-  tidyr::fill(OftenLackEnergy, .direction = "down") %>%
+  tidyr::fill(OverallControl, .direction = "down") %>%
   # Convert month to days to match time
   dplyr::mutate(
     month = as.numeric(month),
@@ -507,7 +500,7 @@ data_hard_merged <- tmerge(
   tmerge(
     data2 = data_hard_td,
     id = ParticipantNo,
-    OftenLackEnergy = tdc(day, OftenLackEnergy)
+    OverallControl = tdc(day, OverallControl)
   )
 
 
@@ -530,7 +523,7 @@ data_hard_merged_cd <- data_hard_merged %>% dplyr::filter(diagnosis2 == 'CD')
 
 cox_soft_cd <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
-    OftenLackEnergy +
+    OverallControl +
     IMD +
     Sex +
     age_decade +
@@ -551,7 +544,7 @@ cox_soft_cd %>%
  
 cox_hard_cd <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
-    OftenLackEnergy +
+    OverallControl +
     IMD +
     Sex +
     age_decade +
@@ -580,7 +573,7 @@ data_hard_merged_uc <- data_hard_merged %>% dplyr::filter(diagnosis2 == 'UC/IBDU
 
 cox_soft_uc <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
-    OftenLackEnergy +
+    OverallControl +
     IMD +
     Sex +
     age_decade +
@@ -601,7 +594,7 @@ cox_soft_uc %>%
  
 cox_hard_uc <- coxph(
   Surv(tstart, tstop, endpoint) ~ 
-    OftenLackEnergy +
+    OverallControl +
     IMD +
     Sex +
     age_decade +

@@ -60,7 +60,7 @@ plot_hard_pre <- data_hard_long %>%
     at_risk_flag == TRUE) %>%
   dplyr::mutate(
     MinimumExercise = forcats::fct_na_value_to_level(MinimumExercise, "Missing"),
-    MinimumExercise = forcats::fct_relevel(MinimumExercise, "Missing")
+    MinimumExercise = forcats::fct_relevel(MinimumExercise, "Missing", "No", "Yes")
   ) %>%
   dplyr::count(month, MinimumExercise) %>%
   # Calculate percentage
@@ -110,7 +110,7 @@ plot_hard_post <- data_hard_long %>%
     post_flare_flag == TRUE) %>%
   dplyr::mutate(
     MinimumExercise = forcats::fct_na_value_to_level(MinimumExercise, "Missing"),
-    MinimumExercise = forcats::fct_relevel(MinimumExercise, "Missing")
+    MinimumExercise = forcats::fct_relevel(MinimumExercise, "Missing", "No", "Yes")
   ) %>%
   dplyr::count(month, MinimumExercise) %>%
   # Calculate percentage

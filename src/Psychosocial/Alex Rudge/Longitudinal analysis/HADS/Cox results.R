@@ -1,10 +1,7 @@
 
 # Extracting the results from the Cox models
 
-# Run HADS
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
-source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/tdc model uc.R")
-source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/HADS/tdc model cd.R")
 
 
 # Anxiety

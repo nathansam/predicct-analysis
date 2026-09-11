@@ -26,10 +26,6 @@ cox_results %<>%
     significance = forcats::as_factor(significance)
   )
 
-# p.value.tidy bmj or lancet
-cox_results %<>%
-  dplyr::rename(p.value.tidy = p.value.tidy.lancet)
-
 
 # Flare type
 cox_results_soft <- cox_results %>%
@@ -40,18 +36,20 @@ cox_results_hard <- cox_results %>%
 
 # Forest plot 
 
+base_size = 10
+
 # Custom theme
 custom_theme <- 
   theme_minimal() +
   theme(
   # Title
-  plot.title = element_text(size = 12),
-  plot.subtitle = element_text(size = 10),
+  plot.title = element_text(size = base_size + 2),
+  plot.subtitle = element_text(size = base_size - 2),
   # Axes
   axis.title.y = element_blank(),
-  axis.text.y = element_text(size = 12, colour = 'black'),
-  axis.title.x = element_text(size = 12, colour = 'black'),
-  axis.text.x = element_text(size = 10, colour = 'black')
+  axis.text.y = element_text(size = base_size, colour = 'black'),
+  axis.title.x = element_text(size = base_size, colour = 'black'),
+  axis.text.x = element_text(size = base_size - 2, colour = 'black')
 )
 
 # Maximum xlimit
@@ -104,7 +102,7 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       x = 0,
       y = forcats::as_factor(term_tidy),
       label = n),
-      size = 12,
+      size = base_size,
       size.unit = "pt",
       color = 'black'
     ) +
@@ -118,7 +116,7 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       x = 0,
       y = forcats::as_factor(term_tidy),
       label = conf.interval.tidy),
-      size = 12,
+      size = base_size,
       size.unit = "pt",
       color = 'black'
       ) +
@@ -132,13 +130,13 @@ summon_forest_plot <- function(data, variable, diagnosis2){
       x = 0,
       y = forcats::as_factor(term_tidy),
       label = p.value.tidy),
-      size = 12,
+      size = base_size,
       size.unit = "pt",
       color = 'black'
       ) +
     theme_void() +
     theme(plot.title = element_text(hjust = 0.5))
-  
+
   # Return
   list(plot = plot, n = n, hr = hr, p = p)
   
@@ -165,31 +163,34 @@ summon_complete_forest <- function(
 
 
   plot_anxiety$plot + 
+    (plot_anxiety$n + 
+       labs(title = 'N') + 
+       theme(plot.title = element_text(size = base_size))) +
     (plot_anxiety$hr + 
        labs(title = 'aHR (95% CI)') + 
-       theme(plot.title = element_text(size = 12))) + 
-    (plot_anxiety$p + 
+       theme(plot.title = element_text(size = base_size))) + 
+    (plot_anxiety$p +
        labs(title = 'P-value') +
-       theme(plot.title = element_text(size = 12))) +
-   plot_depression$plot + plot_depression$hr +  plot_depression$p +
-   plot_somatisation$plot + plot_somatisation$hr + plot_somatisation$p +
-   plot_fatigue$plot + plot_fatigue$hr + plot_fatigue$p +
-   plot_sleep$plot + plot_sleep$hr + plot_sleep$p +
-   plot_exercise$plot + plot_exercise$hr + plot_exercise$p +
-   plot_lifeevents$plot + plot_lifeevents$hr + plot_lifeevents$p +
+       theme(plot.title = element_text(size = base_size))) +
+   plot_depression$plot + plot_depression$n + plot_depression$hr + plot_depression$p +
+   plot_somatisation$plot + plot_somatisation$n + plot_somatisation$hr + plot_somatisation$p +
+   plot_fatigue$plot + plot_fatigue$n + plot_fatigue$hr + plot_fatigue$p +
+   plot_sleep$plot + plot_sleep$n + plot_sleep$hr + plot_sleep$p +
+   plot_exercise$plot + plot_exercise$n + plot_exercise$hr + plot_exercise$p +
+   plot_lifeevents$plot + plot_lifeevents$n + plot_lifeevents$hr + plot_lifeevents$p +
     patchwork::plot_layout(
-     ncol = 3,
+     ncol = 4,
      guides = 'collect',
      axes = 'collect',
-     width = c(2.5, 1.2, 0.5),
-     height = c(2,2,3,2,2,2,2)
+     width = c(2.5, 0.4, 1.2, 0.5),
+     height = c(3,3,3,2,2,2,2)
    ) +
    patchwork::plot_annotation(
       title = title,
       subtitle = subtitle
    ) &
     theme(
-      plot.title = element_text(size = 14, hjust = 0.5),
+      plot.title = element_text(size = base_size, hjust = 0.5, face = 'bold'),
      plot.subtitle = element_text(hjust = 0.5),
       legend.position = "none",
      plot.margin = margin(0, 0, 3, 0))
@@ -234,17 +235,18 @@ plot_hr_hard_cd
 
 # Save
 filepath_save <- paste0(
-  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Longitudinal analysis/",
-  toupper(suffix),
-  "/"
+  "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Plots/Longitudinal analysis/"
 )
+
+width = 7
+height = 5
 
 # soft uc
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft uc", suffix_save),
   plot = plot_hr_soft_uc,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
@@ -252,8 +254,8 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot soft cd", suffix_save),
   plot = plot_hr_soft_cd,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
@@ -261,8 +263,8 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard uc", suffix_save),
   plot = plot_hr_hard_uc,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
@@ -270,114 +272,114 @@ ggsave(
 ggsave(
   filename = paste0(filepath_save, "HR forest plot hard cd", suffix_save),
   plot = plot_hr_hard_cd,
-  width = 9.5,
-  height = 7,
+  width = width,
+  height = height,
   units = 'in'
 )
 
 
 # Raw data as a separate table for publication
 
-cox_results_table <- cox_results %>%
-  dplyr::arrange(
-    flare_type, 
-    diagnosis2, 
-    # Ordering to match the forest plot ordering
-    factor(variable, levels = c(
-      'score_group_anxiety', 
-      'score_group_depression', 
-      'somatisation',
-      'OftenLackEnergy', 
-      'SleepDisturbance',
-      'MinimumExercise', 
-      'AnyLifeEvents'))
-  ) %>%
-  dplyr::select(diagnosis2, flare_type, term_tidy, n, conf.interval.tidy, p.value.tidy)
-
-# 4 separate tables
-# Soft uc
-table_hr_soft_uc <- cox_results_table %>%
-  dplyr::filter(
-    diagnosis2 == 'UC/IBDU',
-    flare_type == 'soft'
-  ) %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-# Soft cd
-table_hr_soft_cd <- cox_results_table %>%
-  dplyr::filter(
-    diagnosis2 == 'CD',
-    flare_type == 'soft'
-  ) %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-# hard uc
-table_hr_hard_uc <- cox_results_table %>%
-  dplyr::filter(
-    diagnosis2 == 'UC/IBDU',
-    flare_type == 'hard'
-  ) %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-# hard cd
-table_hr_hard_cd <- cox_results_table %>%
-  dplyr::filter(
-    diagnosis2 == 'CD',
-    flare_type == 'hard'
-  ) %>%
-  dplyr::select(-diagnosis2, -flare_type) %>%
-  gt::gt() %>%
-  gt::cols_label(
-    term_tidy = '',
-    n = 'N',
-    conf.interval.tidy = 'aHR (95% CI)',
-    p.value.tidy = 'P-value'
-  )
-
-suffix_word <- paste0(" ", suffix, '.docx')
-
-# Save as word
-# soft uc
-gt::gtsave(
-  data = table_hr_soft_uc,
-  filename = paste0(filepath_save, "Data HR forest plot soft uc", suffix_word)
-)
-
-# soft cd
-gt::gtsave(
-  data = table_hr_soft_cd,
-  filename = paste0(filepath_save, "Data HR forest plot soft cd", suffix_word)
-)
-
-# hard uc
-gt::gtsave(
-  data = table_hr_hard_uc,
-  filename = paste0(filepath_save, "Data HR forest plot hard uc", suffix_word)
-)
-
-# hard cd
-gt::gtsave(
-  data = table_hr_hard_cd,
-  filename = paste0(filepath_save, "Data HR forest plot hard cd", suffix_word)
-)
+# cox_results_table <- cox_results %>%
+#   dplyr::arrange(
+#     flare_type,
+#     diagnosis2,
+#     # Ordering to match the forest plot ordering
+#     factor(variable, levels = c(
+#       'score_group_anxiety',
+#       'score_group_depression',
+#       'somatisation',
+#       'OftenLackEnergy',
+#       'SleepDisturbance',
+#       'MinimumExercise',
+#       'AnyLifeEvents'))
+#   ) %>%
+#   dplyr::select(diagnosis2, flare_type, term_tidy, n, conf.interval.tidy, p.value.tidy)
+#
+# # 4 separate tables
+# # Soft uc
+# table_hr_soft_uc <- cox_results_table %>%
+#   dplyr::filter(
+#     diagnosis2 == 'UC/IBDU',
+#     flare_type == 'soft'
+#   ) %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# # Soft cd
+# table_hr_soft_cd <- cox_results_table %>%
+#   dplyr::filter(
+#     diagnosis2 == 'CD',
+#     flare_type == 'soft'
+#   ) %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# # hard uc
+# table_hr_hard_uc <- cox_results_table %>%
+#   dplyr::filter(
+#     diagnosis2 == 'UC/IBDU',
+#     flare_type == 'hard'
+#   ) %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# # hard cd
+# table_hr_hard_cd <- cox_results_table %>%
+#   dplyr::filter(
+#     diagnosis2 == 'CD',
+#     flare_type == 'hard'
+#   ) %>%
+#   dplyr::select(-diagnosis2, -flare_type) %>%
+#   gt::gt() %>%
+#   gt::cols_label(
+#     term_tidy = '',
+#     n = 'N',
+#     conf.interval.tidy = 'aHR (95% CI)',
+#     p.value.tidy = 'P-value'
+#   )
+#
+# suffix_word <- paste0(" ", suffix, '.docx')
+#
+# # Save as word
+# # soft uc
+# gt::gtsave(
+#   data = table_hr_soft_uc,
+#   filename = paste0(filepath_save, "Data HR forest plot soft uc", suffix_word)
+# )
+#
+# # soft cd
+# gt::gtsave(
+#   data = table_hr_soft_cd,
+#   filename = paste0(filepath_save, "Data HR forest plot soft cd", suffix_word)
+# )
+#
+# # hard uc
+# gt::gtsave(
+#   data = table_hr_hard_uc,
+#   filename = paste0(filepath_save, "Data HR forest plot hard uc", suffix_word)
+# )
+#
+# # hard cd
+# gt::gtsave(
+#   data = table_hr_hard_cd,
+#   filename = paste0(filepath_save, "Data HR forest plot hard cd", suffix_word)
+# )

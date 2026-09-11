@@ -3,8 +3,6 @@
 
 # Run fatigue
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
-source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/Life Events/tdc model uc.R")
-source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/Life Events/tdc model cd.R")
 
 
 # Anxiety
@@ -53,5 +51,4 @@ readr::write_rds(
   x = cox_results_lifeevents_cc,
   file = paste0(filepath, "cox_results_lifeevents_cc.rds")
 )
-
 

@@ -25,7 +25,7 @@ custom_theme = theme_minimal() +
     plot.tag = element_text(size = 12)
   )
 
-palette <- c("#009E73", "#0072B2", "#FFA500", "grey")
+palette <- c("#FFA500", "#0072B2", "#009E73", "grey")
 
 
 # Complete for missing

@@ -186,7 +186,7 @@ custom_theme = theme_minimal() +
     plot.tag = element_text(size = 12)
   )
 
-palette <- c( "#009E73", "#0072B2", "#FFA500", "grey")
+palette <- c("#FFA500", "#0072B2", "#009E73", "grey")
 
 data_anxiety_soft_long %<>% 
   # Anxiety groups
@@ -527,7 +527,7 @@ plot_anxiety_hard_pre <- data_anxiety_hard_long %>%
     ) +
   xlab("Month") +
   ylab("Count") +
-  custom_theme
+  custom_theme; plot_anxiety_hard_pre
 
 
 # Post flare
@@ -579,7 +579,7 @@ plot_anxiety_hard_post <- data_anxiety_hard_long %>%
   ) +
   xlab("Month") +
   ylab("Count") +
-  custom_theme
+  custom_theme; plot_anxiety_hard_post
 
 
 # Depression ####
@@ -632,7 +632,7 @@ plot_depression_hard_pre <- data_depression_hard_long %>%
   ) +
   xlab("Month") +
   ylab("Count") +
-  custom_theme
+  custom_theme; plot_depression_hard_pre
 
 
 # Post flare
@@ -684,7 +684,7 @@ plot_depression_hard_post <- data_depression_hard_long %>%
   ) +
   xlab("Month") +
   ylab("Count") +
-  custom_theme
+  custom_theme; plot_depression_hard_post
 
 # Together
 plot_anxiety_soft_pre + plot_anxiety_hard_pre +
@@ -714,7 +714,8 @@ plot_depression_soft_pre + plot_depression_hard_pre +
 
 data_anxiety_soft_static <- data_anxiety_soft %>%
   dplyr::select(
-    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD, time, DiseaseFlareYN
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    flare_group, OverallControl, control_8, time, DiseaseFlareYN
   ) %>%
   # Remove people with time 0
   dplyr::filter(
@@ -761,7 +762,8 @@ data_anxiety_soft_merged <- tmerge(
 ## Hard ####
 data_anxiety_hard_static <- data_anxiety_hard %>%
   dplyr::select(
-    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD, time, DiseaseFlareYN
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    flare_group, OverallControl, control_8, time, DiseaseFlareYN
   ) %>%
   # Remove people with time 0
   dplyr::filter(
@@ -809,7 +811,8 @@ data_anxiety_hard_merged <- tmerge(
 
 data_depression_soft_static <- data_depression_soft %>%
   dplyr::select(
-    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD, time, DiseaseFlareYN
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    flare_group, OverallControl, control_8, time, DiseaseFlareYN
   ) %>%
   # Remove people with time 0
   dplyr::filter(
@@ -855,7 +858,8 @@ data_depression_soft_merged <- tmerge(
 ## Hard ####
 data_depression_hard_static <- data_depression_hard %>%
   dplyr::select(
-    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD, time, DiseaseFlareYN
+    ParticipantNo, SiteNo, diagnosis2, Sex, age_decade, FC, Smoke, IMD,
+    flare_group, OverallControl, control_8, time, DiseaseFlareYN
   ) %>%
   # Remove people with time 0
   dplyr::filter(
@@ -1093,6 +1097,227 @@ cox_depression_hard_uc <- coxph(
 )
 
 cox_depression_hard_uc %>%
+  print_survival()
+
+```
+
+### Extended analysis results - Anxiety
+
+#### Crohn's disease
+
+```{r}
+# Time dependent cox model
+# CD
+data_anxiety_soft_merged_cd_extended <- data_anxiety_soft_merged %>% dplyr::filter(diagnosis2 == 'CD')
+data_anxiety_hard_merged_cd_extended <- data_anxiety_hard_merged %>% dplyr::filter(diagnosis2 == 'CD')
+data_depression_soft_merged_cd_extended <- data_depression_soft_merged %>% dplyr::filter(diagnosis2 == 'CD')
+data_depression_hard_merged_cd_extended <- data_depression_hard_merged %>% dplyr::filter(diagnosis2 == 'CD')
+```
+
+##### Patient-reported flare
+
+```{r}
+
+cox_anxiety_soft_cd_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_anxiety_soft_merged_cd_extended
+)
+
+cox_anxiety_soft_cd_extended %>%
+  print_survival()
+
+```
+
+##### Objective flare
+
+```{r}
+cox_anxiety_hard_cd_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_anxiety_hard_merged_cd_extended
+)
+
+cox_anxiety_hard_cd_extended %>%
+  print_survival()
+
+```
+
+#### Ulcerative colitis
+
+```{r}
+# Time dependent cox model
+data_anxiety_soft_merged_uc_extended <- data_anxiety_soft_merged %>% dplyr::filter(diagnosis2 == 'UC/IBDU')
+data_anxiety_hard_merged_uc_extended <- data_anxiety_hard_merged %>% dplyr::filter(diagnosis2 == 'UC/IBDU')
+data_depression_soft_merged_uc_extended <- data_depression_soft_merged %>% dplyr::filter(diagnosis2 == 'UC/IBDU')
+data_depression_hard_merged_uc_extended <- data_depression_hard_merged %>% dplyr::filter(diagnosis2 == 'UC/IBDU')
+```
+
+##### Patient-reported flare
+
+```{r}
+
+cox_anxiety_soft_uc_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_anxiety_soft_merged_uc_extended
+)
+
+cox_anxiety_soft_uc_extended %>%
+  print_survival()
+
+```
+
+##### Objective flare
+
+```{r}
+cox_anxiety_hard_uc_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_anxiety_hard_merged_uc_extended
+)
+
+cox_anxiety_hard_uc_extended %>%
+  print_survival()
+
+```
+
+### Extended analysis results - Depression
+
+#### Crohn's disease
+
+##### Patient-reported flare
+
+```{r}
+
+cox_depression_soft_cd_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_depression_soft_merged_cd_extended
+)
+
+cox_depression_soft_cd_extended %>%
+  print_survival()
+
+```
+
+##### Objective flare
+
+```{r}
+## Hard ####
+
+cox_depression_hard_cd_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_depression_hard_merged_cd_extended
+)
+
+cox_depression_hard_cd_extended %>%
+  print_survival()
+
+```
+
+#### Ulcerative colitis
+
+##### Patient-reported flare
+
+```{r}
+
+cox_depression_soft_uc_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_depression_soft_merged_uc_extended
+)
+
+cox_depression_soft_uc_extended %>%
+  print_survival()
+
+```
+
+##### Objective flare
+
+```{r}
+## Hard ####
+
+cox_depression_hard_uc_extended <- coxph(
+  Surv(tstart, tstop, endpoint) ~
+    score_group +
+    IMD +
+    Sex +
+    age_decade +
+    FC +
+    flare_group +
+    OverallControl +
+    control_8 +
+    Smoke +
+    frailty(SiteNo),
+  data = data_depression_hard_merged_uc_extended
+)
+
+cox_depression_hard_uc_extended %>%
   print_survival()
 
 ```

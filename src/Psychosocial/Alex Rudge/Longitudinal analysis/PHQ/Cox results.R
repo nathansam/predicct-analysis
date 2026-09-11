@@ -1,10 +1,7 @@
 
 # Extracting the results from the Cox models
 
-# Run fatigue
 source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/functions.R")
-source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/PHQ/tdc model uc.R")
-source("~/GitHub/predicct-analysis/src/Psychosocial/Alex Rudge/Longitudinal analysis/PHQ/tdc model cd.R")
 
 
 # Anxiety
@@ -46,12 +43,10 @@ cox_results_phq_cc <- extract_tdc_results(
 
 
 
-# Save
-filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Longitudinal analysis/"
-
-readr::write_rds(
-  x = cox_results_phq_cc,
-  file = paste0(filepath, "cox_results_phq_cc.rds")
-)
-
-
+# # Save
+# filepath <- "/Volumes/igmm/cvallejo-predicct/people/Alex/Predicct2/Data/Longitudinal analysis/"
+# 
+# readr::write_rds(
+#   x = cox_results_phq_cc,
+#   file = paste0(filepath, "cox_results_phq_cc.rds")
+# )
