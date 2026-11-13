@@ -1,0 +1,24 @@
+Adverse Life Events
+
+Only analyse: 
+  "Death",
+  "Divorce",
+  "MaritalSeparation",
+  "PersonalInjury",
+  "Dismissal",
+  "SexualDifficulties"
+  
+Results:
+Number of people with an adverse life event
+Total, n = 104
+Ulcerative colitis, n = 47
+Crohn's disease, n = 57
+
+
+Ulcerative colitis:
+Patient-reported flare, HR 1.34 (0.848, 2.13), p = 0.208
+Objective flare, HR 1.87 (0.911, 3.83), p = 0.0874
+
+Crohn's disease:
+Patient-reported flare, HR 1.57 (1.01, 2.37), p = 0.0385
+Objective flare, HR 1.66, (0.838, 3.26), p = 0.14
